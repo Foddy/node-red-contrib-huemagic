@@ -34,6 +34,9 @@
       "hue-brightness": "red/hue-brightness.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "hex-rgb": "^1.0.0",
     "huejay": "^1.7.0",

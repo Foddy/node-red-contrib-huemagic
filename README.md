@@ -18,7 +18,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 ### Installation
 HueMagic was written for **Node.js 4+**.
 
-`npm install -g node-red-contrib-huemagic`
+`npm install node-red-contrib-huemagic`
 
 ## Hue Light *Node*
 Use the Hue Light node to control the lights and receive light bulb events *(you can find this node under the input category of your nodes palette)*.

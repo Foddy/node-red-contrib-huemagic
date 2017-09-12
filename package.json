@@ -28,10 +28,10 @@
 		"nodes": {
 			"hue-bridge": "red/hue-bridge.js",
 			"hue-light": "red/hue-light.js",
+			"hue-group": "red/hue-group.js",
 			"hue-motion": "red/hue-motion.js",
 			"hue-temperature": "red/hue-temperature.js",
-			"hue-brightness": "red/hue-brightness.js",
-			"hue-group": "red/hue-group.js"
+			"hue-brightness": "red/hue-brightness.js"
 		}
 	},
 	"dependencies": {

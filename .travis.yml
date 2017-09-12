@@ -4,7 +4,6 @@ node_js:
 deploy:
   provider: npm
   email: npm@foddys.com
-  api_key:
-    secure: $NPM_TOKEN
+  api_key: $NPM_TOKEN
   on:
     repo: Foddy/node-red-contrib-huemagic

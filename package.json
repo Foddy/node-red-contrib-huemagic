@@ -3,17 +3,17 @@
 	"version": "1.0.0",
 	"description": "Philips Hue node to control lights, groups, motion sensors, temperature sensors and Lux sensors using Node-RED.",
 	"author": "foddys",
-	"homepage": "https://github.com/foddys",
+	"homepage": "https://github.com/Foddy/node-red-contrib-huemagic",
 	"license": "Apache-2.0",
 	"maintainers": [
 		"Foddy Botosakis <github@foddys.com>"
 	],
 	"repository": {
 		"type": "git",
-		"url": "xyz-url"
+		"url": "https://github.com/Foddy/node-red-contrib-huemagic.git"
 	},
 	"bugs": {
-		"url": "xyz-url"
+		"url": "https://github.com/Foddy/node-red-contrib-huemagic/issues"
 	},
 	"keywords": [
 		"node-red",

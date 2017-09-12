@@ -1,0 +1,131 @@
+<script type="text/x-red" data-template-name="hue-brightness">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Sensor name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sensorid"><i class="fa fa-sun-o"></i> Sensor</label>
+        <input type="text" id="node-input-sensorid" placeholder="1" style="width: 60%;"/>
+        <a id="node-config-input-scan-temp-sensors" class="editor-button"><i class="fa fa-search"></i></a>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="hue-brightness">
+    <p>Hue brightness node to receive current light level in Lux and daylight / darkness.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Lux sensors. Type in the name of the sensor manually or keep the default device name.</p>
+
+    <h3>Light Level Events</h3>
+    <p>The event message that the light sensor sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>The light sensor id</dd>
+
+        <dt>lightlevel<span class="property-type">int</span></dt>
+        <dd>Light level measured in Lux</dd>
+
+        <dt>dark<span class="property-type">boolean</span></dt>
+        <dd>True if it's dark</dd>
+
+        <dt>daylight<span class="property-type">boolean</span></dt>
+        <dd>True if daylight recognized</dd>
+
+        <dt>updated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 date string of the last light level update</dd>
+
+        <dt>battery<span class="property-type">int</span></dt>
+        <dd>Current battery level of the lux sensor in percent</dd>
+    </dl>
+
+    <p>Events will only be sent on deploy (once) and the if the light level changes.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-brightness',{
+        category: 'output',
+        color: '#f1c40f',
+        defaults: {
+            name: {value:""},
+            bridge: {type: "hue-bridge", required: true},
+            sensorid: {value:"", required: true, validate: RED.validators.number()}
+        },
+        inputs: 0,
+        outputs: 1,
+        outputLabels: 'brightness (changed)',
+        align: 'right',
+        icon: "hue-brightness.png",
+        paletteLabel: "Hue Brightness",
+        label: function() {
+            return this.name || "Hue Light Sensor";
+        },
+        oneditprepare: function()
+        {
+            var scope = this;
+
+            function manualLightSensorID()
+            {
+                var current = $('#node-input-sensorid').val();
+                $('#node-input-sensorid').replaceWith('<input type="text" id="node-input-sensorid" style="width: 60%;"/>');
+                $('#node-input-sensorid').val(current);
+            }
+
+            function searchAndSelectLightSensorID()
+            {
+                var current = $('#node-input-sensorid').val();
+                $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 60%;"></select>');
+                $('#node-input-sensorid').append('<option selected="selected" value="null">searching temperature sensors…</option>');
+
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLLightLevel"})
+                .done( function(data) {
+                    var lightSensors = JSON.parse(data);
+
+                    if(lightSensors.length <= 0)
+                    {
+                        RED.notify("No light sensors found.", "error");
+                    }
+
+                    // RESET OPTIONS
+                    $('#node-input-sensorid').empty();
+
+                    // SET TEMPERATURE SENSORS AS OPTIONS
+                    lightSensors.forEach(function(sensor)
+                    {
+                        $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                    });
+
+                    // SELECT CURRENT VALUE
+                    $('#node-input-sensorid').val(current);
+                })
+                .fail(function()
+                {
+                    RED.notify("Something went wrong. Please retry.", "error");
+                });
+            }
+
+            $(document).on('change', '#node-input-sensorid', function()
+            {
+                var sensorName = $('#node-input-sensorid option:selected').text();
+                if(sensorName.length > 0)
+                {
+                    $('#node-input-name').val(sensorName);
+                }
+            });
+
+            $('#node-config-input-scan-temp-sensors').click(function()
+            {
+                if($('#node-input-sensorid').prop("tagName") === "INPUT")
+                {
+                    searchAndSelectLightSensorID();
+                } else {
+                    manualLightSensorID();
+                }
+            });
+        }
+    });
+</script>

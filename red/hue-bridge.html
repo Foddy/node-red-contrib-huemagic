@@ -1,0 +1,164 @@
+<script type="text/x-red" data-template-name="hue-bridge">
+	<div class="form-row">
+		<label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-config-input-name">
+	</div>
+	<div class="form-row">
+			<label for="node-config-input-bridge"><i class="fa fa-server"></i> Bridge IP</label>
+			<input type="text" id="node-config-input-bridge" placeholder="192.168.0.100" style="width: 60%;"/>
+			<a id="node-config-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
+	</div>
+	<div class="form-row">
+			<label for="node-config-input-key"><i class="fa fa-key"></i> API Key</label>
+			<input type="text" id="node-config-input-key" style="width: 60%;"/>
+			<a id="node-config-input-register" class="editor-button"><i class="fa fa-user-circle-o"></i></a>
+	</div>
+	<div class="form-row">
+		<label for="node-config-input-interval"><i class="fa fa-clock-o"></i> Poll interval</label>
+		<input type="text" placeholder="3000" id="node-config-input-interval">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="hue-bridge">
+	<p>Philips Hue Bridge configuration with the following parameters:</p>
+
+	<h3>Name</h3>
+    <p>Type in the name of the Hue Bridge manually or keep the default device name</p>
+
+    <h3>Bridge IP</h3>
+    <p>Type in the Hue Bridge IP address manually or press the button to retreive all locally available bridges (static IP configuration on the Hue Bridge recommended)</p>
+
+    <h3>API Key</h3>
+    <p>Type in the Hue Bridge authorization key manually or press the button to retreive key from bridge</p>
+
+    <h3>Poll interval</h3>
+    <p>Interval that is used to poll active nodes for changes (min 500ms / recommended between 1000ms and 5000ms)</p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType("hue-bridge", {
+		category: "config",
+		color: '#c7d8d8',
+		defaults: {
+			name: {value:"Hue Bridge", required: true},
+			bridge: {value:"", required: true},
+			key: {value:"", required: true},
+			interval: {
+				value: 3000,
+				required: true,
+				validate: function(v) {
+					return (/^[0-9]+/.test(v) && parseInt(v,10) >= 500);
+				}
+			}
+		},
+		paletteLabel: "Hue Bridge",
+		label: function() {
+			return this.name;
+		},
+		oneditprepare: function()
+		{
+			function manualBridgeIP()
+			{
+				var current = $('#node-config-input-bridge').val();
+				$('#node-config-input-bridge').replaceWith('<input type="text" id="node-config-input-bridge" style="width: 60%;"/>');
+				$('#node-config-input-bridge').val(current);
+			}
+
+			function searchAndSelectBridge()
+			{
+				var current = $('#node-config-input-bridge').val();
+				$('#node-config-input-bridge').replaceWith('<select id="node-config-input-bridge" style="width: 60%;"></select>');
+				$('#node-config-input-bridge').append('<option selected="selected" value="null">searching…</option>');
+
+				$.get('hue/bridges')
+				.done( function(data) {
+					var bridges = JSON.parse(data);
+
+					if(bridges.length <= 0)
+					{
+						RED.notify("No Hue Bridge found.", "error");
+					}
+
+					// RESET OPTIONS
+					$('#node-config-input-bridge').empty();
+
+					// SET BRIDGES AS OPTIONS
+					bridges.forEach(function(bridge)
+					{
+						$('#node-config-input-bridge').append('<option value="' + bridge.ip + '">' + bridge.ip + '</option>');
+					});
+
+					// SELECT CURRENT VALUE
+					$('#node-config-input-bridge').val(current);
+				})
+				.fail(function()
+				{
+					RED.notify("Something went wrong. Please retry.", "error");
+				});
+			}
+
+			$(document).on('change', '#node-config-input-bridge', function()
+			{
+				var currentBridgeIP = $('#node-config-input-bridge').val();
+				if(currentBridgeIP.length > 6)
+				{
+					$.get('hue/name', { ip: currentBridgeIP } )
+					.done( function(data)
+					{
+						$('#node-config-input-name').val(data);
+					})
+					.fail(function(err)
+					{
+						RED.notify("Sorry. Your selected Hue Bridge is invalid!", "error");
+					});
+				}
+			});
+
+			$('#node-config-input-scan').click(function()
+			{
+				if($('#node-config-input-bridge').prop("tagName") === "INPUT")
+				{
+					searchAndSelectBridge();
+				} else {
+					manualBridgeIP();
+				}
+			});
+
+			$('#node-config-input-register').click(function()
+			{
+				if(!$('#node-config-input-bridge').val())
+				{
+					RED.notify("Please select your Hue Bridge before trying to create a new user!", "error");
+				}
+				else
+				{
+					$('#node-config-input-key').val("");
+					$('#node-config-input-key').attr("placeholder", "waiting 20 seconds…");
+					RED.notify("Please press your Hue Bridge button within the next 20 seconds to create a new user!");
+
+					setTimeout(function()
+					{
+						$.get('hue/register', { ip: $('#node-config-input-bridge').val() } )
+						.done( function(data)
+						{
+							if(data == "error")
+							{
+								RED.notify("Please retry within 20 seconds…", "error");
+								$('#node-config-input-key').attr("placeholder", "");
+							}
+							else
+							{
+								var userdata = JSON.parse(data);
+								$('#node-config-input-key').val(userdata[0].success.username);
+								RED.notify("User created successfully!");
+							}
+						}).fail(function(err)
+						{
+							RED.notify(err.responseText, "error");
+						});
+					}, 20000);
+				}
+			});
+		}
+	});
+</script>

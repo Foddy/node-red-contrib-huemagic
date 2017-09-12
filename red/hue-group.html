@@ -1,0 +1,182 @@
+<script type="text/x-red" data-template-name="hue-group">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Group name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge">
+    </div>
+    <div class="form-row">
+        <label for="node-input-groupid"><i class="fa fa-lightbulb-o"></i> Group</label>
+        <input type="text" id="node-input-groupid" placeholder="1" style="width: 60%;"/>
+        <a id="node-config-input-scan-lights" class="editor-button"><i class="fa fa-search"></i></a>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="hue-group">
+    <p>Hue group node to control whole groups containing lights and receive group events.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available preconfigured groups. Type in the name of the group manually or keep the default name.</p>
+
+    <h3>Turn On / Off (simple)</h3>
+    <p>Changes the group on / off state based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>msg.payload<span class="property-type">boolean</span></dt>
+        <dd>Will turn on or turn off all lights inside the group with their previous configuration (color and brightness)</dd>
+    </dl>
+
+    <h3>Turn On / Off (extended)</h3>
+    <p>Changes the group state, effect, color and brightness based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>on<span class="property-type">boolean</span></dt>
+        <dd>True to turn on all the lights inside the group, false to turn them off</dd>
+
+        <dt class="optional">brightness<span class="property-type">int</span></dt>
+        <dd>Optionally configurable brightness of the lights in percent (0-100)</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value</dd>
+
+        <dt class="optional">transitionTime<span class="property-type">int</span></dt>
+        <dd>Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)</dd>
+
+        <dt class="optional">colorloop<span class="property-type">int</span></dt>
+        <dd>Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)</dd>
+    </dl>
+
+    <h3>Alert Effect</h3>
+    <p>Plays an alert effect based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>alert<span class="property-type">int</span></dt>
+        <dd>Configurable amount (>0) of the alert effect. When the alert effect is finished the light bulbs will reset to the previous state.</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value</dd>
+    </dl>
+
+    <h3>Group Events</h3>
+    <p>The event message that the group sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>The group id</dd>
+
+        <dt>on<span class="property-type">boolean</span></dt>
+        <dd>True for on, false for off</dd>
+
+        <dt>lightIds<span class="property-type">array</span></dt>
+        <dd>An array of light ids associated with the group</dd>
+
+        <dt>allOn<span class="property-type">boolean</span></dt>
+        <dd>True if all lights in the group are on, false if not</dd>
+
+        <dt>anyOn<span class="property-type">boolean</span></dt>
+        <dd>True if any lights in the group are on, false if none are on</dd>
+
+        <dt>brightness<span class="property-type">int</span></dt>
+        <dd>Current brightness of all lights in the whole group in percent</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Current RGB color value of all lights in the group (if supported)</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Current HEX color value of all lights in the group (if supported)</dd>
+
+        <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
+        <dd>ISO 8601 date string of the last group state update</dd>
+    </dl>
+    <p>Events will only be sent if the group state is changed.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-group',{
+        category: 'input',
+        color: '#f94f8b',
+        defaults: {
+            name: {value:""},
+            bridge: {type: "hue-bridge", required: true},
+            groupid: {value:"", required: true, validate: RED.validators.number()}
+        },
+        inputs: 1,
+        outputs: 1,
+        inputLabels: 'turn on / off',
+        outputLabels: 'status',
+        align: 'right',
+        icon: "hue-group.png",
+        paletteLabel: "Hue Group",
+        label: function() {
+            return this.name || "Hue Group";
+        },
+        oneditprepare: function()
+        {
+            var scope = this;
+
+            function manualLightID()
+            {
+                var current = $('#node-input-groupid').val();
+                $('#node-input-groupid').replaceWith('<input type="text" id="node-input-groupid" style="width: 60%;"/>');
+                $('#node-input-groupid').val(current);
+            }
+
+            function searchAndSelectLightID()
+            {
+                var current = $('#node-input-groupid').val();
+                $('#node-input-groupid').replaceWith('<select id="node-input-groupid" style="width: 60%;"></select>');
+                $('#node-input-groupid').append('<option selected="selected" value="null">searching motion sensors…</option>');
+
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                $.get('hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                .done(function(data) {
+                    var lightBulbs = JSON.parse(data);
+
+                    if(lightBulbs.length <= 0)
+                    {
+                        RED.notify("No groups found.", "error");
+                    }
+
+                    // RESET OPTIONS
+                    $('#node-input-groupid').empty();
+
+                    // SET MOTION SENSORS AS OPTIONS
+                    lightBulbs.forEach(function(sensor)
+                    {
+                        $('#node-input-groupid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                    });
+
+                    // SELECT CURRENT VALUE
+                    $('#node-input-groupid').val(current);
+                })
+                .fail(function()
+                {
+                    RED.notify("Something went wrong. Please retry.", "error");
+                });
+            }
+
+            $(document).on('change', '#node-input-groupid', function()
+            {
+                var sensorName = $('#node-input-groupid option:selected').text();
+                if(sensorName.length > 0)
+                {
+                    $('#node-input-name').val(sensorName);
+                }
+            });
+
+            $('#node-config-input-scan-lights').click(function()
+            {
+                if($('#node-input-groupid').prop("tagName") === "INPUT")
+                {
+                    searchAndSelectLightID();
+                } else {
+                    manualLightID();
+                }
+            });
+        }
+    });
+</script>

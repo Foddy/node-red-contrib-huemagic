@@ -49,7 +49,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 
 | Property 	| Type               	| Information                                                                                                                         	|
 |----------	|--------------------	|-------------------------------------------------------------------------------------------------------------------------------------	|
-| **alert**    	| int *(required)*     	| Configurable amount *(> 0)* of the alert effect. When the alert effect is finished the light bulb will reset to the previous state.   	|
+| **alert**    	| int *(required)*     	| Configurable amount *(> 0)* of the alert effect. When the alert effect is finished the light bulb will reset to the previous state.   |
 | **rgb**      	| array[int,int,int] 	| Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value 	|
 | **hex**      	| string             	| Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value 	|
 
@@ -115,7 +115,7 @@ The event message that the group sends contains the following data in the msg.pa
 | **updated**    | string             | ISO 8601 date string of the last group state update               |
 
 ## Hue Motion *Node*
-Use the Hue Motion node to control the motion sensor and receive motion events. *(you can find this node under the output category of your nodes palette)*.
+Use the Hue Motion node to control the motion sensor and receive motion events *(you can find this node under the output category of your nodes palette)*.
 
 ![Hue Motion Example](https://cloud.foddys.com/mS7R/HUE-MOTION.png)
 
@@ -143,7 +143,7 @@ Use the Hue Temperature node to receive current (room) temperature in Celsius an
 ![Hue Temperature Example](https://cloud.foddys.com/mT4C/HUE-TEMPERATURE.png)
 
 ### Temperature Events
-The event message that the temperature sensor sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and the if the temperature changes.
+The event message that the temperature sensor sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if the temperature changes.
 
 |    Property    | Type    | Information                                                |
 |:--------------:|---------|------------------------------------------------------------|
@@ -159,7 +159,7 @@ Use the Hue Brightness node to receive the current light level in Lux and daylig
 ![Hue Lux Example](https://cloud.foddys.com/mSnM/HUE-LUX.png)
 
 ### Light Level Events
-The event message that the light sensor sends contains the following data in the **msg.payload** object. Events will only be sent on deploy (once) and the if the light level changes.
+The event message that the light sensor sends contains the following data in the **msg.payload** object. Events will only be sent on deploy (once) and if the light level changes.
 
 |    Property    | Type    | Information                                         |
 |:--------------:|---------|-----------------------------------------------------|

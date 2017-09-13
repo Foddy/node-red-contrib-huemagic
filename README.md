@@ -100,7 +100,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 | **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value |
 
 ### Group Events
-The event message that the group sends contains the following data in the msg.payload object. Events will only be sent if the group state is changed.
+The event message that the group sends contains the following data in the **msg.payload** object. Events will only be sent if the group state is changed.
 
 | Property       | Type               | Information                                                       |
 |----------------|--------------------|-------------------------------------------------------------------|

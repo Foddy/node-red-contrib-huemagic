@@ -193,4 +193,37 @@ module.exports = function(RED)
 			res.send(500).send(error.stack);
 		});
 	});
+
+	//
+	// DISCOVER SCENES
+	RED.httpAdmin.get('/hue/scenes', function(req, res, next)
+	{
+		let huejay = require('huejay');
+		var bridge = (req.query.bridge).toString();
+		var username = req.query.key;
+
+		let client = new huejay.Client({
+			host: bridge,
+			username: username
+		});
+
+		client.scenes.getAll()
+		.then(scenes => {
+			var allScenes = [];
+
+			for (let scene of scenes)
+			{
+				var oneScene = {};
+				oneScene.id = scene.id;
+				oneScene.name = scene.name;
+
+				allScenes.push(oneScene);
+			}
+
+			res.end(JSON.stringify(allScenes));
+		})
+		.catch(error => {
+			res.send(500).send(error.stack);
+		});
+	});
 };

@@ -43,7 +43,22 @@ module.exports = function(RED)
 					context.set('brightness', sensor.state.lightLevel);
 
 					var message = {};
-					message.payload = {id: luxSensorID, lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: sensor.state.lastUpdated, battery: sensor.config.battery};
+					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: sensor.state.lastUpdated};
+
+					message.info = {};
+					message.info.id = sensor.id;
+					message.info.uniqueId = sensor.uniqueId;
+					message.info.name = sensor.name;
+					message.info.type = sensor.type;
+					message.info.softwareVersion = sensor.softwareVersion;
+					message.info.battery = sensor.config.battery;
+
+					message.info.model = {};
+					message.info.model.id = sensor.model.id;
+					message.info.model.manufacturer = sensor.model.manufacturer;
+					message.info.model.name = sensor.model.name;
+					message.info.model.type = sensor.model.type;
+
 					scope.send(message);
 
 					if(sensor.state.dark)

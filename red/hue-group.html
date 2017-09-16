@@ -18,7 +18,7 @@
     <p>Hue group node to control whole groups containing lights and receive group events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available preconfigured groups. Type in the name of the group manually or keep the default name.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available preconfigured groups. Type in the name of the group manually or keep the default name. Note that events will only be sent if the group state is changed.</p>
 
     <h3>Turn On / Off (simple)</h3>
     <p>Changes the group on / off state based on the passed in <b>msg.payload</b> values of:</p>
@@ -65,14 +65,8 @@
     <h3>Group Events</h3>
     <p>The event message that the group sends contains the following data in the <b>msg.payload</b> object:</p>
     <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>The group id</dd>
-
         <dt>on<span class="property-type">boolean</span></dt>
         <dd>True for on, false for off</dd>
-
-        <dt>lightIds<span class="property-type">array</span></dt>
-        <dd>An array of light ids associated with the group</dd>
 
         <dt>allOn<span class="property-type">boolean</span></dt>
         <dd>True if all lights in the group are on, false if not</dd>
@@ -92,7 +86,25 @@
         <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
         <dd>ISO 8601 date string of the last group state update</dd>
     </dl>
-    <p>Events will only be sent if the group state is changed.</p>
+
+    <h3>Additional Group Info</h3>
+    <p>Additional information about the group is going to be sent to the <b>msg.info</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Group Id, generated automatically by the bridge</dd>
+
+        <dt>lightIds<span class="property-type">array[int…]</span></dt>
+        <dd>An array of light ids associated with the group</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name for the group</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Type of group (e.g. LightGroup, Luminaire, LightSource, Room)</dd>
+
+        <dt class="optional">model<span class="property-type">object</span></dt>
+        <dd>Huejay (the API behind HueMagic) maintains a list of Philips Hue supported luminaire models. The Group model attribute returns optionally a GroupModel object. This object contains more information about the model like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue</dd>
+    </dl>
 </script>
 
 <script type="text/javascript">

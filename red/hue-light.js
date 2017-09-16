@@ -63,9 +63,23 @@ module.exports = function(RED)
 						// DETERMINE TYPE AND SEND STATUS
 						var message = {};
 						message.payload = {};
-						message.payload.id = lightID;
 						message.payload.on = light.on;
 						message.payload.brightness = brightnessPercent;
+
+						message.info = {};
+						message.info.id = light.id;
+						message.info.uniqueId = light.uniqueId;
+						message.info.name = light.name;
+						message.info.type = light.type;
+						message.info.softwareVersion = light.softwareVersion;
+
+						message.info.model = {};;
+						message.info.model.id = light.model.id;
+						message.info.model.manufacturer = light.model.manufacturer;
+						message.info.model.name = light.model.name;
+						message.info.model.type = light.model.type;
+						message.info.model.colorGamut = light.model.colorGamut;
+						message.info.model.friendsOfHue = light.model.friendsOfHue;
 
 						if(light.xy)
 						{
@@ -274,9 +288,23 @@ module.exports = function(RED)
 			// DETERMINE TYPE AND SEND STATUS
 			var message = {};
 			message.payload = {};
-			message.payload.id = parseInt(light.id);
 			message.payload.on = light.on;
 			message.payload.brightness = brightnessPercent;
+
+			message.info = {};
+			message.info.id = light.id;
+			message.info.uniqueId = light.uniqueId;
+			message.info.name = light.name;
+			message.info.type = light.type;
+			message.info.softwareVersion = light.softwareVersion;
+
+			message.info.model = {};;
+			message.info.model.id = light.model.id;
+			message.info.model.manufacturer = light.model.manufacturer;
+			message.info.model.name = light.model.name;
+			message.info.model.type = light.model.type;
+			message.info.model.colorGamut = light.model.colorGamut;
+			message.info.model.friendsOfHue = light.model.friendsOfHue;
 
 			if(light.xy)
 			{

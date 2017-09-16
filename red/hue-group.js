@@ -65,12 +65,26 @@ module.exports = function(RED)
 					// SEND STATUS
 					var message = {};
 					message.payload = {};
-					message.payload.id = groupID;
 					message.payload.on = group.on;
-					message.payload.lightIds = group.lightIds;
 					message.payload.allOn = group.allOn;
 					message.payload.anyOn = group.anyOn;
 					message.payload.brightness = brightnessPercent;
+
+					message.info = {};
+					message.info.id = group.id;
+					message.info.lightIds = group.lightIds.join(', ');
+					message.info.name = group.name;
+					message.info.type = group.type;
+
+					if(group.modelId !== undefined)
+					{
+						message.info.model = {};
+						message.info.model.id = group.model.id;
+						message.info.model.uniqueId = group.uniqueId;
+						message.info.model.manufacturer = group.model.manufacturer;
+						message.info.model.name = group.model.name;
+						message.info.model.type = group.model.type;
+					}
 
 					if(group.xy)
 					{
@@ -255,12 +269,27 @@ module.exports = function(RED)
 			// SEND STATUS
 			var message = {};
 			message.payload = {};
-			message.payload.id = parseInt(group.id);
 			message.payload.on = group.on;
-			message.payload.lightIds = group.lightIds;
 			message.payload.allOn = group.allOn;
 			message.payload.anyOn = group.anyOn;
 			message.payload.brightness = brightnessPercent;
+
+			message.info = {};
+			message.info.id = group.id;
+			message.info.lightIds = group.lightIds.join(', ');
+			message.info.name = group.name;
+			message.info.type = group.type;
+			message.info.class = group.class;
+
+			if(group.modelId !== undefined)
+			{
+				message.info.model = {};
+				message.info.model.id = group.model.id;
+				message.info.model.uniqueId = group.uniqueId;
+				message.info.model.manufacturer = group.model.manufacturer;
+				message.info.model.name = group.model.name;
+				message.info.model.type = group.model.type;
+			}
 
 			if(group.xy)
 			{

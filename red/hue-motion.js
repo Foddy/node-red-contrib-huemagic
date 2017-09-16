@@ -47,7 +47,22 @@ module.exports = function(RED)
 							context.set('presence', true);
 
 							var message = {};
-							message.payload = {id: motionSensorID, active: true, motion: true, updated: sensor.state.lastUpdated, battery: sensor.config.battery};
+							message.payload = {active: true, motion: true, updated: sensor.state.lastUpdated};
+
+							message.info = {};
+							message.info.id = sensor.id;
+							message.info.uniqueId = sensor.uniqueId;
+							message.info.name = sensor.name;
+							message.info.type = sensor.type;
+							message.info.softwareVersion = sensor.softwareVersion;
+							message.info.battery = sensor.config.battery;
+
+							message.info.model = {};
+							message.info.model.id = sensor.model.id;
+							message.info.model.manufacturer = sensor.model.manufacturer;
+							message.info.model.name = sensor.model.name;
+							message.info.model.type = sensor.model.type;
+
 							scope.send(message);
 
 							scope.status({fill: "green", shape: "dot", text: "motion detected"});
@@ -55,7 +70,22 @@ module.exports = function(RED)
 						else
 						{
 							var message = {};
-							message.payload = {id: motionSensorID, active: true, motion: false, updated: sensor.state.lastUpdated, battery: sensor.config.battery};
+							message.payload = {active: true, motion: false, updated: sensor.state.lastUpdated};
+
+							message.info = {};
+							message.info.id = sensor.id;
+							message.info.uniqueId = sensor.uniqueId;
+							message.info.name = sensor.name;
+							message.info.type = sensor.type;
+							message.info.softwareVersion = sensor.softwareVersion;
+							message.info.battery = sensor.config.battery;
+
+							message.info.model = {};
+							message.info.model.id = sensor.model.id;
+							message.info.model.manufacturer = sensor.model.manufacturer;
+							message.info.model.name = sensor.model.name;
+							message.info.model.type = sensor.model.type;
+
 							scope.send(message);
 
 							context.set('presence', false);
@@ -88,7 +118,22 @@ module.exports = function(RED)
 				})
 				.then(sensor => {
 					var notify = {};
-					notify.payload = {id: motionSensorID, active: msg.payload, motion: false, updated: sensor.state.lastUpdated, battery: sensor.config.battery};
+					notify.payload = {active: msg.payload, motion: false, updated: sensor.state.lastUpdated};
+
+					message.info = {};
+					message.info.id = sensor.id;
+					message.info.uniqueId = sensor.uniqueId;
+					message.info.name = sensor.name;
+					message.info.type = sensor.type;
+					message.info.softwareVersion = sensor.softwareVersion;
+					message.info.battery = sensor.config.battery;
+
+					message.info.model = {};
+					message.info.model.id = sensor.model.id;
+					message.info.model.manufacturer = sensor.model.manufacturer;
+					message.info.model.name = sensor.model.name;
+					message.info.model.type = sensor.model.type;
+
 					scope.send(notify);
 
 					if(msg.payload == false)

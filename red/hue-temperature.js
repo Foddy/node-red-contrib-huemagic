@@ -47,7 +47,22 @@ module.exports = function(RED)
 					var fahrenheit = Math.round(((celsius * 1.8)+32) * 100) / 100;
 
 					var message = {};
-					message.payload = {id: temperatureSensorID, celsius: celsius, fahrenheit: fahrenheit, updated: sensor.state.lastUpdated, battery: sensor.config.battery};
+					message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: sensor.state.lastUpdated};
+
+					message.info = {};
+					message.info.id = sensor.id;
+					message.info.uniqueId = sensor.uniqueId;
+					message.info.name = sensor.name;
+					message.info.type = sensor.type;
+					message.info.softwareVersion = sensor.softwareVersion;
+					message.info.battery = sensor.config.battery;
+
+					message.info.model = {};
+					message.info.model.id = sensor.model.id;
+					message.info.model.manufacturer = sensor.model.manufacturer;
+					message.info.model.name = sensor.model.name;
+					message.info.model.type = sensor.model.type;
+
 					scope.send(message);
 
 					scope.status({fill: "yellow", shape: "dot", text: celsius+" °C / "+fahrenheit+" °F"});

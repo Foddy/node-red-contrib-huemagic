@@ -1,0 +1,136 @@
+<script type="text/x-red" data-template-name="hue-scene">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Sensor name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sceneid"><i class="fa fa-eye"></i> Scene</label>
+        <input type="text" id="node-input-sceneid" placeholder="1" style="width: 60%;"/>
+        <a id="node-config-input-scan-scenes" class="editor-button"><i class="fa fa-search"></i></a>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="hue-scene">
+    <p>Hue Scene node to recall (activate) Hue Scenes.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available scenes. Type in the name of the scene manually or keep the default scene name. Note that events will only be sent if the scene node receives any command.</p>
+
+    <h3>Activate</h3>
+    <p>Any passed in value on the scene node activates the preconfigured scene.</p>
+
+    <h3>Scene Events</h3>
+    <p>The event message that the scene node sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">string</span></dt>
+        <dd>The unique scene id</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>The scene name</dd>
+
+        <dt>lightIds<span class="property-type">array[int…]</span></dt>
+        <dd>Array of associated light ids in the scene</dd>
+
+        <dt>owner<span class="property-type">string</span></dt>
+        <dd>User who created the scene</dd>
+
+        <dt>appData<span class="property-type">object</span></dt>
+        <dd>Object consisting of version and data properties</dd>
+
+        <dt>lastUpdated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 date string when scene was last updated</dd>
+
+        <dt>version<span class="property-type">float</span></dt>
+        <dd>Version number of the scene</dd>
+    </dl>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-scene',{
+        category: 'input',
+        color: '#ff823a',
+        defaults: {
+            name: {value:""},
+            bridge: {type: "hue-bridge", required: true},
+            sceneid: {value:"", required: true}
+        },
+        inputs: 1,
+        outputs: 1,
+        inputLabels: 'activate scene',
+        outputLabels: 'scene information',
+        align: 'right',
+        icon: "hue-scene.png",
+        paletteLabel: "Hue Scene",
+        label: function() {
+            return this.name || "Hue Scene";
+        },
+        oneditprepare: function()
+        {
+            var scope = this;
+
+            function manualSceneID()
+            {
+                var current = $('#node-input-sceneid').val();
+                $('#node-input-sceneid').replaceWith('<input type="text" id="node-input-sceneid" style="width: 60%;"/>');
+                $('#node-input-sceneid').val(current);
+            }
+
+            function searchAndSelectScenes()
+            {
+                var current = $('#node-input-sceneid').val();
+                $('#node-input-sceneid').replaceWith('<select id="node-input-sceneid" style="width: 60%;"></select>');
+                $('#node-input-sceneid').append('<option selected="selected" value="null">searching scenes…</option>');
+
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                $.get('hue/scenes', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                .done(function(data) {
+                    var scenes = JSON.parse(data);
+
+                    if(scenes.length <= 0)
+                    {
+                        RED.notify("No scenes found.", "error");
+                    }
+
+                    // RESET OPTIONS
+                    $('#node-input-sceneid').empty();
+
+                    // SET MOTION SENSORS AS OPTIONS
+                    scenes.forEach(function(scene)
+                    {
+                        $('#node-input-sceneid').append('<option value="' + scene.id + '">' + scene.name + '</option>');
+                    });
+
+                    // SELECT CURRENT VALUE
+                    $('#node-input-sceneid').val(current);
+                })
+                .fail(function()
+                {
+                    RED.notify("Something went wrong. Please retry.", "error");
+                });
+            }
+
+            $(document).on('change', '#node-input-sceneid', function()
+            {
+                var sceneName = $('#node-input-sceneid option:selected').text();
+                if(sceneName.length > 0)
+                {
+                    $('#node-input-name').val(sceneName);
+                }
+            });
+
+            $('#node-config-input-scan-scenes').click(function()
+            {
+                if($('#node-input-sceneid').prop("tagName") === "INPUT")
+                {
+                    searchAndSelectScenes();
+                } else {
+                    manualSceneID();
+                }
+            });
+        }
+    });
+</script>

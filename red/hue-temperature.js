@@ -1,7 +1,7 @@
-"use strict";
-
 module.exports = function(RED)
 {
+	"use strict";
+
 	function HueTemperature(config)
 	{
 		RED.nodes.createNode(this, config);

@@ -1,7 +1,7 @@
-"use strict";
-
 module.exports = function(RED)
 {
+	"use strict";
+
 	function HueBridge(config)
 	{
 		RED.nodes.createNode(this, config);

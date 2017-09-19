@@ -255,7 +255,7 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.1 (latest)
+### v1.1.2 (latest)
 * Fixed block-scoped declarations for Node.js below version 6.x
 
 ### v1.1.0

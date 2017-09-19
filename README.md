@@ -255,7 +255,10 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.0 (latest)
+### v1.1.1 (latest)
+* Fixed block-scoped declarations for Node.js below version 6.x
+
+### v1.1.0
 * Support of Hue Scenes (new scene node)!
 * Removed "id, "lightIds" and "battery" parameter in msg.payload of sensors / lights / groups
 * Added msg.info object on all node events with extended device information

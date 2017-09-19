@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(RED)
 {
 	function HueLight(config)

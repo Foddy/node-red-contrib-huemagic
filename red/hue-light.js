@@ -136,7 +136,7 @@ module.exports = function(RED)
 				});
 			}
 			// EXTENDED TURN ON / OFF LIGHT
-			else if(msg.payload.on)
+			else if(typeof msg.payload.on != 'undefined')
 			{
 				client.lights.getById(lightID)
 				.then(light => {
@@ -201,7 +201,7 @@ module.exports = function(RED)
 				});
 			}
 			// ALERT EFFECT
-			else if(msg.payload.alert && msg.payload.alert > 0)
+			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
 				client.lights.getById(lightID)
 				.then(light => {

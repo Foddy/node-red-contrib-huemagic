@@ -255,7 +255,10 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.2 (latest)
+### v1.1.3 (latest)
+* Several fixes for the Hue Light and Hue Group nodes
+
+### v1.1.2
 * Fixed block-scoped declarations for Node.js below version 6.x
 
 ### v1.1.0

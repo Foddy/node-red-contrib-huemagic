@@ -129,7 +129,7 @@ module.exports = function(RED)
 				});
 			}
 			// EXTENDED TURN ON / OFF GROUP
-			else if(msg.payload.on)
+			else if(typeof msg.payload.on != 'undefined')
 			{
 				client.groups.getById(groupID)
 				.then(group => {
@@ -183,7 +183,7 @@ module.exports = function(RED)
 				});
 			}
 			// ALERT EFFECT
-			else if(msg.payload.alert && msg.payload.alert > 0)
+			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
 				client.groups.getById(groupID)
 				.then(group => {

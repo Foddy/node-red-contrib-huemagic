@@ -256,9 +256,9 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.6 (latest)
+### v1.1.7 (latest)
 * Replacing "superagent" dependency with "request" due to security vulnerabilities
-* Fixed Hue Bridge node
+* Several small fixes and optimizations for hue bridge node
 
 ### v1.1.3
 * Several fixes for the Hue Light and Hue Group nodes

@@ -40,18 +40,18 @@ module.exports = function(RED)
 	    }
 	    else
 	    {
-	    	let huejay = require('huejay');
+		let huejay = require('huejay');
 
-	    	var bridgeIP = (req.query.ip).toString();
-	    	let client = new huejay.Client({host: bridgeIP, username: 'default'});
+		var bridgeIP = (req.query.ip).toString();
+		let client = new huejay.Client({host: bridgeIP, username: 'default'});
 
-	    	client.bridge.get()
+		client.bridge.get()
 			.then(bridge => {
 				res.end(bridge.name);
 			})
 			.catch(error => {
-	    		res.send(500).send(error.message);
-	    	});
+			res.send(500).send(error.message);
+		});
 	    }
 	});
 
@@ -68,10 +68,10 @@ module.exports = function(RED)
 			var request = require('request');
 			let bridgeIP = (req.query.ip).toString();
 
-			request.post({url:'http://'+bridgeIP+'/api'}, {body: {"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}}, function(err,httpResponse,body) {
+			request.post('http://'+bridgeIP+'/api', {body: JSON.stringify({"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}) }, function(err,httpResponse,body) {
 			  if(err)
 			  {
-			    rescope.send(500).send("Could not find Hue Bridge…");
+				rescope.end("error");
 			  }
 			  else
 			  {
@@ -79,11 +79,11 @@ module.exports = function(RED)
 
 			    if(bridge[0].error)
 			    {
-			      rescope.end("error");
+				 rescope.end("error");
 			    }
 			    else
 			    {
-			      rescope.end(JSON.stringify(bridge));
+				 rescope.end(JSON.stringify(bridge));
 			    }
 			  }
 			});

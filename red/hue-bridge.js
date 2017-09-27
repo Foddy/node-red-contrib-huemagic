@@ -68,24 +68,24 @@ module.exports = function(RED)
 			var request = require('request');
 			let bridgeIP = (req.query.ip).toString();
 
-			request.post({url:'http://'+bridgeIP+'/api', {body: {"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}}, function(err,httpResponse,body) {
-				if(err)
-				{
-					rescope.send(500).send("Could not find Hue Bridge…");
-				}
-				else
-				{
-					var bridge = JSON.parse(body);
+			request.post({url:'http://'+bridgeIP+'/api'}, {body: {"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}}, function(err,httpResponse,body) {
+			  if(err)
+			  {
+			    rescope.send(500).send("Could not find Hue Bridge…");
+			  }
+			  else
+			  {
+			    var bridge = JSON.parse(body);
 
-					if(bridge[0].error)
-					{
-						rescope.end("error");
-					}
-					else
-					{
-						rescope.end(JSON.stringify(bridge));
-					}
-				}
+			    if(bridge[0].error)
+			    {
+			      rescope.end("error");
+			    }
+			    else
+			    {
+			      rescope.end(JSON.stringify(bridge));
+			    }
+			  }
 			});
 		}
 	});

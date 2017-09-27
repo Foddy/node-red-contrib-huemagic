@@ -62,23 +62,20 @@ module.exports = function(RED)
 		if(!req.query.ip)
 		{
 			return rescope.status(500).send("Missing Hue Bridge IP…");
-	    }
-	    else
-	    {
-			let request = require('superagent');
+		}
+		else
+		{
+			var request = require('request');
 			let bridgeIP = (req.query.ip).toString();
 
-			request.post('http://'+bridgeIP+'/api')
-			.send({"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)})
-			.end(function(err, result)
-			{
+			request.post({url:'http://'+bridgeIP+'/api', {body: {"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}}, function(err,httpResponse,body) {
 				if(err)
 				{
 					rescope.send(500).send("Could not find Hue Bridge…");
 				}
 				else
 				{
-					var bridge = result.body;
+					var bridge = JSON.parse(body);
 
 					if(bridge[0].error)
 					{
@@ -90,7 +87,7 @@ module.exports = function(RED)
 					}
 				}
 			});
-	    }
+		}
 	});
 
 	//

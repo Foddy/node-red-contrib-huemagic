@@ -17,6 +17,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 
 ### Installation
 HueMagic was written for **Node.js 4+** and Node-RED v0.17.5+.
+_Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
 

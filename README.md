@@ -278,4 +278,8 @@ The event message that the lux sensor sends also contains the following data in 
 * Initial release
 
 ***
-Released under the [Apache License 2.0](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)).
+[![BrowserStack](http://cloud.foddys.com/mmBs/Logo-01.svg | width=150)](https://www.browserstack.com/#huemagic)
+
+HueMagic is using [BrowserStack](https://www.browserstack.com) for cross browser compatibility testing of the HueMagic web UI on real browsers. Check it out! :)
+
+*Released under the [Apache License 2.0](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)).*

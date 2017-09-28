@@ -278,7 +278,7 @@ The event message that the lux sensor sends also contains the following data in 
 * Initial release
 
 ***
-[![BrowserStack](http://cloud.foddys.com/mmBs/Logo-01.svg)](https://www.browserstack.com/#huemagic)
+[![BrowserStack](https://cloud.foddys.com/mmBs/Logo-01.svg)](https://www.browserstack.com/#huemagic)
 
 HueMagic is using [BrowserStack](https://www.browserstack.com) for cross browser compatibility testing of the HueMagic web UI on real browsers. Check it out! :)
 

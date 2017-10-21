@@ -16,7 +16,7 @@ module.exports = function(RED)
 
 		//
 		// CHECK CONFIG
-		if(!config.lightid || bridge == null)
+		if(bridge == null)
 		{
 			this.status({fill: "red", shape: "ring", text: "not configured"});
 			return false;
@@ -24,7 +24,7 @@ module.exports = function(RED)
 
 		//
 		// INITIALIZE CLIENT
-		var lightID = parseInt(config.lightid);
+		var lightID = (config.lightid) ? parseInt(config.lightid) : false;
 		let client = new huejay.Client({
 			host: (bridge.config.bridge).toString(),
 			port: 80,
@@ -34,106 +34,132 @@ module.exports = function(RED)
 		//
 		// UPDATE STATE
 		scope.status({fill: "grey", shape: "dot", text: "initializing…"});
-		this.recheck = setInterval(function()
+
+		if(lightID != false)
 		{
-			client.lights.getById(lightID)
-			.then(light => {
-				if(light.reachable == false)
-				{
-					scope.status({fill: "red", shape: "ring", text: "not reachable"});
-				}
-				else
-				{
-					var state = context.get('status') || false;
-					var uniqueStatus = ((light.on) ? "1" : "0") + light.brightness + light.hue + light.saturation + light.colorTemp;
-					var brightnessPercent = 0;
-
-					if(state != uniqueStatus)
+			this.recheck = setInterval(function()
+			{
+				client.lights.getById(lightID)
+				.then(light => {
+					if(light.reachable == false)
 					{
-						context.set('status', uniqueStatus);
-
-						if(light.on)
-						{
-							brightnessPercent = Math.round((100/254)*light.brightness);
-							scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
-						}
-						else
-						{
-							scope.status({fill: "grey", shape: "dot", text: "turned off"});
-						}
-
-						// DETERMINE TYPE AND SEND STATUS
-						var message = {};
-						message.payload = {};
-						message.payload.on = light.on;
-						message.payload.brightness = brightnessPercent;
-
-						message.info = {};
-						message.info.id = light.id;
-						message.info.uniqueId = light.uniqueId;
-						message.info.name = light.name;
-						message.info.type = light.type;
-						message.info.softwareVersion = light.softwareVersion;
-
-						message.info.model = {};;
-						message.info.model.id = light.model.id;
-						message.info.model.manufacturer = light.model.manufacturer;
-						message.info.model.name = light.model.name;
-						message.info.model.type = light.model.type;
-						message.info.model.colorGamut = light.model.colorGamut;
-						message.info.model.friendsOfHue = light.model.friendsOfHue;
-
-						if(light.xy)
-						{
-							var rgbColor = rgb.convertXYtoRGB(light.xy[0], light.xy[1], light.brightness);
-
-							message.payload.rgb = rgbColor;
-							message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
-						}
-
-						message.payload.updated = moment().format();
-
-						scope.send(message);
+						scope.status({fill: "red", shape: "ring", text: "not reachable"});
 					}
-				}
-			})
-			.catch(error => {
-				scope.status({fill: "red", shape: "ring", text: "connection error"});
-				clearInterval(scope.recheck);
-			});
-		}, parseInt(bridge.config.interval));
+					else
+					{
+						var state = context.get('status') || false;
+						var uniqueStatus = ((light.on) ? "1" : "0") + light.brightness + light.hue + light.saturation + light.colorTemp;
+						var brightnessPercent = 0;
+
+						if(state != uniqueStatus)
+						{
+							context.set('status', uniqueStatus);
+
+							if(light.on)
+							{
+								brightnessPercent = Math.round((100/254)*light.brightness);
+								scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+							}
+							else
+							{
+								scope.status({fill: "grey", shape: "dot", text: "turned off"});
+							}
+
+							// DETERMINE TYPE AND SEND STATUS
+							var message = {};
+							message.payload = {};
+							message.payload.on = light.on;
+							message.payload.brightness = brightnessPercent;
+
+							message.info = {};
+							message.info.id = light.id;
+							message.info.uniqueId = light.uniqueId;
+							message.info.name = light.name;
+							message.info.type = light.type;
+							message.info.softwareVersion = light.softwareVersion;
+
+							message.info.model = {};;
+							message.info.model.id = light.model.id;
+							message.info.model.manufacturer = light.model.manufacturer;
+							message.info.model.name = light.model.name;
+							message.info.model.type = light.model.type;
+							message.info.model.colorGamut = light.model.colorGamut;
+							message.info.model.friendsOfHue = light.model.friendsOfHue;
+
+							if(light.xy)
+							{
+								var rgbColor = rgb.convertXYtoRGB(light.xy[0], light.xy[1], light.brightness);
+
+								message.payload.rgb = rgbColor;
+								message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
+							}
+
+							message.payload.updated = moment().format();
+
+							scope.send(message);
+						}
+					}
+				})
+				.catch(error => {
+					scope.status({fill: "red", shape: "ring", text: "connection error"});
+					clearInterval(scope.recheck);
+				});
+			}, parseInt(bridge.config.interval));
+		}
+		else
+		{
+			scope.status({fill: "grey", shape: "dot", text: "universal mode"});
+		}
+
 
 		//
 		// TURN ON / OFF LIGHT
 		this.on('input', function(msg)
 		{
+			// CHECK IF LIGHT ID IS SET
+			if(lightID == false)
+			{
+				if(typeof msg.topic != 'undefined')
+				{
+					lightID = parseInt(msg.topic);
+				}
+				else
+				{
+					scope.error("No light Id defined. Please check the docs.");
+					return false;
+				}
+			}
+
 			// SIMPLE TURN ON / OFF LIGHT
 			if(msg.payload == true || msg.payload == false)
 			{
-				client.lights.getById(lightID)
-				.then(light => {
-					if(light.reachable)
-					{
-						light.on = msg.payload;
-						return client.lights.save(light);
-					}
-					else
-					{
-						scope.status({fill: "red", shape: "ring", text: "not reachable"});
-						return false;
-					}
-				})
-				.then(light => {
-					if(light != false)
-					{
-						scope.sendLightStatus(light);
-					}
-				})
-				.catch(error => {
-					scope.error(error);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
-					clearInterval(scope.recheck);
-				});
+				if(lightID != false)
+				{
+					client.lights.getById(lightID)
+					.then(light => {
+						if(light.reachable)
+						{
+							light.on = msg.payload;
+							return client.lights.save(light);
+						}
+						else
+						{
+							scope.status({fill: "red", shape: "ring", text: "not reachable"});
+							return false;
+						}
+					})
+					.then(light => {
+						if(light != false)
+						{
+							scope.sendLightStatus(light);
+						}
+					})
+					.catch(error => {
+						scope.error(error);
+						scope.status({fill: "red", shape: "ring", text: "input error"});
+						clearInterval(scope.recheck);
+					});
+				}
 			}
 			// EXTENDED TURN ON / OFF LIGHT
 			else if(typeof msg.payload.on != 'undefined')

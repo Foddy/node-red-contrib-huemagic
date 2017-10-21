@@ -87,6 +87,13 @@ The event message that the light bulb sends also contains the following data in 
 | **softwareVersion** | float  | Software version of the light                                                                                                                                            |
 | **model**           | object | The model object of the light includes model specific information like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue |
 
+### Universal Mode (optional)
+Defines the light Id on the Hue Bridge manually if not configured in the node properties (deactivates light update events):
+
+| Property 	| Type    	| Information                                                                               	|
+|:--------:	|---------	|-------------------------------------------------------------------------------------------	|
+| **msg.topic**  	| int 	| Manual definition of the light bulb Id 											|
+
 ## Hue Groups
 Use the Hue Group node to control whole groups containing lights and receive group events *(you can find this node under the input category of your nodes palette)*.
 
@@ -143,6 +150,13 @@ The event message that the group sends also contains the following data in the *
 | **name**     | string | Name for the group                                                                                                                                                                                                                                                                                                          |
 | **type**     | string | Type of group (e.g. LightGroup, Luminaire, LightSource, Room)                                                                                                                                                                                                                                                               |
 | **model**    | object | [Huejay](https://github.com/sqmk/huejay) *(the API behind HueMagic)* maintains a list of Philips Hue supported luminaire models. The Group model attribute returns optionally a GroupModel object. This object contains more information about the model like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue |
+
+### Universal Mode (optional)
+Defines the group Id on the Hue Bridge manually if not configured in the node properties (deactivates group update events):
+
+| Property 	| Type    	| Information                                                                               	|
+|:--------:	|---------	|-------------------------------------------------------------------------------------------	|
+| **msg.topic**  	| int 	| Manual definition of the group Id 												|
 
 ## Hue Scenes
 Use the Hue Scene node to recall / activate preconfigured scenes on the bridge and receive scene information *(you can find this node under the input category of your nodes palette)*.
@@ -256,7 +270,10 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.7 (latest)
+### v1.1.8 (latest)
+* New "universal mode" for Hue Light and Hue Group nodes
+
+### v1.1.7
 * Replacing "superagent" dependency with "request" due to security vulnerabilities
 * Several small fixes and optimizations for hue bridge node
 
@@ -281,6 +298,6 @@ The event message that the lux sensor sends also contains the following data in 
 <a href="https://www.browserstack.com">
 <img src="https://cloud.foddys.com/mmBs/Logo-01.svg" width="200"></a>
 
-HueMagic is using [BrowserStack](https://www.browserstack.com) for cross browser compatibility testing of the HueMagic web UI on real browsers.
+HueMagic is sponsored by [BrowserStack](https://www.browserstack.com) for cross browser compatibility testing on real browsers.
 
 *Released under the [Apache License 2.0](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)).*

@@ -105,6 +105,13 @@
         <dt class="optional">model<span class="property-type">object</span></dt>
         <dd>Huejay (the API behind HueMagic) maintains a list of Philips Hue supported luminaire models. The Group model attribute returns optionally a GroupModel object. This object contains more information about the model like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue</dd>
     </dl>
+
+    <h3>Universal Mode (optional)</h3>
+    <p>Defines the group Id on the Hue Bridge manually if not configured in the node properties (deactivates group update events):</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manual definition of the group Id</dd>
+    </dl>
 </script>
 
 <script type="text/javascript">
@@ -114,7 +121,7 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            groupid: {value:"", required: true, validate: RED.validators.number()}
+            groupid: {value:"", required: false, validate: RED.validators.number()}
         },
         inputs: 1,
         outputs: 1,

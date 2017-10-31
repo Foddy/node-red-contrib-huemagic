@@ -120,6 +120,8 @@ module.exports = function(RED)
 		// TURN ON / OFF GROUP
 		this.on('input', function(msg)
 		{
+			var context = this.context();
+
 			// CHECK IF GROUP ID IS SET
 			if(groupID == false)
 			{
@@ -210,28 +212,54 @@ module.exports = function(RED)
 			{
 				client.groups.getById(groupID)
 				.then(group => {
-					var groupPreviousState = group;
+					context.set('groupPreviousState', [group.on ? true : false, group.brightness, group.xy ? group.xy : false]);
 
-					// SET RGB COLOR
-					if(msg.payload.rgb && group.xy)
+					// SET ALERT COLOR
+					if(group.xy)
 					{
-						group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
+						if(typeof msg.payload.rgb != 'undefined')
+						{
+							group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
+						}
+						else if(typeof msg.payload.hex != 'undefined')
+						{
+							group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
+						}
+						else
+						{
+							group.xy = rgb.convertRGBtoXY([255,0,0], false);
+						}
 					}
 
-					// SET HEX COLOR
-					if(msg.payload.hex && group.xy)
-					{
-						group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
-					}
+					// ACTIVATE
+					group.on = true;
+					group.brightness = 254;
+					group.transitionTime = 0;
+					return client.groups.save(group);
+				})
+				.then(group => {
+					// ACTIVATE ALERT
+					group.alert = 'lselect';
+					return client.groups.save(group);
+				})
+				.then(group => {
+					// TURN OFF ALERT
+					var groupPreviousState = context.get('groupPreviousState');
+					var alertSeconds = parseInt(msg.payload.alert);
 
-					// SET TO RED IF NO COLOR SET
-					if(!msg.payload.rgb && !msg.payload.hex && group.xy)
-					{
-						group.xy = rgb.convertRGBtoXY([255,0,0], false);
-					}
+					setTimeout(function() {
+						group.on = groupPreviousState[0];
+						group.alert = 'none';
+						group.brightness = groupPreviousState[1];
+						group.transitionTime = 2;
 
-					// REPEAT ALERT
-					scope.repeatAlert(client, groupPreviousState, group, (parseInt(msg.payload.alert)-1));
+						if(groupPreviousState[2] != false)
+						{
+							group.xy = groupPreviousState[2];
+						}
+
+						client.groups.save(group);
+					}, alertSeconds * 1000);
 				})
 				.catch(error => {
 					scope.error(error);
@@ -241,28 +269,6 @@ module.exports = function(RED)
 			}
 		});
 
-		//
-		// REPEAT ALERT
-		this.repeatAlert = function(client, previousGroup, alertGroup, repeat)
-		{
-			var scope = this;
-
-			setTimeout(function() {
-				alertGroup.on = true;
-				alertGroup.alert = 'select';
-				client.groups.save(alertGroup);
-
-				if(repeat > 0)
-				{
-					repeat -= 1;
-					scope.repeatAlert(client, previousGroup, alertGroup, repeat);
-				}
-				else
-				{
-					client.groups.save(previousGroup);
-				}
-			}, 1000);
-		}
 
 		//
 		// SEND GROUP STATUS

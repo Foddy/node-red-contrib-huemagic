@@ -116,6 +116,8 @@ module.exports = function(RED)
 		// TURN ON / OFF LIGHT
 		this.on('input', function(msg)
 		{
+			var context = this.context();
+
 			// CHECK IF LIGHT ID IS SET
 			if(lightID == false)
 			{
@@ -233,33 +235,69 @@ module.exports = function(RED)
 				.then(light => {
 					if(light.reachable)
 					{
-						var lightPreviousState = light;
+						context.set('lightPreviousState', [light.on ? true : false, light.brightness, light.xy ? light.xy : false]);
 
-						// SET RGB COLOR
-						if(msg.payload.rgb && light.xy)
+						// SET ALERT COLOR
+						if(light.xy)
 						{
-							light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.modelid);
+							if(typeof msg.payload.rgb != 'undefined')
+							{
+								light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.modelid);
+							}
+							else if(typeof msg.payload.hex != 'undefined')
+							{
+								light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
+							}
+							else
+							{
+								light.xy = rgb.convertRGBtoXY([255,0,0], light.modelid);
+							}
 						}
 
-						// SET HEX COLOR
-						if(msg.payload.hex && light.xy)
-						{
-							light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
-						}
-
-						// SET TO RED IF NO COLOR SET
-						if(!msg.payload.rgb && !msg.payload.hex && light.xy)
-						{
-							light.xy = rgb.convertRGBtoXY([255,0,0], light.modelid);
-						}
-
-						// REPEAT ALERT
-						scope.repeatAlert(client, lightPreviousState, light, (parseInt(msg.payload.alert)-1));
+						// ACTIVATE
+						light.on = true;
+						light.brightness = 254;
+						light.transitionTime = 0;
+						return client.lights.save(light);
 					}
 					else
 					{
 						scope.status({fill: "red", shape: "ring", text: "not reachable"});
 						return false;
+					}
+				})
+				.then(light => {
+					// ACTIVATE ALERT
+					if(light != false)
+					{
+						light.alert = 'lselect';
+						return client.lights.save(light);
+					}
+					else
+					{
+						return false;
+					}
+				})
+				.then(light => {
+					// TURN OFF ALERT
+					if(light != false)
+					{
+						var lightPreviousState = context.get('lightPreviousState');
+						var alertSeconds = parseInt(msg.payload.alert);
+
+						setTimeout(function() {
+							light.on = lightPreviousState[0];
+							light.alert = 'none';
+							light.brightness = lightPreviousState[1];
+							light.transitionTime = 2;
+
+							if(lightPreviousState[2] != false)
+							{
+								light.xy = lightPreviousState[2];
+							}
+
+							client.lights.save(light);
+						}, alertSeconds * 1000);
 					}
 				})
 				.catch(error => {
@@ -270,28 +308,6 @@ module.exports = function(RED)
 			}
 		});
 
-		//
-		// REPEAT ALERT
-		this.repeatAlert = function(client, previousLight, alertLight, repeat)
-		{
-			var scope = this;
-
-			setTimeout(function() {
-				alertLight.on = true;
-				alertLight.alert = 'select';
-				client.lights.save(alertLight);
-
-				if(repeat > 0)
-				{
-					repeat -= 1;
-					scope.repeatAlert(client, previousLight, alertLight, repeat);
-				}
-				else
-				{
-					client.lights.save(previousLight);
-				}
-			}, 1000);
-		}
 
 		//
 		// SEND LIGHT STATUS

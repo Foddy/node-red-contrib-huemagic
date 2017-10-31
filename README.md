@@ -57,11 +57,11 @@ Changes the light state, effect, color and brightness based on the passed in **m
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
 
-| Property 	| Type               	| Information                                                                                                                         	|
-|----------	|--------------------	|-------------------------------------------------------------------------------------------------------------------------------------	|
-| **alert**    	| int *(required)*     	| Configurable amount *(> 0)* of the alert effect. When the alert effect is finished the light bulb will reset to the previous state.   |
-| **rgb**      	| array[int,int,int] 	| Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value 	|
-| **hex**      	| string             	| Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value 	|
+| Property  | Type               | Information                                                                                                                                          |
+|-----------|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **alert** | int *(required)*   | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state. |
+| **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                  |
+| **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                  |
 
 
 ### Light Events
@@ -121,11 +121,11 @@ Changes the group state, effect, color and brightness based on the passed in **m
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
 
-| Property  | Type               | Information                                                                                                                         |
-|-----------|--------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **alert** | int *(required)*   | Configurable amount (>0) of the alert effect. When the alert effect is finished the light bulbs will reset to the previous state.   |
-| **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value |
-| **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value |
+| Property  | Type               | Information                                                                                                                                                        |
+|-----------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **alert** | int *(required)*   | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state. |
+| **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                                |
+| **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                                |
 
 ### Group Events
 The event message that the group sends contains the following data in the **msg.payload** object. Events will only be sent if the group state is changed.
@@ -270,7 +270,11 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.8 (latest)
+### v1.1.9 (latest)
+* Improved alert function with configurable amount of seconds
+* Several fixes and optimizations
+
+### v1.1.8
 * New "universal mode" for Hue Light and Hue Group nodes
 
 ### v1.1.7

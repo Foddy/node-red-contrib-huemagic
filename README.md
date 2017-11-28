@@ -53,6 +53,7 @@ Changes the light state, effect, color and brightness based on the passed in **m
 | **hex**            	| string             	| Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value 	|
 | **transitionTime** 	| int                	| Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) 	|
 | **colorloop**      	| int                	| Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        	|
+| **colorTemp**       | int               | Optionally configurable color temperature of the light from 153 to 500
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:

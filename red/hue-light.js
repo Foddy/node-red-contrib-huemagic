@@ -189,7 +189,18 @@ module.exports = function(RED)
 						{
 							light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
 						}
-
+						//SET COLOR TEMPERATURE
+                                                if(msg.payload.colorTemp && light.colorTemp)
+                                                {
+                                                        let colorTemp = parseInt(msg.payload.colorTemp);
+                                                        if(colorTemp >= 153 && colorTemp <= 500)
+                                                        {
+                                                                light.colorTemp = parseInt(msg.payload.colorTemp);
+                                                        } else {
+                                                                scope.error("Invalid color temprature. Only 153 - 500 allowed");
+                                                                return false;
+                                                        }
+                                                }
 						// SET TRANSITION TIME
 						if(msg.payload.transitionTime)
 						{

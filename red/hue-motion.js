@@ -144,7 +144,7 @@ module.exports = function(RED)
 					}
 					else
 					{
-						scope.status({fill: "grey", shape: "dot", text: "no motion"});
+						scope.status({fill: "green", shape: "dot", text: "activated"});
 					}
 				})
 				.catch(error => {

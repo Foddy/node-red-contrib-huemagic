@@ -2,13 +2,15 @@ module.exports = function(RED)
 {
 	"use strict";
 
-	function HueBrightness(config)
+	function HueTap(config)
 	{
 		RED.nodes.createNode(this, config);
 		var bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
+		var moment = require('moment');
 		var context = this.context();
 		var scope = this;
+
 
 		//
 		// CHECK CONFIG
@@ -20,7 +22,7 @@ module.exports = function(RED)
 
 		//
 		// INITIALIZE CLIENT
-		var luxSensorID = parseInt(config.sensorid);
+		var sensorid = parseInt(config.sensorid);
 		let client = new huejay.Client({
 			host: (bridge.config.bridge).toString(),
 			port: 80,
@@ -29,31 +31,44 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		scope.status({fill: "grey", shape: "dot", text: "initializing…"});
+		scope.status({fill: "grey", shape: "dot", text: "waiting…"});
 		this.recheck = setInterval(function()
 		{
-			client.sensors.getById(luxSensorID)
+			client.sensors.getById(sensorid)
 			.then(sensor => {
-				var brightness = context.get('brightness') || -1;
+				var buttonEvent = context.get('buttonevent') || false;
 
-				if(sensor.config.reachable == false)
+				if(buttonEvent != sensor.state.buttonevent)
 				{
-					scope.status({fill: "red", shape: "ring", text: "not reachable"});
-				}
-				else if(brightness != sensor.state.lightLevel)
-				{
-					context.set('brightness', sensor.state.lightLevel);
+					context.set('buttonevent', sensor.state.buttonevent);
+
+					var buttonNum = 0;
+
+					if(sensor.state.buttonevent == 34)
+					{
+						buttonNum = 1;
+					}
+					else if(sensor.state.buttonevent == 16)
+					{
+						buttonNum = 2;
+					}
+					else if(sensor.state.buttonevent == 17)
+					{
+						buttonNum = 3;
+					}
+					else if(sensor.state.buttonevent == 18)
+					{
+						buttonNum = 4;
+					}
 
 					var message = {};
-					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: sensor.state.lastUpdated};
+					message.payload = {button: buttonNum, updated: moment().format()};
 
 					message.info = {};
 					message.info.id = sensor.id;
 					message.info.uniqueId = sensor.uniqueId;
 					message.info.name = sensor.name;
 					message.info.type = sensor.type;
-					message.info.softwareVersion = sensor.softwareVersion;
-					message.info.battery = sensor.config.battery;
 
 					message.info.model = {};
 					message.info.model.id = sensor.model.id;
@@ -62,19 +77,11 @@ module.exports = function(RED)
 					message.info.model.type = sensor.model.type;
 
 					scope.send(message);
-
-					if(sensor.state.dark)
-					{
-						scope.status({fill: "blue", shape: "dot", text: sensor.state.lightLevel+" Lux (dark)"});
-					}
-					else if(sensor.state.daylight)
-					{
-						scope.status({fill: "yellow", shape: "dot", text: sensor.state.lightLevel+" Lux (daylight)"});
-					}
-					else
-					{
-						scope.status({fill: "grey", shape: "dot", text: sensor.state.lightLevel+" Lux"});
-					}
+					scope.status({fill: "green", shape: "dot", text: "Button #" + buttonNum + " pressed"});
+				}
+				else
+				{
+					scope.status({fill: "grey", shape: "dot", text: "waiting…"});
 				}
 			})
 			.catch(error => {
@@ -90,5 +97,5 @@ module.exports = function(RED)
 		});
 	}
 
-	RED.nodes.registerType("hue-brightness", HueBrightness);
+	RED.nodes.registerType("hue-tap", HueTap);
 }

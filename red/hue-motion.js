@@ -91,7 +91,7 @@ module.exports = function(RED)
 							scope.send(message);
 
 							context.set('presence', false);
-							scope.status({fill: "grey", shape: "dot", text: "no motion"});
+							scope.status({fill: "grey", shape: "dot", text: "activated"});
 						}
 					}
 				}
@@ -102,7 +102,6 @@ module.exports = function(RED)
 			})
 			.catch(error => {
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
-				clearInterval(scope.recheck);
 			});
 		}, parseInt(bridge.config.interval));
 

@@ -72,7 +72,6 @@ module.exports = function(RED)
 			})
 			.catch(error => {
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
-				clearInterval(scope.recheck);
 			});
 		}, parseInt(bridge.config.interval));
 

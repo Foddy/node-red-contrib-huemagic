@@ -1,0 +1,131 @@
+module.exports = function(RED)
+{
+	"use strict";
+
+	function HueSwitch(config)
+	{
+		RED.nodes.createNode(this, config);
+		var bridge = RED.nodes.getNode(config.bridge);
+		let huejay = require('huejay');
+		var context = this.context();
+		var scope = this;
+
+
+		//
+		// CHECK CONFIG
+		if(!config.sensorid || bridge == null)
+		{
+			this.status({fill: "red", shape: "ring", text: "not configured"});
+			return false;
+		}
+
+		//
+		// INITIALIZE CLIENT
+		var sensorid = parseInt(config.sensorid);
+		let client = new huejay.Client({
+			host: (bridge.config.bridge).toString(),
+			port: 80,
+			username: bridge.config.key
+		});
+
+		//
+		// UPDATE STATE
+		scope.status({fill: "grey", shape: "dot", text: "waiting…"});
+		this.recheck = setInterval(function()
+		{
+			client.sensors.getById(sensorid)
+			.then(sensor => {
+				var buttonEvent = context.get('buttonevent') || false;
+
+				if(sensor.config.reachable == false)
+				{
+					scope.status({fill: "red", shape: "ring", text: "not reachable"});
+				}
+				else if(buttonEvent != sensor.state.buttonevent)
+				{
+					context.set('buttonevent', sensor.state.buttonevent);
+
+					// DEFINE HUMAN READABLE BUTTON NAME
+					var buttonName = "";
+					if(sensor.state.buttonevent < 2000)
+					{
+						buttonName = "On";
+					}
+					else if(sensor.state.buttonevent < 3000)
+					{
+						buttonName = "Dim Up";
+					}
+					else if(sensor.state.buttonevent < 4000)
+					{
+						buttonName = "Dim Down";
+					}
+					else
+					{
+						buttonName = "Off";
+					}
+
+					// DEFINE HUMAN READABLE BUTTON ACTION
+					var buttonAction = "";
+					var buttonActionRaw = parseInt(sensor.state.buttonevent.toString().substring(3));
+
+					if(buttonActionRaw == 0)
+					{
+						buttonAction = "pressed";
+					}
+					else if(buttonActionRaw == 1)
+					{
+						buttonAction = "holded";
+					}
+					else if(buttonActionRaw == 2)
+					{
+						buttonAction = "short released";
+					}
+					else
+					{
+						buttonAction = "long released";
+					}
+
+					var message = {};
+					message.payload = {};
+					message.payload.button = sensor.state.buttonevent;
+					message.payload.name = buttonName;
+					message.payload.action = buttonAction;
+					message.payload.updated = sensor.state.lastUpdated;
+
+					message.info = {};
+					message.info.id = sensor.id;
+					message.info.uniqueId = sensor.uniqueId;
+					message.info.name = sensor.name;
+					message.info.type = sensor.type;
+					message.info.softwareVersion = sensor.softwareVersion;
+					message.info.battery = sensor.config.battery;
+
+					message.info.model = {};
+					message.info.model.id = sensor.model.id;
+					message.info.model.manufacturer = sensor.model.manufacturer;
+					message.info.model.name = sensor.model.name;
+					message.info.model.type = sensor.model.type;
+
+					scope.send(message);
+					scope.status({fill: "green", shape: "dot", text: buttonName + " " + buttonAction});
+				}
+				else
+				{
+					scope.status({fill: "grey", shape: "dot", text: "waiting…"});
+				}
+			})
+			.catch(error => {
+				scope.status({fill: "red", shape: "ring", text: "connection error"});
+			});
+		}, parseInt(bridge.config.interval));
+
+		//
+		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		this.on('close', function()
+		{
+			clearInterval(scope.recheck);
+		});
+	}
+
+	RED.nodes.registerType("hue-switch", HueSwitch);
+}

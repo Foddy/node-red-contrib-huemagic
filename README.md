@@ -2,9 +2,10 @@
 
 # HueMagic - Philips Hue nodes for Node-RED
 
-![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
+[![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg)](https://david-dm.org/foddy/node-red-contrib-huemagic)
+ [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
 
-HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue lights, groups, scenes, motion sensors, temperature sensors and Lux sensors.
+HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue lights, groups, scenes, taps, switches, motion sensors, temperature sensors and Lux sensors.
 
 ### Features
 * Easy and extended control
@@ -16,7 +17,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Easy to use alarm and colorloop effects on light bulbs and whole groups
 
 ### Installation
-HueMagic was written for **Node.js 4+** and Node-RED v0.17.5+.
+HueMagic was written for **Node.js 4+** and Node-RED v0.17.5+. It supports Philips Hue API version v1.19.0.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -26,9 +27,11 @@ _Please make sure, that you deactivate / remove other Philips Hue related NodeRE
 - [Hue Lights](#hue-lights)
 - [Hue Groups](#hue-groups)
 - [Hue Scenes](#hue-scenes)
-- [Hue Motion Sensor](#hue-motion-sensor)
-- [Hue Temperature Sensor](#hue-temperature-sensor)
-- [Hue Lux Sensor](#hue-lux-sensor)
+- [Hue Taps](#hue-tap)
+- [Hue Wireless Dimmer Switches](#hue-switch)
+- [Hue Motion Sensors](#hue-motion-sensor)
+- [Hue Temperature Sensors](#hue-temperature-sensor)
+- [Hue Lux Sensors](#hue-lux-sensor)
 
 ## Hue Lights
 Use the Hue Light node to control the lights and receive light bulb events *(you can find this node under the input category of your nodes palette)*.
@@ -53,7 +56,7 @@ Changes the light state, effect, color and brightness based on the passed in **m
 | **hex**            	| string             	| Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value 	|
 | **transitionTime** 	| int                	| Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) 	|
 | **colorloop**      	| int                	| Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        	|
-| **colorTemp**       | int               | Optionally configurable color temperature of the light from 153 to 500
+| **colorTemp**       | int               | Optionally configurable color temperature of the light from 153 to 500 |
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
@@ -74,6 +77,7 @@ The event message that the light bulb sends contains the following data in the *
 | **brightness** 	| int                	| Current brightness of the light bulb in percent          	|
 | **rgb**        	| array[int,int,int] 	| Current RGB color value of the light bulb (if supported) 	|
 | **hex**        	| string             	| Current HEX color value of the light bulb (if supported) 	|
+| **colorTemp**     | int             		| Current color temperature of the light bulb (if supported) |
 | **updated**    	| string             	| ISO 8601 date string of the last light state update      	|
 
 ### Additional Light Bulb Information
@@ -118,6 +122,7 @@ Changes the group state, effect, color and brightness based on the passed in **m
 | **hex**            | string               | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
 | **transitionTime** | int                  | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
 | **colorloop**      | int                  | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
+| **colorTemp**       | int               | Optionally configurable color temperature of the group lights from 153 to 500 |
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
@@ -139,6 +144,7 @@ The event message that the group sends contains the following data in the **msg.
 | **brightness** | int                | Current brightness of all lights in the whole group in percent    |
 | **rgb**        | array[int,int,int] | Current RGB color value of all lights in the group (if supported) |
 | **hex**        | string             | Current HEX color value of all lights in the group (if supported) |
+| **colorTemp**  | int            	   | Current color temperature of all lights in the group (if supported) |
 | **updated**    | string             | ISO 8601 date string of the last group state update               |
 
 ### Additional Group Information
@@ -179,6 +185,57 @@ The event message that the scene node sends contains the following data in the *
 | **appData**     | object      | Object consisting of appData.version and appData.data properties |
 | **lastUpdated** | string      | ISO 8601 date string when scene was last updated                 |
 | **version**     | float       | Version number of the scene                                      |
+
+## Hue Tap
+Use the Hue Tap node to receive button events *(you can find this node under the output category of your nodes palette)*.
+
+![Hue Scene Example](https://cloud.foddys.com/o2qO/HueTap.png)
+
+### Button Events
+The event message that the Hue Tap device sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
+
+|    Property    | Type    | Information                                                |
+|:--------------:|---------|------------------------------------------------------------|
+| **button**    | int   | Pressed button number from 1-4                                     |
+| **updated**    | string  | ISO 8601 date string of the last button event        |
+
+### Additional Hue Tap Information
+The event message that the Hue Tap device sends also contains the following data in the **msg.info** object.
+
+|       Property      | Type   | Information                                                                                                                         |
+|:-------------------:|--------|-------------------------------------------------------------------------------------------------------------------------------------|
+|        **id**       | int    | Numerical id of the sensor as registered on the bridge                                                                              |
+| **uniqueId**        | string | Unique Id of the sensor (typically hardware id)                                                                                     |
+| **name**            | string | Name for the sensor                                                                                                                 |
+| **type**            | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
+| **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+
+## Hue Switch
+Use the Hue Switch node to receive button events *(you can find this node under the output category of your nodes palette)*.
+
+![Hue Scene Example](https://cloud.foddys.com/o3eV/HueSwitch.png)
+
+### Button Events
+The event message that the Hue Wireless Dimmer Switch sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
+
+|    Property    | Type    | Information                                                |
+|:--------------:|---------|------------------------------------------------------------|
+| **button**    | int   | Pressed button id ([more information under 1.2 ZLL Switch](https://developers.meethue.com/documentation/supported-sensors#zgpSwitch))                      |
+| **name**    | string  | Human readable pressed button name *(On, Dim Up, Dim Down, Off)*        |
+| **action**    | string  | Human readable pressed button action *(pressed, holded, short released, long released)*        |
+| **updated**    | string  | ISO 8601 date string of the last button event        |
+
+### Additional Hue Switch Information
+The event message that the Hue Wireless Dimmer Switch device sends also contains the following data in the **msg.info** object.
+
+|       Property      | Type   | Information                                                                                                                         |
+|:-------------------:|--------|-------------------------------------------------------------------------------------------------------------------------------------|
+|        **id**       | int    | Numerical id of the sensor as registered on the bridge                                                                              |
+| **uniqueId**        | string | Unique Id of the sensor (typically hardware id)                                                                                     |
+| **name**            | string | Name for the sensor                                                                                                                 |
+| **type**            | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
+| **battery**         | int    | Current battery level of the temperature sensor in percent                                                                          |
+| **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Motion Sensor
 Use the Hue Motion node to control the motion sensor and receive motion events *(you can find this node under the output category of your nodes palette)*.
@@ -271,7 +328,13 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.1.9 (latest)
+### v1.2.1 (latest)
+* Support of Hue Taps and Wireless Dimmer Switches *(new nodes available)*
+* Improved connection handling with automatic reconnection
+* New option to configure color temperature on lights and groups ([28277f4](https://github.com/Foddy/node-red-contrib-huemagic/commit/28277f49eeb58d59377a609eb75573d7816c11fd))
+* Dependency updates
+
+### v1.1.9
 * Improved alert function with configurable amount of seconds
 * Several fixes and optimizations
 

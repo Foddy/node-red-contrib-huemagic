@@ -106,7 +106,6 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.status({fill: "red", shape: "ring", text: "connection error"});
-					clearInterval(scope.recheck);
 				});
 			}, parseInt(bridge.config.interval));
 		}
@@ -178,6 +177,21 @@ module.exports = function(RED)
 						group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
 					}
 
+					// SET COLOR TEMPERATURE
+					if(msg.payload.colorTemp && group.colorTemp)
+					{
+						let colorTemp = parseInt(msg.payload.colorTemp);
+						if(colorTemp >= 153 && colorTemp <= 500)
+						{
+							group.colorTemp = parseInt(msg.payload.colorTemp);
+						}
+						else
+						{
+							scope.error("Invalid color temprature. Only 153 - 500 allowed");
+							return false;
+						}
+					}
+
 					// SET TRANSITION TIME
 					if(msg.payload.transitionTime)
 					{
@@ -204,7 +218,6 @@ module.exports = function(RED)
 				.catch(error => {
 					scope.error(error);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
-					clearInterval(scope.recheck);
 				});
 			}
 			// ALERT EFFECT
@@ -264,7 +277,6 @@ module.exports = function(RED)
 				.catch(error => {
 					scope.error(error);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
-					clearInterval(scope.recheck);
 				});
 			}
 		});
@@ -328,6 +340,11 @@ module.exports = function(RED)
 
 				message.payload.rgb = rgbColor;
 				message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
+			}
+
+			if(group.colorTemp)
+			{
+				message.payload.colorTemp = group.colorTemp;
 			}
 
 			message.payload.updated = moment().format();

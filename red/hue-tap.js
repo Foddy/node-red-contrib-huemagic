@@ -38,25 +38,25 @@ module.exports = function(RED)
 			.then(sensor => {
 				var buttonEvent = context.get('buttonevent') || false;
 
-				if(buttonEvent != sensor.state.buttonevent)
+				if(buttonEvent != sensor.state.buttonEvent)
 				{
-					context.set('buttonevent', sensor.state.buttonevent);
+					context.set('buttonevent', sensor.state.buttonEvent);
 
 					var buttonNum = 0;
 
-					if(sensor.state.buttonevent == 34)
+					if(sensor.state.buttonEvent == 34)
 					{
 						buttonNum = 1;
 					}
-					else if(sensor.state.buttonevent == 16)
+					else if(sensor.state.buttonEvent == 16)
 					{
 						buttonNum = 2;
 					}
-					else if(sensor.state.buttonevent == 17)
+					else if(sensor.state.buttonEvent == 17)
 					{
 						buttonNum = 3;
 					}
-					else if(sensor.state.buttonevent == 18)
+					else if(sensor.state.buttonEvent == 18)
 					{
 						buttonNum = 4;
 					}

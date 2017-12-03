@@ -41,21 +41,21 @@ module.exports = function(RED)
 				{
 					scope.status({fill: "red", shape: "ring", text: "not reachable"});
 				}
-				else if(buttonEvent != sensor.state.buttonevent)
+				else if(buttonEvent != sensor.state.buttonEvent)
 				{
-					context.set('buttonevent', sensor.state.buttonevent);
+					context.set('buttonevent', sensor.state.buttonEvent);
 
 					// DEFINE HUMAN READABLE BUTTON NAME
 					var buttonName = "";
-					if(sensor.state.buttonevent < 2000)
+					if(sensor.state.buttonEvent < 2000)
 					{
 						buttonName = "On";
 					}
-					else if(sensor.state.buttonevent < 3000)
+					else if(sensor.state.buttonEvent < 3000)
 					{
 						buttonName = "Dim Up";
 					}
-					else if(sensor.state.buttonevent < 4000)
+					else if(sensor.state.buttonEvent < 4000)
 					{
 						buttonName = "Dim Down";
 					}
@@ -66,7 +66,7 @@ module.exports = function(RED)
 
 					// DEFINE HUMAN READABLE BUTTON ACTION
 					var buttonAction = "";
-					var buttonActionRaw = parseInt(sensor.state.buttonevent.toString().substring(3));
+					var buttonActionRaw = parseInt(sensor.state.buttonEvent.toString().substring(3));
 
 					if(buttonActionRaw == 0)
 					{
@@ -87,7 +87,7 @@ module.exports = function(RED)
 
 					var message = {};
 					message.payload = {};
-					message.payload.button = sensor.state.buttonevent;
+					message.payload.button = sensor.state.buttonEvent;
 					message.payload.name = buttonName;
 					message.payload.action = buttonAction;
 					message.payload.updated = sensor.state.lastUpdated;
@@ -115,6 +115,7 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
+				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
 		}, parseInt(bridge.config.interval));

@@ -328,7 +328,10 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.2.1 (latest)
+### v1.2.2 (latest)
+* Fixed an error on the Hue Switch and Hue Tap nodes
+
+### v1.2.1
 * Support of Hue Taps and Wireless Dimmer Switches *(new nodes available)*
 * Improved connection handling with automatic reconnection
 * New option to configure color temperature on lights and groups ([28277f4](https://github.com/Foddy/node-red-contrib-huemagic/commit/28277f49eeb58d59377a609eb75573d7816c11fd))

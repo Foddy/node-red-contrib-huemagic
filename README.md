@@ -1,4 +1,4 @@
-![Hue Magic Logo](https://cloud.foddys.com/mRlI/HUEMAGIC-LOGO.svg)
+[![Hue Magic Logo](https://cloud.foddys.com/mRlI/HUEMAGIC-LOGO.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
 
 # HueMagic - Philips Hue nodes for Node-RED
 

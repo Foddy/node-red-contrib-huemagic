@@ -319,6 +319,12 @@ module.exports = function(RED)
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}
+
+			// UNIVERSAL MODE? RESET…
+			if(typeof msg.topic != 'undefined')
+			{
+				lightID = false;
+			}
 		});
 
 

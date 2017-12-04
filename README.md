@@ -328,8 +328,9 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.2.2 (latest)
+### v1.2.3 (latest)
 * Fixed an error on the Hue Switch and Hue Tap nodes
+* Fixed an error with the "Universal Mode" on several nodes
 
 ### v1.2.1
 * Support of Hue Taps and Wireless Dimmer Switches *(new nodes available)*

@@ -231,6 +231,7 @@ module.exports = function(RED)
 						}
 						else
 						{
+							group.on = true;
 							group.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
 						}
 					}

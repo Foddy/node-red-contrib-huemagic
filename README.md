@@ -331,7 +331,7 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.3.0 (latest)
+### v1.3.1 (latest)
 * New "saturation" setting in Hue Light and Hue Group nodes
 * Improved input algorithm for Hue Lights and Groups nodes
 * Added range validation for the "brightness" setting

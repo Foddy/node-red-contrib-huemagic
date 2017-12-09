@@ -260,6 +260,7 @@ module.exports = function(RED)
 							}
 							else
 							{
+								light.on = true;
 								light.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
 							}
 						}

@@ -337,6 +337,7 @@ The event message that the lux sensor sends also contains the following data in 
 * Added range validation for the "brightness" setting
 * Setting the brightness level to "0" percent now turns off the lamp / group
 * Fixed an error where nodes are losing their Id
+* Fixed an error with the Hue Switch / Hue Tap node
 * Typo corrections in README and several node's information
 
 ### v1.2.3

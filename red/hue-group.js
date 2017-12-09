@@ -120,25 +120,19 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var context = this.context();
+			var tempGroupID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? parseInt(msg.topic) : groupID;
 
 			// CHECK IF GROUP ID IS SET
-			if(groupID == false)
+			if(tempGroupID == false)
 			{
-				if(typeof msg.topic != 'undefined')
-				{
-					groupID = parseInt(msg.topic);
-				}
-				else
-				{
-					scope.error("No group Id defined. Please check the docs.");
-					return false;
-				}
+				scope.error("No group Id defined. Please check the docs.");
+				return false;
 			}
 
 			// SIMPLE TURN ON / OFF GROUP
 			if(msg.payload == true || msg.payload == false)
 			{
-				client.groups.getById(groupID)
+				client.groups.getById(tempGroupID)
 				.then(group => {
 					group.on = msg.payload;
 					return client.groups.save(group);
@@ -152,78 +146,10 @@ module.exports = function(RED)
 					clearInterval(scope.recheck);
 				});
 			}
-			// EXTENDED TURN ON / OFF GROUP
-			else if(typeof msg.payload.on != 'undefined')
-			{
-				client.groups.getById(groupID)
-				.then(group => {
-					group.on = msg.payload.on;
-
-					// SET BRIGHTNESS
-					if(msg.payload.brightness)
-					{
-						group.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
-					}
-
-					// SET RGB COLOR
-					if(msg.payload.rgb && group.xy)
-					{
-						group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
-					}
-
-					// SET HEX COLOR
-					if(msg.payload.hex && group.xy)
-					{
-						group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
-					}
-
-					// SET COLOR TEMPERATURE
-					if(msg.payload.colorTemp && group.colorTemp)
-					{
-						let colorTemp = parseInt(msg.payload.colorTemp);
-						if(colorTemp >= 153 && colorTemp <= 500)
-						{
-							group.colorTemp = parseInt(msg.payload.colorTemp);
-						}
-						else
-						{
-							scope.error("Invalid color temprature. Only 153 - 500 allowed");
-							return false;
-						}
-					}
-
-					// SET TRANSITION TIME
-					if(msg.payload.transitionTime)
-					{
-						group.transitionTime = parseInt(msg.payload.transitionTime);
-					}
-
-					// SET COLORLOOP EFFECT
-					if(msg.payload.colorloop && msg.payload.colorloop > 0 && group.xy)
-					{
-						group.effect = 'colorloop';
-
-						// DISABLE AFTER
-						setTimeout(function() {
-							group.effect = 'none';
-							client.groups.save(group)
-						}, parseInt(msg.payload.colorloop)*1000);
-					}
-
-					return client.groups.save(group);
-				})
-				.then(group => {
-					scope.sendGroupStatus(group);
-				})
-				.catch(error => {
-					scope.error(error);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
-				});
-			}
 			// ALERT EFFECT
 			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
-				client.groups.getById(groupID)
+				client.groups.getById(tempGroupID)
 				.then(group => {
 					context.set('groupPreviousState', [group.on ? true : false, group.brightness, group.xy ? group.xy : false]);
 
@@ -279,11 +205,104 @@ module.exports = function(RED)
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}
-
-			// UNIVERSAL MODE? RESET…
-			if(typeof msg.topic != 'undefined')
+			// EXTENDED TURN ON / OFF GROUP
+			else
 			{
-				groupID = false;
+				client.groups.getById(tempGroupID)
+				.then(group => {
+
+					// SET GROUP STATE
+					if(typeof msg.payload.on != 'undefined')
+					{
+						group.on = msg.payload.on;
+					}
+
+					// SET BRIGHTNESS
+					if(typeof msg.payload.brightness != 'undefined')
+					{
+						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
+						{
+							scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
+							return false;
+						}
+						else if(msg.payload.brightness == 0)
+						{
+							group.on = false;
+						}
+						else
+						{
+							group.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
+						}
+					}
+
+					// SET RGB COLOR
+					if(msg.payload.rgb && group.xy)
+					{
+						group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
+					}
+
+					// SET HEX COLOR
+					if(msg.payload.hex && group.xy)
+					{
+						group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
+					}
+
+					// SET SATURATION
+					if(msg.payload.saturation && group.saturation)
+					{
+						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
+						{
+							scope.error("Invalid saturation setting. Only 0 - 254 allowed");
+							return false;
+						}
+						else
+						{
+							group.saturation = Math.round((254/100)*parseInt(msg.payload.saturation));
+						}
+					}
+
+					// SET COLOR TEMPERATURE
+					if(msg.payload.colorTemp && group.colorTemp)
+					{
+						let colorTemp = parseInt(msg.payload.colorTemp);
+						if(colorTemp >= 153 && colorTemp <= 500)
+						{
+							group.colorTemp = parseInt(msg.payload.colorTemp);
+						}
+						else
+						{
+							scope.error("Invalid color temprature. Only 153 - 500 allowed");
+							return false;
+						}
+					}
+
+					// SET TRANSITION TIME
+					if(msg.payload.transitionTime)
+					{
+						group.transitionTime = parseInt(msg.payload.transitionTime);
+					}
+
+					// SET COLORLOOP EFFECT
+					if(msg.payload.colorloop && msg.payload.colorloop > 0 && group.xy)
+					{
+						group.effect = 'colorloop';
+
+						// DISABLE AFTER
+						setTimeout(function() {
+							group.effect = 'none';
+							client.groups.save(group)
+						}, parseInt(msg.payload.colorloop)*1000);
+					}
+
+					return client.groups.save(group);
+				})
+				.then(group => {
+					scope.sendGroupStatus(group);
+				})
+				.catch(error => {
+					scope.error(error);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+				});
 			}
 		});
 

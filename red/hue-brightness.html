@@ -95,7 +95,7 @@
             {
                 var current = $('#node-input-sensorid').val();
                 $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 60%;"></select>');
-                $('#node-input-sensorid').append('<option selected="selected" value="null">searching temperature sensors…</option>');
+                $('#node-input-sensorid').append('<option selected="selected" value="null">searching brightness sensors…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLLightLevel"})

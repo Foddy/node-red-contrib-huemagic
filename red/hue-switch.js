@@ -37,11 +37,7 @@ module.exports = function(RED)
 			.then(sensor => {
 				var buttonEvent = context.get('buttonevent') || false;
 
-				if(sensor.config.reachable == false)
-				{
-					scope.status({fill: "red", shape: "ring", text: "not reachable"});
-				}
-				else if(buttonEvent != sensor.state.buttonEvent)
+				if(buttonEvent != sensor.state.buttonEvent && sensor.state.buttonEvent === parseInt(sensor.state.buttonEvent, 10))
 				{
 					context.set('buttonevent', sensor.state.buttonEvent);
 

@@ -15,9 +15,10 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Displays current state for all device types in the Node-RED UI
 * Supports activating / deactivating of motion sensors
 * Easy to use alarm and colorloop effects on light bulbs and whole groups
+* Additive state settings on all nodes with multiple commands supported
 
 ### Installation
-HueMagic was written for **Node.js 4+** and Node-RED v0.17.5+. It supports Philips Hue API version v1.19.0.
+HueMagic was written for **Node.js 4+** and Node-RED v0.17.5+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -46,17 +47,18 @@ Changes the light on / off state based on the passed in **msg** values of:
 | **payload**  	| boolean 	| Will turn on or turn off the light with its previous configuration (color and brightness) 	|
 
 ### Turn On / Off (extended mode)
-Changes the light state, effect, color and brightness based on the passed in **msg.payload** values of:
+Changes the light state, effect, color, brightness and other states based on the passed in **msg.payload** values of:
 
 | Property       	| Type               	| Information                                                                                                                       	|
 |----------------	|--------------------	|-----------------------------------------------------------------------------------------------------------------------------------	|
-| **on**             	| boolean *(required)* 	| Will turn on or turn off the light with its previous configuration (color and brightness)                                         	|
+| **on**             	| boolean	| Will turn on or turn off the light with its previous configuration (color and brightness)                                         	|
 | **brightness**     	| int                	| Optionally configurable brightness of the light in percent (0-100)                                                                	|
 | **rgb**            	| array[int,int,int] 	| Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value 	|
 | **hex**            	| string             	| Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value 	|
 | **transitionTime** 	| int                	| Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) 	|
 | **colorloop**      	| int                	| Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        	|
 | **colorTemp**       | int               | Optionally configurable color temperature of the light from 153 to 500 |
+| **saturation**       | int               | Optionally configurable color saturation of the light in percent (from 0 to 100) |
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
@@ -112,17 +114,18 @@ Changes the group on / off state based on the passed in **msg** values of:
 | **payload** | boolean | Will turn on or turn off all lights inside the group with their previous configuration (color and brightness) |
 
 ### Turn On / Off (extended mode)
-Changes the group state, effect, color and brightness based on the passed in **msg.payload** values of:
+Changes the group state, effect, color, brightness and other states based on the passed in **msg.payload** values of:
 
 | Property           | Type                 | Information                                                                                                                                    |
 |--------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| **on**             | boolean *(required)* | True to turn on all the lights inside the group, false to turn them off                                                                        |
+| **on**             | boolean | True to turn on all the lights inside the group, false to turn them off                                                                        |
 | **brightness**     | int                  | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
 | **rgb**            | array[int,int,int]   | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 | **hex**            | string               | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
 | **transitionTime** | int                  | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
 | **colorloop**      | int                  | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
 | **colorTemp**       | int               | Optionally configurable color temperature of the group lights from 153 to 500 |
+| **saturation**       | int               | Optionally configurable color saturation of the group in percent (from 0 to 100) |
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
@@ -234,7 +237,7 @@ The event message that the Hue Wireless Dimmer Switch device sends also contains
 | **uniqueId**        | string | Unique Id of the sensor (typically hardware id)                                                                                     |
 | **name**            | string | Name for the sensor                                                                                                                 |
 | **type**            | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
-| **battery**         | int    | Current battery level of the temperature sensor in percent                                                                          |
+| **battery**         | int    | Current battery level of the Hue Switch in percent                                                                          |
 | **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Motion Sensor
@@ -328,7 +331,15 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.2.3 (latest)
+### v1.3.0 (latest)
+* New "saturation" setting in Hue Light and Hue Group nodes
+* Improved input algorithm for Hue Lights and Groups nodes
+* Added range validation for the "brightness" setting
+* Setting the brightness level to "0" percent now turns off the lamp / group
+* Fixed an error where nodes are losing their Id
+* Typo corrections in README and several node's information
+
+### v1.2.3
 * Fixed an error on the Hue Switch and Hue Tap nodes
 * Fixed an error with the "Universal Mode" on several nodes
 

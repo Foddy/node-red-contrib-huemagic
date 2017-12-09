@@ -30,7 +30,7 @@
     <h3>Turn On / Off (extended)</h3>
     <p>Changes the light state, effect, color and brightness based on the passed in <b>msg.payload</b> values of:</p>
     <dl class="message-properties">
-        <dt>on<span class="property-type">boolean</span></dt>
+        <dt class="optional">on<span class="property-type">boolean</span></dt>
         <dd>True to turn on the light bulb, false to turn it off</dd>
 
         <dt class="optional">brightness<span class="property-type">int</span></dt>
@@ -50,6 +50,9 @@
 
         <dt class="optional">colorTemp<span class="property-type">int</span></dt>
         <dd>Optionally configurable color temperature of the light from 153 to 500</dd>
+
+        <dt class="optional">saturation<span class="property-type">int</span></dt>
+        <dd>Optionally configurable color saturation of the light in percent (from 0 to 100)</dd>
     </dl>
 
     <h3>Alert Effect</h3>
@@ -151,7 +154,7 @@
             {
                 var current = $('#node-input-lightid').val();
                 $('#node-input-lightid').replaceWith('<select id="node-input-lightid" style="width: 60%;"></select>');
-                $('#node-input-lightid').append('<option selected="selected" value="null">searching motion sensors…</option>');
+                $('#node-input-lightid').append('<option selected="selected" value="null">searching lights…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/lights', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})

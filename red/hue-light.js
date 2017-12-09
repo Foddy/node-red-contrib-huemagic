@@ -95,7 +95,6 @@ module.exports = function(RED)
 							}
 
 							message.payload.updated = moment().format();
-
 							scope.send(message);
 						}
 					}
@@ -117,27 +116,21 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var context = this.context();
+			var tempLightID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? parseInt(msg.topic) : lightID;
 
 			// CHECK IF LIGHT ID IS SET
-			if(lightID == false)
+			if(tempLightID == false)
 			{
-				if(typeof msg.topic != 'undefined')
-				{
-					lightID = parseInt(msg.topic);
-				}
-				else
-				{
-					scope.error("No light Id defined. Please check the docs.");
-					return false;
-				}
+				scope.error("No light Id defined. Please check the docs.");
+				return false;
 			}
 
 			// SIMPLE TURN ON / OFF LIGHT
 			if(msg.payload == true || msg.payload == false)
 			{
-				if(lightID != false)
+				if(tempLightID != false)
 				{
-					client.lights.getById(lightID)
+					client.lights.getById(tempLightID)
 					.then(light => {
 						if(light.reachable)
 						{
@@ -163,89 +156,10 @@ module.exports = function(RED)
 					});
 				}
 			}
-			// EXTENDED TURN ON / OFF LIGHT
-			else if(typeof msg.payload.on != 'undefined')
-			{
-				client.lights.getById(lightID)
-				.then(light => {
-					if(light.reachable)
-					{
-						light.on = msg.payload.on;
-
-						// SET BRIGHTNESS
-						if(msg.payload.brightness)
-						{
-							light.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
-						}
-
-						// SET RGB COLOR
-						if(msg.payload.rgb && light.xy)
-						{
-							light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.modelid);
-						}
-
-						// SET HEX COLOR
-						if(msg.payload.hex && light.xy)
-						{
-							light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
-						}
-
-						// SET COLOR TEMPERATURE
-						if(msg.payload.colorTemp && light.colorTemp)
-						{
-							let colorTemp = parseInt(msg.payload.colorTemp);
-							if(colorTemp >= 153 && colorTemp <= 500)
-							{
-								light.colorTemp = parseInt(msg.payload.colorTemp);
-							}
-							else
-							{
-								scope.error("Invalid color temprature. Only 153 - 500 allowed");
-								return false;
-							}
-						}
-
-						// SET TRANSITION TIME
-						if(msg.payload.transitionTime)
-						{
-							light.transitionTime = parseInt(msg.payload.transitionTime);
-						}
-
-						// SET COLORLOOP EFFECT
-						if(msg.payload.colorloop && msg.payload.colorloop > 0 && light.xy)
-						{
-							light.effect = 'colorloop';
-
-							// DISABLE AFTER
-							setTimeout(function() {
-								light.effect = 'none';
-								client.lights.save(light);
-							}, parseInt(msg.payload.colorloop)*1000);
-						}
-
-						return client.lights.save(light);
-					}
-					else
-					{
-						scope.status({fill: "red", shape: "ring", text: "not reachable"});
-						return false;
-					}
-				})
-				.then(light => {
-					if(light != false)
-					{
-						scope.sendLightStatus(light);
-					}
-				})
-				.catch(error => {
-					scope.error(error);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
-				});
-			}
 			// ALERT EFFECT
 			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
-				client.lights.getById(lightID)
+				client.lights.getById(tempLightID)
 				.then(light => {
 					if(light.reachable)
 					{
@@ -319,11 +233,114 @@ module.exports = function(RED)
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}
-
-			// UNIVERSAL MODE? RESET…
-			if(typeof msg.topic != 'undefined')
+			// EXTENDED TURN ON / OFF LIGHT
+			else
 			{
-				lightID = false;
+				client.lights.getById(tempLightID)
+				.then(light => {
+					if(light.reachable)
+					{
+						// SET LIGHT STATE
+						if(typeof msg.payload.on != 'undefined')
+						{
+							light.on = msg.payload.on;
+						}
+
+						// SET BRIGHTNESS
+						if(typeof msg.payload.brightness != 'undefined')
+						{
+							if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
+							{
+								scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
+								return false;
+							}
+							else if(msg.payload.brightness == 0)
+							{
+								light.on = false;
+							}
+							else
+							{
+								light.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
+							}
+						}
+
+						// SET RGB COLOR
+						if(msg.payload.rgb && light.xy)
+						{
+							light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.modelid);
+						}
+
+						// SET HEX COLOR
+						if(msg.payload.hex && light.xy)
+						{
+							light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
+						}
+
+						// SET COLOR TEMPERATURE
+						if(msg.payload.colorTemp && light.colorTemp)
+						{
+							let colorTemp = parseInt(msg.payload.colorTemp);
+							if(colorTemp >= 153 && colorTemp <= 500)
+							{
+								light.colorTemp = parseInt(msg.payload.colorTemp);
+							}
+							else
+							{
+								scope.error("Invalid color temprature. Only 153 - 500 allowed");
+								return false;
+							}
+						}
+
+						// SET SATURATION
+						if(msg.payload.saturation && light.saturation)
+						{
+							if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
+							{
+								scope.error("Invalid saturation setting. Only 0 - 254 allowed");
+								return false;
+							}
+							else
+							{
+								light.saturation = Math.round((254/100)*parseInt(msg.payload.saturation));
+							}
+						}
+
+						// SET TRANSITION TIME
+						if(msg.payload.transitionTime)
+						{
+							light.transitionTime = parseInt(msg.payload.transitionTime);
+						}
+
+						// SET COLORLOOP EFFECT
+						if(msg.payload.colorloop && msg.payload.colorloop > 0 && light.xy)
+						{
+							light.effect = 'colorloop';
+
+							// DISABLE AFTER
+							setTimeout(function() {
+								light.effect = 'none';
+								client.lights.save(light);
+							}, parseInt(msg.payload.colorloop)*1000);
+						}
+
+						return client.lights.save(light);
+					}
+					else
+					{
+						scope.status({fill: "red", shape: "ring", text: "not reachable"});
+						return false;
+					}
+				})
+				.then(light => {
+					if(light != false)
+					{
+						scope.sendLightStatus(light);
+					}
+				})
+				.catch(error => {
+					scope.error(error);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+				});
 			}
 		});
 

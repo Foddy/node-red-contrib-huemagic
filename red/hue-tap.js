@@ -38,7 +38,7 @@ module.exports = function(RED)
 			.then(sensor => {
 				var buttonEvent = context.get('buttonevent') || false;
 
-				if(buttonEvent != sensor.state.buttonEvent)
+				if(buttonEvent != sensor.state.buttonEvent && sensor.state.buttonEvent === parseInt(sensor.state.buttonEvent, 10))
 				{
 					context.set('buttonevent', sensor.state.buttonEvent);
 

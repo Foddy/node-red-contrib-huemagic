@@ -120,7 +120,7 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var context = this.context();
-			var tempGroupID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? parseInt(msg.topic) : groupID;
+			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false) ? parseInt(msg.topic) : groupID;
 
 			// CHECK IF GROUP ID IS SET
 			if(tempGroupID == false)

@@ -41,7 +41,7 @@
     "access": "public"
   },
   "dependencies": {
-    "hex-rgb": "^1.0.0",
+    "hex-rgb": "^2.0.0",
     "huejay": "^1.7.4",
     "moment": "^2.20.1",
     "rgb-hex": "^2.1.0",

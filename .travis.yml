@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "node"
+deploy:
+  provider: npm
+  email: npm@foddys.com
+  api_key: $NPM_TOKEN
+  on:
+    repo: Foddy/node-red-contrib-huemagic

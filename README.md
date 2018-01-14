@@ -331,7 +331,7 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.3.3 (latest)
+### v1.3.4 (latest)
 * Improved status messages for transition commands
 * Dependency updates
 

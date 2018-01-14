@@ -120,7 +120,7 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var context = this.context();
-			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false) ? parseInt(msg.topic) : groupID;
+			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : groupID;
 
 			// CHECK IF GROUP ID IS SET
 			if(tempGroupID == false)
@@ -298,7 +298,17 @@ module.exports = function(RED)
 					return client.groups.save(group);
 				})
 				.then(group => {
-					scope.sendGroupStatus(group);
+					// TRANSITION TIME? WAIT…
+					if(msg.payload.transitionTime)
+					{
+						setTimeout(function() {
+							scope.sendGroupStatus(group);
+						}, parseInt(msg.payload.transitionTime)*1010);
+					}
+					else
+					{
+						scope.sendGroupStatus(group);
+					}
 				})
 				.catch(error => {
 					scope.error(error);

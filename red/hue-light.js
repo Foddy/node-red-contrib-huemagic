@@ -109,7 +109,7 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var context = this.context();
-			var tempLightID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false) ? parseInt(msg.topic) : lightID;
+			var tempLightID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : lightID;
 
 			// CHECK IF LIGHT ID IS SET
 			if(tempLightID == false)
@@ -304,7 +304,17 @@ module.exports = function(RED)
 				.then(light => {
 					if(light != false)
 					{
-						scope.sendLightStatus(light);
+						// TRANSITION TIME? WAIT…
+						if(msg.payload.transitionTime)
+						{
+							setTimeout(function() {
+								scope.sendLightStatus(light);
+							}, parseInt(msg.payload.transitionTime)*1010);
+						}
+						else
+						{
+							scope.sendLightStatus(light);
+						}
 					}
 				})
 				.catch(error => {

@@ -38,7 +38,7 @@ _Please make sure, that you deactivate / remove other Philips Hue related NodeRE
 - [Hue Lux Sensors](#hue-lux-sensor)
 
 ## Hue Lights
-Use the Hue Light node to control the lights and receive light bulb events *(you can find this node under the input category of your nodes palette)*.
+Use the Hue Light node to control the lights and receive light bulb events.
 
 ![Hue Light Example](https://cloud.foddys.com/mY6m/hue-light.png)
 
@@ -108,7 +108,7 @@ Defines the light Id on the Hue Bridge manually if not configured in the node pr
 | **msg.topic**  	| int 	| Manual definition of the light bulb Id 											|
 
 ## Hue Groups
-Use the Hue Group node to control whole groups containing lights and receive group events *(you can find this node under the input category of your nodes palette)*.
+Use the Hue Group node to control whole groups containing lights and receive group events.
 
 ![Hue Group Example](https://cloud.foddys.com/mXpj/hue-group.png)
 
@@ -178,7 +178,7 @@ Defines the group Id on the Hue Bridge manually if not configured in the node pr
 | **msg.topic**  	| int 	| Manual definition of the group Id 												|
 
 ## Hue Scenes
-Use the Hue Scene node to recall / activate preconfigured scenes on the bridge and receive scene information *(you can find this node under the input category of your nodes palette)*.
+Use the Hue Scene node to recall / activate preconfigured scenes on the bridge and receive scene information.
 
 ![Hue Scene Example](https://cloud.foddys.com/mXl6/hue-scene.png)
 
@@ -199,7 +199,7 @@ The event message that the scene node sends contains the following data in the *
 | **version**     | float       | Version number of the scene                                      |
 
 ## Hue Tap
-Use the Hue Tap node to receive button events *(you can find this node under the output category of your nodes palette)*.
+Use the Hue Tap node to receive button events.
 
 ![Hue Scene Example](https://cloud.foddys.com/o2qO/HueTap.png)
 
@@ -223,7 +223,7 @@ The event message that the Hue Tap device sends also contains the following data
 | **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Switch
-Use the Hue Switch node to receive button events *(you can find this node under the output category of your nodes palette)*.
+Use the Hue Switch node to receive button events.
 
 ![Hue Scene Example](https://cloud.foddys.com/o3eV/HueSwitch.png)
 
@@ -250,7 +250,7 @@ The event message that the Hue Wireless Dimmer Switch device sends also contains
 | **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Motion Sensor
-Use the Hue Motion node to control the motion sensor and receive motion events *(you can find this node under the output category of your nodes palette)*.
+Use the Hue Motion node to control the motion sensor and receive motion events.
 
 ![Hue Motion Example](https://cloud.foddys.com/mXpZ/hue-motion.png)
 
@@ -284,7 +284,7 @@ The event message that the motion sensor sends also contains the following data 
 | **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Temperature Sensor
-Use the Hue Temperature node to receive current (room) temperature in Celsius and Fahrenheit *(you can find this node under the output category of your nodes palette)*.
+Use the Hue Temperature node to receive current (room) temperature in Celsius and Fahrenheit.
 
 ![Hue Temperature Example](https://cloud.foddys.com/mXYB/hue-temperature.png)
 
@@ -311,7 +311,7 @@ The event message that the temperature sensor sends also contains the following 
 | **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Lux Sensor
-Use the Hue Brightness node to receive the current light level in Lux and daylight / darkness *(you can find this node under the output category of your nodes palette)*.
+Use the Hue Brightness node to receive the current light level in Lux and daylight / darkness.
 
 ![Hue Lux Example](https://cloud.foddys.com/mX3W/hue-lux.png)
 
@@ -340,9 +340,10 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.4.0 (latest)
+### v1.4.1 (latest)
 * New color name setting in Hue Light and Hue Group nodes (check docs)
 * Human readable color names for Hue Lights and Hue Groups
+* HueMagic nodes are now all under the new "HueMagic" category in the palette
 * Support of Philips Hue API version v1.19.0+ and Node.js 8+
 * Dependency updates
 

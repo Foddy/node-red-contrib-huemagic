@@ -11,6 +11,8 @@ module.exports = function(RED)
 		let rgb = require('../utils/rgb');
 		let rgbHex = require('rgb-hex');
 		let hexRGB = require('hex-rgb');
+		var colornames = require("colornames");
+		var colornamer = require('color-namer');
 		var context = this.context();
 		var scope = this;
 
@@ -97,6 +99,9 @@ module.exports = function(RED)
 
 							message.payload.rgb = rgbColor;
 							message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
+
+							var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+							message.payload.color = cNamesArray.basic[0]["name"];
 						}
 
 						message.payload.updated = moment().format();
@@ -163,6 +168,14 @@ module.exports = function(RED)
 						else if(typeof msg.payload.hex != 'undefined')
 						{
 							group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
+						}
+						else if(typeof msg.payload.color != 'undefined')
+						{
+							var colorHex = colornames(msg.payload.color);
+							if(colorHex)
+							{
+								group.xy = rgb.convertRGBtoXY(hexRGB(colorHex), false);
+							}
 						}
 						else
 						{
@@ -233,6 +246,16 @@ module.exports = function(RED)
 						{
 							group.on = true;
 							group.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
+						}
+					}
+
+					// SET HUMAN READABLE COLOR
+					if(msg.payload.color && light.xy)
+					{
+						var colorHex = colornames(msg.payload.color);
+						if(colorHex)
+						{
+							group.xy = rgb.convertRGBtoXY(hexRGB(colorHex), false);
 						}
 					}
 
@@ -376,6 +399,9 @@ module.exports = function(RED)
 
 				message.payload.rgb = rgbColor;
 				message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
+
+				var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+				message.payload.color = cNamesArray.basic[0]["name"];
 			}
 
 			if(group.colorTemp)

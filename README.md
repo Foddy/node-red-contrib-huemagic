@@ -18,7 +18,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Additive state settings on all nodes with multiple commands supported
 
 ### Installation
-HueMagic was written for **Node.js 4+** and Node-RED v0.17.5+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 8+** and Node-RED v0.18.3+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -55,6 +55,7 @@ Changes the light state, effect, color, brightness and other states based on the
 | **brightness**     	| int                	| Optionally configurable brightness of the light in percent (0-100)                                                                	|
 | **rgb**            	| array[int,int,int] 	| Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value 	|
 | **hex**            	| string             	| Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value 	|
+| **color**            	| string             	| Optionally configurable human readable color name in english like "red" of the light bulb	|
 | **transitionTime** 	| int                	| Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) 	|
 | **colorloop**      	| int                	| Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        	|
 | **colorTemp**       | int               | Optionally configurable color temperature of the light from 153 to 500 |
@@ -68,6 +69,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 | **alert** | int *(required)*   | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state. |
 | **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                  |
 | **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                  |
+| **color**            	| string             	| Optionally configurable human readable color name in english like "red" of the alert effect	|
 
 
 ### Light Events
@@ -79,6 +81,7 @@ The event message that the light bulb sends contains the following data in the *
 | **brightness** 	| int                	| Current brightness of the light bulb in percent          	|
 | **rgb**        	| array[int,int,int] 	| Current RGB color value of the light bulb (if supported) 	|
 | **hex**        	| string             	| Current HEX color value of the light bulb (if supported) 	|
+| **color**        	| string             	| Current color name of the light bulb (if supported) 	|
 | **colorTemp**     | int             		| Current color temperature of the light bulb (if supported) |
 | **updated**    	| string             	| ISO 8601 date string of the last light state update      	|
 
@@ -122,6 +125,7 @@ Changes the group state, effect, color, brightness and other states based on the
 | **brightness**     | int                  | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
 | **rgb**            | array[int,int,int]   | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 | **hex**            | string               | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
+| **color**            | string               | Optionally configurable human readable color name in english like "red" of all lights inside the group |
 | **transitionTime** | int                  | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
 | **colorloop**      | int                  | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
 | **colorTemp**       | int               | Optionally configurable color temperature of the group lights from 153 to 500 |
@@ -135,6 +139,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 | **alert** | int *(required)*   | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state. |
 | **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                                |
 | **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                                |
+| **color**            | string               | Optionally configurable human readable color name in english like "red" of the alert affect on all lights inside the group |
 
 ### Group Events
 The event message that the group sends contains the following data in the **msg.payload** object. Events will only be sent if the group state is changed.
@@ -147,6 +152,7 @@ The event message that the group sends contains the following data in the **msg.
 | **brightness** | int                | Current brightness of all lights in the whole group in percent    |
 | **rgb**        | array[int,int,int] | Current RGB color value of all lights in the group (if supported) |
 | **hex**        | string             | Current HEX color value of all lights in the group (if supported) |
+| **color**        | string             | Current color name of all lights in the group (if supported) |
 | **colorTemp**  | int            	   | Current color temperature of all lights in the group (if supported) |
 | **updated**    | string             | ISO 8601 date string of the last group state update               |
 
@@ -331,7 +337,13 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.3.4 (latest)
+### v1.4.0 (latest)
+* New color name setting in Hue Light and Hue Group nodes (check docs)
+* Human readable color names for Hue Lights and Hue Groups
+* Support of Philips Hue API version v1.19.0+ and Node.js 8+
+* Dependency updates
+
+### v1.3.4
 * Improved status messages for transition commands
 * Dependency updates
 

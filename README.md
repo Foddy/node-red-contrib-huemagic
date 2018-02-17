@@ -2,8 +2,11 @@
 
 # HueMagic - Philips Hue nodes for Node-RED
 
-[![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg)](https://david-dm.org/foddy/node-red-contrib-huemagic)
- [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
+[![Travis](https://img.shields.io/travis/Foddy/node-red-contrib-huemagic.svg?style=flat-square)]()
+[![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://david-dm.org/foddy/node-red-contrib-huemagic)
+[![npm](https://img.shields.io/npm/dt/node-red-contrib-huemagic.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic)
+[![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic.svg?style=flat-square)]()
+ [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
 
 HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue lights, groups, scenes, taps, switches, motion sensors, temperature sensors and Lux sensors.
 

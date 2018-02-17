@@ -13,7 +13,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 ### Features
 * Easy and extended control
 * Automatic discovery of Philips Hue bridges as well as devices, scenes & groups
-* Automatic and powerful color conversions *(supports HEX & RGB input / output)*
+* Automatic and powerful color conversions *(supports HEX, RGB & color names input / output)*
 * Events to detect external changes on all devices / groups
 * Displays current state for all device types in the Node-RED UI
 * Supports activating / deactivating of motion sensors

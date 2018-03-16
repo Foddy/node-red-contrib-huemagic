@@ -340,7 +340,14 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.4.1 (latest)
+### v1.4.2 (latest)
+* Added reachable attribute to Hue Lights node
+* Hue Tap can now send the same button action twice
+* Fixed Hue Brightness event trigger when lux is 0
+* UTC formatted "updated" date for Hue Brightness node
+* Better error handling for all nodes
+
+### v1.4.1
 * New color name setting in Hue Light and Hue Group nodes (check docs)
 * Human readable color names for Hue Lights and Hue Groups
 * HueMagic nodes are now all under the new "HueMagic" category in the palette

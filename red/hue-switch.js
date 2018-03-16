@@ -7,6 +7,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 		var bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
+		var moment = require('moment');
 		var context = this.context();
 		var scope = this;
 
@@ -45,7 +46,7 @@ module.exports = function(RED)
 					if (lastUpdated === false) {
 						return;
 					}
-					
+
 					// DEFINE HUMAN READABLE BUTTON NAME
 					var buttonName = "";
 					if(sensor.state.buttonEvent < 2000)
@@ -91,7 +92,7 @@ module.exports = function(RED)
 					message.payload.button = sensor.state.buttonEvent;
 					message.payload.name = buttonName;
 					message.payload.action = buttonAction;
-					message.payload.updated = sensor.state.lastUpdated;
+					message.payload.updated = moment.utc(sensor.state.lastUpdated).local().format();
 
 					message.info = {};
 					message.info.id = sensor.id;

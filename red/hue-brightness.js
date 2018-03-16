@@ -35,15 +35,15 @@ module.exports = function(RED)
 		{
 			client.sensors.getById(luxSensorID)
 			.then(sensor => {
-				var brightness = context.get('brightness') || -1;
+				var lastUpdated = context.get('lastUpdated') || false;
 
 				if(sensor.config.reachable == false)
 				{
 					scope.status({fill: "red", shape: "ring", text: "not reachable"});
 				}
-				else if(brightness != sensor.state.lightLevel)
+				else if(sensor.state.lastUpdated != lastUpdated)
 				{
-					context.set('brightness', sensor.state.lightLevel);
+					context.set('lastUpdated', sensor.state.lastUpdated);
 
 					var message = {};
 					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: moment.utc(sensor.state.lastUpdated).local().format()};

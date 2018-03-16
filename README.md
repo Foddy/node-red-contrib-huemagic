@@ -2,10 +2,10 @@
 
 # HueMagic - Philips Hue nodes for Node-RED
 
-[![Travis](https://img.shields.io/travis/Foddy/node-red-contrib-huemagic.svg?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/Foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/)
 [![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://david-dm.org/foddy/node-red-contrib-huemagic)
 [![npm](https://img.shields.io/npm/dt/node-red-contrib-huemagic.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic)
-[![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic.svg?style=flat-square)]()
+[![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/)
  [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
 
 HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue lights, groups, scenes, taps, switches, motion sensors, temperature sensors and Lux sensors.
@@ -340,18 +340,16 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.5.0 (latest)
+### v1.5.2 (latest)
 * Added option to disable color naming in Hue Light & Hue Group config
 * Fixed hex color conversion for Hue Light and Hue Group nodes
 * More accurate color handling for light bulbs
-* Dependency updates
-
-### v1.4.2
-* Added reachable attribute to Hue Lights node
+* Added reachable attribute to Hue Light node
 * Hue Tap can now send the same button action twice
 * Fixed Hue Brightness event trigger when lux is 0
 * UTC formatted "updated" date for Hue Brightness node
 * Better error handling for all nodes
+* Dependency updates
 
 ### v1.4.1
 * New color name setting in Hue Light and Hue Group nodes (check docs)

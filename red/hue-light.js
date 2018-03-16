@@ -44,21 +44,27 @@ module.exports = function(RED)
 				client.lights.getById(lightID)
 				.then(light => {
 					var state = context.get('status') || false;
-					var uniqueStatus = ((light.on) ? "1" : "0") + light.brightness + light.hue + light.saturation + light.colorTemp;
+					var uniqueStatus = ((light.on) ? "1" : "0") + light.brightness + light.hue + light.saturation + light.colorTemp + light.reachable;
 					var brightnessPercent = 0;
 
 					if(state != uniqueStatus)
 					{
 						context.set('status', uniqueStatus);
 
-						if(light.on)
-						{
-							brightnessPercent = Math.round((100/254)*light.brightness);
-							scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+						if(light.reachable){
+							if(light.on)
+							{
+								brightnessPercent = Math.round((100/254)*light.brightness);
+								scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+							}
+							else
+							{
+								scope.status({fill: "grey", shape: "dot", text: "turned off"});
+							}
 						}
 						else
 						{
-							scope.status({fill: "grey", shape: "dot", text: "turned off"});
+							scope.status({fill: "red", shape: "ring", text: "not reachable"});
 						}
 
 						// DETERMINE TYPE AND SEND STATUS
@@ -66,6 +72,7 @@ module.exports = function(RED)
 						message.payload = {};
 						message.payload.on = light.on;
 						message.payload.brightness = brightnessPercent;
+						message.payload.reachable = light.reachable;
 
 						message.info = {};
 						message.info.id = light.id;

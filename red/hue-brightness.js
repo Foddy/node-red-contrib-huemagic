@@ -7,6 +7,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 		var bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
+		var moment = require('moment');
 		var context = this.context();
 		var scope = this;
 
@@ -34,18 +35,18 @@ module.exports = function(RED)
 		{
 			client.sensors.getById(luxSensorID)
 			.then(sensor => {
-				var brightness = context.get('brightness') || -1;
+				var lastUpdated = context.get('lastUpdated') || false;
 
 				if(sensor.config.reachable == false)
 				{
 					scope.status({fill: "red", shape: "ring", text: "not reachable"});
 				}
-				else if(brightness != sensor.state.lightLevel)
+				else if(sensor.state.lastUpdated != lastUpdated)
 				{
-					context.set('brightness', sensor.state.lightLevel);
+					context.set('lastUpdated', sensor.state.lastUpdated);
 
 					var message = {};
-					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: sensor.state.lastUpdated};
+					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 					message.info = {};
 					message.info.id = sensor.id;
@@ -78,6 +79,7 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
+				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
 		}, parseInt(bridge.config.interval));

@@ -36,11 +36,16 @@ module.exports = function(RED)
 		{
 			client.sensors.getById(sensorid)
 			.then(sensor => {
-				var buttonEvent = context.get('buttonevent') || false;
+				var lastUpdated = context.get('lastUpdated') || false;
 
-				if(buttonEvent != sensor.state.buttonEvent && sensor.state.buttonEvent === parseInt(sensor.state.buttonEvent, 10))
+				if(sensor.state.lastUpdated != lastUpdated)
 				{
-					context.set('buttonevent', sensor.state.buttonEvent);
+					context.set('lastUpdated', sensor.state.lastUpdated);
+
+					// Return on first deploy to purge old state
+					if (lastUpdated === false) {
+						return;
+					}
 
 					var buttonNum = 0;
 
@@ -62,7 +67,7 @@ module.exports = function(RED)
 					}
 
 					var message = {};
-					message.payload = {button: buttonNum, updated: moment().format()};
+					message.payload = {button: buttonNum, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 					message.info = {};
 					message.info.id = sensor.id;
@@ -85,6 +90,7 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
+				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
 		}, parseInt(bridge.config.interval));

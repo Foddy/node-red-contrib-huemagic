@@ -110,6 +110,7 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
+					scope.error(error);
 					scope.status({fill: "red", shape: "ring", text: "connection error"});
 				});
 			}, parseInt(bridge.config.interval));
@@ -146,7 +147,7 @@ module.exports = function(RED)
 					scope.sendGroupStatus(group);
 				})
 				.catch(error => {
-					scope.error(error);
+					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 					clearInterval(scope.recheck);
 				});
@@ -214,7 +215,7 @@ module.exports = function(RED)
 					}, alertSeconds * 1000);
 				})
 				.catch(error => {
-					scope.error(error);
+					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}
@@ -276,7 +277,7 @@ module.exports = function(RED)
 					{
 						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
 						{
-							scope.error("Invalid saturation setting. Only 0 - 254 allowed");
+							scope.error("Invalid saturation setting. Only 0 - 254 allowed", msg);
 							return false;
 						}
 						else
@@ -295,7 +296,7 @@ module.exports = function(RED)
 						}
 						else
 						{
-							scope.error("Invalid color temprature. Only 153 - 500 allowed");
+							scope.error("Invalid color temprature. Only 153 - 500 allowed", msg);
 							return false;
 						}
 					}
@@ -334,7 +335,7 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
-					scope.error(error);
+					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}

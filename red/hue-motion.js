@@ -7,6 +7,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 		var bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
+		var moment = require('moment');
 		var context = this.context();
 		var scope = this;
 
@@ -49,7 +50,7 @@ module.exports = function(RED)
 							context.set('presence', true);
 
 							var message = {};
-							message.payload = {active: true, motion: true, updated: sensor.state.lastUpdated};
+							message.payload = {active: true, motion: true, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 							message.info = {};
 							message.info.id = sensor.id;
@@ -72,7 +73,7 @@ module.exports = function(RED)
 						else
 						{
 							var message = {};
-							message.payload = {active: true, motion: false, updated: sensor.state.lastUpdated};
+							message.payload = {active: true, motion: false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 							message.info = {};
 							message.info.id = sensor.id;
@@ -101,6 +102,7 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
+				score.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
 		}, parseInt(bridge.config.interval));
@@ -118,9 +120,8 @@ module.exports = function(RED)
 					return client.sensors.save(sensor);
 				})
 				.then(sensor => {
-					var notify = {};
-					notify.payload = {active: msg.payload, motion: false, updated: sensor.state.lastUpdated};
-
+					var message = {};
+					message.payload = {active: msg.payload, motion: false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 					message.info = {};
 					message.info.id = sensor.id;
 					message.info.uniqueId = sensor.uniqueId;
@@ -135,7 +136,7 @@ module.exports = function(RED)
 					message.info.model.name = sensor.model.name;
 					message.info.model.type = sensor.model.type;
 
-					scope.send(notify);
+					scope.send(message);
 
 					if(msg.payload == false)
 					{
@@ -147,9 +148,7 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
-					var notify = {};
-					notify.payload = error;
-					scope.send(notify);
+					scope.error(error, msg);
 				});
 			}
 		});

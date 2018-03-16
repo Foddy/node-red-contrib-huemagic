@@ -7,6 +7,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 		var bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
+		var moment = require('moment');
 		var context = this.context();
 		var scope = this;
 
@@ -49,7 +50,7 @@ module.exports = function(RED)
 					var fahrenheit = Math.round(((celsius * 1.8)+32) * 100) / 100;
 
 					var message = {};
-					message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: sensor.state.lastUpdated};
+					message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 					message.info = {};
 					message.info.id = sensor.id;
@@ -71,6 +72,7 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
+				score.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
 		}, parseInt(bridge.config.interval));

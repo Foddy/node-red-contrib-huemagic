@@ -35,12 +35,17 @@ module.exports = function(RED)
 		{
 			client.sensors.getById(sensorid)
 			.then(sensor => {
-				var buttonEvent = context.get('buttonevent') || false;
+				var lastUpdated = context.get('lastUpdated') || false;
 
-				if(buttonEvent != sensor.state.buttonEvent && sensor.state.buttonEvent === parseInt(sensor.state.buttonEvent, 10))
+				if(sensor.state.lastUpdated != lastUpdated)
 				{
-					context.set('buttonevent', sensor.state.buttonEvent);
+					context.set('lastUpdated', sensor.state.lastUpdated);
 
+					// Return on first deploy to purge old state
+					if (lastUpdated === false) {
+						return;
+					}
+					
 					// DEFINE HUMAN READABLE BUTTON NAME
 					var buttonName = "";
 					if(sensor.state.buttonEvent < 2000)

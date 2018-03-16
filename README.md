@@ -340,7 +340,7 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.4.3 (latest)
+### v1.4.4 (latest)
 * Added option to disable color naming in Hue Light & Hue Group config
 * Fixed hex color conversion for Hue Light and Hue Group nodes
 * More accurate color handling for light bulbs

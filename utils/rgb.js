@@ -1,117 +1,135 @@
-"use strict";
+var colorPointsGamut_A = [[0.703, 0.296], [0.214, 0.709], [0.139, 0.081]];
+var colorPointsGamut_B = [[0.674, 0.322], [0.408, 0.517], [0.168, 0.041]];
+var colorPointsGamut_C = [[0.692, 0.308], [0.17, 0.7], [0.153, 0.048]];
+var colorPointsDefault = [[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]];
 
-var XY = function (x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    , hueLimits = {
-        red: new XY(0.675, 0.322),
-        green: new XY(0.4091, 0.518),
-        blue: new XY(0.167, 0.04)
-    }
-    , livingColorsLimits = {
-        red: new XY(0.704, 0.296),
-        green: new XY(0.2151, 0.7106),
-        blue: new XY(0.138, 0.08)
-    }
-    , defaultLimits = {
-        red: new XY(1.0, 0),
-        green: new XY(0.0, 1.0),
-        blue: new XY(0.0, 0.0)
-    }
-    ;
+var GAMUT_A_BULBS_LIST = ["LLC001", "LLC005", "LLC006", "LLC007", "LLC010", "LLC011", "LLC012", "LLC014", "LLC013", "LST001"];
+var GAMUT_B_BULBS_LIST = ["LCT001", "LCT002", "LCT003", "LCT004", "LLM001", "LCT005", "LCT006", "LCT007"];
+var GAMUT_C_BULBS_LIST = ["LCT010", "LCT011", "LCT012", "LCT014", "LCT015", "LCT016", "LLC020", "LST002"];
+var MULTI_SOURCE_LUMINAIRES = ["HBL001", "HBL002", "HBL003", "HIL001", "HIL002", "HEL001", "HEL002"];
 
-function _crossProduct(p1, p2) {
-    return (p1.x * p2.y - p1.y * p2.x);
+module.exports = {
+  convertXYtoRGB: _getRGBFromXYState,
+  convertRGBtoXY: function(rgb, model) {
+    var red = rgb[0];
+    var green = rgb[1];
+    var blue = rgb[2];
+    red = red / 255;
+    green = green / 255;
+    blue = blue / 255;
+    var r = red > 0.04045 ? Math.pow(((red + 0.055) / 1.055), 2.4000000953674316) : red / 12.92;
+    var g = green > 0.04045 ? Math.pow(((green + 0.055) / 1.055), 2.4000000953674316) : green / 12.92;
+    var b = blue > 0.04045 ? Math.pow(((blue + 0.055) / 1.055), 2.4000000953674316) : blue / 12.92;
+    var x = r * 0.664511 + g * 0.154324 + b * 0.162028;
+    var y = r * 0.283881 + g * 0.668433 + b * 0.047685;
+    var z = r * 8.8E-5 + g * 0.07231 + b * 0.986039;
+    var xy = [x / (x + y + z), y / (x + y + z)];
+    if (isNaN(xy[0])) {
+      xy[0] = 0.0;
+    }
+
+    if (isNaN(xy[1])) {
+      xy[1] = 0.0;
+    }
+
+    var colorPoints = colorPointsForModel(model);
+    var inReachOfLamps = checkPointInLampsReach(xy, colorPoints);
+    if (!inReachOfLamps) {
+      var pAB = getClosestPointToPoints(colorPoints[0], colorPoints[1], xy);
+      var pAC = getClosestPointToPoints(colorPoints[2], colorPoints[0], xy);
+      var pBC = getClosestPointToPoints(colorPoints[1], colorPoints[2], xy);
+      var dAB = getDistanceBetweenTwoPoints(xy, pAB);
+      var dAC = getDistanceBetweenTwoPoints(xy, pAC);
+      var dBC = getDistanceBetweenTwoPoints(xy, pBC);
+      var lowest = dAB;
+      var closestPoint = pAB;
+      if (dAC < dAB) {
+        lowest = dAC;
+        closestPoint = pAC;
+      }
+
+      if (dBC < lowest) {
+        closestPoint = pBC;
+      }
+
+      xy[0] = closestPoint[0];
+      xy[1] = closestPoint[1];
+    }
+
+    xy[0] = precision(xy[0]);
+    xy[1] = precision(xy[1]);
+    return xy;
+  }
+};
+
+function colorPointsForModel(model) {
+  if (model == null) {
+    model = " ";
+  }
+
+  if (GAMUT_B_BULBS_LIST.indexOf(model) == -1 && MULTI_SOURCE_LUMINAIRES.indexOf(model) == -1) {
+    if(GAMUT_A_BULBS_LIST.indexOf(model) >= 0) {
+      return colorPointsGamut_A;
+    } else if(GAMUT_C_BULBS_LIST.indexOf(model) >= 0) {
+      return colorPointsGamut_C;
+    } else {
+      return colorPointsDefault;
+    }
+  } else {
+    return colorPointsGamut_B;
+  }
 }
 
-function _isInColorGamut(p, lampLimits) {
-    var v1 = new XY(
-            lampLimits.green.x - lampLimits.red.x
-            , lampLimits.green.y - lampLimits.red.y
-        )
-        , v2 = new XY(
-            lampLimits.blue.x - lampLimits.red.x
-            , lampLimits.blue.y - lampLimits.red.y
-        )
-        , q = new XY(p.x - lampLimits.red.x, p.y - lampLimits.red.y)
-        , s = _crossProduct(q, v2) / _crossProduct(v1, v2)
-        , t = _crossProduct(v1, q) / _crossProduct(v1, v2)
-        ;
-
-    return (s >= 0.0) && (t >= 0.0) && (s + t <= 1.0);
+function checkPointInLampsReach(point, colorPoints) {
+  if (point != null && colorPoints != null) {
+    var red = colorPoints[0];
+    var green = colorPoints[1];
+    var blue = colorPoints[2];
+    var v1 = [green[0] - red[0], green[1] - red[1]];
+    var v2 = [blue[0] - red[0], blue[1] - red[1]];
+    var q = [point[0] - red[0], point[1] - red[1]];
+    var s = crossProduct(q, v2) / crossProduct(v1, v2);
+    var t = crossProduct(v1, q) / crossProduct(v1, v2);
+    return s >= 0.0 && t >= 0.0 && s + t <= 1.0;
+  } else {
+    return false;
+  }
 }
 
-/**
- * Find the closest point on a line. This point will be reproducible by the limits.
- *
- * @param start {XY} The point where the line starts.
- * @param stop {XY} The point where the line ends.
- * @param point {XY} The point which is close to the line.
- * @return {XY} A point that is on the line specified, and closest to the XY provided.
- */
-function _getClosestPoint(start, stop, point) {
-    var AP = new XY(point.x - start.x, point.y - start.y)
-        , AB = new XY(stop.x - start.x, stop.y - start.y)
-        , ab2 = AB.x * AB.x + AB.y * AB.y
-        , ap_ab = AP.x * AB.x + AP.y * AB.y
-        , t = ap_ab / ab2
-        ;
+function crossProduct(point1, point2) {
+  return point1[0] * point2[1] - point1[1] * point2[0];
+}
 
-    if (t < 0.0) {
-        t = 0.0;
-    } else if (t > 1.0) {
-        t = 1.0;
+function getClosestPointToPoints(pointA, pointB, pointP) {
+  if (pointA != null && pointB != null && pointP != null) {
+    var pointAP = [pointP[0] - pointA[0], pointP[1] - pointA[1]];
+    var pointAB = [pointB[0] - pointA[0], pointB[1] - pointA[1]];
+    var ab2 = pointAB[0] * pointAB[0] + pointAB[1] * pointAB[1];
+    var apAb = pointAP[0] * pointAB[0] + pointAP[1] * pointAB[1];
+    var t = apAb / ab2;
+    if(t < 0.0) {
+      t = 0.0;
+    } else if(t > 1.0) {
+      t = 1.0;
     }
 
-    return new XY(
-        start.x + AB.x * t
-        , start.y + AB.y * t
-    );
+    return [pointA[0] + pointAB[0] * t, pointA[1] + pointAB[1] * t];
+  } else {
+    return null;
+  }
 }
 
-function _getDistanceBetweenPoints(pOne, pTwo) {
-    var dx = pOne.x - pTwo.x
-        , dy = pOne.y - pTwo.y
-        ;
-    return Math.sqrt(dx * dx + dy * dy);
+function getDistanceBetweenTwoPoints(pointA, pointB) {
+  var dx = pointA[0] - pointB[0];
+  var dy = pointA[1] - pointB[1];
+  var dist = Math.sqrt(dx * dx + dy * dy);
+  return dist;
 }
 
-function _getXYStateFromRGB(red, green, blue, limits) {
-    var r = _gammaCorrection(red)
-        , g = _gammaCorrection(green)
-        , b = _gammaCorrection(blue)
-        , X = r * 0.4360747 + g * 0.3850649 + b * 0.0930804
-        , Y = r * 0.2225045 + g * 0.7168786 + b * 0.0406169
-        , Z = r * 0.0139322 + g * 0.0971045 + b * 0.7141733
-        , cx = X / (X + Y + Z)
-        , cy = Y / (X + Y + Z)
-        , xyPoint
-        ;
-
-    cx = isNaN(cx) ? 0.0 : cx;
-    cy = isNaN(cy) ? 0.0 : cy;
-
-    xyPoint = new XY(cx, cy);
-
-    if (!_isInColorGamut(xyPoint, limits)) {
-        xyPoint = _resolveXYPointForLamp(xyPoint, limits);
-    }
-
-    return [xyPoint.x, xyPoint.y];
+function precision(d) {
+  return Math.round(10000.0 * d) / 10000.0;
 }
 
-/**
- * This function is a rough approximation of the reversal of RGB to xy transform. It is a gross approximation and does
- * get close, but is not exact.
- * @param x
- * @param y
- * @param brightness
- * @returns {Array} RGB values
- * @private
- *
- * This function is a modification of the one found at https://github.com/bjohnso5/hue-hacking/blob/master/src/colors.js#L251
- */
 function _getRGBFromXYState(x, y, brightness) {
     var Y = brightness
       , X = (Y / y) * x
@@ -123,15 +141,11 @@ function _getRGBFromXYState(x, y, brightness) {
       ]
       ;
 
-    // Apply reverse gamma correction.
     rgb = rgb.map(function (x) {
         return (x <= 0.0031308) ? (12.92 * x) : ((1.0 + 0.055) * Math.pow(x, (1.0 / 2.4)) - 0.055);
     });
 
-    // Bring all negative components to zero.
     rgb = rgb.map(function (x) { return Math.max(0, x); });
-
-    // If one component is greater than 1, weight components by that value.
     var max = Math.max(rgb[0], rgb[1], rgb[2]);
     if (max > 1) {
         rgb = rgb.map(function (x) { return x / max; });
@@ -141,75 +155,3 @@ function _getRGBFromXYState(x, y, brightness) {
 
     return rgb;
 }
-
-/**
- * When a color is outside the limits, find the closest point on each line in the CIE 1931 'triangle'.
- * @param point {XY} The point that is outside the limits
- * @param limits The limits of the bulb (red, green and blue XY points).
- * @returns {XY}
- */
-function _resolveXYPointForLamp(point, limits) {
-
-    var pAB = _getClosestPoint(limits.red, limits.green, point)
-        , pAC = _getClosestPoint(limits.blue, limits.red, point)
-        , pBC = _getClosestPoint(limits.green, limits.blue, point)
-        , dAB = _getDistanceBetweenPoints(point, pAB)
-        , dAC = _getDistanceBetweenPoints(point, pAC)
-        , dBC = _getDistanceBetweenPoints(point, pBC)
-        , lowest = dAB
-        , closestPoint = pAB
-        ;
-
-    if (dAC < lowest) {
-        lowest = dAC;
-        closestPoint = pAC;
-    }
-
-    if (dBC < lowest) {
-        closestPoint = pBC;
-    }
-
-    return closestPoint;
-}
-
-function _gammaCorrection(value) {
-    var result = value;
-    if (value > 0.04045) {
-        result = Math.pow((value + 0.055) / (1.0 + 0.055), 2.4);
-    } else {
-        result = value / 12.92;
-    }
-    return result;
-}
-
-function _getLimits(modelid) {
-    var limits = defaultLimits
-        ;
-
-    if (modelid) {
-        modelid = modelid.toLowerCase();
-
-        if (/^lct/.test(modelid)) {
-            // This is a Hue bulb
-            limits = hueLimits;
-        } else if (/^llc/.test(modelid)) {
-            // This is a Living Color lamp (Bloom, Iris, etc..)
-            limits = livingColorsLimits;
-        } else if (/^lwb/.test(modelid)) {
-            // This is a lux bulb
-            limits = defaultLimits;
-        } else {
-            limits = defaultLimits;
-        }
-    }
-
-    return limits;
-}
-
-module.exports = {
-    convertRGBtoXY: function(rgb, modelid) {
-        var limits = _getLimits(modelid);
-        return _getXYStateFromRGB(rgb[0], rgb[1], rgb[2], limits);
-    },
-    convertXYtoRGB: _getRGBFromXYState
-};

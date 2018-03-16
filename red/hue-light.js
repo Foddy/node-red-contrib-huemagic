@@ -96,8 +96,11 @@ module.exports = function(RED)
 							message.payload.rgb = rgbColor;
 							message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
 
-							var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-							message.payload.color = cNamesArray.basic[0]["name"];
+							if(config.colornamer == true)
+							{
+								var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+								message.payload.color = cNamesArray.basic[0]["name"];
+							}
 						}
 
 						message.payload.updated = moment().format();
@@ -166,23 +169,24 @@ module.exports = function(RED)
 					{
 						if(typeof msg.payload.rgb != 'undefined')
 						{
-							light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.modelid);
+							light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.model.id);
 						}
 						else if(typeof msg.payload.hex != 'undefined')
 						{
-							light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
+							var rgbResult = hexRGB((msg.payload.hex).toString());
+							light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
 						}
 						else if(typeof msg.payload.color != 'undefined')
 						{
 							var colorHex = colornames(msg.payload.color);
 							if(colorHex)
 							{
-								light.xy = rgb.convertRGBtoXY(hexRGB(colorHex), light.modelid);
+								light.xy = rgb.convertRGBtoXY(hexRGB(colorHex), light.model.id);
 							}
 						}
 						else
 						{
-							light.xy = rgb.convertRGBtoXY([255,0,0], light.modelid);
+							light.xy = rgb.convertRGBtoXY([255,0,0], light.model.id);
 						}
 					}
 
@@ -267,20 +271,21 @@ module.exports = function(RED)
 						var colorHex = colornames(msg.payload.color);
 						if(colorHex)
 						{
-							light.xy = rgb.convertRGBtoXY(hexRGB(colorHex), light.modelid);
+							light.xy = rgb.convertRGBtoXY(hexRGB(colorHex), light.model.id);
 						}
 					}
 
 					// SET RGB COLOR
 					if(msg.payload.rgb && light.xy)
 					{
-						light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.modelid);
+						light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.model.id);
 					}
 
 					// SET HEX COLOR
 					if(msg.payload.hex && light.xy)
 					{
-						light.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), light.modelid);
+						var rgbResult = hexRGB((msg.payload.hex).toString());
+						light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
 					}
 
 					// SET COLOR TEMPERATURE
@@ -404,8 +409,11 @@ module.exports = function(RED)
 				message.payload.rgb = rgbColor;
 				message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
 
-				var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-				message.payload.color = cNamesArray.basic[0]["name"];
+				if(config.colornamer == true)
+				{
+					var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+					message.payload.color = cNamesArray.basic[0]["name"];
+				}
 			}
 
 			if(light.colorTemp)

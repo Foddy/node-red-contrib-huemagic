@@ -100,8 +100,11 @@ module.exports = function(RED)
 							message.payload.rgb = rgbColor;
 							message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
 
-							var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-							message.payload.color = cNamesArray.basic[0]["name"];
+							if(config.colornamer == true)
+							{
+								var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+								message.payload.color = cNamesArray.basic[0]["name"];
+							}
 						}
 
 						message.payload.updated = moment().format();
@@ -168,7 +171,8 @@ module.exports = function(RED)
 						}
 						else if(typeof msg.payload.hex != 'undefined')
 						{
-							group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
+							var rgbResult = hexRGB((msg.payload.hex).toString());
+							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 						}
 						else if(typeof msg.payload.color != 'undefined')
 						{
@@ -269,7 +273,8 @@ module.exports = function(RED)
 					// SET HEX COLOR
 					if(msg.payload.hex && group.xy)
 					{
-						group.xy = rgb.convertRGBtoXY(hexRGB((msg.payload.hex).toString()), false);
+						var rgbResult = hexRGB((msg.payload.hex).toString());
+						group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 					}
 
 					// SET SATURATION
@@ -401,8 +406,11 @@ module.exports = function(RED)
 				message.payload.rgb = rgbColor;
 				message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
 
-				var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-				message.payload.color = cNamesArray.basic[0]["name"];
+				if(config.colornamer == true)
+				{
+					var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+					message.payload.color = cNamesArray.basic[0]["name"];
+				}
 			}
 
 			if(group.colorTemp)

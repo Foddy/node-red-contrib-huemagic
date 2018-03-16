@@ -56,7 +56,7 @@ module.exports = function(RED)
 				}, 1000);
 			})
 			.catch(error => {
-				console.log(error.stack);
+				scope.error(error, msg);
 			});
 		});
 	}

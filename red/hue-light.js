@@ -98,6 +98,7 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
+					scope.error(error);
 					scope.status({fill: "red", shape: "ring", text: "connection error"});
 					clearInterval(scope.recheck);
 				});
@@ -140,7 +141,7 @@ module.exports = function(RED)
 						}
 					})
 					.catch(error => {
-						scope.error(error);
+						scope.error(error, msg);
 						scope.status({fill: "red", shape: "ring", text: "input error"});
 						clearInterval(scope.recheck);
 					});
@@ -219,7 +220,7 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
-					scope.error(error);
+					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}
@@ -341,7 +342,7 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
-					scope.error(error);
+					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "input error"});
 				});
 			}

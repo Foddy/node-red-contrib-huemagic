@@ -7,6 +7,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 		var bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
+		var moment = require('moment');
 		var context = this.context();
 		var scope = this;
 
@@ -45,7 +46,7 @@ module.exports = function(RED)
 					context.set('brightness', sensor.state.lightLevel);
 
 					var message = {};
-					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: sensor.state.lastUpdated};
+					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 					message.info = {};
 					message.info.id = sensor.id;

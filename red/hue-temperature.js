@@ -72,7 +72,7 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
-				score.error(error);
+				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
 		}, parseInt(bridge.config.interval));

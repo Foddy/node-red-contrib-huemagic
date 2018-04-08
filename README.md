@@ -340,7 +340,10 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.5.3 (latest)
+### v1.5.4 (latest)
+* Dependency updates
+
+### v1.5.3
 * Fixed a typo in Hue Temperature node
 
 ### v1.5.2

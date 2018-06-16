@@ -21,7 +21,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Additive state settings on all nodes with multiple commands supported
 
 ### Installation
-HueMagic was written for **Node.js 8+** and Node-RED v0.18.3+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 8+** and Node-RED v0.18.7+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -322,7 +322,8 @@ The event message that the light sensor sends contains the following data in the
 
 |    Property    | Type    | Information                                         |
 |:--------------:|---------|-----------------------------------------------------|
-| **lightlevel** | int     | Light level measured in Lux                         |
+| **lux** | int     | Real lux value                         |
+| **lightlevel** | int     | Light level                         |
 | **dark**       | boolean | True if it's dark                                   |
 | **daylight**   | boolean | True if daylight recognized                         |
 | **updated**    | string  | ISO 8601 date string of the last light level update |
@@ -342,9 +343,12 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.5.5 (latest)
+### v1.5.6 (latest)
 * New increment/decrement brightness setting in Hue Light and Hue Group nodes ([3a6977a](https://github.com/Foddy/node-red-contrib-huemagic/pull/54/commits/3a6977a1f8090917556f6ee4bdf4142fad7f7d85))
+* New real lux property to Hue Brightness event outputs ([thanks @Travelbacon](https://github.com/Foddy/node-red-contrib-huemagic/issues/49))
 * Added colorTemp property to Hue Light event outputs ([f8d237d](https://github.com/Foddy/node-red-contrib-huemagic/pull/52/commits/f8d237d6edf6772dbb73d9bd408e81a4ad4bd99a))
+* Manipulation of the update interval setting to avoid API errors with many devices
+* Fixed some annoying typos
 * Dependency updates
 
 ### v1.5.4

@@ -10,7 +10,6 @@ module.exports = function(RED)
 		var context = this.context();
 		var scope = this;
 
-
 		//
 		// CHECK CONFIG
 		if(!config.sceneid || bridge == null)

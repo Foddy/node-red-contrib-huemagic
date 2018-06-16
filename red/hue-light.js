@@ -17,6 +17,10 @@ module.exports = function(RED)
 		var scope = this;
 
 		//
+		// INTERVAL PATCH
+		var intervalPatch = 2000;
+
+		//
 		// CHECK CONFIG
 		if(bridge == null)
 		{
@@ -117,7 +121,7 @@ module.exports = function(RED)
 					scope.status({fill: "red", shape: "ring", text: "connection error"});
 					clearInterval(scope.recheck);
 				});
-			}, parseInt(bridge.config.interval));
+			}, parseInt(bridge.config.interval) + intervalPatch);
 		}
 		else
 		{

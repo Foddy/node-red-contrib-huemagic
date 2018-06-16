@@ -23,8 +23,11 @@
     <h3>Light Level Events</h3>
     <p>The event message that the light sensor sends contains the following data in the <b>msg.payload</b> object:</p>
     <dl class="message-properties">
-        <dt>lightlevel<span class="property-type">int</span></dt>
-        <dd>Light level measured in Lux</dd>
+        <dt>lux<span class="property-type">int</span></dt>
+        <dd>Real lux value</dd>
+
+        <dt>lightLevel<span class="property-type">int</span></dt>
+        <dd>Light level</dd>
 
         <dt>dark<span class="property-type">boolean</span></dt>
         <dd>True if it's dark</dd>

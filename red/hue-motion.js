@@ -11,6 +11,9 @@ module.exports = function(RED)
 		var context = this.context();
 		var scope = this;
 
+		//
+		// INTERVAL PATCH
+		var intervalPatch = 1000;
 
 		//
 		// CHECK CONFIG
@@ -102,10 +105,10 @@ module.exports = function(RED)
 				}
 			})
 			.catch(error => {
-				score.error(error);
+				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
-		}, parseInt(bridge.config.interval));
+		}, parseInt(bridge.config.interval) + intervalPatch);
 
 
 		//

@@ -12,6 +12,10 @@ module.exports = function(RED)
 		var scope = this;
 
 		//
+		// INTERVAL PATCH
+		var intervalPatch = 4000;
+
+		//
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
@@ -45,8 +49,17 @@ module.exports = function(RED)
 				{
 					context.set('lastUpdated', sensor.state.lastUpdated);
 
+					var realLUX = sensor.state.lightLevel - 1;
+					realLUX = realLUX / 10000;
+					realLUX = Math.round(Math.pow(10, realLUX));
+
 					var message = {};
-					message.payload = {lightLevel: sensor.state.lightLevel, dark: sensor.state.dark, daylight: sensor.state.daylight, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+					message.payload = {};
+					message.payload.lux = realLUX;
+					message.payload.lightLevel = sensor.state.lightLevel;
+					message.payload.dark = sensor.state.dark;
+					message.payload.daylight = sensor.state.daylight;
+					message.payload.updated = moment.utc(sensor.state.lastUpdated).local().format();
 
 					message.info = {};
 					message.info.id = sensor.id;
@@ -66,15 +79,15 @@ module.exports = function(RED)
 
 					if(sensor.state.dark)
 					{
-						scope.status({fill: "blue", shape: "dot", text: sensor.state.lightLevel+" Lux (dark)"});
+						scope.status({fill: "blue", shape: "dot", text: realLUX+" Lux (dark)"});
 					}
 					else if(sensor.state.daylight)
 					{
-						scope.status({fill: "yellow", shape: "dot", text: sensor.state.lightLevel+" Lux (daylight)"});
+						scope.status({fill: "yellow", shape: "dot", text: realLUX+" Lux (daylight)"});
 					}
 					else
 					{
-						scope.status({fill: "grey", shape: "dot", text: sensor.state.lightLevel+" Lux"});
+						scope.status({fill: "grey", shape: "dot", text: realLUX+" Lux"});
 					}
 				}
 			})
@@ -82,7 +95,7 @@ module.exports = function(RED)
 				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
-		}, parseInt(bridge.config.interval));
+		}, parseInt(bridge.config.interval) + intervalPatch);
 
 		//
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL

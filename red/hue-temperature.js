@@ -11,6 +11,9 @@ module.exports = function(RED)
 		var context = this.context();
 		var scope = this;
 
+		//
+		// INTERVAL PATCH
+		var intervalPatch = 5000;
 
 		//
 		// CHECK CONFIG
@@ -75,7 +78,7 @@ module.exports = function(RED)
 				scope.error(error);
 				scope.status({fill: "red", shape: "ring", text: "connection error"});
 			});
-		}, parseInt(bridge.config.interval));
+		}, parseInt(bridge.config.interval) + intervalPatch);
 
 		//
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL

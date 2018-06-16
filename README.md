@@ -342,7 +342,12 @@ The event message that the lux sensor sends also contains the following data in 
 
 # Changelog
 
-### v1.5.4 (latest)
+### v1.5.5 (latest)
+* New increment/decrement brightness setting in Hue Light and Hue Group nodes ([3a6977a](https://github.com/Foddy/node-red-contrib-huemagic/pull/54/commits/3a6977a1f8090917556f6ee4bdf4142fad7f7d85))
+* Added colorTemp property to Hue Light event outputs ([f8d237d](https://github.com/Foddy/node-red-contrib-huemagic/pull/52/commits/f8d237d6edf6772dbb73d9bd408e81a4ad4bd99a))
+* Dependency updates
+
+### v1.5.4
 * Dependency updates
 
 ### v1.5.3

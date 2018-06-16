@@ -229,29 +229,32 @@ module.exports = function(RED)
 				client.groups.getById(tempGroupID)
 				.then(group => {
 
-					// SET GROUP STATE
-					if(typeof msg.payload.on != 'undefined')
-					{
-						group.on = msg.payload.on;
-					}
+                    // SET GROUP STATE
+                    if (typeof msg.payload.on != 'undefined') {
+                        group.on = msg.payload.on;
+                    }
 
-					// SET BRIGHTNESS
-					if(typeof msg.payload.brightness != 'undefined')
+                    // SET BRIGHTNESS
+                    if (typeof msg.payload.brightness != 'undefined') {
+                        if (msg.payload.brightness > 100 || msg.payload.brightness < 0) {
+                            scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
+                            return false;
+                        }
+                        else if (msg.payload.brightness == 0) {
+                            group.on = false;
+                        }
+                        else {
+                            group.on = true;
+                            group.brightness = Math.round((254 / 100) * parseInt(msg.payload.brightness));
+                        }
+                    }
+                    else if (typeof msg.payload.incrementBrightness != 'undefined')
 					{
-						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
-						{
-							scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
-							return false;
-						}
-						else if(msg.payload.brightness == 0)
-						{
-							group.on = false;
-						}
-						else
-						{
-							group.on = true;
-							group.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
-						}
+                        if (msg.payload.incrementBrightness > 0)
+                        {
+                            group.on = true;
+                        }
+                        group.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
 					}
 
 					// SET HUMAN READABLE COLOR

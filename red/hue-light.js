@@ -264,6 +264,14 @@ module.exports = function(RED)
 							light.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
 						}
 					}
+					else if(typeof msg.payload.incrementBrightness != 'undefined')
+					{
+						if (msg.payload.incrementBrightness > 0)
+						{
+							light.on = true;
+						}
+						light.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
+					}
 
 					// SET HUMAN READABLE COLOR
 					if(msg.payload.color && light.xy)

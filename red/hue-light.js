@@ -103,6 +103,11 @@ module.exports = function(RED)
 							}
 						}
 
+						if(light.colorTemp)
+						{
+							message.payload.colorTemp = light.colorTemp;
+						}
+
 						message.payload.updated = moment().format();
 						scope.send(message);
 					}

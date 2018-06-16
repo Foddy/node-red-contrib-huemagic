@@ -56,6 +56,7 @@ Changes the light state, effect, color, brightness and other states based on the
 |----------------	|--------------------	|-----------------------------------------------------------------------------------------------------------------------------------	|
 | **on**             	| boolean	| Will turn on or turn off the light with its previous configuration (color and brightness)                                         	|
 | **brightness**     	| int                	| Optionally configurable brightness of the light in percent (0-100)                                                                	|
+| **incrementBrightness**     	| int         	| Increment/decrement brightness by given percentage value                                                                	|
 | **rgb**            	| array[int,int,int] 	| Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value 	|
 | **hex**            	| string             	| Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value 	|
 | **color**            	| string             	| Optionally configurable human readable color name in english like "red" of the light bulb	|
@@ -126,6 +127,7 @@ Changes the group state, effect, color, brightness and other states based on the
 |--------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
 | **on**             | boolean | True to turn on all the lights inside the group, false to turn them off                                                                        |
 | **brightness**     | int                  | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
+| **incrementBrightness**     	| int       | Increment/decrement brightness by given percentage value                                                                	|
 | **rgb**            | array[int,int,int]   | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 | **hex**            | string               | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
 | **color**            | string               | Optionally configurable human readable color name in english like "red" of all lights inside the group |

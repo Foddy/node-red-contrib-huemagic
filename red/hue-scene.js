@@ -12,7 +12,7 @@ module.exports = function(RED)
 
 		//
 		// CHECK CONFIG
-		if(!config.sceneid || bridge == null)
+		if(bridge == null)
 		{
 			this.status({fill: "red", shape: "ring", text: "not configured"});
 			return false;
@@ -31,7 +31,26 @@ module.exports = function(RED)
 		// ENABLE SCENE
 		this.on('input', function(msg)
 		{
-			client.scenes.getById(sceneID)
+			let getScene;
+			if (sceneID) {
+				getScene = client.scenes.getById(sceneID);
+			} else if (typeof msg.payload === 'string') {
+				getScene = client.scenes.getAll()
+					.then(scenes => {
+						let fallback;
+						for (const scene of scenes) {
+							if (scene.name === msg.payload || scene.id === msg.payload) {
+								return scene;
+							}
+						}
+
+						throw new Error('Scene with name or id ' + msg.payload + ' does not exist.');
+					});
+			} else {
+				getScene = Promise.reject(new Error('No scene provided'));
+			}
+
+			getScene
 			.then(scene => {
 				scope.status({fill: "blue", shape: "dot", text: "scene recalled"});
 				client.scenes.recall(scene);

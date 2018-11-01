@@ -4,15 +4,163 @@ module.exports = function(RED)
 
 	function HueBridge(config)
 	{
-		RED.nodes.createNode(this, config);
+		var scope = this;
+		var events = require('events');
+		let huejay = require('huejay');
+		
+		// INTERVAL AND EVENT EMITTER
+		this.nodeActive = true;
+		this.lights = [];
+		this.sensors = [];
+		this.groups = [];
+		this.events = new events.EventEmitter();
 
-		this.config = {
-			name: config.name,
-			key: config.key,
-			bridge: config.bridge,
-			interval: config.interval
-		};
+		// CREATE NODE
+		RED.nodes.createNode(scope, config);
+
+		// DEFINE CLIENT
+		this.client = new huejay.Client({
+			host: (config.bridge).toString(),
+			port: config.port || 80,
+			username: config.key
+		});
+
+		// RECHECK DEVICES
+		this.recheck = function()
+		{
+			Promise.all([
+				scope.client.lights.getAll(),
+				scope.client.sensors.getAll(),
+				scope.client.groups.getAll()
+			])
+			.then(results => {
+				let lights = results[0]; // .forEach(function(l){ delete l.updated });
+				let sensors = results[1]; // .forEach(function(s){ delete s.updated });
+				let groups = results[2];
+
+				// GET UPDATES
+				let lightUpdates = scope.getUpdates("light", lights);
+				let sensorUpdates = scope.getUpdates("sensor", sensors);
+				let groupUpdates = scope.getUpdates("group", groups);
+
+				// RETURN UPDATES
+				return [lightUpdates, sensorUpdates, groupUpdates];
+			})
+			.then(updates => {
+				// EMIT UPDATES
+				scope.emitUpdates("light", updates[0]);
+				scope.emitUpdates("sensor", updates[1]);
+				scope.emitUpdates("group", updates[2]);
+
+				// RECHECK
+				if(scope.nodeActive == true) { setTimeout(function(){ scope.recheck(); }, config.interval); }
+				return true;
+			})
+			.catch(error => {
+				scope.debug(error.stack);
+
+				if(scope.nodeActive == true)
+				{
+					setTimeout(function(){ scope.recheck(); }, 500);
+				}
+			});
+		}
+
+		// START FIRST CHECK
+		this.recheck();
+
+		// DETERMINE UPDATES
+		this.getUpdates = function(deviceMode, devices)
+		{
+			var updates = [];			
+			for (var i = devices.length - 1; i >= 0; i--)
+			{
+				let device = devices[i];
+				var updated = false;
+				var uniqueStatus = "";
+
+				if(deviceMode == "light")
+				{
+					uniqueStatus = ((device.on) ? "1" : "0") + device.brightness + device.hue + device.saturation + device.colorTemp + device.reachable;
+
+					if(device.id in this.lights)
+					{
+						if(this.lights[device.id] != uniqueStatus)
+						{
+							this.lights[device.id] = uniqueStatus;
+							updated = true;
+						}
+					}
+					else
+					{
+						this.lights[device.id] = uniqueStatus;
+						updated = true;
+					}
+				}
+				else if(deviceMode == "sensor")
+				{
+					uniqueStatus = device.state.lastUpdated;
+					if(device.id in this.sensors)
+					{
+						if(this.sensors[device.id] != uniqueStatus)
+						{
+							this.sensors[device.id] = uniqueStatus;
+							updated = true;
+						}
+					}
+					else
+					{
+						this.sensors[device.id] = uniqueStatus;
+						updated = true;
+					}
+				}
+				else if(deviceMode == "group")
+				{
+					uniqueStatus = ((device.on) ? "1" : "0") + device.brightness + device.hue + device.saturation + device.colorTemp + ((device.anyOn) ? "1" : "0") + ((device.allOn) ? "1" : "0");
+					if(device.id in this.groups)
+					{
+						if(this.groups[device.id] != uniqueStatus)
+						{
+							this.groups[device.id] = uniqueStatus;
+							updated = true;
+						}
+					}
+					else
+					{
+						this.groups[device.id] = uniqueStatus;
+						updated = true;
+					}
+				}
+
+				// IS UPDATED?
+				if(updated == true)
+				{
+					updates.push(device);
+				}
+			}
+
+			// RETURN UPDATES
+			return updates;
+		}
+
+		// EMIT UPDATES
+		this.emitUpdates = function(device, updates)
+		{
+			for (let deviceUpdate of updates)
+			{
+				let eventName = device + deviceUpdate.id;
+				scope.events.emit(eventName, deviceUpdate);
+			}
+		}
+		
+		//
+		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		this.on('close', function()
+		{
+			scope.nodeActive = false;
+		});
 	}
+
 	RED.nodes.registerType("hue-bridge", HueBridge);
 
 	//

@@ -5,11 +5,11 @@ module.exports = function(RED)
 	function HueScene(config)
 	{
 		RED.nodes.createNode(this, config);
-		var bridge = RED.nodes.getNode(config.bridge);
-		let huejay = require('huejay');
-		var context = this.context();
-		var scope = this;
 
+		var scope = this;
+		let bridge = RED.nodes.getNode(config.bridge);
+		let huejay = require('huejay');
+		
 		//
 		// CHECK CONFIG
 		if(bridge == null)
@@ -19,23 +19,14 @@ module.exports = function(RED)
 		}
 
 		//
-		// INITIALIZE CLIENT
-		var sceneID = config.sceneid;
-		let client = new huejay.Client({
-			host: (bridge.config.bridge).toString(),
-			port: 80,
-			username: bridge.config.key
-		});
-
-		//
 		// ENABLE SCENE
 		this.on('input', function(msg)
 		{
-			let getScene;
-			if (sceneID) {
-				getScene = client.scenes.getById(sceneID);
+			var getScene;
+			if (config.sceneid) {
+				getScene = bridge.client.scenes.getById(config.sceneid);
 			} else if (typeof msg.payload === 'string') {
-				getScene = client.scenes.getAll()
+				getScene = bridge.client.scenes.getAll()
 					.then(scenes => {
 						let fallback;
 						for (const scene of scenes) {
@@ -53,7 +44,7 @@ module.exports = function(RED)
 			getScene
 			.then(scene => {
 				scope.status({fill: "blue", shape: "dot", text: "scene recalled"});
-				client.scenes.recall(scene);
+				bridge.client.scenes.recall(scene);
 				return scene;
 			})
 			.then(scene => {

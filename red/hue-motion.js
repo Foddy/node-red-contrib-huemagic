@@ -5,15 +5,9 @@ module.exports = function(RED)
 	function HueMotion(config)
 	{
 		RED.nodes.createNode(this, config);
-		var bridge = RED.nodes.getNode(config.bridge);
-		let huejay = require('huejay');
-		var moment = require('moment');
-		var context = this.context();
 		var scope = this;
-
-		//
-		// INTERVAL PATCH
-		var intervalPatch = 1000;
+		let bridge = RED.nodes.getNode(config.bridge);
+		let moment = require('moment');
 
 		//
 		// CHECK CONFIG
@@ -24,91 +18,69 @@ module.exports = function(RED)
 		}
 
 		//
-		// INITIALIZE CLIENT
-		var motionSensorID = parseInt(config.sensorid);
-		let client = new huejay.Client({
-			host: (bridge.config.bridge).toString(),
-			port: 80,
-			username: bridge.config.key
-		});
-
-		//
 		// UPDATE STATE
 		scope.status({fill: "grey", shape: "dot", text: "no motion"});
-		this.recheck = setInterval(function()
+
+		//
+		// ON UPDATE
+		bridge.events.on('sensor' + config.sensorid, function(sensor)
 		{
-			client.sensors.getById(motionSensorID)
-			.then(sensor => {
-				if(sensor.config.reachable == false)
+			if(sensor.config.reachable == false)
+			{
+				scope.status({fill: "red", shape: "ring", text: "not reachable"});
+			}
+			else if(sensor.config.on == true)
+			{
+				if(sensor.state.presence)
 				{
-					scope.status({fill: "red", shape: "ring", text: "not reachable"});
+					var message = {};
+					message.payload = {active: true, motion: true, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+
+					message.info = {};
+					message.info.id = sensor.id;
+					message.info.uniqueId = sensor.uniqueId;
+					message.info.name = sensor.name;
+					message.info.type = sensor.type;
+					message.info.softwareVersion = sensor.softwareVersion;
+					message.info.battery = sensor.config.battery;
+
+					message.info.model = {};
+					message.info.model.id = sensor.model.id;
+					message.info.model.manufacturer = sensor.model.manufacturer;
+					message.info.model.name = sensor.model.name;
+					message.info.model.type = sensor.model.type;
+
+					scope.send(message);
+					scope.status({fill: "green", shape: "dot", text: "motion detected"});
 				}
-				else if(sensor.config.on == true)
+				else
 				{
-					var presence = context.get('presence') || false;
-					if(presence != sensor.state.presence)
-					{
-						if(sensor.state.presence)
-						{
-							context.set('presence', true);
+					var message = {};
+					message.payload = {active: true, motion: false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
-							var message = {};
-							message.payload = {active: true, motion: true, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+					message.info = {};
+					message.info.id = sensor.id;
+					message.info.uniqueId = sensor.uniqueId;
+					message.info.name = sensor.name;
+					message.info.type = sensor.type;
+					message.info.softwareVersion = sensor.softwareVersion;
+					message.info.battery = sensor.config.battery;
 
-							message.info = {};
-							message.info.id = sensor.id;
-							message.info.uniqueId = sensor.uniqueId;
-							message.info.name = sensor.name;
-							message.info.type = sensor.type;
-							message.info.softwareVersion = sensor.softwareVersion;
-							message.info.battery = sensor.config.battery;
+					message.info.model = {};
+					message.info.model.id = sensor.model.id;
+					message.info.model.manufacturer = sensor.model.manufacturer;
+					message.info.model.name = sensor.model.name;
+					message.info.model.type = sensor.model.type;
 
-							message.info.model = {};
-							message.info.model.id = sensor.model.id;
-							message.info.model.manufacturer = sensor.model.manufacturer;
-							message.info.model.name = sensor.model.name;
-							message.info.model.type = sensor.model.type;
-
-							scope.send(message);
-
-							scope.status({fill: "green", shape: "dot", text: "motion detected"});
-						}
-						else
-						{
-							var message = {};
-							message.payload = {active: true, motion: false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
-
-							message.info = {};
-							message.info.id = sensor.id;
-							message.info.uniqueId = sensor.uniqueId;
-							message.info.name = sensor.name;
-							message.info.type = sensor.type;
-							message.info.softwareVersion = sensor.softwareVersion;
-							message.info.battery = sensor.config.battery;
-
-							message.info.model = {};
-							message.info.model.id = sensor.model.id;
-							message.info.model.manufacturer = sensor.model.manufacturer;
-							message.info.model.name = sensor.model.name;
-							message.info.model.type = sensor.model.type;
-
-							scope.send(message);
-
-							context.set('presence', false);
-							scope.status({fill: "grey", shape: "dot", text: "activated"});
-						}
-					}
+					scope.send(message);
+					scope.status({fill: "grey", shape: "dot", text: "activated"});
 				}
-				else if(sensor.config.on == false)
-				{
-					scope.status({fill: "red", shape: "ring", text: "deactivated"});
-				}
-			})
-			.catch(error => {
-				scope.error(error);
-				scope.status({fill: "red", shape: "ring", text: "connection error"});
-			});
-		}, parseInt(bridge.config.interval) + intervalPatch);
+			}
+			else if(sensor.config.on == false)
+			{
+				scope.status({fill: "red", shape: "ring", text: "deactivated"});
+			}
+		});
 
 
 		//
@@ -117,10 +89,10 @@ module.exports = function(RED)
 		{
 			if(msg.payload == true || msg.payload == false)
 			{
-				client.sensors.getById(motionSensorID)
+				bridge.client.sensors.getById(config.sensorid)
 				.then(sensor => {
 					sensor.config.on = msg.payload;
-					return client.sensors.save(sensor);
+					return bridge.client.sensors.save(sensor);
 				})
 				.then(sensor => {
 					var message = {};
@@ -161,7 +133,7 @@ module.exports = function(RED)
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL
 		this.on('close', function()
 		{
-			clearInterval(scope.recheck);
+			bridge.events.removeAllListeners('sensor' + config.sensorid);
 		});
 	}
 

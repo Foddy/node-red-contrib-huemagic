@@ -5,20 +5,16 @@ module.exports = function(RED)
 	function HueGroup(config)
 	{
 		RED.nodes.createNode(this, config);
-		var bridge = RED.nodes.getNode(config.bridge);
-		let huejay = require('huejay');
-		var moment = require('moment');
+
+		var scope = this;
+		
+		let bridge = RED.nodes.getNode(config.bridge);
+		let moment = require('moment');
 		let rgb = require('../utils/rgb');
 		let rgbHex = require('rgb-hex');
 		let hexRGB = require('hex-rgb');
-		var colornames = require("colornames");
-		var colornamer = require('color-namer');
-		var context = this.context();
-		var scope = this;
-
-		//
-		// INTERVAL PATCH
-		var intervalPatch = 3000;
+		let colornames = require("colornames");
+		let colornamer = require('color-namer');
 
 		//
 		// CHECK CONFIG
@@ -29,98 +25,73 @@ module.exports = function(RED)
 		}
 
 		//
-		// INITIALIZE CLIENT
-		var groupID = (config.groupid) ? parseInt(config.groupid) : false;
-		let client = new huejay.Client({
-			host: (bridge.config.bridge).toString(),
-			port: 80,
-			username: bridge.config.key
-		});
-
-		//
 		// UPDATE STATE
 		scope.status({fill: "grey", shape: "dot", text: "initializing…"});
 
-		if(groupID != false)
+		if(config.groupid)
 		{
-			this.recheck = setInterval(function()
+			bridge.events.on('group' + config.groupid, function(group)
 			{
-				client.groups.getById(groupID)
-				.then(group => {
-					var state = context.get('gstatus') || false;
-					var uniqueStatus = ((group.on) ? "1" : "0") + group.brightness + group.hue + group.saturation + group.colorTemp + ((group.anyOn) ? "1" : "0") + ((group.allOn) ? "1" : "0");
-					var brightnessPercent = 0;
+				var brightnessPercent = Math.round((100/254)*group.brightness);
 
-					if(state != uniqueStatus)
+				if(group.allOn)
+				{
+					scope.status({fill: "yellow", shape: "dot", text: "all lights on ("+ brightnessPercent +"%)"});
+				}
+				else if(group.anyOn)
+				{
+					scope.status({fill: "yellow", shape: "ring", text: "some lights on ("+ brightnessPercent +"%)"});
+				}
+				else if(group.on)
+				{
+					scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+				}
+				else
+				{
+					scope.status({fill: "grey", shape: "dot", text: "all lights off"});
+				}
+
+				// SEND STATUS
+				var message = {};
+				message.payload = {};
+				message.payload.on = group.on;
+				message.payload.allOn = group.allOn;
+				message.payload.anyOn = group.anyOn;
+				message.payload.brightness = brightnessPercent;
+
+				message.info = {};
+				message.info.id = group.id;
+				message.info.lightIds = group.lightIds.join(', ');
+				message.info.name = group.name;
+				message.info.type = group.type;
+
+				if(group.modelId !== undefined)
+				{
+					message.info.model = {};
+					message.info.model.id = group.model.id;
+					message.info.model.uniqueId = group.uniqueId;
+					message.info.model.manufacturer = group.model.manufacturer;
+					message.info.model.name = group.model.name;
+					message.info.model.type = group.model.type;
+				}
+
+				if(group.xy)
+				{
+					var rgbColor = rgb.convertXYtoRGB(group.xy[0], group.xy[1], group.brightness);
+
+					message.payload.rgb = rgbColor;
+					message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
+
+					if(config.colornamer == true)
 					{
-						context.set('gstatus', uniqueStatus);
-						brightnessPercent = Math.round((100/254)*group.brightness);
-
-						if(group.allOn)
-						{
-							scope.status({fill: "yellow", shape: "dot", text: "all lights on ("+ brightnessPercent +"%)"});
-						}
-						else if(group.anyOn)
-						{
-							scope.status({fill: "yellow", shape: "ring", text: "some lights on ("+ brightnessPercent +"%)"});
-						}
-						else if(group.on)
-						{
-							scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
-						}
-						else
-						{
-							scope.status({fill: "grey", shape: "dot", text: "all lights off"});
-						}
-
-						// SEND STATUS
-						var message = {};
-						message.payload = {};
-						message.payload.on = group.on;
-						message.payload.allOn = group.allOn;
-						message.payload.anyOn = group.anyOn;
-						message.payload.brightness = brightnessPercent;
-
-						message.info = {};
-						message.info.id = group.id;
-						message.info.lightIds = group.lightIds.join(', ');
-						message.info.name = group.name;
-						message.info.type = group.type;
-
-						if(group.modelId !== undefined)
-						{
-							message.info.model = {};
-							message.info.model.id = group.model.id;
-							message.info.model.uniqueId = group.uniqueId;
-							message.info.model.manufacturer = group.model.manufacturer;
-							message.info.model.name = group.model.name;
-							message.info.model.type = group.model.type;
-						}
-
-						if(group.xy)
-						{
-							var rgbColor = rgb.convertXYtoRGB(group.xy[0], group.xy[1], group.brightness);
-
-							message.payload.rgb = rgbColor;
-							message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
-
-							if(config.colornamer == true)
-							{
-								var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-								message.payload.color = cNamesArray.basic[0]["name"];
-							}
-						}
-
-						message.payload.updated = moment().format();
-
-						scope.send(message);
+						var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
+						message.payload.color = cNamesArray.basic[0]["name"];
 					}
-				})
-				.catch(error => {
-					scope.error(error);
-					scope.status({fill: "red", shape: "ring", text: "connection error"});
-				});
-			}, parseInt(bridge.config.interval) + intervalPatch);
+				}
+
+				message.payload.updated = moment().format();
+				scope.send(message);
+			});
 		}
 		else
 		{
@@ -133,7 +104,7 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var context = this.context();
-			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : groupID;
+			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
 
 			// CHECK IF GROUP ID IS SET
 			if(tempGroupID == false)
@@ -145,10 +116,10 @@ module.exports = function(RED)
 			// SIMPLE TURN ON / OFF GROUP
 			if(msg.payload == true || msg.payload == false)
 			{
-				client.groups.getById(tempGroupID)
+				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
 					group.on = msg.payload;
-					return client.groups.save(group);
+					return bridge.client.groups.save(group);
 				})
 				.then(group => {
 					scope.sendGroupStatus(group);
@@ -162,7 +133,7 @@ module.exports = function(RED)
 			// ALERT EFFECT
 			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
-				client.groups.getById(tempGroupID)
+				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
 					context.set('groupPreviousState', [group.on ? true : false, group.brightness, group.xy ? group.xy : false]);
 
@@ -196,12 +167,12 @@ module.exports = function(RED)
 					group.on = true;
 					group.brightness = 254;
 					group.transitionTime = 0;
-					return client.groups.save(group);
+					return bridge.client.groups.save(group);
 				})
 				.then(group => {
 					// ACTIVATE ALERT
 					group.alert = 'lselect';
-					return client.groups.save(group);
+					return bridge.client.groups.save(group);
 				})
 				.then(group => {
 					// TURN OFF ALERT
@@ -219,7 +190,7 @@ module.exports = function(RED)
 							group.xy = groupPreviousState[2];
 						}
 
-						client.groups.save(group);
+						bridge.client.groups.save(group);
 					}, alertSeconds * 1000);
 				})
 				.catch(error => {
@@ -230,7 +201,7 @@ module.exports = function(RED)
 			// EXTENDED TURN ON / OFF GROUP
 			else
 			{
-				client.groups.getById(tempGroupID)
+				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
 
                     // SET GROUP STATE
@@ -327,11 +298,11 @@ module.exports = function(RED)
 						// DISABLE AFTER
 						setTimeout(function() {
 							group.effect = 'none';
-							client.groups.save(group)
+							bridge.client.groups.save(group)
 						}, parseInt(msg.payload.colorloop)*1000);
 					}
 
-					return client.groups.save(group);
+					return bridge.client.groups.save(group);
 				})
 				.then(group => {
 					// TRANSITION TIME? WAIT…
@@ -359,8 +330,6 @@ module.exports = function(RED)
 		this.sendGroupStatus = function(group)
 		{
 			var scope = this;
-
-			var state = scope.context().get('gstatus') || false;
 			var uniqueStatus = ((group.on) ? "1" : "0") + group.brightness + group.hue + group.saturation + group.colorTemp + ((group.anyOn) ? "1" : "0") + ((group.allOn) ? "1" : "0");
 			var brightnessPercent = Math.round((100/254)*group.brightness);
 
@@ -426,16 +395,14 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-
 			scope.send(message);
-			scope.context().set('gstatus', uniqueStatus);
 		}
 
 		//
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL
 		this.on('close', function()
 		{
-			clearInterval(scope.recheck);
+			bridge.events.removeAllListeners('group' + config.groupid);
 		});
 	}
 

@@ -5,16 +5,15 @@ module.exports = function(RED)
 	function HueTemperature(config)
 	{
 		RED.nodes.createNode(this, config);
-		var bridge = RED.nodes.getNode(config.bridge);
-		let huejay = require('huejay');
-		var moment = require('moment');
-		var context = this.context();
+
 		var scope = this;
+		let bridge = RED.nodes.getNode(config.bridge);
+		let moment = require('moment');
 
 		//
-		// INTERVAL PATCH
-		var intervalPatch = 5000;
-
+		// MEMORY
+		this.temperature = -1000;
+		
 		//
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
@@ -24,67 +23,50 @@ module.exports = function(RED)
 		}
 
 		//
-		// INITIALIZE CLIENT
-		var temperatureSensorID = parseInt(config.sensorid);
-		let client = new huejay.Client({
-			host: (bridge.config.bridge).toString(),
-			port: 80,
-			username: bridge.config.key
-		});
-
-		//
 		// UPDATE STATE
 		scope.status({fill: "grey", shape: "dot", text: "initializing…"});
-		this.recheck = setInterval(function()
+
+		//
+		// ON UPDATE
+		bridge.events.on('sensor' + config.sensorid, function(sensor)
 		{
-			client.sensors.getById(temperatureSensorID)
-			.then(sensor => {
-				var temperature = context.get('temperature') || false;
+			if(sensor.config.reachable == false)
+			{
+				scope.status({fill: "red", shape: "ring", text: "not reachable"});
+			}
+			else if(scope.temperature != sensor.state.temperature)
+			{
+				scope.temperature = sensor.state.temperature;
+				var celsius = Math.round(sensor.state.temperature * 100) / 100;
+				var fahrenheit = Math.round(((celsius * 1.8)+32) * 100) / 100;
 
-				if(sensor.config.reachable == false)
-				{
-					scope.status({fill: "red", shape: "ring", text: "not reachable"});
-				}
-				else if(temperature != sensor.state.temperature)
-				{
-					context.set('temperature', sensor.state.temperature);
+				var message = {};
+				message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
-					var celsius = Math.round(sensor.state.temperature * 100) / 100;
-					var fahrenheit = Math.round(((celsius * 1.8)+32) * 100) / 100;
+				message.info = {};
+				message.info.id = sensor.id;
+				message.info.uniqueId = sensor.uniqueId;
+				message.info.name = sensor.name;
+				message.info.type = sensor.type;
+				message.info.softwareVersion = sensor.softwareVersion;
+				message.info.battery = sensor.config.battery;
 
-					var message = {};
-					message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+				message.info.model = {};
+				message.info.model.id = sensor.model.id;
+				message.info.model.manufacturer = sensor.model.manufacturer;
+				message.info.model.name = sensor.model.name;
+				message.info.model.type = sensor.model.type;
 
-					message.info = {};
-					message.info.id = sensor.id;
-					message.info.uniqueId = sensor.uniqueId;
-					message.info.name = sensor.name;
-					message.info.type = sensor.type;
-					message.info.softwareVersion = sensor.softwareVersion;
-					message.info.battery = sensor.config.battery;
-
-					message.info.model = {};
-					message.info.model.id = sensor.model.id;
-					message.info.model.manufacturer = sensor.model.manufacturer;
-					message.info.model.name = sensor.model.name;
-					message.info.model.type = sensor.model.type;
-
-					scope.send(message);
-
-					scope.status({fill: "yellow", shape: "dot", text: celsius+" °C / "+fahrenheit+" °F"});
-				}
-			})
-			.catch(error => {
-				scope.error(error);
-				scope.status({fill: "red", shape: "ring", text: "connection error"});
-			});
-		}, parseInt(bridge.config.interval) + intervalPatch);
+				scope.send(message);
+				scope.status({fill: "yellow", shape: "dot", text: celsius+" °C / "+fahrenheit+" °F"});
+			}
+		});
 
 		//
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL
 		this.on('close', function()
 		{
-			clearInterval(scope.recheck);
+			bridge.events.removeAllListeners('sensor' + config.sensorid);
 		});
 	}
 

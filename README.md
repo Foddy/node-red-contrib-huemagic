@@ -27,7 +27,7 @@ _Please make sure, that you deactivate / remove other Philips Hue related NodeRE
 
 ### Available Nodes
 
-- [Hue Bridge](#hue-bridges)
+- [Hue Bridges](#hue-bridges)
 - [Hue Lights](#hue-lights)
 - [Hue Groups](#hue-groups)
 - [Hue Scenes](#hue-scenes)

@@ -38,7 +38,7 @@ _Please make sure, that you deactivate / remove other Philips Hue related NodeRE
 - [Hue Lux Sensors](#hue-lux-sensor)
 
 
-## Hue Bridge
+## Hue Bridges
 The Hue Bridge node keeps the Hue Bridge firmware and connected devices up-to-date and provides more information and setup options for the bridge.
 
 ![Hue Bridge Example](https://d3vv6lp55qjaqc.cloudfront.net/items/2l270c161N2A1C2U141n/hue-bridge.png)

@@ -9,8 +9,14 @@ boolean<script type="text/x-red" data-template-name="hue-motion">
     </div>
     <div class="form-row">
         <label for="node-input-sensorid"><i class="fa fa-eye"></i> Sensor</label>
-        <input type="text" id="node-input-sensorid" placeholder="1" style="width: 60%;"/>
-        <a id="node-config-input-scan-sensors" class="editor-button"><i class="fa fa-search"></i></a>
+        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+            <div style="position: absolute; left: 0px; right: 40px;">
+                <input type="text" id="node-input-sensorid" placeholder="1" style="width: 100%"/>
+            </div>
+            <a id="node-config-input-scan-sensors" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
     </div>
 </script>
 
@@ -95,14 +101,14 @@ boolean<script type="text/x-red" data-template-name="hue-motion">
             function manualMotionSensorID()
             {
                 var current = $('#node-input-sensorid').val();
-                $('#node-input-sensorid').replaceWith('<input type="text" id="node-input-sensorid" style="width: 60%;"/>');
+                $('#node-input-sensorid').replaceWith('<input type="text" id="node-input-sensorid" style="width: 100%"/>');
                 $('#node-input-sensorid').val(current);
             }
 
             function searchAndSelectMotionSensor()
             {
                 var current = $('#node-input-sensorid').val();
-                $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 60%;"></select>');
+                $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 100%"></select>');
                 $('#node-input-sensorid').append('<option selected="selected" value="null">searching motion sensors…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());

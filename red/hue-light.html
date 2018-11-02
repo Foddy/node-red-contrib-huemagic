@@ -9,8 +9,14 @@
     </div>
     <div class="form-row">
         <label for="node-input-lightid"><i class="fa fa-lightbulb-o"></i> Light</label>
-        <input type="text" id="node-input-lightid" placeholder="1" style="width: 60%;"/>
-        <a id="node-config-input-scan-lights" class="editor-button"><i class="fa fa-search"></i></a>
+        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+            <div style="position: absolute; left: 0px; right: 40px;">
+                <input type="text" id="node-input-lightid" placeholder="1" style="width: 100%"/>
+            </div>
+            <a id="node-config-input-scan-lights" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-colornamer"><i class="fa fa-check-circle"></i> <span>Colornamer</span></label>
@@ -165,14 +171,14 @@
             function manualLightID()
             {
                 var current = $('#node-input-lightid').val();
-                $('#node-input-lightid').replaceWith('<input type="text" id="node-input-lightid" style="width: 60%;"/>');
+                $('#node-input-lightid').replaceWith('<input type="text" id="node-input-lightid" style="width: 100%"/>');
                 $('#node-input-lightid').val(current);
             }
 
             function searchAndSelectLightID()
             {
                 var current = $('#node-input-lightid').val();
-                $('#node-input-lightid').replaceWith('<select id="node-input-lightid" style="width: 60%;"></select>');
+                $('#node-input-lightid').replaceWith('<select id="node-input-lightid" style="width: 100%"></select>');
                 $('#node-input-lightid').append('<option selected="selected" value="null">searching lights…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());

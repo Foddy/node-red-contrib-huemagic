@@ -2,157 +2,227 @@ module.exports = function(RED)
 {
 	"use strict";
 
-	function HueBridge(config)
+	function HueBridgeNode(config)
 	{
+		RED.nodes.createNode(this, config);
+
 		var scope = this;
-		var events = require('events');
-		let huejay = require('huejay');
-		
-		// INTERVAL AND EVENT EMITTER
+		let bridge = RED.nodes.getNode(config.bridge);
+		let moment = require('moment');
+
+		//
+		// INTERVAL
 		this.nodeActive = true;
-		this.lights = [];
-		this.sensors = [];
-		this.groups = [];
-		this.events = new events.EventEmitter();
 
-		// CREATE NODE
-		RED.nodes.createNode(scope, config);
-
-		// DEFINE CLIENT
-		this.client = new huejay.Client({
-			host: (config.bridge).toString(),
-			port: config.port || 80,
-			username: config.key
-		});
-
-		// RECHECK DEVICES
-		this.recheck = function()
+		//
+		// CHECK CONFIG
+		if(bridge == null)
 		{
-			Promise.all([
-				scope.client.lights.getAll(),
-				scope.client.sensors.getAll(),
-				scope.client.groups.getAll()
-			])
-			.then(results => {
-				let lights = results[0]; // .forEach(function(l){ delete l.updated });
-				let sensors = results[1]; // .forEach(function(s){ delete s.updated });
-				let groups = results[2];
+			this.status({fill: "red", shape: "ring", text: "not configured"});
+			return false;
+		}
 
-				// GET UPDATES
-				let lightUpdates = scope.getUpdates("light", lights);
-				let sensorUpdates = scope.getUpdates("sensor", sensors);
-				let groupUpdates = scope.getUpdates("group", groups);
+		//
+		// UPDATE STATE
+		this.status({fill: "grey", shape: "dot", text: "connecting…"});
 
-				// RETURN UPDATES
-				return [lightUpdates, sensorUpdates, groupUpdates];
-			})
-			.then(updates => {
-				// EMIT UPDATES
-				scope.emitUpdates("light", updates[0]);
-				scope.emitUpdates("sensor", updates[1]);
-				scope.emitUpdates("group", updates[2]);
+		//
+		// GET INFORMATION
+		this.getBridgeInformation = function()
+		{
+			bridge.client.bridge.get()
+			.then(bridgeInformation => {
+				var message = {};
+				message.payload = {};
+				message.payload.id = bridgeInformation.id;
+				message.payload.name = bridgeInformation.name;
+				message.payload.factoryNew = bridgeInformation.factoryNew;
+				message.payload.replacesBridgeId = bridgeInformation.replacesBridgeId;
+				message.payload.dataStoreVersion = bridgeInformation.dataStoreVersion;
+				message.payload.starterKitId = bridgeInformation.starterKitId;
+				message.payload.softwareVersion = bridgeInformation.softwareVersion;
+				message.payload.apiVersion = bridgeInformation.apiVersion;
+				message.payload.zigbeeChannel = bridgeInformation.zigbeeChannel;
+				message.payload.macAddress = bridgeInformation.macAddress;
+				message.payload.ipAddress = bridgeInformation.ipAddress;
+				message.payload.dhcpEnabled = bridgeInformation.dhcpEnabled;
+				message.payload.netmask = bridgeInformation.netmask;
+				message.payload.gateway = bridgeInformation.gateway;
+				message.payload.proxyAddress = bridgeInformation.proxyAddress;
+				message.payload.proxyPort = bridgeInformation.proxyPort;
+				message.payload.utcTime = bridgeInformation.utcTime;
+				message.payload.timeZone = bridgeInformation.timeZone;
+				message.payload.localTime = bridgeInformation.localTime;
+				message.payload.portalServicesEnabled = bridgeInformation.portalServicesEnabled;
+				message.payload.portalConnected = bridgeInformation.portalConnected;
+				message.payload.linkButtonEnabled = bridgeInformation.linkButtonEnabled;
+				message.payload.touchlinkEnabled = bridgeInformation.touchlinkEnabled;
+				message.payload.autoUpdatesEnabled = config.autoupdates;
 
-				// RECHECK
-				if(scope.nodeActive == true) { setTimeout(function(){ scope.recheck(); }, config.interval); }
-				return true;
+				message.payload.model = {};
+				message.payload.model.id = bridgeInformation.model.id;
+				message.payload.model.manufacturer = bridgeInformation.model.manufacturer;
+				message.payload.model.name = bridgeInformation.model.name;
+
+				scope.send(message);
+				scope.status({fill: "grey", shape: "dot", text: "connected" });
 			})
 			.catch(error => {
-				scope.debug(error.stack);
-
+				scope.error(error);
 				if(scope.nodeActive == true)
 				{
-					setTimeout(function(){ scope.recheck(); }, 500);
+					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 				}
 			});
 		}
 
-		// START FIRST CHECK
-		this.recheck();
+		//
+		// INITIAL START
+		this.getBridgeInformation();
 
-		// DETERMINE UPDATES
-		this.getUpdates = function(deviceMode, devices)
+
+		//
+		// AUTO UPDATES?
+		this.autoUpdateHueBridge = function()
 		{
-			var updates = [];			
-			for (var i = devices.length - 1; i >= 0; i--)
+			if(config.autoupdates == true)
 			{
-				let device = devices[i];
-				var updated = false;
-				var uniqueStatus = "";
-
-				if(deviceMode == "light")
-				{
-					uniqueStatus = ((device.on) ? "1" : "0") + device.brightness + device.hue + device.saturation + device.colorTemp + device.reachable;
-
-					if(device.id in this.lights)
+				bridge.client.softwareUpdate.check()
+				.then(() => {
+					console.log("Checking for Hue Bridge updates…");
+					return bridge.client.softwareUpdate.get();
+				})
+				.then(softwareUpdate => {
+					console.log(softwareUpdate);
+					return bridge.client.softwareUpdate.install();
+				})
+				.then(() => {
+					// UPDATING // CHECK STATUS IN 5 MINUTES
+					if(scope.nodeActive == true)
 					{
-						if(this.lights[device.id] != uniqueStatus)
-						{
-							this.lights[device.id] = uniqueStatus;
-							updated = true;
-						}
+						console.log("Updating Hue Bridge Firmware and Lights…");
+						setTimeout(function(){ scope.getBridgeInformation(); }, 60000 * 5);
 					}
-					else
+				})
+				.catch(error => {
+					// NO UPDATES AVAILABLE // TRY AGAIN IN 1H
+					if(scope.nodeActive == true)
 					{
-						this.lights[device.id] = uniqueStatus;
-						updated = true;
+						console.log("No Hue Bridge updates available. Checking again in an hour…");
+						setTimeout(function(){ scope.autoUpdateHueBridge(); }, 60000 * 60);
 					}
-				}
-				else if(deviceMode == "sensor")
-				{
-					uniqueStatus = device.state.lastUpdated;
-					if(device.id in this.sensors)
-					{
-						if(this.sensors[device.id] != uniqueStatus)
-						{
-							this.sensors[device.id] = uniqueStatus;
-							updated = true;
-						}
-					}
-					else
-					{
-						this.sensors[device.id] = uniqueStatus;
-						updated = true;
-					}
-				}
-				else if(deviceMode == "group")
-				{
-					uniqueStatus = ((device.on) ? "1" : "0") + device.brightness + device.hue + device.saturation + device.colorTemp + ((device.anyOn) ? "1" : "0") + ((device.allOn) ? "1" : "0");
-					if(device.id in this.groups)
-					{
-						if(this.groups[device.id] != uniqueStatus)
-						{
-							this.groups[device.id] = uniqueStatus;
-							updated = true;
-						}
-					}
-					else
-					{
-						this.groups[device.id] = uniqueStatus;
-						updated = true;
-					}
-				}
-
-				// IS UPDATED?
-				if(updated == true)
-				{
-					updates.push(device);
-				}
-			}
-
-			// RETURN UPDATES
-			return updates;
-		}
-
-		// EMIT UPDATES
-		this.emitUpdates = function(device, updates)
-		{
-			for (let deviceUpdate of updates)
-			{
-				let eventName = device + deviceUpdate.id;
-				scope.events.emit(eventName, deviceUpdate);
+				});
 			}
 		}
-		
+
+		this.autoUpdateHueBridge();
+
+		//
+		// COMMANDS
+		this.on('input', function(msg)
+		{
+			var commandSent = false;
+
+			// PRESSING LINK BUTTON
+			if(typeof msg.payload.pressButton != 'undefined')
+			{
+				scope.status({fill: "grey", shape: "dot", text: "pressing button…" });
+				bridge.client.bridge.linkButton()
+				.then(() => {
+					scope.status({fill: "blue", shape: "ring", text: "button pressed" });
+					setTimeout(function(){ scope.getBridgeInformation(); }, 5000);
+				})
+				.catch(error => {
+					scope.error(error);
+					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+				});
+
+				// COMMAND SENT
+				commandSent = true;
+			}
+			
+			// STARTING TOUCHLINK
+			if(typeof msg.payload.touchLink != 'undefined')
+			{
+				scope.status({fill: "grey", shape: "dot", text: "starting TouchLink…" });
+				bridge.client.bridge.touchlink()
+				.then(() => {
+					scope.status({fill: "blue", shape: "ring", text: "TouchLink started…" });
+					setTimeout(function(){ scope.getBridgeInformation(); }, 30000);
+				})
+				.catch(error => {
+					scope.error(error);
+					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+				});
+
+				// COMMAND SENT
+				commandSent = true;
+			}
+
+			// STARTING TOUCHLINK
+			if(typeof msg.payload.settings != 'undefined')
+			{
+				scope.status({fill: "grey", shape: "dot", text: "updating settings…" });
+				bridge.client.bridge.get()
+				.then(bridgeConfig => {
+					if(typeof msg.payload.settings.name != 'undefined')
+					{
+						bridgeConfig.name = msg.payload.settings.name;
+					}
+					if(typeof msg.payload.settings.zigbeeChannel != 'undefined')
+					{
+						bridgeConfig.zigbeeChannel = msg.payload.settings.zigbeeChannel;
+					}
+					if(typeof msg.payload.settings.ipAddress != 'undefined')
+					{
+						bridgeConfig.ipAddress = msg.payload.settings.ipAddress;
+					}
+					if(typeof msg.payload.settings.dhcpEnabled != 'undefined')
+					{
+						bridgeConfig.dhcpEnabled = msg.payload.settings.dhcpEnabled;
+					}
+					if(typeof msg.payload.settings.netmask != 'undefined')
+					{
+						bridgeConfig.netmask = msg.payload.settings.netmask;
+					}
+					if(typeof msg.payload.settings.gateway != 'undefined')
+					{
+						bridgeConfig.gateway = msg.payload.settings.gateway;
+					}
+					if(typeof msg.payload.settings.proxyPort != 'undefined')
+					{
+						bridgeConfig.proxyPort = msg.payload.settings.proxyPort;
+					}
+					if(typeof msg.payload.settings.proxyAddress != 'undefined')
+					{
+						bridgeConfig.proxyAddress = msg.payload.settings.proxyAddress;
+					}
+					if(typeof msg.payload.settings.timeZone != 'undefined')
+					{
+						bridgeConfig.timeZone = msg.payload.settings.timeZone;
+					}
+					return bridge.client.bridge.save(bridgeConfig);
+				})
+				.then(bridgeInformation => {
+					scope.status({fill: "green", shape: "dot", text: "config updated" });
+					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+				})
+				.catch(error => {
+					scope.error(error);
+					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+				});
+
+				// COMMAND SENT
+				commandSent = true;
+			}
+			
+			// GET INFORMATION // FALLBACK
+			if(commandSent == false)
+			{
+				scope.getBridgeInformation();
+			}
+		});
+
 		//
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL
 		this.on('close', function()
@@ -161,216 +231,5 @@ module.exports = function(RED)
 		});
 	}
 
-	RED.nodes.registerType("hue-bridge", HueBridge);
-
-	//
-	// DISCOVER HUE BRIDGES ON LOCAL NETWORK
-	RED.httpAdmin.get('/hue/bridges', function(req, res, next)
-	{
-		let huejay = require('huejay');
-
-		huejay.discover()
-		.then(bridges => {
-			res.end(JSON.stringify(bridges));
-		})
-		.catch(error => {
-			res.send(500).send(error.message);
-		});
-	});
-
-	//
-	// GET BRIDGE NAME
-	RED.httpAdmin.get('/hue/name', function(req, res, next)
-	{
-		if(!req.query.ip)
-		{
-			return res.status(500).send("Missing Hue Bridge IP…");
-	    }
-	    else
-	    {
-		let huejay = require('huejay');
-
-		var bridgeIP = (req.query.ip).toString();
-		let client = new huejay.Client({host: bridgeIP, username: 'default'});
-
-		client.bridge.get()
-			.then(bridge => {
-				res.end(bridge.name);
-			})
-			.catch(error => {
-			res.send(500).send(error.message);
-		});
-	    }
-	});
-
-	//
-	// REGISTER A HUE BRIDGE
-	RED.httpAdmin.get('/hue/register', function(req, rescope, next)
-	{
-		if(!req.query.ip)
-		{
-			return rescope.status(500).send("Missing Hue Bridge IP…");
-		}
-		else
-		{
-			var request = require('request');
-			let bridgeIP = (req.query.ip).toString();
-
-			request.post('http://'+bridgeIP+'/api', {body: JSON.stringify({"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}) }, function(err,httpResponse,body) {
-			  if(err)
-			  {
-				rescope.end("error");
-			  }
-			  else
-			  {
-			    var bridge = JSON.parse(body);
-
-			    if(bridge[0].error)
-			    {
-				 rescope.end("error");
-			    }
-			    else
-			    {
-				 rescope.end(JSON.stringify(bridge));
-			    }
-			  }
-			});
-		}
-	});
-
-	//
-	// DISCOVER SENSORS
-	RED.httpAdmin.get('/hue/sensors', function(req, res, next)
-	{
-		let huejay = require('huejay');
-		var bridge = (req.query.bridge).toString();
-		var username = req.query.key;
-		var type = req.query.type;
-
-		let client = new huejay.Client({
-			host: bridge,
-			username: username
-		});
-
-		client.sensors.getAll()
-		.then(sensors => {
-			var motionSensors = [];
-
-			for (let sensor of sensors)
-			{
-				if(sensor.type == type)
-				{
-					var motionSensor = {};
-					motionSensor.id = sensor.id;
-					motionSensor.name = sensor.name;
-
-					motionSensors.push(motionSensor);
-				}
-			}
-
-			res.end(JSON.stringify(motionSensors));
-		})
-		.catch(error => {
-			res.send(500).send(error.stack);
-		});
-	});
-
-	//
-	// DISCOVER LIGHTS
-	RED.httpAdmin.get('/hue/lights', function(req, res, next)
-	{
-		let huejay = require('huejay');
-		var bridge = (req.query.bridge).toString();
-		var username = req.query.key;
-
-		let client = new huejay.Client({
-			host: bridge,
-			username: username
-		});
-
-		client.lights.getAll()
-		.then(lights => {
-			var allLights = [];
-
-			for (let light of lights)
-			{
-				var oneLightBulb = {};
-				oneLightBulb.id = light.id;
-				oneLightBulb.name = light.name;
-
-				allLights.push(oneLightBulb);
-			}
-
-			res.end(JSON.stringify(allLights));
-		})
-		.catch(error => {
-			res.send(500).send(error.stack);
-		});
-	});
-
-	//
-	// DISCOVER GROUPS
-	RED.httpAdmin.get('/hue/groups', function(req, res, next)
-	{
-		let huejay = require('huejay');
-		var bridge = (req.query.bridge).toString();
-		var username = req.query.key;
-
-		let client = new huejay.Client({
-			host: bridge,
-			username: username
-		});
-
-		client.groups.getAll()
-		.then(groups => {
-			var allGroups = [];
-
-			for (let group of groups)
-			{
-				var oneGroup = {};
-				oneGroup.id = group.id;
-				oneGroup.name = group.name;
-
-				allGroups.push(oneGroup);
-			}
-
-			res.end(JSON.stringify(allGroups));
-		})
-		.catch(error => {
-			res.send(500).send(error.stack);
-		});
-	});
-
-	//
-	// DISCOVER SCENES
-	RED.httpAdmin.get('/hue/scenes', function(req, res, next)
-	{
-		let huejay = require('huejay');
-		var bridge = (req.query.bridge).toString();
-		var username = req.query.key;
-
-		let client = new huejay.Client({
-			host: bridge,
-			username: username
-		});
-
-		client.scenes.getAll()
-		.then(scenes => {
-			var allScenes = [];
-
-			for (let scene of scenes)
-			{
-				var oneScene = {};
-				oneScene.id = scene.id;
-				oneScene.name = scene.name;
-
-				allScenes.push(oneScene);
-			}
-
-			res.end(JSON.stringify(allScenes));
-		})
-		.catch(error => {
-			res.send(500).send(error.stack);
-		});
-	});
-};
+	RED.nodes.registerType("hue-bridge-node", HueBridgeNode);
+}

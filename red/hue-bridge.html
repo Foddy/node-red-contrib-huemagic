@@ -1,164 +1,172 @@
-<script type="text/x-red" data-template-name="hue-bridge">
-	<div class="form-row">
-		<label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
-		<input type="text" id="node-config-input-name">
-	</div>
-	<div class="form-row">
-			<label for="node-config-input-bridge"><i class="fa fa-server"></i> Bridge IP</label>
-			<input type="text" id="node-config-input-bridge" placeholder="192.168.0.100" style="width: 60%;"/>
-			<a id="node-config-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
-	</div>
-	<div class="form-row">
-			<label for="node-config-input-key"><i class="fa fa-key"></i> API Key</label>
-			<input type="text" id="node-config-input-key" style="width: 60%;"/>
-			<a id="node-config-input-register" class="editor-button"><i class="fa fa-user-circle-o"></i></a>
-	</div>
-	<div class="form-row">
-		<label for="node-config-input-interval"><i class="fa fa-clock-o"></i> Poll interval</label>
-		<input type="text" placeholder="3000" id="node-config-input-interval">
-	</div>
+<script type="text/x-red" data-template-name="hue-bridge-node">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Hue Bridge Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge">
+    </div>
+    <div class="form-row">
+        <label for="node-input-autoupdates"><i class="fa fa-refresh"></i> <span>Auto Updates</span></label>
+        <label for="node-input-autoupdates" style="width:70%">
+            <input type="checkbox" id="node-input-autoupdates" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Activate auto updates</span>
+        </label>
+    </div>
 </script>
 
-<script type="text/x-red" data-help-name="hue-bridge">
-	<p>Philips Hue Bridge configuration with the following parameters:</p>
+<script type="text/x-red" data-help-name="hue-bridge-node">
+    <p>Hue Bridge node keeps the Hue Bridge firmware and connected devices up-to-date and provides more information and setup options for the bridge.</p>
 
-	<h3>Name</h3>
-    <p>Type in the name of the Hue Bridge manually or keep the default device name</p>
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and choose if the selected bridge should automatically find and install firmware and other device updates.</p>
 
-    <h3>Bridge IP</h3>
-    <p>Type in the Hue Bridge IP address manually or press the button to retreive all locally available bridges (static IP configuration on the Hue Bridge recommended)</p>
+    <h3>Get settings / status</h3>
+    <p>Retrieves the current status / settings of the bridge by injecting any input value</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean (example)</span></dt>
+        <dd>Triggers an output of the current status / settings</dd>
+    </dl>
 
-    <h3>API Key</h3>
-    <p>Type in the Hue Bridge authorization key manually or press the button to retreive key from bridge</p>
+    <h3>Simulate link button press</h3>
+    <p>Use this command to simulate pressing the link button of the Hue Bridge. No need to physically press the button on your bridge for creating users and other actions. Pass the <b>pressButton</b> property to <b>msg.payload</b>.</p>
+    <dl class="message-properties">
+        <dt>pressButton<span class="property-type">boolean (example)</span></dt>
+        <dd>Simulates pressing the link button</dd>
+    </dl>
 
-    <h3>Poll interval</h3>
-    <p>Interval that is used to poll active nodes for changes (min 500ms / recommended between 1000ms and 5000ms)</p>
+    <h3>Enable TouchLink scan</h3>
+    <p>Use TouchLink to pair new devices or old devices after a bridge reset. This is commonly known in the community as "Lamp stealer". Pass the <b>touchLink</b> property to <b>msg.payload</b>.</p>
+    <dl class="message-properties">
+        <dt>touchLink<span class="property-type">boolean (example)</span></dt>
+        <dd>Pairs lights / devices</dd>
+    </dl>
+
+    <h3>Hue Bridge Settings</h3>
+    <p>Changes the Hue Bridge settings based on the passed in <b>msg.payload.settings</b> values of:</p>
+    <dl class="message-properties">
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name of the bridge</dd>
+
+        <dt>zigbeeChannel<span class="property-type">int</span></dt>
+        <dd>ZigBee channel (for communicating with lights)</dd>
+
+        <dt>ipAddress<span class="property-type">string</span></dt>
+        <dd>IP address (risky)</dd>
+
+        <dt>dhcpEnabled<span class="property-type">boolean</span></dt>
+        <dd>Whether or not DHCP is enabled</dd>
+
+        <dt>netmask<span class="property-type">string</span></dt>
+        <dd>Netmask (risky)</dd>
+
+        <dt>gateway<span class="property-type">string</span></dt>
+        <dd>Gateway (risky)</dd>
+
+        <dt>proxyAddress<span class="property-type">string</span></dt>
+        <dd>Proxy address</dd>
+
+        <dt>proxyPort<span class="property-type">string</span></dt>
+        <dd>Proxy port</dd>
+
+        <dt>timeZone<span class="property-type">string</span></dt>
+        <dd>Time zone</dd>
+    </dl>
+
+    <h3>Hue Bridge Events</h3>
+    <p>The event message that the bridge sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">string</span></dt>
+        <dd>Unique ID of the Hue Bridge</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name of the bridge</dd>
+
+        <dt>factoryNew<span class="property-type">boolean</span></dt>
+        <dd>Whether or not the bridge is factory new</dd>
+
+        <dt>replacesBridgeId<span class="property-type">string / null</span></dt>
+        <dd>Replaces bridge id (for migrating from old bridges)</dd>
+
+        <dt>dataStoreVersion<span class="property-type">string</span></dt>
+        <dd>Data store version</dd>
+
+        <dt>starterKitId<span class="property-type">string</span></dt>
+        <dd>Name of the starterkit created in the factory</dd>
+
+        <dt>softwareVersion<span class="property-type">string</span></dt>
+        <dd>Software version of the bridge</dd>
+
+        <dt>apiVersion<span class="property-type">string</span></dt>
+        <dd>API version of the bridge</dd>
+
+        <dt>zigbeeChannel<span class="property-type">int</span></dt>
+        <dd>ZigBee channel (for communicating with lights)</dd>
+
+        <dt>macAddress<span class="property-type">string</span></dt>
+        <dd>MAC address</dd>
+
+        <dt>ipAddress<span class="property-type">string</span></dt>
+        <dd>IP address</dd>
+
+        <dt>dhcpEnabled<span class="property-type">boolean</span></dt>
+        <dd>Whether or not DHCP is enabled</dd>
+
+        <dt>netmask<span class="property-type">string</span></dt>
+        <dd>Netmask</dd>
+
+        <dt>gateway<span class="property-type">string</span></dt>
+        <dd>Gateway</dd>
+
+        <dt>proxyAddress<span class="property-type">string</span></dt>
+        <dd>Proxy address</dd>
+
+        <dt>proxyPort<span class="property-type">string</span></dt>
+        <dd>Proxy port</dd>
+
+        <dt>utcTime<span class="property-type">string</span></dt>
+        <dd>UTC time of the bridge</dd>
+
+        <dt>timeZone<span class="property-type">string</span></dt>
+        <dd>Time zone</dd>
+
+        <dt>localTime<span class="property-type">string</span></dt>
+        <dd>Local time of the bridge</dd>
+
+        <dt>portalServicesEnabled<span class="property-type">boolean</span></dt>
+        <dd>Whether or not portal services are enabled</dd>
+
+        <dt>portalConnected<span class="property-type">boolean</span></dt>
+        <dd>Whether or not portal is connected</dd>
+
+        <dt>linkButtonEnabled<span class="property-type">boolean</span></dt>
+        <dd>Whether or not link button is enabled</dd>
+
+        <dt>touchlinkEnabled<span class="property-type">boolean</span></dt>
+        <dd>Whether or not TouchLink is enabled</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>The model object of the bridge includes model specific information like the model.id, model.manufacturer and model.name</dd>
+    </dl>
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType("hue-bridge", {
-		category: "config",
-		color: '#c7d8d8',
-		defaults: {
-			name: {value:"Hue Bridge", required: true},
-			bridge: {value:"", required: true},
-			key: {value:"", required: true},
-			interval: {
-				value: 3000,
-				required: true,
-				validate: function(v) {
-					return (/^[0-9]+/.test(v) && parseInt(v,10) >= 500);
-				}
-			}
-		},
-		paletteLabel: "Hue Bridge",
-		label: function() {
-			return this.name;
-		},
-		oneditprepare: function()
-		{
-			function manualBridgeIP()
-			{
-				var current = $('#node-config-input-bridge').val();
-				$('#node-config-input-bridge').replaceWith('<input type="text" id="node-config-input-bridge" style="width: 60%;"/>');
-				$('#node-config-input-bridge').val(current);
-			}
-
-			function searchAndSelectBridge()
-			{
-				var current = $('#node-config-input-bridge').val();
-				$('#node-config-input-bridge').replaceWith('<select id="node-config-input-bridge" style="width: 60%;"></select>');
-				$('#node-config-input-bridge').append('<option selected="selected" value="null">searching…</option>');
-
-				$.get('hue/bridges')
-				.done( function(data) {
-					var bridges = JSON.parse(data);
-
-					if(bridges.length <= 0)
-					{
-						RED.notify("No Hue Bridge found.", "error");
-					}
-
-					// RESET OPTIONS
-					$('#node-config-input-bridge').empty();
-
-					// SET BRIDGES AS OPTIONS
-					bridges.forEach(function(bridge)
-					{
-						$('#node-config-input-bridge').append('<option value="' + bridge.ip + '">' + bridge.ip + '</option>');
-					});
-
-					// SELECT CURRENT VALUE
-					$('#node-config-input-bridge').val(current);
-				})
-				.fail(function()
-				{
-					RED.notify("Something went wrong. Please retry.", "error");
-				});
-			}
-
-			$(document).on('change', '#node-config-input-bridge', function()
-			{
-				var currentBridgeIP = $('#node-config-input-bridge').val();
-				if(currentBridgeIP.length > 6)
-				{
-					$.get('hue/name', { ip: currentBridgeIP } )
-					.done( function(data)
-					{
-						$('#node-config-input-name').val(data);
-					})
-					.fail(function(err)
-					{
-						RED.notify("Sorry. Your selected Hue Bridge is invalid!", "error");
-					});
-				}
-			});
-
-			$('#node-config-input-scan').click(function()
-			{
-				if($('#node-config-input-bridge').prop("tagName") === "INPUT")
-				{
-					searchAndSelectBridge();
-				} else {
-					manualBridgeIP();
-				}
-			});
-
-			$('#node-config-input-register').click(function()
-			{
-				if(!$('#node-config-input-bridge').val())
-				{
-					RED.notify("Please select your Hue Bridge before trying to create a new user!", "error");
-				}
-				else
-				{
-					$('#node-config-input-key').val("");
-					$('#node-config-input-key').attr("placeholder", "waiting 20 seconds…");
-					RED.notify("Please press your Hue Bridge button within the next 20 seconds to create a new user!");
-
-					setTimeout(function()
-					{
-						$.get('hue/register', { ip: $('#node-config-input-bridge').val() } )
-						.done( function(data)
-						{
-							if(data == "error")
-							{
-								RED.notify("Please retry within 20 seconds…", "error");
-								$('#node-config-input-key').attr("placeholder", "");
-							}
-							else
-							{
-								var userdata = JSON.parse(data);
-								$('#node-config-input-key').val(userdata[0].success.username);
-								RED.notify("User created successfully!");
-							}
-						}).fail(function(err)
-						{
-							RED.notify(err.responseText, "error");
-						});
-					}, 20000);
-				}
-			});
-		}
-	});
+    RED.nodes.registerType('hue-bridge-node',{
+        category: 'HueMagic',
+        color: '#b7b7b7',
+        defaults: {
+            name: {value:""},
+            bridge: {type: "hue-bridge", required: true},
+            autoupdates: {value: true}
+        },
+        inputs: 1,
+        outputs: 1,
+        outputLabels: 'Bridge configuration',
+        align: 'right',
+        icon: "hue-bridge.png",
+        paletteLabel: "Hue Bridge",
+        label: function() {
+            return this.name || "Hue Bridge";
+        }
+    });
 </script>

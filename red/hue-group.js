@@ -89,6 +89,11 @@ module.exports = function(RED)
 					}
 				}
 
+				if(group.colorTemp)
+				{
+					message.payload.colorTemp = group.colorTemp;
+				}
+
 				message.payload.updated = moment().format();
 				scope.send(message);
 			});

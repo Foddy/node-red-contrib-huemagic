@@ -7,14 +7,15 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 
 		var scope = this;
-		
 		let bridge = RED.nodes.getNode(config.bridge);
+		let path = require('path');
 		let moment = require('moment');
 		let rgb = require('../utils/rgb');
 		let rgbHex = require('rgb-hex');
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
 		let colornamer = require('color-namer');
+		let getColors = require('get-image-colors');
 
 		//
 		// CHECK CONFIG

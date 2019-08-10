@@ -497,7 +497,7 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.0.0 (latest)
+### v2.0.1 (latest)
 * New "Hue Rule" node (check node docs)
 * New "fetch" command for the Hue Bridge node to get various information
 * New "toggle" and "image" command for Hue Light and Group nodes

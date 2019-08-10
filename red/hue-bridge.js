@@ -71,7 +71,7 @@ module.exports = function(RED)
 				scope.error(error);
 				if(scope.nodeActive == true)
 				{
-					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					setTimeout(function(){ scope.getBridgeInformation(); }, 3000);
 				}
 			});
 		}
@@ -159,7 +159,158 @@ module.exports = function(RED)
 				commandSent = true;
 			}
 
-			// STARTING TOUCHLINK
+			// GET DEVICES
+			if(typeof msg.payload.fetch != 'undefined')
+			{
+				if(msg.payload.fetch == "users")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching users…" });
+					bridge.client.users.getAll()
+					.then(users => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+
+						var message = {};
+						message.users = users;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "lights")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching lights…" });
+					bridge.client.lights.getAll()
+					.then(lights => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+
+						var message = {};
+						message.lights = lights;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "groups")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching groups…" });
+					bridge.client.groups.getAll()
+					.then(groups => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.groups = groups;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "sensors")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching sensors…" });
+					bridge.client.sensors.getAll()
+					.then(sensors => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.sensors = sensors;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "scenes")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching scenes…" });
+					bridge.client.scenes.getAll()
+					.then(scenes => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.scenes = scenes;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "rules")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching rules…" });
+					bridge.client.rules.getAll()
+					.then(rules => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.rules = rules;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "schedules")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching schedules…" });
+					bridge.client.schedules.getAll()
+					.then(schedules => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.schedules = schedules;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "resourceLinks")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching resource links…" });
+					bridge.client.resourceLinks.getAll()
+					.then(resourceLinks => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.resourceLinks = resourceLinks;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "timeZones")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "fetching timezones…" });
+					bridge.client.timeZones.getAll()
+					.then(timeZones => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						
+						var message = {};
+						message.timeZones = timeZones;
+						scope.send(message);
+					})
+					.catch(error => {
+						scope.error(error);
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+
+				commandSent = true;
+			}
+
+			// UPDATING SETTINGS
 			if(typeof msg.payload.settings != 'undefined')
 			{
 				scope.status({fill: "grey", shape: "dot", text: "updating settings…" });

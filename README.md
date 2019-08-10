@@ -1,15 +1,16 @@
-[![Hue Magic Logo](https://cloud.foddys.com/mRlI/HUEMAGIC-LOGO.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
+[![Hue Magic Logo](https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/dd9081c45c947d997bf4c03603f12d5c9b963a12/huemagic.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
 
 # HueMagic - Philips Hue nodes for Node-RED
 
 [![Travis](https://img.shields.io/travis/Foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/) [![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://david-dm.org/foddy/node-red-contrib-huemagic) [![npm](https://img.shields.io/npm/dt/node-red-contrib-huemagic.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic) [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U) [![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
 
-HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue bridges, lights, groups, scenes, taps, switches, motion sensors, temperature sensors and Lux sensors.
+HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue bridges, lights, groups, scenes, rules, taps, switches, motion sensors, temperature sensors and Lux sensors.
 
 ### Features
 * Simple and comprehensive control of the Hue Bridge and connected devices
 * Automatic discovery of Philips Hue bridges as well as devices, scenes & groups…
 * Supports the output and input of multiple color code definitions *(HEX, RGB & human readable color names)*
+* Supports the temporary activation and deactivation of rules on the Hue Bridge
 * Event-based status messages for all devices connected to the Hue Bridge
 * Real-time status messages in the NodeRED UI
 * Supports virtual pressing of the button on the Hue Bridge (Link Button)
@@ -20,7 +21,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Additive state settings on all nodes with multiple commands
 
 ### Installation
-HueMagic was written for **Node.js 10+** and Node-RED v0.19.5+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 10+** and Node-RED v0.20.7+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -36,12 +37,13 @@ _Please make sure, that you deactivate / remove other Philips Hue related NodeRE
 - [Hue Motion Sensors](#hue-motion-sensor)
 - [Hue Temperature Sensors](#hue-temperature-sensor)
 - [Hue Lux Sensors](#hue-lux-sensor)
+- [Hue Rules](#hue-rules)
 
 
 ## Hue Bridges
 The Hue Bridge node keeps the Hue Bridge firmware and connected devices up-to-date and provides more information and setup options for the bridge.
 
-![Hue Bridge Example](https://d3vv6lp55qjaqc.cloudfront.net/items/2l270c161N2A1C2U141n/hue-bridge.png)
+![Hue Bridge Example](https://user-images.githubusercontent.com/5302050/62820502-4974e780-bb65-11e9-8f05-4078d77eec5e.png)
 
 ### Get settings / status
 Retrieves the current status / settings of the bridge by injecting any input value.
@@ -63,6 +65,21 @@ Use TouchLink to pair new devices or old devices after a bridge reset. This is c
 |    Property   |             Type             |       Information      |
 |:-------------:|:----------------------------:|:----------------------:|
 | **touchLink** | boolean (any value accepted) | Pairs lights / devices |
+
+### Fetch all devices and resources
+Use the Fetch command to retrieve various information from the Hue Bridge when needed. Pass the **fetch** property to **msg.payload**.
+
+|      Property     |  Type  | Information                                                   |
+|:-----------------:|:------:|---------------------------------------------------------------|
+|     **users**     | string | Returns an array of User objects in msg.users                 |
+|     **lights**    | string | Returns an array of Light objects in msg.lights               |
+|     **groups**    | string | Returns an array of Group objects in msg.groups               |
+|    **sensors**    | string | Returns an array of Sensor objects in msg.sensors             |
+|     **scenes**    | string | Returns an array of Scene objects in msg.scenes               |
+|     **rules**     | string | Returns an array of Rule objects in msg.rules                 |
+|   **schedules**   | string | Returns an array of Schedule objects in msg.schedules         |
+| **resourceLinks** | string | Returns an array of ResourceLink objects in msg.resourceLinks |
+|   **timeZones**   | string | Returns an array of all available time zones in msg.timeZones |
 
 ### Hue Bridge Settings
 Changes the Hue Bridge settings based on the passed in **msg.payload.settings** values of:
@@ -112,7 +129,7 @@ The event message that the bridge sends contains the following data in the **msg
 ## Hue Lights
 Use the Hue Light node to control the lights and receive light bulb events.
 
-![Hue Light Example](https://cloud.foddys.com/mY6m/hue-light.png)
+![Hue Light Example](https://user-images.githubusercontent.com/5302050/62820499-48dc5100-bb65-11e9-962f-a1e1a1de21df.png)
 
 ### Turn on / off (simple mode)
 Changes the light on / off state based on the passed in **msg** values of:
@@ -124,28 +141,36 @@ Changes the light on / off state based on the passed in **msg** values of:
 ### Turn On / Off (extended mode)
 Changes the light state, effect, color, brightness and other states based on the passed in **msg.payload** values of:
 
-|         Property        |        Type        |                                                            Information                                                            |
-|:-----------------------:|:------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|
-| **on**                  | boolean            | Will turn on or turn off the light with its previous configuration (color and brightness)                                         |
-| **brightness**          | int                | Optionally configurable brightness of the light in percent (0-100)                                                                |
-| **incrementBrightness** | int                | Increment/decrement brightness by given percentage value                                                                          |
-| **rgb**                 | array[int,int,int] | Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value |
-| **hex**                 | string             | Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value |
-| **color**               | string             | Optionally configurable human readable color name in english like "red" of the light bulb                                         |
-| **transitionTime**      | int                | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) |
-| **colorloop**           | int                | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        |
-| **colorTemp**           | int                | Optionally configurable color temperature of the light from 153 to 500                                                            |
-| **saturation**          | int                | Optionally configurable color saturation of the light in percent (from 0 to 100)                                                  |
+|         Property        |        Type        | Information                                                                                                                       |
+|:-----------------------:|:------------------:|-----------------------------------------------------------------------------------------------------------------------------------|
+|          **on**         |       boolean      | Will turn on or turn off the light with its previous configuration (color and brightness)                                         |
+|      **brightness**     |         int        | Optionally configurable brightness of the light in percent (0-100)                                                                |
+| **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                          |
+|         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value |
+|         **hex**         |       string       | Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value |
+|        **color**        |       string       | Optionally configurable human readable color name in english like "red" of the light bulb                                         |
+|        **image**        |       string       | Optionally configurable image path (remote or local) to apply the most dominant color to the light                                |
+|    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) |
+|      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        |
+|      **colorTemp**      |         int        | Optionally configurable color temperature of the light from 153 to 500                                                            |
+|      **saturation**     |         int        | Optionally configurable color saturation of the light in percent (from 0 to 100)                                                  |
+
+### Toggle on / off (auto)
+Turns the light on or off depending on the current state based on the passed in **msg.payload** value of:
+
+|   Property  |   Type  |                                        Information                                        |
+|:-----------:|:-------:|:-----------------------------------------------------------------------------------------:|
+| **toggle** | any | Will turn on or turn off the light with the previous configuration (color and brightness) |
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
 
-|  Property |        Type        |                                                                      Information                                                                     |
-|:---------:|:------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------:|
-| **alert** | int *(required)*   | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state. |
-| **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                  |
-| **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                  |
-| **color** | string             | Optionally configurable human readable color name in english like "red" of the alert effect                                                          |
+|  Property |        Type        | Information                                                                                                                                          |
+|:---------:|:------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state. |
+|  **rgb**  | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                  |
+|  **hex**  |       string       | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                  |
+| **color** |       string       | Optionally configurable human readable color name in english like "red" of the alert effect                                                          |
 
 
 ### Light Events
@@ -164,14 +189,14 @@ The event message that the light bulb sends contains the following data in the *
 ### Additional Light Bulb Information
 The event message that the light bulb sends also contains the following data in the **msg.info** object.
 
-|       Property      |  Type  |                                                                                Information                                                                               |
-|:-------------------:|:------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| **id**              | int    | Numerical id of the light as registered on the bridge                                                                                                                    |
-| **uniqueId**        | string | Unique Id of the light (typically hardware id)                                                                                                                           |
-| **name**            | string | Name for the light                                                                                                                                                       |
-| **type**            | string | Type of light (e.g. Extended Color Light, Dimmable Light)                                                                                                                |
-| **softwareVersion** | float  | Software version of the light                                                                                                                                            |
-| **model**           | object | The model object of the light includes model specific information like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue |
+|       Property      |  Type  | Information                                                                                                                                                              |
+|:-------------------:|:------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        **id**       |   int  | Numerical id of the light as registered on the bridge                                                                                                                    |
+|     **uniqueId**    | string | Unique Id of the light (typically hardware id)                                                                                                                           |
+|       **name**      | string | Name for the light                                                                                                                                                       |
+|       **type**      | string | Type of light (e.g. Extended Color Light, Dimmable Light)                                                                                                                |
+| **softwareVersion** |  float | Software version of the light                                                                                                                                            |
+|      **model**      | object | The model object of the light includes model specific information like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue |
 
 ### Universal Mode (optional)
 Defines the light Id on the Hue Bridge manually if not configured in the node properties (deactivates light update events):
@@ -183,7 +208,7 @@ Defines the light Id on the Hue Bridge manually if not configured in the node pr
 ## Hue Groups
 Use the Hue Group node to control whole groups containing lights and receive group events.
 
-![Hue Group Example](https://cloud.foddys.com/mXpj/hue-group.png)
+![Hue Group Example](https://user-images.githubusercontent.com/5302050/62820500-4974e780-bb65-11e9-9273-b564a8ca077c.png)
 
 ### Turn on / off (simple mode)
 Changes the group on / off state based on the passed in **msg** values of:
@@ -195,28 +220,36 @@ Changes the group on / off state based on the passed in **msg** values of:
 ### Turn On / Off (extended mode)
 Changes the group state, effect, color, brightness and other states based on the passed in **msg.payload** values of:
 
-|         Property        |        Type        |                                                                   Information                                                                  |
-|:-----------------------:|:------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------:|
-| **on**                  | boolean            | True to turn on all the lights inside the group, false to turn them off                                                                        |
-| **brightness**          | int                | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
-| **incrementBrightness** | int                | Increment/decrement brightness by given percentage value                                                                                       |
-| **rgb**                 | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
-| **hex**                 | string             | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
-| **color**               | string             | Optionally configurable human readable color name in english like "red" of all lights inside the group                                         |
-| **transitionTime**      | int                | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
-| **colorloop**           | int                | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
-| **colorTemp**           | int                | Optionally configurable color temperature of the group lights from 153 to 500                                                                  |
-| **saturation**          | int                | Optionally configurable color saturation of the group in percent (from 0 to 100)                                                               |
+|         Property        |        Type        | Information                                                                                                                                    |
+|:-----------------------:|:------------------:|------------------------------------------------------------------------------------------------------------------------------------------------|
+|          **on**         |       boolean      | True to turn on all the lights inside the group, false to turn them off                                                                        |
+|      **brightness**     |         int        | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
+| **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                                       |
+|         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
+|         **hex**         |       string       | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
+|        **color**        |       string       | Optionally configurable human readable color name in english like "red" of all lights inside the group                                         |
+|        **image**        |       string       | Optionally configurable image path (remote or local) to apply the most dominant color to the group                                             |
+|    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
+|      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
+|      **colorTemp**      |         int        | Optionally configurable color temperature of the group lights from 153 to 500                                                                  |
+|      **saturation**     |         int        | Optionally configurable color saturation of the group in percent (from 0 to 100)                                                               |
+
+### Toggle on / off (auto)
+Turns the lights on or off depending on the current state based on the passed in **msg.payload** value of:
+
+|   Property  |   Type  |                                        Information                                        |
+|:-----------:|:-------:|:-----------------------------------------------------------------------------------------:|
+| **toggle** | any | Will turn on or turn off all lights inside the group with their previous configuration (color and brightness) |
 
 ### Special Alert Effect
 Plays an alert effect based on the passed in **msg.payload** values of:
 
-|  Property |        Type        |                                                                             Information                                                                            |
-|:---------:|:------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| **alert** | int *(required)*   | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state. |
-| **rgb**   | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                                |
-| **hex**   | string             | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                                |
-| **color** | string             | Optionally configurable human readable color name in english like "red" of the alert affect on all lights inside the group                                         |
+|  Property |        Type        | Information                                                                                                                                                        |
+|:---------:|:------------------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state. |
+|  **rgb**  | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                                |
+|  **hex**  |       string       | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                                |
+| **color** |       string       | Optionally configurable human readable color name in english like "red" of the alert affect on all lights inside the group                                         |
 
 ### Group Events
 The event message that the group sends contains the following data in the **msg.payload** object. Events will only be sent if the group state is changed.
@@ -238,11 +271,11 @@ The event message that the group sends also contains the following data in the *
 
 |   Property   |  Type  |                                                                                                                                                                           Information                                                                                                                                                                           |
 |:------------:|:------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| **id**       | int    | Group Id, generated automatically by the bridge                                                                                                                                                                                                                                                                                                                 |
-| **lightIds** | array  | An array of light ids associated with the group                                                                                                                                                                                                                                                                                                                 |
-| **name**     | string | Name for the group                                                                                                                                                                                                                                                                                                                                              |
-| **type**     | string | Type of group (e.g. LightGroup, Luminaire, LightSource, Room)                                                                                                                                                                                                                                                                                                   |
-| **model**    | object | [Huejay](https://github.com/sqmk/huejay) *(the API behind HueMagic)* maintains a list of Philips Hue supported luminaire models. The Group model attribute returns optionally a GroupModel object. This object contains more information about the model like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue |
+|    **id**    |   int  | Group Id, generated automatically by the bridge                                                                                                                                                                                                                                                                                                                 |
+| **lightIds** |  array | An array of light ids associated with the group                                                                                                                                                                                                                                                                                                                 |
+|   **name**   | string | Name for the group                                                                                                                                                                                                                                                                                                                                              |
+|   **type**   | string | Type of group (e.g. LightGroup, Luminaire, LightSource, Room)                                                                                                                                                                                                                                                                                                   |
+|   **model**  | object | [Huejay](https://github.com/sqmk/huejay) *(the API behind HueMagic)* maintains a list of Philips Hue supported luminaire models. The Group model attribute returns optionally a GroupModel object. This object contains more information about the model like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue |
 
 ### Universal Mode (optional)
 Defines the group Id on the Hue Bridge manually if not configured in the node properties (deactivates group update events):
@@ -254,7 +287,7 @@ Defines the group Id on the Hue Bridge manually if not configured in the node pr
 ## Hue Scenes
 Use the Hue Scene node to recall / activate preconfigured scenes on the bridge and receive scene information.
 
-![Hue Scene Example](https://cloud.foddys.com/mXl6/hue-scene.png)
+![Hue Scene Example](https://user-images.githubusercontent.com/5302050/62797032-f6565280-bada-11e9-8364-b8dec7f44428.png)
 
 ### Recall / Activate Scene
 **Any** passed in value on the scene node activates the preconfigured scene. Please note that recalling animated scenes may not work properly due to some restrictions.
@@ -275,7 +308,7 @@ The event message that the scene node sends contains the following data in the *
 ## Hue Tap
 Use the Hue Tap node to receive button events.
 
-![Hue Scene Example](https://cloud.foddys.com/o2qO/HueTap.png)
+![Hue Scene Example](https://user-images.githubusercontent.com/5302050/62820493-48dc5100-bb65-11e9-8932-e9f152b3c048.png)
 
 ### Button Events
 The event message that the Hue Tap device sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
@@ -299,7 +332,7 @@ The event message that the Hue Tap device sends also contains the following data
 ## Hue Switch
 Use the Hue Switch node to receive button events.
 
-![Hue Scene Example](https://cloud.foddys.com/o3eV/HueSwitch.png)
+![Hue Scene Example](https://user-images.githubusercontent.com/5302050/62820494-48dc5100-bb65-11e9-82eb-0c8bc9e5be40.png)
 
 ### Button Events
 The event message that the Hue Wireless Dimmer Switch sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
@@ -326,7 +359,7 @@ The event message that the Hue Wireless Dimmer Switch device sends also contains
 ## Hue Motion Sensor
 Use the Hue Motion node to control the motion sensor and receive motion events.
 
-![Hue Motion Example](https://cloud.foddys.com/mXpZ/hue-motion.png)
+![Hue Motion Example](https://user-images.githubusercontent.com/5302050/62820498-48dc5100-bb65-11e9-8887-3e63317856aa.png)
 
 ### Activate / Deactivate Sensor
 Activates or deactivates the motion sensor based on the passed in **msg** values of:
@@ -360,7 +393,7 @@ The event message that the motion sensor sends also contains the following data 
 ## Hue Temperature Sensor
 Use the Hue Temperature node to receive current (room) temperature in Celsius and Fahrenheit.
 
-![Hue Temperature Example](https://cloud.foddys.com/mXYB/hue-temperature.png)
+![Hue Temperature Example](https://user-images.githubusercontent.com/5302050/62820492-4843ba80-bb65-11e9-8a73-0e0764888595.png)
 
 ### Temperature Events
 The event message that the temperature sensor sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if the temperature changes.
@@ -376,18 +409,18 @@ The event message that the temperature sensor sends also contains the following 
 
 |       Property      |  Type  |                                                             Information                                                             |
 |:-------------------:|:------:|:-----------------------------------------------------------------------------------------------------------------------------------:|
-| **id**              | int    | Numerical id of the sensor as registered on the bridge                                                                              |
-| **uniqueId**        | string | Unique Id of the sensor (typically hardware id)                                                                                     |
-| **name**            | string | Name for the sensor                                                                                                                 |
-| **type**            | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
-| **softwareVersion** | float  | Software version of the sensor                                                                                                      |
-| **battery**         | int    | Current battery level of the temperature sensor in percent                                                                          |
-| **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+|        **id**       |   int  | Numerical id of the sensor as registered on the bridge                                                                              |
+|     **uniqueId**    | string | Unique Id of the sensor (typically hardware id)                                                                                     |
+|       **name**      | string | Name for the sensor                                                                                                                 |
+|       **type**      | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
+| **softwareVersion** |  float | Software version of the sensor                                                                                                      |
+|     **battery**     |   int  | Current battery level of the temperature sensor in percent                                                                          |
+|      **model**      | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
 ## Hue Lux Sensor
 Use the Hue Brightness node to receive the current light level in Lux and daylight / darkness.
 
-![Hue Lux Example](https://cloud.foddys.com/mX3W/hue-lux.png)
+![Hue Lux Example](https://user-images.githubusercontent.com/5302050/62820501-4974e780-bb65-11e9-8b6b-5b9287efc74b.png)
 
 ### Light Level Events
 The event message that the light sensor sends contains the following data in the **msg.payload** object. Events will only be sent on deploy (once) and if the light level changes.
@@ -405,17 +438,77 @@ The event message that the lux sensor sends also contains the following data in 
 
 |       Property      |  Type  |                                                             Information                                                             |
 |:-------------------:|:------:|:-----------------------------------------------------------------------------------------------------------------------------------:|
-| **id**              | int    | Numerical id of the sensor as registered on the bridge                                                                              |
-| **uniqueId**        | string | Unique Id of the sensor (typically hardware id)                                                                                     |
-| **name**            | string | Name for the sensor                                                                                                                 |
-| **type**            | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
-| **softwareVersion** | float  | Software version of the sensor                                                                                                      |
-| **battery**         | int    | Current battery level of the temperature sensor in percent                                                                          |
-| **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+|        **id**       |   int  | Numerical id of the sensor as registered on the bridge                                                                              |
+|     **uniqueId**    | string | Unique Id of the sensor (typically hardware id)                                                                                     |
+|       **name**      | string | Name for the sensor                                                                                                                 |
+|       **type**      | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
+| **softwareVersion** |  float | Software version of the sensor                                                                                                      |
+|     **battery**     |   int  | Current battery level of the temperature sensor in percent                                                                          |
+|      **model**      | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+
+## Hue Rules
+Hue rule node to receive rule events or to enable / disable rules.
+
+![Hue Rules Example](https://user-images.githubusercontent.com/5302050/62820496-48dc5100-bb65-11e9-932d-6b0a46647e6a.png)
+
+### Enable / Disable Rule
+Activates or deactivates the rule based on the passed in **msg** values of:
+
+|   Property  |   Type  |                       Information                       |
+|:-----------:|:-------:|:-------------------------------------------------------:|
+| **payload** | boolean | True to enable the rule, false to disable 			  |
+
+### Trigger events
+The event message that the rule node sends contains the following data in the **msg.payload** object.
+
+|    Property   |  Type  |                        Information                       |
+|:-------------:|:------:|:--------------------------------------------------------:|
+| **triggered** | string | ISO 8601 date string of the last time rule was triggered |
+
+### Additional Rule Info
+Additional information about the rule is going to be sent to the **msg.info** object.
+
+|      Property      |  Type  |                      Information                      |
+|:------------------:|:------:|:-----------------------------------------------------:|
+|       **id**       |   int  | Numerical id of the rule as registered on the bridge  |
+|     **created**    | string | ISO 8601 date string of the creation date of the rule |
+|      **name**      | string | Name of the rule                                      |
+| **timesTriggered** |   int  | Number of times rule was triggered                    |
+|      **owner**     | string | User who created the rule                             |
+|     **status**     | string | enabled or disabled, rule is triggerable on enabled   |
+
+### Rule Conditions
+An array of objects representing the rule conditions is going to be sent to the **msg.conditions** array.
+
+|   Property   |  Type  |                      Information                     |
+|:------------:|:------:|:----------------------------------------------------:|
+|  **address** | string | The sensor resource/state location for the condition |
+| **operator** | string | The operator for the condition                       |
+|   **value**  | string | The value used in conjunction with operator          |
+
+### Rule Actions
+An array of objects representing the rule actions is going to be sent to **msg.actions** array.
+
+|   Property  |  Type  |                  Information                  |
+|:-----------:|:------:|:---------------------------------------------:|
+| **address** | string | The actionable resource location              |
+|  **method** | string | Type of method for the action (e.g. GET, PUT) |
+|   **body**  | object | The body of the action                        |
 
 # Changelog
 
-### v1.9.0 (latest)
+### v2.0.0 (latest)
+* New "Hue Rule" node (check node docs)
+* New "fetch" command for the Hue Bridge node to get various information
+* New "toggle" and "image" command for Hue Light and Group nodes
+* Transitions and colorloop effects now support millisecond values (comma values)
+* Optimized sequential requests to the bridge to avoid API limit errors
+* Fixed validation errors when group or light nodes are used in universal mode
+* Fixed a problem with human readable color names ([e354c0b](https://github.com/Foddy/node-red-contrib-huemagic/pull/84/commits/e354c0b3596d169fb25bd1e830df39adaf04dc73))
+* Updated readme
+* Dependency updates
+
+### v1.9.0
 * New "Hue Bridge" node (check node docs)
 * New event-based algorithm improves the stability of all nodes
 * New option to specify your own, alternative Hue Bridge port has been added (check node docs)
@@ -514,7 +607,7 @@ The event message that the lux sensor sends also contains the following data in 
 ***
 <a href="https://en.wikipedia.org/wiki/Stuttgart" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/0S331Q0T312D3T1p061W/huemagic-made-with-love.svg" width="555"></a>
 
-If you like HueMagic and would like to support the development, you can do so with a donation. Just choose below, which amount or for what purpose you want to donate. HueMagic is and remains completely free for everyone - even without a donation. Thank you! :)
+Do you like HueMagic? If so, make sure to give this project a star! If you want to support the development, you can also do so with a donation. Just choose below, which amount or for what purpose you want to donate. HueMagic remains completely free for everyone - even without a donation. Thank you! :)
 
 <a href="https://bit.ly/2JDJAKk" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/3p0j0X0L2Q2V2a2p3j2T/huemagic-donate-coffee.svg" width="164.2"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://bit.ly/2CW70ZY" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1X2Z2I3X1H1T1M3U3p0d/huemagic-donate-light.svg" width="186.32"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://bit.ly/2yIRj5t" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1R0h422r2q1Z0a0H2w42/huemagic-donate-sensor.svg" width="202.11"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/0i20323o0H1k393z0t2g/huemagic-donate-anything.svg" width="165.79"></a>
 

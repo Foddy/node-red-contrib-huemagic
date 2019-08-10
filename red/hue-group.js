@@ -135,6 +135,23 @@ module.exports = function(RED)
 					clearInterval(scope.recheck);
 				});
 			}
+			// TOGGLE ON / OFF
+			else if(typeof msg.payload.toggle != 'undefined')
+			{
+				bridge.client.groups.getById(tempGroupID)
+				.then(group => {
+					group.on = (group.on) ? false : true;
+					return bridge.client.groups.save(group);
+				})
+				.then(group => {
+					scope.sendGroupStatus(group);
+				})
+				.catch(error => {
+					scope.error(error, msg);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+					clearInterval(scope.recheck);
+				});
+			}
 			// ALERT EFFECT
 			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
@@ -207,7 +224,7 @@ module.exports = function(RED)
 			else
 			{
 				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
+				.then(async (group) => {
 
                     // SET GROUP STATE
                     if (typeof msg.payload.on != 'undefined') {
@@ -292,7 +309,7 @@ module.exports = function(RED)
 					// SET TRANSITION TIME
 					if(msg.payload.transitionTime)
 					{
-						group.transitionTime = parseInt(msg.payload.transitionTime);
+						group.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
 
 					// SET COLORLOOP EFFECT
@@ -304,7 +321,19 @@ module.exports = function(RED)
 						setTimeout(function() {
 							group.effect = 'none';
 							bridge.client.groups.save(group)
-						}, parseInt(msg.payload.colorloop)*1000);
+						}, parseFloat(msg.payload.colorloop)*1000);
+					}
+
+					// SET DOMINANT COLORS FROM IMAGE
+					if(msg.payload.image && group.xy)
+					{
+						var colors = await getColors(msg.payload.image);
+						if(colors.length > 0)
+						{
+							var colorsHEX = colors.map(color => color.hex());
+							var rgbResult = hexRGB(colorsHEX[0]);
+							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
+						}
 					}
 
 					return bridge.client.groups.save(group);
@@ -315,7 +344,7 @@ module.exports = function(RED)
 					{
 						setTimeout(function() {
 							scope.sendGroupStatus(group);
-						}, parseInt(msg.payload.transitionTime)*1010);
+						}, parseFloat(msg.payload.transitionTime)*1010);
 					}
 					else
 					{

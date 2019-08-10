@@ -8,12 +8,14 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
+		let path = require('path');
 		let moment = require('moment');
 		let rgb = require('../utils/rgb');
 		let rgbHex = require('rgb-hex');
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
 		let colornamer = require('color-namer');
+		let getColors = require('get-image-colors');
 
 
 		//
@@ -137,6 +139,28 @@ module.exports = function(RED)
 					});
 				}
 			}
+			// TOGGLE ON / OFF
+			else if(typeof msg.payload.toggle != 'undefined')
+			{
+				if(tempLightID != false)
+				{
+					bridge.client.lights.getById(tempLightID)
+					.then(light => {
+						light.on = (light.on) ? false : true;
+						return bridge.client.lights.save(light);
+					})
+					.then(light => {
+						if(light != false)
+						{
+							scope.sendLightStatus(light);
+						}
+					})
+					.catch(error => {
+						scope.error(error, msg);
+						scope.status({fill: "red", shape: "ring", text: "input error"});
+					});
+				}
+			}
 			// ALERT EFFECT
 			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
@@ -219,7 +243,7 @@ module.exports = function(RED)
 			else
 			{
 				bridge.client.lights.getById(tempLightID)
-				.then(light => {
+				.then(async (light) => {
 					// SET LIGHT STATE
 					if(typeof msg.payload.on != 'undefined')
 					{
@@ -309,7 +333,7 @@ module.exports = function(RED)
 					// SET TRANSITION TIME
 					if(msg.payload.transitionTime)
 					{
-						light.transitionTime = parseInt(msg.payload.transitionTime);
+						light.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
 
 					// SET COLORLOOP EFFECT
@@ -321,7 +345,19 @@ module.exports = function(RED)
 						setTimeout(function() {
 							light.effect = 'none';
 							bridge.client.lights.save(light);
-						}, parseInt(msg.payload.colorloop)*1000);
+						}, parseFloat(msg.payload.colorloop)*1000);
+					}
+
+					// SET DOMINANT COLORS FROM IMAGE
+					if(msg.payload.image && light.xy)
+					{
+						var colors = await getColors(msg.payload.image);
+						if(colors.length > 0)
+						{
+							var colorsHEX = colors.map(color => color.hex());
+							var rgbResult = hexRGB(colorsHEX[0]);
+							light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+						}
 					}
 
 					return bridge.client.lights.save(light);
@@ -334,7 +370,7 @@ module.exports = function(RED)
 						{
 							setTimeout(function() {
 								scope.sendLightStatus(light);
-							}, parseInt(msg.payload.transitionTime)*1010);
+							}, parseFloat(msg.payload.transitionTime)*1010);
 						}
 						else
 						{

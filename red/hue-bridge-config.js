@@ -13,6 +13,7 @@ module.exports = function(RED)
 		this.lights = [];
 		this.sensors = [];
 		this.groups = [];
+		this.rules = [];
 		this.events = new events.EventEmitter();
 
 		// CREATE NODE
@@ -29,29 +30,45 @@ module.exports = function(RED)
 		// RECHECK DEVICES
 		this.recheck = function()
 		{
-			Promise.all([
-				scope.client.lights.getAll(),
-				scope.client.sensors.getAll(),
-				scope.client.groups.getAll()
-			])
+			var results = [];
+
+			scope.client.lights.getAll().then(lights => {
+				results.push(lights);
+				return true;
+			})
+			scope.client.sensors.getAll().then(sensors => {
+				results.push(sensors);
+				return true;
+			})
+			scope.client.groups.getAll().then(groups => {
+				results.push(groups);
+				return true;
+			})
+			scope.client.rules.getAll().then(rules => {
+				results.push(rules);
+				return results;
+			})
 			.then(results => {
 				let lights = results[0];
 				let sensors = results[1];
 				let groups = results[2];
+				let rules = results[3];
 
 				// GET UPDATES
 				let lightUpdates = scope.getUpdates("light", lights);
 				let sensorUpdates = scope.getUpdates("sensor", sensors);
 				let groupUpdates = scope.getUpdates("group", groups);
+				let ruleUpdates = scope.getUpdates("rule", rules);
 
 				// RETURN UPDATES
-				return [lightUpdates, sensorUpdates, groupUpdates];
+				return [lightUpdates, sensorUpdates, groupUpdates, ruleUpdates];
 			})
 			.then(updates => {
 				// EMIT UPDATES
 				scope.emitUpdates("light", updates[0]);
 				scope.emitUpdates("sensor", updates[1]);
 				scope.emitUpdates("group", updates[2]);
+				scope.emitUpdates("rule", updates[3]);
 
 				// RECHECK
 				if(scope.nodeActive == true) { setTimeout(function(){ scope.recheck(); }, config.interval); }
@@ -62,7 +79,7 @@ module.exports = function(RED)
 
 				if(scope.nodeActive == true)
 				{
-					setTimeout(function(){ scope.recheck(); }, 500);
+					setTimeout(function(){ scope.recheck(); }, 1500);
 				}
 			});
 		}
@@ -71,16 +88,16 @@ module.exports = function(RED)
 		this.recheck();
 
 		// DETERMINE UPDATES
-		this.getUpdates = function(deviceMode, devices)
+		this.getUpdates = function(mode, content)
 		{
 			var updates = [];			
-			for (var i = devices.length - 1; i >= 0; i--)
+			for (var i = content.length - 1; i >= 0; i--)
 			{
-				let device = devices[i];
+				let device = content[i];
 				var updated = false;
 				var uniqueStatus = "";
 
-				if(deviceMode == "light")
+				if(mode == "light")
 				{
 					uniqueStatus = ((device.on) ? "1" : "0") + device.brightness + device.hue + device.saturation + device.colorTemp + device.reachable;
 
@@ -98,7 +115,7 @@ module.exports = function(RED)
 						updated = true;
 					}
 				}
-				else if(deviceMode == "sensor")
+				else if(mode == "sensor")
 				{
 					uniqueStatus = device.state.lastUpdated;
 					if(device.id in this.sensors)
@@ -115,7 +132,7 @@ module.exports = function(RED)
 						updated = true;
 					}
 				}
-				else if(deviceMode == "group")
+				else if(mode == "group")
 				{
 					uniqueStatus = ((device.on) ? "1" : "0") + device.brightness + device.hue + device.saturation + device.colorTemp + ((device.anyOn) ? "1" : "0") + ((device.allOn) ? "1" : "0");
 					if(device.id in this.groups)
@@ -129,6 +146,25 @@ module.exports = function(RED)
 					else
 					{
 						this.groups[device.id] = uniqueStatus;
+						updated = true;
+					}
+				}
+				else if(mode == "rule")
+				{
+					let rule = device;
+					uniqueStatus = rule.lastTriggered + rule.status;
+
+					if(rule.id in this.rules)
+					{
+						if(this.rules[rule.id] != uniqueStatus)
+						{
+							this.rules[rule.id] = uniqueStatus;
+							updated = true;
+						}
+					}
+					else
+					{
+						this.rules[rule.id] = uniqueStatus;
 						updated = true;
 					}
 				}
@@ -369,6 +405,39 @@ module.exports = function(RED)
 			}
 
 			res.end(JSON.stringify(allScenes));
+		})
+		.catch(error => {
+			res.send(500).send(error.stack);
+		});
+	});
+
+	//
+	// DISCOVER RULES
+	RED.httpAdmin.get('/hue/rules', function(req, res, next)
+	{
+		let huejay = require('huejay');
+		var bridge = (req.query.bridge).toString();
+		var username = req.query.key;
+
+		let client = new huejay.Client({
+			host: bridge,
+			username: username
+		});
+
+		client.rules.getAll()
+		.then(rules => {
+			var allRules = [];
+
+			for (let rule of rules)
+			{
+				var oneRule = {};
+				oneRule.id = rule.id;
+				oneRule.name = rule.name;
+
+				allRules.push(oneRule);
+			}
+
+			res.end(JSON.stringify(allRules));
 		})
 		.catch(error => {
 			res.send(500).send(error.stack);

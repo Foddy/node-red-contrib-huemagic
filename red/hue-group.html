@@ -60,10 +60,13 @@
         <dt class="optional">color<span class="property-type">string</span></dt>
         <dd>Optionally configurable human readable color name in english like "red" of all lights inside the group</dd>
 
-        <dt class="optional">transitionTime<span class="property-type">int</span></dt>
+        <dt class="optional">image<span class="property-type">string</span></dt>
+        <dd>Optionally configurable image path (remote or local) to apply the most dominant color to the group</dd>
+
+        <dt class="optional">transitionTime<span class="property-type">float</span></dt>
         <dd>Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)</dd>
 
-        <dt class="optional">colorloop<span class="property-type">int</span></dt>
+        <dt class="optional">colorloop<span class="property-type">float</span></dt>
         <dd>Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)</dd>
 
         <dt class="optional">colorTemp<span class="property-type">int</span></dt>
@@ -71,6 +74,13 @@
 
         <dt class="optional">saturation<span class="property-type">int</span></dt>
         <dd>Optionally configurable color saturation of the group in percent (from 0 to 100)</dd>
+    </dl>
+
+    <h3>Toggle On / Off (auto)</h3>
+    <p>Turns the lights on or off depending on the current state based on the passed in <b>msg.payload</b> value of:</p>
+    <dl class="message-properties">
+        <dt>toggle<span class="property-type">any</span></dt>
+        <dd>Will turn on or turn off all lights inside the group with their previous configuration (color and brightness)</dd>
     </dl>
 
     <h3>Alert Effect</h3>
@@ -154,7 +164,11 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            groupid: {value:"", required: false, validate: RED.validators.number()},
+            groupid: {value:"", required: false, validate: function(id) {
+                if(id.length < 1) { return true; }
+                else if(!isNaN(id)) { return true; }
+                else { return false; }
+            }},
             colornamer: {value: true}
         },
         inputs: 1,

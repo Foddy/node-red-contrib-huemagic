@@ -42,6 +42,37 @@
         <dd>Pairs lights / devices</dd>
     </dl>
 
+    <h3>Fetch all devices and resources</h3>
+    <p>Use the Fetch command to retrieve various information from the Hue Bridge when needed. Pass the <b>fetch</b> property to <b>msg.payload</b>.</p>
+    <dl class="message-properties">
+        <dt>users<span class="property-type">string</span></dt>
+        <dd>Returns an array of User objects in msg.users</dd>
+
+        <dt>lights<span class="property-type">string</span></dt>
+        <dd>Returns an array of Light objects in msg.lights</dd>
+
+        <dt>groups<span class="property-type">string</span></dt>
+        <dd>Returns an array of Group objects in msg.groups</dd>
+
+        <dt>sensors<span class="property-type">string</span></dt>
+        <dd>Returns an array of Sensor objects in msg.sensors</dd>
+
+        <dt>scenes<span class="property-type">string</span></dt>
+        <dd>Returns an array of Scene objects in msg.scenes</dd>
+
+        <dt>rules<span class="property-type">string</span></dt>
+        <dd>Returns an array of Rule objects in msg.rules</dd>
+
+        <dt>schedules<span class="property-type">string</span></dt>
+        <dd>Returns an array of Schedule objects in msg.schedules</dd>
+
+        <dt>resourceLinks<span class="property-type">string</span></dt>
+        <dd>Returns an array of ResourceLink objects in msg.resourceLinks</dd>
+
+        <dt>timeZones<span class="property-type">string</span></dt>
+        <dd>Returns an array of all available time zones in msg.timeZones</dd>
+    </dl>
+
     <h3>Hue Bridge Settings</h3>
     <p>Changes the Hue Bridge settings based on the passed in <b>msg.payload.settings</b> values of:</p>
     <dl class="message-properties">

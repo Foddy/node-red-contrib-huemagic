@@ -177,7 +177,8 @@ module.exports = function(RED)
 							var colorHex = colornames(msg.payload.color);
 							if(colorHex)
 							{
-								group.xy = rgb.convertRGBtoXY(hexRGB(colorHex), false);
+								var rgbResult = hexRGB(colorHex);
+								group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 							}
 						}
 						else
@@ -261,7 +262,8 @@ module.exports = function(RED)
 						var colorHex = colornames(msg.payload.color);
 						if(colorHex)
 						{
-							group.xy = rgb.convertRGBtoXY(hexRGB(colorHex), false);
+							var rgbResult = hexRGB(colorHex);
+							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 						}
 					}
 

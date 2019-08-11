@@ -185,7 +185,8 @@ module.exports = function(RED)
 							var colorHex = colornames(msg.payload.color);
 							if(colorHex)
 							{
-								light.xy = rgb.convertRGBtoXY(hexRGB(colorHex), light.model.id);
+								var rgbResult = hexRGB(colorHex);
+								light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
 							}
 						}
 						else

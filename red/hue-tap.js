@@ -37,12 +37,12 @@ module.exports = function(RED)
 				scope.lastUpdated = sensor.state.lastUpdated;
 
 				// RETURN ON FIRST DEPLOY
-				if (lastUpdated === false) {
+				if (lastUpdated === false)
+				{
 					return;
 				}
 
 				var buttonNum = 0;
-
 				if(sensor.state.buttonEvent == 34)
 				{
 					buttonNum = 1;
@@ -61,7 +61,7 @@ module.exports = function(RED)
 				}
 
 				var message = {};
-				message.payload = {button: buttonNum, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+				message.payload = {button: buttonNum, buttonAlt: sensor.state.buttonEvent, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 				message.info = {};
 				message.info.id = sensor.id;

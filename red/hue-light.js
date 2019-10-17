@@ -40,8 +40,18 @@ module.exports = function(RED)
 				if(light.reachable){
 					if(light.on)
 					{
-						brightnessPercent = Math.round((100/254)*light.brightness);
-						scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+						// CHECK IF LIGHT
+						if(light.brightness)
+						{
+							brightnessPercent = Math.round((100/254)*light.brightness);
+							scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+						}
+						else
+						{
+							// SMART PLUG
+							brightnessPercent = -1;
+							scope.status({fill: "yellow", shape: "dot", text: "turned on"});
+						}
 					}
 					else
 					{

@@ -33,19 +33,20 @@ module.exports = function(RED)
 		{
 			bridge.events.on('group' + config.groupid, function(group)
 			{
-				var brightnessPercent = Math.round((100/254)*group.brightness);
+				var brightnessPercent = (group.brightness) ? Math.round((100/254)*group.brightness) : -1;
+				var brightnessNotice = (brightnessPercent > -1) ? " ("+ brightnessPercent +"%)" : "";
 
 				if(group.allOn)
 				{
-					scope.status({fill: "yellow", shape: "dot", text: "all lights on ("+ brightnessPercent +"%)"});
+					scope.status({fill: "yellow", shape: "dot", text: "all lights on" + brightnessNotice});
 				}
 				else if(group.anyOn)
 				{
-					scope.status({fill: "yellow", shape: "ring", text: "some lights on ("+ brightnessPercent +"%)"});
+					scope.status({fill: "yellow", shape: "ring", text: "some lights on" + brightnessNotice});
 				}
 				else if(group.on)
 				{
-					scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+					scope.status({fill: "yellow", shape: "dot", text: "turned on" + brightnessNotice});
 				}
 				else
 				{

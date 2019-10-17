@@ -21,7 +21,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Additive state settings on all nodes with multiple commands
 
 ### Installation
-HueMagic was written for **Node.js 10+** and Node-RED v0.20.7+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 10+** and Node-RED v1.0.1+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -313,10 +313,11 @@ Use the Hue Tap node to receive button events.
 ### Button Events
 The event message that the Hue Tap device sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
 
-|   Property  |  Type  |                  Information                  |
-|:-----------:|:------:|:---------------------------------------------:|
-| **button**  | int    | Pressed button number from 1-4                |
-| **updated** | string | ISO 8601 date string of the last button event |
+|    Property   |  Type  |                          Information                         |
+|:-------------:|:------:|:------------------------------------------------------------:|
+| **button**    | int    | Pressed button number from 1-4                               |
+| **buttonAlt** | int    | Alternative pressed button number (unparsed from the bridge) |
+| **updated**   | string | ISO 8601 date string of the last button event                |
 
 ### Additional Hue Tap Information
 The event message that the Hue Tap device sends also contains the following data in the **msg.info** object.
@@ -497,7 +498,13 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.0.2 (latest)
+### v2.0.3 (latest)
+* Support of the Hue Smart plug (BETA)
+* Support of alternative dimmer switches (check node docs, new property available)
+* Fixed a problem in recheck loop ([#96](https://github.com/Foddy/node-red-contrib-huemagic/issues/96#issuecomment-530469447))
+* Dependency updates
+
+### v2.0.2
 * New "Hue Rule" node (check node docs)
 * New "fetch" command for the Hue Bridge node to get various information
 * New "toggle" and "image" command for Hue Light and Group nodes

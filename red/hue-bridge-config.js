@@ -20,7 +20,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(scope, config);
 
 		// DEFINE CLIENT
-		let ipHostArray = (config.bridge).toString().split(":");
+		let ipHostArray = (config.bridge).toString().trim().split(":");
 		this.client = new huejay.Client({
 			host: ipHostArray[0],
 			port: (ipHostArray > 1) ? parseInt(ipHostArray[1]) : 80,
@@ -32,23 +32,21 @@ module.exports = function(RED)
 		{
 			var results = [];
 
-			scope.client.lights.getAll().then(lights => {
+			new Promise(function() {
+				return scope.client.lights.getAll();
+			}).then(lights => {
 				results.push(lights);
-				return true;
-			})
-			scope.client.sensors.getAll().then(sensors => {
+				return scope.client.sensors.getAll();
+			}).then(sensors => {
 				results.push(sensors);
-				return true;
-			})
-			scope.client.groups.getAll().then(groups => {
+				return scope.client.groups.getAll();
+			}).then(groups => {
 				results.push(groups);
-				return true;
-			})
-			scope.client.rules.getAll().then(rules => {
+				return scope.client.rules.getAll();
+			}).then(rules => {
 				results.push(rules);
 				return results;
-			})
-			.then(results => {
+			}).then(results => {
 				let lights = results[0];
 				let sensors = results[1];
 				let groups = results[2];

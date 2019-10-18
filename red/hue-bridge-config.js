@@ -32,21 +32,23 @@ module.exports = function(RED)
 		{
 			var results = [];
 
-			new Promise(function() {
-				return scope.client.lights.getAll();
-			}).then(lights => {
+			scope.client.lights.getAll().then(lights => {
 				results.push(lights);
-				return scope.client.sensors.getAll();
-			}).then(sensors => {
+				return true;
+			})
+			scope.client.sensors.getAll().then(sensors => {
 				results.push(sensors);
-				return scope.client.groups.getAll();
-			}).then(groups => {
+				return true;
+			})
+			scope.client.groups.getAll().then(groups => {
 				results.push(groups);
-				return scope.client.rules.getAll();
-			}).then(rules => {
+				return true;
+			})
+			scope.client.rules.getAll().then(rules => {
 				results.push(rules);
 				return results;
-			}).then(results => {
+			})
+			.then(results => {
 				let lights = results[0];
 				let sensors = results[1];
 				let groups = results[2];

@@ -498,7 +498,7 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.0.3 (latest)
+### v2.0.4 (latest)
 * Support of the Hue Smart plug (BETA)
 * Support of alternative dimmer switches (check node docs, new property available)
 * Fixed a problem in recheck loop ([#96](https://github.com/Foddy/node-red-contrib-huemagic/issues/96#issuecomment-530469447))

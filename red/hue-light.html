@@ -24,13 +24,19 @@
         <input type="checkbox" id="node-input-colornamer" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Activate color naming</span>
         </label>
     </div>
+    <div class="form-row">
+        <label for="node-input-skipupdate"><i class="fa fa-sign-out"></i> <span>Events</span></label>
+        <label for="node-input-skipupdate" style="width:70%">
+        <input type="checkbox" id="node-input-skipupdate" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip update on light change</span>
+        </label>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="hue-light">
     <p>Hue light node to control the lights and receive light bulb events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available lights. Type in the name of the light manually or keep the default device name. Note that events will only be sent if the light bulb state is changed.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available lights. Type in the name of the light manually or keep the default device name. Note that events will only be sent if the light bulb state is changed. It can be skipped to manual update.</p>
 
     <h3>Turn On / Off (simple)</h3>
     <p>Changes the light on / off state based on the passed in <b>msg.payload</b> values of:</p>
@@ -166,7 +172,8 @@
                 else if(!isNaN(id)) { return true; }
                 else { return false; }
             }},
-            colornamer: {value: true}
+            colornamer: {value: true},
+            skipupdate: {value: false}
         },
         inputs: 1,
         outputs: 1,

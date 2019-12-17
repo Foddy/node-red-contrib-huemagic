@@ -32,7 +32,7 @@ module.exports = function(RED)
 
 		//
 		// ON UPDATE
-		if(config.lightid && !config.skipupdate)
+		if(config.lightid)
 		{
 			bridge.events.on('light' + config.lightid, function(light)
 			{
@@ -110,15 +110,7 @@ module.exports = function(RED)
 		}
 		else
 		{
-			// IF SKIP UPDATE
-			if (config.skipupdate)
-			{
-				scope.status({ fill: "grey", shape: "dot", text: "skipping updates" });
-			} 
-			else 
-			{
-				scope.status({ fill: "grey", shape: "dot", text: "universal mode" });
-			}
+			scope.status({fill: "grey", shape: "dot", text: "universal mode"});
 		}
 
 

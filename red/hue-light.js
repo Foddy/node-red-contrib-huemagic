@@ -192,11 +192,20 @@ module.exports = function(RED)
 						}
 						else if(typeof msg.payload.color != 'undefined')
 						{
-							var colorHex = colornames(msg.payload.color);
-							if(colorHex)
+							if(msg.payload.color == "random"||msg.payload.color == "any")
 							{
-								var rgbResult = hexRGB(colorHex);
+								var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+								var rgbResult = hexRGB(randomColor);
 								light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+							}
+							else
+							{
+								var colorHex = colornames(msg.payload.color);
+								if(colorHex)
+								{
+									var rgbResult = hexRGB(colorHex);
+									light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+								}
 							}
 						}
 						else
@@ -288,14 +297,23 @@ module.exports = function(RED)
 						light.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
 					}
 
-					// SET HUMAN READABLE COLOR
+					// SET HUMAN READABLE COLOR OR RANDOM
 					if(msg.payload.color && light.xy)
 					{
-						var colorHex = colornames(msg.payload.color);
-						if(colorHex)
+						if(msg.payload.color == "random"||msg.payload.color == "any")
 						{
-							var rgbResult = hexRGB(colorHex);
+							var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+							var rgbResult = hexRGB(randomColor);
 							light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+						}
+						else
+						{
+							var colorHex = colornames(msg.payload.color);
+							if(colorHex)
+							{
+								var rgbResult = hexRGB(colorHex);
+								light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+							}
 						}
 					}
 

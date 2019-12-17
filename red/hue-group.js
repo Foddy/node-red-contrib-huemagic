@@ -175,11 +175,20 @@ module.exports = function(RED)
 						}
 						else if(typeof msg.payload.color != 'undefined')
 						{
-							var colorHex = colornames(msg.payload.color);
-							if(colorHex)
+							if(msg.payload.color == "random"||msg.payload.color == "any")
 							{
-								var rgbResult = hexRGB(colorHex);
+								var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+								var rgbResult = hexRGB(randomColor);
 								group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
+							}
+							else
+							{
+								var colorHex = colornames(msg.payload.color);
+								if(colorHex)
+								{
+									var rgbResult = hexRGB(colorHex);
+									group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
+								}
 							}
 						}
 						else
@@ -258,13 +267,22 @@ module.exports = function(RED)
 					}
 
 					// SET HUMAN READABLE COLOR
-					if(msg.payload.color && light.xy)
+					if(msg.payload.color && group.xy)
 					{
-						var colorHex = colornames(msg.payload.color);
-						if(colorHex)
+						if(msg.payload.color == "random"||msg.payload.color == "any")
 						{
-							var rgbResult = hexRGB(colorHex);
+							var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+							var rgbResult = hexRGB(randomColor);
 							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
+						}
+						else
+						{
+							var colorHex = colornames(msg.payload.color);
+							if(colorHex)
+							{
+								var rgbResult = hexRGB(colorHex);
+								group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
+							}
 						}
 					}
 

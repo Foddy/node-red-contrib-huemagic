@@ -148,7 +148,7 @@ Changes the light state, effect, color, brightness and other states based on the
 | **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                          |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value |
-|        **color**        |       string       | Optionally configurable human readable color name in english like "red" of the light bulb                                         |
+|        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                          |
 |        **image**        |       string       | Optionally configurable image path (remote or local) to apply the most dominant color to the light                                |
 |    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) |
 |      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        |
@@ -170,7 +170,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 | **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state. |
 |  **rgb**  | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                  |
 |  **hex**  |       string       | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                  |
-| **color** |       string       | Optionally configurable human readable color name in english like "red" of the alert effect                                                          |
+| **color** |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color effect                                                          |
 
 
 ### Light Events
@@ -227,7 +227,7 @@ Changes the group state, effect, color, brightness and other states based on the
 | **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                                       |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
-|        **color**        |       string       | Optionally configurable human readable color name in english like "red" of all lights inside the group                                         |
+|        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                         |
 |        **image**        |       string       | Optionally configurable image path (remote or local) to apply the most dominant color to the group                                             |
 |    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
 |      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
@@ -249,7 +249,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 | **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state. |
 |  **rgb**  | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                                |
 |  **hex**  |       string       | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                                |
-| **color** |       string       | Optionally configurable human readable color name in english like "red" of the alert affect on all lights inside the group                                         |
+| **color** |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                         |
 
 ### Group Events
 The event message that the group sends contains the following data in the **msg.payload** object. Events will only be sent if the group state is changed.
@@ -498,7 +498,11 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.0.4 (latest)
+### v2.0.5 (latest)
+* A delay has been added to minimize API limit problems to the Hue Bridge
+* The color parameter now supports random colors via "any" or "random" as input (Hue Light & Group nodes)
+
+### v2.0.4
 * Support of the Hue Smart plug (BETA)
 * Support of alternative dimmer switches (check node docs, new property available)
 * Fixed a problem in recheck loop ([#96](https://github.com/Foddy/node-red-contrib-huemagic/issues/96#issuecomment-530469447))

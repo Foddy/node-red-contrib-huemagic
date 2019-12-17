@@ -27,51 +27,45 @@ module.exports = function(RED)
 			username: config.key
 		});
 
+		// DELAY
+		this.delay = function(ms)
+		{
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
+
 		// RECHECK DEVICES
 		this.recheck = function()
 		{
-			var results = [];
-
-			scope.client.lights.getAll().then(lights => {
-				results.push(lights);
-				return true;
-			})
 			scope.client.sensors.getAll().then(sensors => {
-				results.push(sensors);
-				return true;
-			})
-			scope.client.groups.getAll().then(groups => {
-				results.push(groups);
-				return true;
-			})
-			scope.client.rules.getAll().then(rules => {
-				results.push(rules);
-				return results;
-			})
-			.then(results => {
-				let lights = results[0];
-				let sensors = results[1];
-				let groups = results[2];
-				let rules = results[3];
-
-				// GET UPDATES
-				let lightUpdates = scope.getUpdates("light", lights);
 				let sensorUpdates = scope.getUpdates("sensor", sensors);
-				let groupUpdates = scope.getUpdates("group", groups);
-				let ruleUpdates = scope.getUpdates("rule", rules);
+				scope.emitUpdates("sensor", sensorUpdates);
 
-				// RETURN UPDATES
-				return [lightUpdates, sensorUpdates, groupUpdates, ruleUpdates];
+				return true;
 			})
-			.then(updates => {
-				// EMIT UPDATES
-				scope.emitUpdates("light", updates[0]);
-				scope.emitUpdates("sensor", updates[1]);
-				scope.emitUpdates("group", updates[2]);
-				scope.emitUpdates("rule", updates[3]);
+			scope.delay(700).then(() => { return "next"; })
+			scope.client.lights.getAll().then(lights => {
+				let lightUpdates = scope.getUpdates("light", lights);
+				scope.emitUpdates("light", lightUpdates);
 
+				return true;
+			})
+			scope.delay(700).then(() => { return "next"; })
+			scope.client.groups.getAll().then(groups => {
+				let groupUpdates = scope.getUpdates("group", groups);
+				scope.emitUpdates("group", groupUpdates);
+
+				return true;
+			})
+			scope.delay(700).then(() => { return "next"; })
+			scope.client.rules.getAll().then(rules => {
+				let ruleUpdates = scope.getUpdates("rule", rules);
+				scope.emitUpdates("rule", ruleUpdates);
+
+				return true;
+			})
+			.then(proceed => {
 				// RECHECK
-				if(scope.nodeActive == true) { setTimeout(function(){ scope.recheck(); }, config.interval); }
+				if(scope.nodeActive == true && proceed == true) { setTimeout(function(){ scope.recheck(); }, config.interval); }
 				return true;
 			})
 			.catch(error => {
@@ -79,7 +73,7 @@ module.exports = function(RED)
 
 				if(scope.nodeActive == true)
 				{
-					setTimeout(function(){ scope.recheck(); }, 1500);
+					setTimeout(function(){ scope.recheck(); }, 5000);
 				}
 			});
 		}

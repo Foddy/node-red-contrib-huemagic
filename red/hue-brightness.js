@@ -20,7 +20,10 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		this.status({fill: "grey", shape: "dot", text: "initializing…"});
+		if(typeof bridge.disableupdates != 'undefined' && bridge.disableupdates == false)
+		{
+			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+		}
 
 		//
 		// ON UPDATE
@@ -58,8 +61,8 @@ module.exports = function(RED)
 				message.info.model.name = sensor.model.name;
 				message.info.model.type = sensor.model.type;
 
-				scope.send(message);
-
+				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+				
 				if(sensor.state.dark)
 				{
 					scope.status({fill: "blue", shape: "dot", text: realLUX+" Lux (dark)"});

@@ -101,7 +101,7 @@ module.exports = function(RED)
 				message.info.model.name = sensor.model.name;
 				message.info.model.type = sensor.model.type;
 
-				scope.send(message);
+				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
 				scope.status({fill: "green", shape: "dot", text: buttonName + " " + buttonAction});
 			}
 			else

@@ -18,13 +18,18 @@
             </a>
         </div>
     </div>
+    <div class="form-row">      
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>        
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>        
+        </label>        
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="hue-rules">
     <p>Hue rule node to receive rule events or to enable / disable rules.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available rules on the bridge. Type in the name of the rule manually or keep the default name. Note that events will only be sent on deploy (once) and if the rule is triggered on the bridge.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available rules on the bridge. Type in the name of the rule manually or keep the default name. Note that events will only be sent on deploy (once) and if the rule is triggered on the bridge. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
 
     <h3>Enable / Disable</h3>
     <p>Activates or deactivates the rule based on the passed in <b>msg</b> values of:</p>
@@ -99,7 +104,8 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            ruleid: {value:"", required: true, validate: RED.validators.number()}
+            ruleid: {value:"", required: true, validate: RED.validators.number()},
+            skipevents: {value: false}
         },
         inputs: 1,
         outputs: 1,

@@ -29,6 +29,11 @@
 		<label for="node-config-input-interval"><i class="fa fa-clock-o"></i> Poll interval</label>
 		<input type="text" placeholder="3000" id="node-config-input-interval">
 	</div>
+	<div class="form-row">		
+		<label for="node-config-input-disableupdates"><i class="fa fa-sign-out"></i> <span>Disable events</span></label>		
+		<input type="checkbox" id="node-config-input-disableupdates" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Disable node events</span>		
+		</label>		
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="hue-bridge">
@@ -45,6 +50,9 @@
 
     <h3>Poll interval</h3>
     <p>Interval that is used to poll active nodes for changes (min 500ms / recommended between 1000ms and 5000ms)</p>
+
+    <h3>Disable events</h3>
+    <p>If this setting is activated, the current status of Light, Group & Rule will not be polled from the bridge. Hue Motion and Tap sensors are unaffected by this setting.</p>
 </script>
 
 <script type="text/javascript">
@@ -61,7 +69,8 @@
 				validate: function(v) {
 					return (/^[0-9]+/.test(v) && parseInt(v,10) >= 500);
 				}
-			}
+			},
+			disableupdates: {value: false}
 		},
 		paletteLabel: "Hue Bridge",
 		label: function() {

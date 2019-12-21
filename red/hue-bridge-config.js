@@ -34,7 +34,7 @@ module.exports = function(RED)
 		}
 
 		// RECHECK DEVICES
-		this.recheck = function()
+		this.recheckAll = function()
 		{
 			scope.client.sensors.getAll().then(sensors => {
 				let sensorUpdates = scope.getUpdates("sensor", sensors);
@@ -65,7 +65,7 @@ module.exports = function(RED)
 			})
 			.then(proceed => {
 				// RECHECK
-				if(scope.nodeActive == true && proceed == true) { setTimeout(function(){ scope.recheck(); }, config.interval); }
+				if(scope.nodeActive == true && proceed == true) { setTimeout(function(){ scope.recheckAll(); }, config.interval); }
 				return true;
 			})
 			.catch(error => {
@@ -73,13 +73,45 @@ module.exports = function(RED)
 
 				if(scope.nodeActive == true)
 				{
-					setTimeout(function(){ scope.recheck(); }, 5000);
+					setTimeout(function(){ scope.recheckAll(); }, 5000);
+				}
+			});
+		}
+
+		// RECHECK ONLY SENSORS
+		this.recheckSensors = function()
+		{
+			scope.client.sensors.getAll().then(sensors => {
+				let sensorUpdates = scope.getUpdates("sensor", sensors);
+				scope.emitUpdates("sensor", sensorUpdates);
+
+				return true;
+			})
+			.then(proceed => {
+				// RECHECK
+				if(scope.nodeActive == true && proceed == true) { setTimeout(function(){ scope.recheckSensors(); }, config.interval); }
+				return true;
+			})
+			.catch(error => {
+				scope.debug(error.stack);
+
+				if(scope.nodeActive == true)
+				{
+					setTimeout(function(){ scope.recheckSensors(); }, 5000);
 				}
 			});
 		}
 
 		// START FIRST CHECK
-		this.recheck();
+		if(!config.disableupdates)
+		{
+			this.recheckAll();
+		}
+		else
+		{
+			this.recheckSensors();
+		}
+		
 
 		// DETERMINE UPDATES
 		this.getUpdates = function(mode, content)

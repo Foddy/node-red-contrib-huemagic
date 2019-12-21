@@ -18,13 +18,18 @@
             </a>
         </div>
     </div>
+    <div class="form-row">      
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>        
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>        
+        </label>        
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="hue-motion">
     <p>Hue motion node to control the motion sensor and receive motion events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available motion sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the "Activate / Deactivate" command.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available motion sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the "Activate / Deactivate" command. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
 
     <h3>Activate / Deactivate</h3>
     <p>Activates or deactivates the motion sensor based on the passed in <b>msg</b> values of:</p>
@@ -82,7 +87,8 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            sensorid: {value:"", required: true, validate: RED.validators.number()}
+            sensorid: {value:"", required: true, validate: RED.validators.number()},
+            skipevents: {value: false}
         },
         inputs: 1,
         outputs: 1,

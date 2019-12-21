@@ -52,13 +52,6 @@ Retrieves the current status / settings of the bridge by injecting any input val
 |:--------:|:----:|:---------------------------------------------------:|
 | **any**  | any  | Triggers an output of the current status / settings |
 
-### Simulate link button press
-Use this command to simulate pressing the link button of the Hue Bridge. No need to physically press the button on your bridge for creating users and other actions. Pass the **pressButton** property to **msg.payload**.
-
-|     Property    |             Type             |             Information            |
-|:---------------:|:----------------------------:|:----------------------------------:|
-| **pressButton** | boolean (any value accepted) | Simulates pressing the link button |
-
 ### Enable TouchLink scan
 Use TouchLink to pair new devices or old devices after a bridge reset. This is commonly known in the community as "Lamp stealer". Pass the **touchLink** property to **msg.payload**.
 
@@ -498,7 +491,11 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.0.5 (latest)
+### v2.1.0 (latest)
+* Node updates can now be deactivated individually or globally (check node settings or Hue Bridge configuration)
+* The "pressButton" option has been removed due to API restrictions on newer Hue Bridge firmwares (1.31+)
+
+### v2.0.5
 * A delay has been added to minimize API limit problems to the Hue Bridge
 * The color parameter now supports random colors via "any" or "random" as input (Hue Light & Group nodes)
 

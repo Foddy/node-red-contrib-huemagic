@@ -28,7 +28,10 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		this.status({fill: "grey", shape: "dot", text: "initializing…"});
+		if(typeof bridge.disableupdates != 'undefined' && bridge.disableupdates == false)
+		{
+			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+		}
 
 		//
 		// ON UPDATE
@@ -105,7 +108,7 @@ module.exports = function(RED)
 				}
 
 				message.payload.updated = moment().format();
-				scope.send(message);
+				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
 			});
 		}
 		else
@@ -473,8 +476,7 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-
-			scope.send(message);
+			if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
 		}
 
 		//

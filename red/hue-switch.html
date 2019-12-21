@@ -18,13 +18,18 @@
             </a>
         </div>
     </div>
+    <div class="form-row">      
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>        
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>        
+        </label>        
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="hue-switch">
     <p>Hue Switch node to receive button events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Hue Switch devices. Type in the name manually or keep the default device name. Note that events will only sent on deploy (once) and if a button is pressed.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Hue Switch devices. Type in the name manually or keep the default device name. Note that events will only sent on deploy (once) and if a button is pressed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
 
     <h3>Switch Events</h3>
     <p>The event message that the Hue Switch sends contains the following data in the <b>msg.payload</b> object:</p>
@@ -75,7 +80,8 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            sensorid: {value:"", required: true, validate: RED.validators.number()}
+            sensorid: {value:"", required: true, validate: RED.validators.number()},
+            skipevents: {value: false}
         },
         inputs: 0,
         outputs: 1,

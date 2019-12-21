@@ -122,24 +122,6 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var commandSent = false;
-
-			// PRESSING LINK BUTTON
-			if(typeof msg.payload.pressButton != 'undefined')
-			{
-				scope.status({fill: "grey", shape: "dot", text: "pressing button…" });
-				bridge.client.bridge.linkButton()
-				.then(() => {
-					scope.status({fill: "blue", shape: "ring", text: "button pressed" });
-					setTimeout(function(){ scope.getBridgeInformation(); }, 5000);
-				})
-				.catch(error => {
-					scope.error(error);
-					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-				});
-
-				// COMMAND SENT
-				commandSent = true;
-			}
 			
 			// STARTING TOUCHLINK
 			if(typeof msg.payload.touchLink != 'undefined')

@@ -18,10 +18,10 @@
             </a>
         </div>
     </div>
-    <div class="form-row">      
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>        
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>        
-        </label>        
+    <div class="form-row">
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        </label>
     </div>
 </script>
 
@@ -101,7 +101,7 @@
                 $('#node-input-sensorid').append('<option selected="selected" value="null">searching Hue Taps…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZGPSwitch"})
+                $.get('/hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZGPSwitch"})
                 .done( function(data) {
                     var hueTaps = JSON.parse(data);
 

@@ -21,7 +21,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Additive state settings on all nodes with multiple commands
 
 ### Installation
-HueMagic was written for **Node.js 10+** and Node-RED v1.0.1+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 10+** and Node-RED v1.0.3+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -491,7 +491,10 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.1.0 (latest)
+### v2.1.1 (latest)
+* Fixed an issue with the new option "skip events" on each node
+
+### v2.1.0
 * Node updates can now be deactivated individually or globally (check node settings or Hue Bridge configuration)
 * The "pressButton" option has been removed due to API restrictions on newer Hue Bridge firmwares (1.31+)
 

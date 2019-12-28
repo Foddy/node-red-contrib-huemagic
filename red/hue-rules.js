@@ -20,7 +20,7 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' && bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "initializing…"});
 		}
@@ -65,7 +65,7 @@ module.exports = function(RED)
 				message.actions.push(actionValues);
 			}
 
-			if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+			if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 
 			if(rule.status == "enabled")
 			{
@@ -127,7 +127,7 @@ module.exports = function(RED)
 						message.actions.push(actionValues);
 					}
 
-					if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+					if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 
 					if(msg.payload == false)
 					{

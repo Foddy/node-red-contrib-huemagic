@@ -8,7 +8,7 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let moment = require('moment');		
+		let moment = require('moment');
 
 		//
 		// MEMORY
@@ -101,7 +101,7 @@ module.exports = function(RED)
 				message.info.model.name = sensor.model.name;
 				message.info.model.type = sensor.model.type;
 
-				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+				if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 				scope.status({fill: "green", shape: "dot", text: buttonName + " " + buttonAction});
 			}
 			else

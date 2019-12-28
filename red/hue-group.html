@@ -24,10 +24,10 @@
         <input type="checkbox" id="node-input-colornamer" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Activate color naming</span>
         </label>
     </div>
-    <div class="form-row">      
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>        
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>        
-        </label>        
+    <div class="form-row">
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        </label>
     </div>
 </script>
 
@@ -205,7 +205,7 @@
                 $('#node-input-groupid').append('<option selected="selected" value="null">searching groups…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                $.get('/hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
                 .done(function(data) {
                     var lightBulbs = JSON.parse(data);
 

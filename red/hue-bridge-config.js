@@ -103,7 +103,7 @@ module.exports = function(RED)
 		}
 
 		// START FIRST CHECK
-		if(!config.disableupdates)
+		if(typeof config.disableupdates == 'undefined'||config.disableupdates == false)
 		{
 			this.recheckAll();
 		}

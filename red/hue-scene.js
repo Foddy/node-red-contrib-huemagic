@@ -9,7 +9,7 @@ module.exports = function(RED)
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
 		let huejay = require('huejay');
-		
+
 		//
 		// CHECK CONFIG
 		if(bridge == null)
@@ -58,7 +58,7 @@ module.exports = function(RED)
 				sendSceneInfo.payload.lastUpdated = scene.lastUpdated;
 				sendSceneInfo.payload.version = scene.version;
 
-				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+				if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(sendSceneInfo); }
 
 				setTimeout(function() {
 					scope.status({});

@@ -27,11 +27,11 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' && bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "initializing…"});
 		}
-		
+
 
 		if(config.groupid)
 		{
@@ -101,7 +101,7 @@ module.exports = function(RED)
 				}
 
 				message.payload.updated = moment().format();
-				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+				if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 			});
 		}
 		else
@@ -142,7 +142,7 @@ module.exports = function(RED)
 				});
 			}
 			// TOGGLE ON / OFF
-			else if(typeof msg.payload.toggle != 'undefined')
+			else if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
 			{
 				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
@@ -159,7 +159,7 @@ module.exports = function(RED)
 				});
 			}
 			// ALERT EFFECT
-			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
+			else if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
 				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
@@ -230,6 +230,42 @@ module.exports = function(RED)
 
 						bridge.client.groups.save(group);
 					}, alertSeconds * 1000);
+				})
+				.catch(error => {
+					scope.error(error, msg);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+				});
+			}
+			// ANIMATION STARTED?
+			else if(typeof msg.animation != 'undefined' && msg.animation.status == true && msg.animation.restore == true)
+			{
+				bridge.client.groups.getById(tempGroupID)
+				.then(group => {
+					context.set('groupPreviousState', [group.on ? true : false, group.brightness, group.xy ? group.xy : false]);
+				})
+				.catch(error => {
+					scope.error(error, msg);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+				});
+			}
+			// ANIMATION STOPPED AND RESTORE ACTIVE?
+			else if(typeof msg.animation != 'undefined' && msg.animation.status == false && msg.animation.restore == true)
+			{
+				bridge.client.groups.getById(tempGroupID)
+				.then(group => {
+					var groupPreviousState = context.get('groupPreviousState');
+
+					group.on = groupPreviousState[0];
+					group.alert = 'none';
+					group.brightness = groupPreviousState[1];
+					group.transitionTime = 2;
+
+					if(groupPreviousState[2] != false)
+					{
+						group.xy = groupPreviousState[2];
+					}
+
+					bridge.client.groups.save(group);
 				})
 				.catch(error => {
 					scope.error(error, msg);
@@ -333,7 +369,7 @@ module.exports = function(RED)
 					}
 
 					// SET TRANSITION TIME
-					if(msg.payload.transitionTime)
+					if(typeof msg.payload.transitionTime != 'undefined')
 					{
 						group.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
@@ -366,7 +402,7 @@ module.exports = function(RED)
 				})
 				.then(group => {
 					// TRANSITION TIME? WAIT…
-					if(msg.payload.transitionTime)
+					if(typeof msg.payload.transitionTime != 'undefined')
 					{
 						setTimeout(function() {
 							scope.sendGroupStatus(group);
@@ -455,7 +491,7 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-			if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+			if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 		}
 
 		//

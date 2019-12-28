@@ -29,10 +29,10 @@
 		<label for="node-config-input-interval"><i class="fa fa-clock-o"></i> Poll interval</label>
 		<input type="text" placeholder="3000" id="node-config-input-interval">
 	</div>
-	<div class="form-row">		
-		<label for="node-config-input-disableupdates"><i class="fa fa-sign-out"></i> <span>Disable events</span></label>		
-		<input type="checkbox" id="node-config-input-disableupdates" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Disable node events</span>		
-		</label>		
+	<div class="form-row">
+		<label for="node-config-input-disableupdates"><i class="fa fa-sign-out"></i> <span>Disable events</span></label>
+		<input type="checkbox" id="node-config-input-disableupdates" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Disable node events</span>
+		</label>
 	</div>
 </script>
 
@@ -91,7 +91,7 @@
 				$('#node-config-input-bridge').replaceWith('<select id="node-config-input-bridge" style="width: 100%"></select>');
 				$('#node-config-input-bridge').append('<option selected="selected" value="null">searching…</option>');
 
-				$.get('hue/bridges')
+				$.get('/hue/bridges')
 				.done( function(data) {
 					var bridges = JSON.parse(data);
 
@@ -123,7 +123,7 @@
 				var currentBridgeIP = $('#node-config-input-bridge').val();
 				if(currentBridgeIP.length > 6)
 				{
-					$.get('hue/name', { ip: currentBridgeIP } )
+					$.get('/hue/name', { ip: currentBridgeIP } )
 					.done( function(data)
 					{
 						$('#node-config-input-name').val(data);
@@ -159,7 +159,7 @@
 
 					setTimeout(function()
 					{
-						$.get('hue/register', { ip: $('#node-config-input-bridge').val() } )
+						$.get('/hue/register', { ip: $('#node-config-input-bridge').val() } )
 						.done( function(data)
 						{
 							if(data == "error")

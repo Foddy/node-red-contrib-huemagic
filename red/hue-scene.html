@@ -18,10 +18,10 @@
             </a>
         </div>
     </div>
-    <div class="form-row">      
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>        
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>        
-        </label>        
+    <div class="form-row">
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        </label>
     </div>
 </script>
 
@@ -105,7 +105,7 @@
                 $('#node-input-sceneid').append('<option selected="selected" value="null">searching scenes…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('hue/scenes', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                $.get('/hue/scenes', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
                 .done(function(data) {
                     var scenes = JSON.parse(data);
 

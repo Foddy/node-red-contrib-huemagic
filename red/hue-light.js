@@ -28,7 +28,7 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' && bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "initializing…"});
 		}
@@ -108,7 +108,7 @@ module.exports = function(RED)
 				}
 
 				message.payload.updated = moment().format();
-				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+				if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 			});
 		}
 		else
@@ -153,7 +153,7 @@ module.exports = function(RED)
 				}
 			}
 			// TOGGLE ON / OFF
-			else if(typeof msg.payload.toggle != 'undefined')
+			else if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
 			{
 				if(tempLightID != false)
 				{
@@ -175,7 +175,7 @@ module.exports = function(RED)
 				}
 			}
 			// ALERT EFFECT
-			else if(typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
+			else if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
 				bridge.client.lights.getById(tempLightID)
 				.then(light => {
@@ -256,6 +256,41 @@ module.exports = function(RED)
 							bridge.client.lights.save(light);
 						}, alertSeconds * 1000);
 					}
+				})
+				.catch(error => {
+					scope.error(error, msg);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+				});
+			}
+			// ANIMATION STARTED?
+			else if(typeof msg.animation != 'undefined' && msg.animation.status == true && msg.animation.restore == true)
+			{
+				bridge.client.lights.getById(tempLightID)
+				.then(light => {
+					scope.context().set('lightPreviousState', [light.on ? true : false, light.brightness, light.xy ? light.xy : false]);
+				})
+				.catch(error => {
+					scope.error(error, msg);
+					scope.status({fill: "red", shape: "ring", text: "input error"});
+				});
+			}
+			// ANIMATION STOPPED AND RESTORE ACTIVE?
+			else if(typeof msg.animation != 'undefined' && msg.animation.status == false && msg.animation.restore == true)
+			{
+				bridge.client.lights.getById(tempLightID)
+				.then(light => {
+					var lightPreviousState = scope.context().get('lightPreviousState');
+					light.on = lightPreviousState[0];
+					light.alert = 'none';
+					light.brightness = lightPreviousState[1];
+					light.transitionTime = 2;
+
+					if(lightPreviousState[2] != false)
+					{
+						light.xy = lightPreviousState[2];
+					}
+
+					bridge.client.lights.save(light);
 				})
 				.catch(error => {
 					scope.error(error, msg);
@@ -363,7 +398,7 @@ module.exports = function(RED)
 					}
 
 					// SET TRANSITION TIME
-					if(msg.payload.transitionTime)
+					if(typeof msg.payload.transitionTime != 'undefined')
 					{
 						light.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
@@ -398,7 +433,7 @@ module.exports = function(RED)
 					if(light != false)
 					{
 						// TRANSITION TIME? WAIT…
-						if(msg.payload.transitionTime)
+						if(typeof msg.payload.transitionTime != 'undefined')
 						{
 							setTimeout(function() {
 								scope.sendLightStatus(light);
@@ -476,7 +511,7 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-			if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+			if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 		}
 
 		//

@@ -13,7 +13,7 @@ module.exports = function(RED)
 		//
 		// MEMORY
 		this.temperature = -1000;
-		
+
 		//
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
@@ -24,7 +24,7 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' && bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "initializing…"});
 		}
@@ -60,7 +60,7 @@ module.exports = function(RED)
 				message.info.model.name = sensor.model.name;
 				message.info.model.type = sensor.model.type;
 
-				if(typeof config.skipevents != 'undefined' && config.skipevents == false) { scope.send(message); }
+				if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(message); }
 				scope.status({fill: "yellow", shape: "dot", text: celsius+" °C / "+fahrenheit+" °F"});
 			}
 		});

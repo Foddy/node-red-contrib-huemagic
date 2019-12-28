@@ -122,7 +122,7 @@ module.exports = function(RED)
 		this.on('input', function(msg)
 		{
 			var commandSent = false;
-			
+
 			// STARTING TOUCHLINK
 			if(typeof msg.payload.touchLink != 'undefined')
 			{
@@ -182,7 +182,7 @@ module.exports = function(RED)
 					bridge.client.groups.getAll()
 					.then(groups => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.groups = groups;
 						scope.send(message);
@@ -198,7 +198,7 @@ module.exports = function(RED)
 					bridge.client.sensors.getAll()
 					.then(sensors => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.sensors = sensors;
 						scope.send(message);
@@ -214,7 +214,7 @@ module.exports = function(RED)
 					bridge.client.scenes.getAll()
 					.then(scenes => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.scenes = scenes;
 						scope.send(message);
@@ -230,7 +230,7 @@ module.exports = function(RED)
 					bridge.client.rules.getAll()
 					.then(rules => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.rules = rules;
 						scope.send(message);
@@ -246,7 +246,7 @@ module.exports = function(RED)
 					bridge.client.schedules.getAll()
 					.then(schedules => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.schedules = schedules;
 						scope.send(message);
@@ -262,7 +262,7 @@ module.exports = function(RED)
 					bridge.client.resourceLinks.getAll()
 					.then(resourceLinks => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.resourceLinks = resourceLinks;
 						scope.send(message);
@@ -278,7 +278,7 @@ module.exports = function(RED)
 					bridge.client.timeZones.getAll()
 					.then(timeZones => {
 						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
-						
+
 						var message = {};
 						message.timeZones = timeZones;
 						scope.send(message);
@@ -348,7 +348,7 @@ module.exports = function(RED)
 				// COMMAND SENT
 				commandSent = true;
 			}
-			
+
 			// GET INFORMATION // FALLBACK
 			if(commandSent == false)
 			{

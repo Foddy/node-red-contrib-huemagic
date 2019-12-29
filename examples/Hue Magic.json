@@ -1,0 +1,103 @@
+[
+    {
+        "id": "f6ddc6bb.8646a8",
+        "type": "tab",
+        "label": "Hue Magic (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Magic node"
+    },
+    {
+        "id": "652f80ad.692fe",
+        "type": "hue-magic",
+        "z": "f6ddc6bb.8646a8",
+        "name": "",
+        "endless": true,
+        "restore": false,
+        "preset": null,
+        "steps": null,
+        "x": 370,
+        "y": 120,
+        "wires": [
+            [
+                "f5819321.8928f8"
+            ]
+        ]
+    },
+    {
+        "id": "96c705ff.4785d",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Start animation",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "f5819321.8928f8",
+        "type": "hue-light",
+        "z": "f6ddc6bb.8646a8",
+        "name": "",
+        "lightid": "",
+        "colornamer": true,
+        "skipevents": false,
+        "x": 580,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7175f681.8ac4a8",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Stop animation",
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "5b111243.1e472c",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Custom animation",
+        "topic": "",
+        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":500}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":500}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":500}}]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-magic"
+    }
+]

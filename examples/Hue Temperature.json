@@ -1,0 +1,40 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Temperature (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Temperature node"
+    },
+    {
+        "id": "a9304ae0.8a9bf",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 450,
+        "y": 60,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "8fae232b.888b5",
+        "type": "hue-temperature",
+        "z": "d081bb24.81a8d",
+        "name": "",
+        "sensorid": "",
+        "skipevents": false,
+        "x": 170,
+        "y": 60,
+        "wires": [
+            [
+                "a9304ae0.8a9bf"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,25 @@
+{
+   "info":{
+      "name":"Winter",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#e6dada",
+            "brightness":100,
+            "transitionTime":15
+         }
+      },
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#274046",
+            "brightness":100,
+            "transitionTime":30
+         }
+      }
+   ]
+}

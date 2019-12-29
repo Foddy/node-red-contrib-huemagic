@@ -1,0 +1,24 @@
+{
+    "info": {
+        "name": "Sunny",
+        "author": "HueMagic"
+    },
+    "steps": [
+    	{
+            "delay": 0,
+            "animation": {
+                "hex": "#ffd500",
+                "brightness": 100,
+                "transitionTime": 5
+            }
+        },
+        {
+            "delay": 10000,
+            "animation": {
+                "hex": "#fbcd00",
+                "brightness": 100,
+                "transitionTime": 30
+            }
+        }
+    ]
+}

@@ -1,0 +1,374 @@
+<script type="text/x-red" data-template-name="hue-magic">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-endless"><i class="fa fa-refresh"></i> <span>Loop</span></label>
+        <input type="checkbox" id="node-input-endless" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Run endlessly</span>
+        </label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-restore"><i class="fa fa-undo"></i> <span>Restore</span></label>
+        <input type="checkbox" id="node-input-restore" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Restore previous state after stop</span>
+        </label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-steps"><i class="fa fa-magic"></i> <span>Animation</span></label>
+    </div>
+    <div style="display: none;">
+        <div class="form-row">
+            <input type="text" id="node-input-preset" placeholder="...">
+        </div>
+        <div class="form-row">
+            <input type="text" id="node-input-steps" placeholder="...">
+        </div>
+    </div>
+    <div class="form-row form-animations">
+        <div class="animation template">
+            <div class="color"></div>
+            <div class="info">
+                <span><name>Name</name> <dur>(dur)</dur></span>
+            </div>
+            <img src="https://user-images.githubusercontent.com/5302050/71473708-79e9b500-27d8-11ea-86d5-74dee9ef8c35.png">
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="hue-magic">
+    <p>Hue Magic node for animations</p>
+
+    <h3>Setup</h3>
+    <p>Select whether the animation should be looped indefinitely and / or whether the previous state should be restored after the animation has ended / stopped. Select one of the included animations and connect the node to a group or a light.</p>
+
+    <h3>Start / Stop</h3>
+    <p>Starts or stops an animation based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean</span></dt>
+        <dd>Starts the animation</dd>
+
+        <dt>false<span class="property-type">boolean</span></dt>
+        <dd>Stops the animation</dd>
+    </dl>
+
+    <h3>Custom animations</h3>
+    <p>Alternatively, you can create and use your own animations. To do this, create an array and pass it to <b>msg.payload.steps</b> with the following parameters.</p>
+    <dl class="message-properties">
+        <dt>delay<span class="property-type">int</span></dt>
+        <dd>Execute this frame after the delay (in ms)</dd>
+
+        <dt>animation<span class="property-type">object</span></dt>
+        <dd>Insert all parameters that should be animated here. Supports all values of "Hue Light" and "Hue Group" node.</dd>
+    </dl>
+
+    <h3>Special commands</h3>
+    <p>Sometimes it makes sense for animations to be played out in disorder. For example, to imitate fire more realistically. To do this, create an object and pass it to <b>msg.payload.specials</b> with the following parameters.</p>
+    <dl class="message-properties">
+        <dt>randomOrder<span class="property-type">boolean</span></dt>
+        <dd>Execute steps in random order</dd>
+    </dl>
+
+    <h4>Example (custom animation)</h4>
+<code>
+<pre>
+{
+    "animate": true,
+    "steps": [
+        {
+            "delay": 500,
+            "animation": {
+                "hex": "#FF0000",
+                "transitionTime": 1
+            }
+        },
+        {
+            "delay": 500,
+            "animation": {
+                "hex": "#0000FF",
+                "transitionTime": 1
+            }
+        }
+    ]
+}</pre>
+</code>
+
+    <h3>Tips & Hints</h3>
+    <p>Connect the Hue Magic node to only one light or a whole group node to save API requests on the Hue Bridge. The animation previews can differ slightly from the real result on a lamp / group.</p>
+</script>
+
+<style type="text/css">
+.form-animations
+{
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 30% 3.29% 30% 3.29% 30%;
+    grid-template-columns: 30% 30% 30%;
+    grid-gap: 3.29%;
+
+    max-width: 40vw;
+}
+
+.form-animations .animation
+{
+    position: relative;
+    cursor: pointer;
+
+    overflow: hidden;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    border: 3px solid #fff;
+}
+
+.form-animations .animation.template
+{
+    display: none;
+}
+
+.form-animations .animation.selected
+{
+    border: 3px solid #000;
+}
+
+.form-animations .animation .color
+{
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    height: 100%;
+    width: 100%;
+
+    z-index: 1;
+}
+
+.form-animations .animation .info
+{
+    position: absolute;
+
+    top: 8%;
+    left: 0;
+    width: 100%;
+
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.form-animations .animation .info span
+{
+    display: inline-block;
+    margin: 0 auto;
+
+    color: #000;
+    background-color: rgba(255,255,255,0.8);
+    font-size: 11px;
+    padding: 2.5px 5px;
+
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.form-animations .animation .info span name
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+.form-animations .animation .info span dur
+{
+    display: inline-block;
+    vertical-align: middle;
+    opacity: 0.5;
+    margin-left: 3px;
+    font-size: 9px;
+}
+
+.form-animations .animation img
+{
+    position: relative;
+    pointer-events: none;
+
+    z-index: 10;
+}
+</style>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-magic',{
+        category: 'HueMagic',
+        color: '#ff4242',
+        defaults: {
+            name: {value:""},
+            endless: {value: true},
+            restore: {value: false},
+            preset: {value: null},
+            steps: {value: null}
+        },
+        inputs: 1,
+        outputs: 1,
+        inputLabels: 'run / stop animation',
+        outputLabels: 'light or group',
+        align: 'right',
+        icon: "hue-magic.png",
+        paletteLabel: "Hue Magic",
+        label: function() {
+            return this.name || "Hue Magic";
+        },
+        oneditprepare: function()
+        {
+            var scope = this;
+            this.animations = [];
+
+            var preset = $('#node-input-preset').val();
+            $.getScript("https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js", function( data, textStatus, jqxhr )
+            {
+                // LOAD ANIMATIONS
+                $.get('/hue/animations?nc=' + Math.random())
+                .done( function(data)
+                {
+                    // HELPER
+                    function rgbToHex(r, g, b)
+                    {
+                        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                    }
+
+                    // FRAMES
+                    function addPreviewFrame(step)
+                    {
+                        // TRANSITION?
+                        var stepTransition = 300;
+                        if(typeof step.animation.transitionTime != 'undefined')
+                        {
+                            stepTransition = parseFloat(step.animation.transitionTime)*1000;
+                        }
+
+                        // DEFINE COLOR
+                        var color = "#fff";
+                        if(typeof step.animation.rgb != 'undefined')
+                        {
+                            color = rgbToHex(step.animation.rgb[0], step.animation.rgb[1], step.animation.rgb[2]);
+                        }
+                        else if(typeof step.animation.hex != 'undefined')
+                        {
+                            color = step.animation.hex;
+                        }
+
+                        return { background: color, delay: step.delay, duration: stepTransition };
+                    }
+
+                    // LOGIC
+                    scope.animations = JSON.parse(data);
+                    $.each(scope.animations, function(i, animation)
+                    {
+                        var animationTemplate = $(".animation.template").clone();
+                        animationTemplate.removeClass("template");
+
+                        // APPLY INFORMATION
+                        animationTemplate.attr("data-id", animation.info.id);
+                        animationTemplate.attr("data-name", animation.info.name);
+                        animationTemplate.attr("data-steps", JSON.stringify(animation.steps));
+                        animationTemplate.find("name").html(animation.info.name);
+
+                        // SPECIAL CONFIGS?
+                        var randomOrder = false;
+                        if(typeof animation.specials != 'undefined')
+                        {
+                            // APPLY RANDOM ORDER CONFIG
+                            if(typeof animation.specials.randomOrder != 'undefined')
+                            {
+                                randomOrder = animation.specials.randomOrder;
+                            }
+                        }
+
+                        // IS SELECTED?
+                        if(preset == animation.info.id)
+                        {
+                            animationTemplate.addClass("selected");
+                        }
+
+                        // CALC DURATION IN SECONDS AND ANIMATION
+                        var duration = 0;
+                        var isFirst = true;
+                        var keyframes = [];
+                        $.each(animation.steps, function(z, oneStep)
+                        {
+                            duration += oneStep.delay;
+
+                            // TRANSITION?
+                            if(typeof oneStep.animation.transitionTime != 'undefined')
+                            {
+                                duration += parseFloat(oneStep.animation.transitionTime)*1000;
+                            }
+
+                            if(isFirst == true)
+                            {
+                                oneStep.animation.transitionTime = 0;
+                                isFirst = false;
+                            }
+
+                            // SET CURRENT STEP COLOR
+                            keyframes.push(addPreviewFrame(oneStep));
+                        });
+
+                        // REPEAT KEYFRAMES FOR SMOOTH TRANSITIONS
+                        var r = 0;
+                        while (r < 10)
+                        {
+                            keyframes = keyframes.concat(keyframes);
+                            r++;
+                        }
+
+                        // INITIALIZE COLOR ANIMATION
+                        var animationColorPreview = anime({
+                            targets: animationTemplate.find("div.color")[0],
+                            loop: true,
+                            autoplay: true,
+                            easing: 'linear',
+                            keyframes: keyframes
+                        });
+
+                        // NORMALIZE DUR IN SECONDS
+                        duration = duration/1000;
+
+                        // HUMAN READABLE DURATION
+                        var suffix = (duration <= 60) ? "sec." : "min.";
+                        duration = (duration <= 60) ? (Math.round(duration * 10) / 10) : (Math.round( (duration/60) * 10 ) / 10);
+                        animationTemplate.find("dur").html("("+duration + " " + suffix + ")");
+
+                        // PUSH TO FRONTEND
+                        animationTemplate.appendTo(".form-animations");
+                    });
+                })
+                .fail(function()
+                {
+                    RED.notify("Something went wrong. Please retry.", "error");
+                });
+            });
+
+            // SELECT ANIMATION
+            $(document).off('click', '.form-animations .animation');
+            $(document).on('click', '.form-animations .animation', function(e)
+            {
+                var selectedAnimation = $(e.currentTarget);
+
+                // RESET SELECTION
+                $(".form-animations .animation").removeClass("selected");
+                selectedAnimation.addClass("selected");
+
+                // SET PRESET ID
+                $('#node-input-preset').val(selectedAnimation.attr("data-id"));
+
+                // RESET NAME
+                $('#node-input-name').val(selectedAnimation.attr("data-name"));
+
+                // SET STEPS
+                var index = selectedAnimation.attr("data-id");
+                var steps = JSON.stringify(JSON.parse(selectedAnimation.attr("data-steps")));
+
+                $('#node-input-steps').val(steps);
+            });
+        }
+    });
+</script>

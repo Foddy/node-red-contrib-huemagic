@@ -1,0 +1,31 @@
+{
+   "info":{
+      "name":"LGBT Flag",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#e30303",
+            "brightness":100,
+            "transitionTime":1
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#fc8a02",
+            "transitionTime":1
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#feed02",
+            "transitionTime":1
+         }
+      }
+   ]
+}

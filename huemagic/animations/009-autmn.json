@@ -1,0 +1,25 @@
+{
+   "info":{
+      "name":"Autmn",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#dad299",
+            "brightness":90,
+            "transitionTime":30
+         }
+      },
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#b0dab9",
+            "brightness":80,
+            "transitionTime":15
+         }
+      }
+   ]
+}

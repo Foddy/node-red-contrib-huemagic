@@ -58,7 +58,7 @@ module.exports = function(RED)
 				sendSceneInfo.payload.lastUpdated = scene.lastUpdated;
 				sendSceneInfo.payload.version = scene.version;
 
-				if(typeof config.skipevents != 'undefined'||config.skipevents == false) { scope.send(sendSceneInfo); }
+				if(typeof config.skipevents == 'undefined'||config.skipevents == false) { scope.send(sendSceneInfo); }
 
 				setTimeout(function() {
 					scope.status({});

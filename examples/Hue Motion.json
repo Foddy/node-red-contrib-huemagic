@@ -1,0 +1,82 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Motion (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Motion node"
+    },
+    {
+        "id": "c97e16b9.1ce368",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Turn on",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "acfd6da8.7d8a58"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "711947a4.fc72e8",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Turn off",
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "acfd6da8.7d8a58"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "a9304ae0.8a9bf",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 590,
+        "y": 60,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "acfd6da8.7d8a58",
+        "type": "hue-motion",
+        "z": "d081bb24.81a8d",
+        "name": "",
+        "sensorid": "",
+        "skipevents": false,
+        "x": 350,
+        "y": 60,
+        "wires": [
+            [
+                "a9304ae0.8a9bf"
+            ]
+        ]
+    }
+]

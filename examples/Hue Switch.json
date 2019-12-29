@@ -1,0 +1,40 @@
+[
+    {
+        "id": "e3a959fd.39da6",
+        "type": "tab",
+        "label": "Hue Switch (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Switch node"
+    },
+    {
+        "id": "d481c97b.56f63",
+        "type": "debug",
+        "z": "e3a959fd.39da6",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 330,
+        "y": 60,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "de4dca53.31075",
+        "type": "hue-switch",
+        "z": "e3a959fd.39da6",
+        "name": "",
+        "sensorid": "",
+        "skipevents": false,
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "d481c97b.56f63"
+            ]
+        ]
+    }
+]

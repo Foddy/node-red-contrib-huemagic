@@ -1,0 +1,31 @@
+{
+   "info":{
+      "name":"Rasta",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":5000,
+         "animation":{
+            "hex":"#239300",
+            "brightness":100,
+            "transitionTime":2
+         }
+      },
+      {
+         "delay":5000,
+         "animation":{
+            "hex":"#fdcb10",
+            "transitionTime":2
+         }
+      },
+      {
+         "delay":5000,
+         "animation":{
+            "hex":"#dd0000",
+            "transitionTime":2
+         }
+      }
+   ]
+}

@@ -1,0 +1,33 @@
+{
+   "info":{
+      "name":"Spring",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#127051",
+            "brightness":100,
+            "transitionTime":10
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#c7e3ca",
+            "brightness":100,
+            "transitionTime":10
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#ecb31c",
+            "brightness":100,
+            "transitionTime":10
+         }
+      }
+   ]
+}

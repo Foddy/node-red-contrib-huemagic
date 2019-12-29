@@ -1,0 +1,25 @@
+{
+   "info":{
+      "name":"Dirty Fog",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#b993d6",
+            "brightness":100,
+            "transitionTime":30
+         }
+      },
+      {
+         "delay":0,
+         "animation":{
+            "hex":"#8ca6db",
+            "brightness":100,
+            "transitionTime":30
+         }
+      }
+   ]
+}

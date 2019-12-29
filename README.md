@@ -12,23 +12,25 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Supports the output and input of multiple color code definitions *(HEX, RGB & human readable color names)*
 * Supports the temporary activation and deactivation of rules on the Hue Bridge
 * Event-based status messages for all devices connected to the Hue Bridge
-* Real-time status messages in the NodeRED UI
+* Real-time status messages in the Node-RED UI
 * Supports virtual pressing of the button on the Hue Bridge (Link Button)
 * Programmatic pairing of new devices without app enforcement (TouchLink)
 * Automatic firmware updates to the Hue Bridge and connected devices
 * Supports activating / deactivating of motion sensors
 * Easy to use alarm and colorloop effects on light bulbs and whole groups
+* A large selection of animations and the options to apply custom animations
 * Additive state settings on all nodes with multiple commands
 
 ### Installation
 HueMagic was written for **Node.js 10+** and Node-RED v1.0.3+. It supports Philips Hue API version v1.19.0+.
-_Please make sure, that you deactivate / remove other Philips Hue related NodeRED nodes before installing HueMagic!_
+_Please make sure, that you deactivate / remove other Philips Hue related Node-RED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
 
 ### Available Nodes
 
 - [Hue Bridges](#hue-bridges)
+- [Hue Magic](#hue-magic)
 - [Hue Lights](#hue-lights)
 - [Hue Groups](#hue-groups)
 - [Hue Scenes](#hue-scenes)
@@ -118,6 +120,38 @@ The event message that the bridge sends contains the following data in the **msg
 | **linkButtonEnabled**     | boolean       | Whether or not link button is enabled                                                                                   |
 | **touchlinkEnabled**      | boolean       | Whether or not TouchLink is enabled                                                                                     |
 | **model**                 | object        | The model object of the bridge includes model specific information like the model.id, model.manufacturer and model.name |
+
+## Hue Magic
+Use the Hue Magic node to apply animations on Hue Lights or Hue Groups. Connect the Hue Magic node to only one light or a whole group node to save API requests on the Hue Bridge. The animation previews can differ slightly from the real result on a lamp / group.
+
+![Hue Magic Example](https://user-images.githubusercontent.com/5302050/71544026-68d8a980-297a-11ea-912a-789c06bcad79.png)
+
+### Start / Stop animation
+Starts or stops an animation on the passed in **msg** values of:
+
+|   Property  |   Type  |                       Information                       |
+|:-----------:|:-------:|:-------------------------------------------------------:|
+| **payload** | boolean | True to start the animation, false to stop              |
+
+### Included animations
+Choose one of the included animations to apply to a Hue Light or Hue Group node. Contributions are welcomed! If you have created your own animation that you would like to share with others, add it at `/huemagic/animations/XXX-youranimationname.json` and create a pull request. Take a look at this directory for structure help.
+
+![Some included animations](https://user-images.githubusercontent.com/5302050/71556018-30e16d00-2a33-11ea-8c03-45211767ee98.gif)
+
+### Custom animations
+Alternatively, you can create and use your own animations. To do this, create an **array** and pass it to **msg.payload.steps** with the following parameters.
+
+|    Property   |  Type  |                                                  Information                                                 |
+|:-------------:|:------:|:------------------------------------------------------------------------------------------------------------:|
+| **delay**     | int    | Execute this frame after the delay (in ms)                                                                   |
+| **animation** | object | Insert all parameters that should be animated here. Supports all values of "Hue Light" and "Hue Group" node. |
+
+### Special commands
+Sometimes it makes sense for animations to be played out in disorder. For example, to imitate fire more realistically. To do this, create an object and pass it to **msg.payload.specials** with the following parameters.
+
+|     Property    |   Type  |          Information          |
+|:---------------:|:-------:|:-----------------------------:|
+| **randomOrder** | boolean | Execute steps in random order |
 
 ## Hue Lights
 Use the Hue Light node to control the lights and receive light bulb events.
@@ -491,7 +525,11 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.1.1 (latest)
+### v2.2.0 (latest)
+* New "Hue Magic" node with 12 animations included (check docs and examples)
+* Sample flows for each node are now available and can be imported directly from Node-RED
+
+### v2.1.1
 * Fixed an issue with the new option "skip events" on each node
 
 ### v2.1.0

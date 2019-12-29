@@ -1,0 +1,48 @@
+{
+    "info": {
+        "name": "Sunset",
+        "author": "HueMagic"
+    },
+    "steps": [
+    	{
+            "delay": 0,
+            "animation": {
+                "hex": "#fdd423",
+                "brightness": 100,
+                "transitionTime": 0
+            }
+        },
+        {
+            "delay": 0,
+            "animation": {
+                "hex": "#ff861c",
+                "brightness": 80,
+                "transitionTime": 120
+            }
+        },
+        {
+            "delay": 0,
+            "animation": {
+                "hex": "#c7433a",
+                "brightness": 60,
+                "transitionTime": 120
+            }
+        },
+        {
+            "delay": 0,
+            "animation": {
+                "hex": "#2d4096",
+                "brightness": 40,
+                "transitionTime": 120
+            }
+        },
+        {
+            "delay": 0,
+            "animation": {
+                "hex": "#001263",
+                "brightness": 0,
+                "transitionTime": 120
+            }
+        }
+    ]
+}

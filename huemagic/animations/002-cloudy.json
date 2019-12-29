@@ -1,0 +1,48 @@
+{
+    "info": {
+        "name": "Cloudy",
+        "author": "HueMagic"
+    },
+    "steps": [
+    	{
+            "delay": 0,
+            "animation": {
+                "hex": "#eef2f5",
+                "brightness": 90,
+                "transitionTime": 3
+            }
+        },
+        {
+            "delay": 5000,
+            "animation": {
+                "hex": "#dee8ef",
+                "brightness": 100,
+                "transitionTime": 3
+            }
+        },
+        {
+            "delay": 2000,
+            "animation": {
+                "hex": "#e4ebf1",
+                "brightness": 80,
+                "transitionTime": 1
+            }
+        },
+        {
+            "delay": 10000,
+            "animation": {
+                "hex": "#d0e2ec",
+                "brightness": 100,
+                "transitionTime": 6
+            }
+        },
+        {
+            "delay": 3000,
+            "animation": {
+                "hex": "#d6e4ed",
+                "brightness": 100,
+                "transitionTime": 2
+            }
+        }
+    ]
+}

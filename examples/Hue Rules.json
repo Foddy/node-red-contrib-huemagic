@@ -1,0 +1,82 @@
+[
+    {
+        "id": "7bca3b4f.9070fc",
+        "type": "tab",
+        "label": "Hue Rules (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Rules node"
+    },
+    {
+        "id": "f55a8fb1.7794c8",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Enable rule",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "fe008f45.8665a8"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "a262b4ba.579538",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Disable rule",
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "fe008f45.8665a8"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "a4f953ad.fd937",
+        "type": "debug",
+        "z": "7bca3b4f.9070fc",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 60,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "fe008f45.8665a8",
+        "type": "hue-rules",
+        "z": "7bca3b4f.9070fc",
+        "name": "",
+        "ruleid": "",
+        "skipevents": false,
+        "x": 360,
+        "y": 60,
+        "wires": [
+            [
+                "a4f953ad.fd937"
+            ]
+        ]
+    }
+]

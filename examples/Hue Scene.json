@@ -1,0 +1,61 @@
+[
+    {
+        "id": "e3a959fd.39da6",
+        "type": "tab",
+        "label": "Hue Scene (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Scene node"
+    },
+    {
+        "id": "a1e00b08.a8bf38",
+        "type": "inject",
+        "z": "e3a959fd.39da6",
+        "name": "Activate",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "b6988edd.8d6e3"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "d481c97b.56f63",
+        "type": "debug",
+        "z": "e3a959fd.39da6",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 60,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "b6988edd.8d6e3",
+        "type": "hue-scene",
+        "z": "e3a959fd.39da6",
+        "name": "",
+        "sceneid": "",
+        "skipevents": false,
+        "x": 350,
+        "y": 60,
+        "wires": [
+            [
+                "d481c97b.56f63"
+            ]
+        ]
+    }
+]

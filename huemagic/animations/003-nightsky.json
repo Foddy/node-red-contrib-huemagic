@@ -1,0 +1,22 @@
+{
+    "info": {
+        "name": "Night Sky",
+        "author": "HueMagic"
+    },
+    "steps": [
+    	{
+            "delay": 0,
+            "animation": {
+                "hex": "#0029ff",
+                "transitionTime": 15
+            }
+        },
+        {
+            "delay": 0,
+            "animation": {
+                "hex": "#6ca9ff",
+                "transitionTime": 15
+            }
+        }
+    ]
+}

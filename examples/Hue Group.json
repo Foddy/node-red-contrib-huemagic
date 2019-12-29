@@ -1,0 +1,146 @@
+[
+    {
+        "id": "e3a959fd.39da6",
+        "type": "tab",
+        "label": "Hue Group (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Group node"
+    },
+    {
+        "id": "a1e00b08.a8bf38",
+        "type": "inject",
+        "z": "e3a959fd.39da6",
+        "name": "Turn on",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 60,
+        "wires": [
+            [
+                "4b7a3d1a.dbd78c"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "51d50cd7.34fafc",
+        "type": "inject",
+        "z": "e3a959fd.39da6",
+        "name": "Turn off",
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 120,
+        "wires": [
+            [
+                "4b7a3d1a.dbd78c"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "611f3a1f.a82d8c",
+        "type": "inject",
+        "z": "e3a959fd.39da6",
+        "name": "Extended mode",
+        "topic": "",
+        "payload": "{\"on\":true,\"brightness\":100,\"color\":\"any\"}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "4b7a3d1a.dbd78c"
+            ]
+        ],
+        "icon": "node-red/cog.svg"
+    },
+    {
+        "id": "dcfb675.ff1c298",
+        "type": "inject",
+        "z": "e3a959fd.39da6",
+        "name": "Toggle",
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "4b7a3d1a.dbd78c"
+            ]
+        ],
+        "icon": "font-awesome/fa-power-off"
+    },
+    {
+        "id": "bb79406d.da721",
+        "type": "inject",
+        "z": "e3a959fd.39da6",
+        "name": "Play red alert",
+        "topic": "",
+        "payload": "{\"alert\":5,\"hex\":\"#ff0000\"}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "4b7a3d1a.dbd78c"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "d481c97b.56f63",
+        "type": "debug",
+        "z": "e3a959fd.39da6",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 590,
+        "y": 180,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "4b7a3d1a.dbd78c",
+        "type": "hue-group",
+        "z": "e3a959fd.39da6",
+        "name": "",
+        "groupid": "",
+        "colornamer": true,
+        "skipevents": false,
+        "x": 370,
+        "y": 180,
+        "wires": [
+            [
+                "d481c97b.56f63"
+            ]
+        ]
+    }
+]

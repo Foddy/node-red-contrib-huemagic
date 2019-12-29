@@ -8,7 +8,7 @@
       {
          "delay":1000,
          "animation":{
-            "hex":"#e30303",
+            "hex":"#e40302",
             "brightness":100,
             "transitionTime":1
          }
@@ -16,7 +16,7 @@
       {
          "delay":1000,
          "animation":{
-            "hex":"#fc8a02",
+            "hex":"#fc8b02",
             "transitionTime":1
          }
       },
@@ -24,6 +24,27 @@
          "delay":1000,
          "animation":{
             "hex":"#feed02",
+            "transitionTime":1
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#168026",
+            "transitionTime":1
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#054dff",
+            "transitionTime":1
+         }
+      },
+      {
+         "delay":1000,
+         "animation":{
+            "hex":"#750887",
             "transitionTime":1
          }
       }

@@ -525,9 +525,10 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.2.1 (latest)
+### v2.2.2 (latest)
 * New "Hue Magic" node with 12 animations included (check docs and examples)
 * Sample flows for each node are now available and can be imported directly from Node-RED
+* Fixed an issue which prevented output events on the nodes (#116)
 
 ### v2.1.1
 * Fixed an issue with the new option "skip events" on each node

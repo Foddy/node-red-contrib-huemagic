@@ -60,7 +60,7 @@ module.exports = function(RED)
 				message.info.model.name = sensor.model.name;
 				message.info.model.type = sensor.model.type;
 
-				if(typeof config.skipevents == 'undefined'||config.skipevents == false) { scope.send(message); }
+				if(!config.skipevents) { scope.send(message); }
 				scope.status({fill: "yellow", shape: "dot", text: celsius+" °C / "+fahrenheit+" °F"});
 			}
 		});

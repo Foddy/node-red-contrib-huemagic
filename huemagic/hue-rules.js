@@ -65,7 +65,7 @@ module.exports = function(RED)
 				message.actions.push(actionValues);
 			}
 
-			if(typeof config.skipevents == 'undefined'||config.skipevents == false) { scope.send(message); }
+			if(!config.skipevents) { scope.send(message); }
 
 			if(rule.status == "enabled")
 			{
@@ -127,7 +127,7 @@ module.exports = function(RED)
 						message.actions.push(actionValues);
 					}
 
-					if(typeof config.skipevents == 'undefined'||config.skipevents == false) { scope.send(message); }
+					if(!config.skipevents) { scope.send(message); }
 
 					if(msg.payload == false)
 					{

@@ -108,7 +108,7 @@ module.exports = function(RED)
 				}
 
 				message.payload.updated = moment().format();
-				if(typeof config.skipevents == 'undefined'||config.skipevents == false) { scope.send(message); }
+				if(!config.skipevents) { scope.send(message); }
 			});
 		}
 		else
@@ -511,7 +511,7 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-			if(typeof config.skipevents == 'undefined'||config.skipevents == false) { scope.send(message); }
+			if(!config.skipevents) { scope.send(message); }
 		}
 
 		//

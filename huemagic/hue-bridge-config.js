@@ -7,7 +7,7 @@ module.exports = function(RED)
 		var scope = this;
 		var events = require('events');
 		let huejay = require('huejay');
-		
+
 		// INTERVAL AND EVENT EMITTER
 		this.nodeActive = true;
 		this.lights = [];
@@ -103,7 +103,7 @@ module.exports = function(RED)
 		}
 
 		// START FIRST CHECK
-		if(typeof config.disableupdates == 'undefined'||config.disableupdates == false)
+		if(!config.disableupdates)
 		{
 			this.recheckAll();
 		}
@@ -111,12 +111,12 @@ module.exports = function(RED)
 		{
 			this.recheckSensors();
 		}
-		
+
 
 		// DETERMINE UPDATES
 		this.getUpdates = function(mode, content)
 		{
-			var updates = [];			
+			var updates = [];
 			for (var i = content.length - 1; i >= 0; i--)
 			{
 				let device = content[i];
@@ -215,7 +215,7 @@ module.exports = function(RED)
 				scope.events.emit(eventName, deviceUpdate);
 			}
 		}
-		
+
 		//
 		// CLOSE NDOE / REMOVE RECHECK INTERVAL
 		this.on('close', function()

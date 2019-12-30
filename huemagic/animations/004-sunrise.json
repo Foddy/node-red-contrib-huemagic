@@ -43,6 +43,14 @@
                 "brightness": 100,
                 "transitionTime": 120
             }
+        },
+        {
+            "delay": 240000,
+            "animation": {
+                "hex": "#fdd423",
+                "brightness": 100,
+                "transitionTime": 0
+            }
         }
     ]
 }

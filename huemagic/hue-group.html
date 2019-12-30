@@ -205,7 +205,7 @@
                 $('#node-input-groupid').append('<option selected="selected" value="null">searching groups…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('/hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                $.get('hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
                 .done(function(data) {
                     var lightBulbs = JSON.parse(data);
 

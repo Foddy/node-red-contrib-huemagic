@@ -101,7 +101,7 @@
                 $('#node-input-sensorid').append('<option selected="selected" value="null">searching Hue Taps…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('/hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZGPSwitch"})
+                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZGPSwitch"})
                 .done( function(data) {
                     var hueTaps = JSON.parse(data);
 

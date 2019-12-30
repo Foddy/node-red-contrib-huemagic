@@ -251,18 +251,18 @@ module.exports = function(RED)
 	    }
 	    else
 	    {
-		let huejay = require('huejay');
+			var huejay = require('huejay');
 
-		var bridgeIP = (req.query.ip).toString();
-		let client = new huejay.Client({host: bridgeIP, username: 'default'});
+			var bridgeIP = (req.query.ip).toString();
+			var client = new huejay.Client({host: bridgeIP, username: 'default'});
 
-		client.bridge.get()
+			client.bridge.get()
 			.then(bridge => {
 				res.end(bridge.name);
 			})
 			.catch(error => {
-			res.send(500).send(error.message);
-		});
+				res.send(500).send(error.message);
+			});
 	    }
 	});
 

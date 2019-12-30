@@ -202,7 +202,7 @@
                 $('#node-input-lightid').append('<option selected="selected" value="null">searching lights…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('/hue/lights', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})
+                $.get('hue/lights', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})
                 .done(function(data) {
                     var lightBulbs = JSON.parse(data);
 

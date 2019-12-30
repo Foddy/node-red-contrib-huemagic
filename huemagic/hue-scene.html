@@ -105,7 +105,7 @@
                 $('#node-input-sceneid').append('<option selected="selected" value="null">searching scenes…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('/hue/scenes', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                $.get('hue/scenes', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
                 .done(function(data) {
                     var scenes = JSON.parse(data);
 

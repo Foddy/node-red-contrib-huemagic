@@ -118,7 +118,7 @@
                 $('#node-input-sensorid').append('<option selected="selected" value="null">searching motion sensors…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('/hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})
+                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})
                 .done(function(data) {
                     var motionSensors = JSON.parse(data);
 

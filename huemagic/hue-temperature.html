@@ -107,7 +107,7 @@
                 $('#node-input-sensorid').append('<option selected="selected" value="null">searching temperature sensors…</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('/hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLTemperature"})
+                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLTemperature"})
                 .done( function(data) {
                     var temperatureSensors = JSON.parse(data);
 

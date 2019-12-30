@@ -91,7 +91,7 @@
 				$('#node-config-input-bridge').replaceWith('<select id="node-config-input-bridge" style="width: 100%"></select>');
 				$('#node-config-input-bridge').append('<option selected="selected" value="null">searching…</option>');
 
-				$.get('/hue/bridges')
+				$.get('hue/bridges')
 				.done( function(data) {
 					var bridges = JSON.parse(data);
 
@@ -123,14 +123,14 @@
 				var currentBridgeIP = $('#node-config-input-bridge').val();
 				if(currentBridgeIP.length > 6)
 				{
-					$.get('/hue/name', { ip: currentBridgeIP } )
+					$.get('hue/name', { ip: currentBridgeIP } )
 					.done( function(data)
 					{
 						$('#node-config-input-name').val(data);
 					})
 					.fail(function(err)
 					{
-						RED.notify("Sorry. Your selected Hue Bridge is invalid!", "error");
+						RED.notify("Sorry. Your selected Hue Bridge is invalid: " + err, "error");
 					});
 				}
 			});
@@ -159,7 +159,7 @@
 
 					setTimeout(function()
 					{
-						$.get('/hue/register', { ip: $('#node-config-input-bridge').val() } )
+						$.get('hue/register', { ip: $('#node-config-input-bridge').val() } )
 						.done( function(data)
 						{
 							if(data == "error")

@@ -116,7 +116,10 @@
                     // SET TAPS AS OPTIONS
                     hueTaps.forEach(function(sensor)
                     {
-                        $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        if(sensor.model == "Hue Tap")
+                        {
+                            $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        }
                     });
 
                     // SELECT CURRENT VALUE

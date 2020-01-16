@@ -265,4 +265,12 @@ module.exports = function(RED)
 		// SEND ALL ANIMATIONS
 		res.end(JSON.stringify(allAnimations));
 	});
+
+	//
+	// GET ASSETS
+	RED.httpAdmin.get('/hue/assets/:file', function(req, res, next)
+	{
+		let path = require("path");
+		res.sendFile(path.resolve(__dirname, 'assets', req.params.file));
+	});
 }

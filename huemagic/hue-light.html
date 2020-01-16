@@ -214,10 +214,10 @@
                     // RESET OPTIONS
                     $('#node-input-lightid').empty();
 
-                    // SET MOTION SENSORS AS OPTIONS
-                    lightBulbs.forEach(function(sensor)
+                    // SET LIGHTS AS OPTIONS
+                    lightBulbs.forEach(function(light)
                     {
-                        $('#node-input-lightid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        $('#node-input-lightid').append('<option value="' + light.id + '">' + light.name + '</option>');
                     });
 
                     // SELECT CURRENT VALUE
@@ -231,10 +231,10 @@
 
             $(document).on('change', '#node-input-lightid', function()
             {
-                var sensorName = $('#node-input-lightid option:selected').text();
-                if(sensorName.length > 0)
+                var lightName = $('#node-input-lightid option:selected').text();
+                if(lightName.length > 0)
                 {
-                    $('#node-input-name').val(sensorName);
+                    $('#node-input-name').val(lightName);
                 }
             });
 

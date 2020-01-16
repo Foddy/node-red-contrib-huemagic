@@ -1,7 +1,7 @@
 <script type="text/x-red" data-template-name="hue-scene">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Sensor name">
+        <input type="text" id="node-input-name" placeholder="Scene name">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
@@ -14,6 +14,17 @@
                 <input type="text" id="node-input-sceneid" placeholder="1" style="width: 100%"/>
             </div>
             <a id="node-config-input-scan-scenes" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-groupid"><i class="fa fa-lightbulb-o"></i> Group</label>
+        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+            <div style="position: absolute; left: 0px; right: 40px;">
+                <input type="text" id="node-input-groupid" placeholder="1" style="width: 100%"/>
+            </div>
+            <a id="node-config-input-scan-groups" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
                 <i class="fa fa-search"></i>
             </a>
         </div>
@@ -35,10 +46,13 @@
     <p>When a scene is configured any passed in value on the scene node activates the preconfigured scene.</p>
 
     <h3>Activate (dynamic)</h3>
-    <p>When no scene is configured a scene name or scene id must be passed in to activate that scene.</p>
+    <p>When no scene is configured a scene name or scene id must be passed in to activate that scene. It is also possible to pass a group ID dynamically to recall a scene on a specific group only. The following parameters can be passed manually in <b>msg.payload</b>.</p>
     <dl class="message-properties">
-        <dt>msg.payload<span class="property-type">string</span></dt>
+        <dt>scene<span class="property-type">string</span></dt>
         <dd>Will activate the scene given by its name or id.</dd>
+
+        <dt>group<span class="property-type">int</span></dt>
+        <dd>Will recall a scene on a specific group by its id.</dd>
     </dl>
 
     <h3>Scene Events</h3>
@@ -74,7 +88,12 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            sceneid: {value:""},
+            sceneid: {value: null},
+            groupid: {value:"", required: false, validate: function(id) {
+                if(id.length < 1) { return true; }
+                else if(!isNaN(id)) { return true; }
+                else { return false; }
+            }},
             skipevents: {value: false}
         },
         inputs: 1,
@@ -96,6 +115,13 @@
                 var current = $('#node-input-sceneid').val();
                 $('#node-input-sceneid').replaceWith('<input type="text" id="node-input-sceneid" style="width: 100%"/>');
                 $('#node-input-sceneid').val(current);
+            }
+
+            function manualGroupID()
+            {
+                var current = $('#node-input-groupid').val();
+                $('#node-input-groupid').replaceWith('<input type="text" id="node-input-groupid" style="width: 100%"/>');
+                $('#node-input-groupid').val(current);
             }
 
             function searchAndSelectScenes()
@@ -132,6 +158,42 @@
                 });
             }
 
+            function searchAndSelectGroupID()
+            {
+                var current = $('#node-input-groupid').val();
+                $('#node-input-groupid').replaceWith('<select id="node-input-groupid" style="width: 100%"></select>');
+                $('#node-input-groupid').append('<option selected="selected" value="null">searching groups…</option>');
+
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                $.get('hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
+                .done(function(data) {
+                    var groups = JSON.parse(data);
+
+                    if(groups.length <= 0)
+                    {
+                        RED.notify("No groups found.", "error");
+                    }
+
+                    // RESET OPTIONS
+                    $('#node-input-groupid').empty();
+
+                    // SET GROUPS AS OPTIONS
+                    $('#node-input-groupid').append('<option value="0">All groups / lights</option>');
+                    groups.forEach(function(group)
+                    {
+                        $('#node-input-groupid').append('<option value="' + group.id + '">' + group.name + '</option>');
+                    });
+
+                    // SELECT CURRENT VALUE
+                    $('#node-input-groupid').val(current);
+                })
+                .fail(function()
+                {
+                    RED.notify("Something went wrong. Please retry.", "error");
+                });
+            }
+
+
             $(document).on('change', '#node-input-sceneid', function()
             {
                 var sceneName = $('#node-input-sceneid option:selected').text();
@@ -141,6 +203,7 @@
                 }
             });
 
+            // SCAN
             $('#node-config-input-scan-scenes').click(function()
             {
                 if($('#node-input-sceneid').prop("tagName") === "INPUT")
@@ -148,6 +211,16 @@
                     searchAndSelectScenes();
                 } else {
                     manualSceneID();
+                }
+            });
+
+            $('#node-config-input-scan-groups').click(function()
+            {
+                if($('#node-input-groupid').prop("tagName") === "INPUT")
+                {
+                    searchAndSelectGroupID();
+                } else {
+                    manualGroupID();
                 }
             });
         }

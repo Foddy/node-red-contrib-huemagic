@@ -191,7 +191,7 @@
         {
             var scope = this;
 
-            function manualLightID()
+            function manualGroupID()
             {
                 var current = $('#node-input-groupid').val();
                 $('#node-input-groupid').replaceWith('<input type="text" id="node-input-groupid" style="width: 100%"/>');
@@ -207,9 +207,9 @@
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
                 .done(function(data) {
-                    var lightBulbs = JSON.parse(data);
+                    var groups = JSON.parse(data);
 
-                    if(lightBulbs.length <= 0)
+                    if(groups.length <= 0)
                     {
                         RED.notify("No groups found.", "error");
                     }
@@ -217,10 +217,11 @@
                     // RESET OPTIONS
                     $('#node-input-groupid').empty();
 
-                    // SET MOTION SENSORS AS OPTIONS
-                    lightBulbs.forEach(function(sensor)
+                    // SET GROUPS AS OPTIONS
+                    $('#node-input-groupid').append('<option value="0">All groups / lights</option>');
+                    groups.forEach(function(group)
                     {
-                        $('#node-input-groupid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        $('#node-input-groupid').append('<option value="' + group.id + '">' + group.name + '</option>');
                     });
 
                     // SELECT CURRENT VALUE
@@ -234,10 +235,10 @@
 
             $(document).on('change', '#node-input-groupid', function()
             {
-                var sensorName = $('#node-input-groupid option:selected').text();
-                if(sensorName.length > 0)
+                var groupName = $('#node-input-groupid option:selected').text();
+                if(groupName.length > 0)
                 {
-                    $('#node-input-name').val(sensorName);
+                    $('#node-input-name').val(groupName);
                 }
             });
 
@@ -247,7 +248,7 @@
                 {
                     searchAndSelectGroupID();
                 } else {
-                    manualLightID();
+                    manualGroupID();
                 }
             });
         }

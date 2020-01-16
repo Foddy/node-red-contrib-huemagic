@@ -112,9 +112,9 @@
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLSwitch"})
                 .done( function(data) {
-                    var hueTaps = JSON.parse(data);
+                    var hueSwitches = JSON.parse(data);
 
-                    if(hueTaps.length <= 0)
+                    if(hueSwitches.length <= 0)
                     {
                         RED.notify("No Hue Switches found.", "error");
                     }
@@ -123,9 +123,12 @@
                     $('#node-input-sensorid').empty();
 
                     // SET SWITCHES AS OPTIONS
-                    hueTaps.forEach(function(sensor)
+                    hueSwitches.forEach(function(sensor)
                     {
-                        $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        if(sensor.model == "Hue Wireless Dimmer Switch")
+                        {
+                            $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        }
                     });
 
                     // SELECT CURRENT VALUE

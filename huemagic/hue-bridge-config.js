@@ -317,21 +317,22 @@ module.exports = function(RED)
 
 		client.sensors.getAll()
 		.then(sensors => {
-			var motionSensors = [];
+			var allSensorDevices = [];
 
 			for (let sensor of sensors)
 			{
 				if(sensor.type == type)
 				{
-					var motionSensor = {};
-					motionSensor.id = sensor.id;
-					motionSensor.name = sensor.name;
+					var oneSensor = {};
+					oneSensor.id = sensor.id;
+					oneSensor.name = sensor.name;
+					oneSensor.model = sensor.model.name;
 
-					motionSensors.push(motionSensor);
+					allSensorDevices.push(oneSensor);
 				}
 			}
 
-			res.end(JSON.stringify(motionSensors));
+			res.end(JSON.stringify(allSensorDevices));
 		})
 		.catch(error => {
 			res.send(500).send(error.stack);

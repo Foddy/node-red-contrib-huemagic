@@ -40,7 +40,8 @@ module.exports = function(RED)
 			bridge.events.on('light' + config.lightid, function(light)
 			{
 				var brightnessPercent = 0;
-				if(light.reachable){
+				if(light.reachable)
+				{
 					if(light.on)
 					{
 						// CHECK IF LIGHT

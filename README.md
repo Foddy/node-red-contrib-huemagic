@@ -41,7 +41,6 @@ _Please make sure, that you deactivate / remove other Philips Hue related Node-R
 - [Hue Lux Sensors](#hue-lux-sensor)
 - [Hue Rules](#hue-rules)
 
-
 ## Hue Bridges
 The Hue Bridge node keeps the Hue Bridge firmware and connected devices up-to-date and provides more information and setup options for the bridge.
 
@@ -319,6 +318,14 @@ Use the Hue Scene node to recall / activate preconfigured scenes on the bridge a
 ### Recall / Activate Scene
 **Any** passed in value on the scene node activates the preconfigured scene. Please note that recalling animated scenes may not work properly due to some restrictions.
 
+### Apply scenes dynamically
+When no scene is configured a scene name or scene Id must be passed in to activate that scene. It is also possible to pass a group Id dynamically to recall a scene on a specific group only. The following parameters can be passed manually in **msg.payload**.
+
+|  Property |  Type  |                     Information                    |
+|:---------:|:------:|:--------------------------------------------------:|
+| **scene** | string | Will activate the scene given by its name or id.   |
+| **group** | int    | Will recall a scene on a specific group by its id. |
+
 ### Scene Events
 The event message that the scene node sends contains the following data in the **msg.payload** object. Events will only be sent if a scene receives any command.
 
@@ -525,7 +532,12 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.2.3 (latest)
+### v2.2.5 (latest)
+* Hue scenes can now be applied on specific groups
+* Hue Group nodes now support the option to select all groups / lights
+* Optimized Hue Magic node to load dependencies locally
+
+### v2.2.3
 * API requests are called again via the absolute path
 
 ### v2.2.2

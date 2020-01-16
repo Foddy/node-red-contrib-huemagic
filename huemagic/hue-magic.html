@@ -30,7 +30,7 @@
             <div class="info">
                 <span><name>Name</name> <dur>(dur)</dur></span>
             </div>
-            <img src="https://user-images.githubusercontent.com/5302050/71473708-79e9b500-27d8-11ea-86d5-74dee9ef8c35.png">
+            <img src="hue/assets/huemagic-bulb.png">
         </div>
     </div>
 </script>
@@ -222,7 +222,7 @@
             this.animations = [];
 
             var preset = $('#node-input-preset').val();
-            $.getScript("https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js", function( data, textStatus, jqxhr )
+            $.getScript("hue/assets/anime.js", function( data, textStatus, jqxhr )
             {
                 // LOAD ANIMATIONS
                 $.get('hue/animations?nc=' + Math.random())

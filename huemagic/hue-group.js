@@ -33,7 +33,7 @@ module.exports = function(RED)
 		}
 
 
-		if(config.groupid)
+		if(typeof config.groupid != 'undefined')
 		{
 			bridge.events.on('group' + config.groupid, function(group)
 			{
@@ -118,9 +118,9 @@ module.exports = function(RED)
 			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
 
 			// CHECK IF GROUP ID IS SET
-			if(tempGroupID == false)
+			if(isNaN(tempGroupID))
 			{
-				scope.error("No group Id defined. Please check the docs.");
+				scope.error("No group Id defined.");
 				return false;
 			}
 

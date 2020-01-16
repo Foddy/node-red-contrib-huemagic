@@ -532,7 +532,7 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.2.5 (latest)
+### v2.2.6 (latest)
 * Hue scenes can now be applied on specific groups
 * Hue Group nodes now support the option to select all groups / lights
 * Optimized Hue Magic node to load dependencies locally

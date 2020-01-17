@@ -1,0 +1,34 @@
+{
+	"hue-bridge":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Hue Bridge name",
+			"autoupdates": "Auto updates",
+			"autoupdates-info": "Activate automatic firmware updates"
+		},
+		"node":
+		{
+			"title": "Hue Bridge",
+			"not-configured": "not configured",
+			"connecting": "connecting…",
+			"connected": "connected",
+			"starting-tl": "starting TouchLink…",
+			"started-tl": "TouchLink started…",
+			"f-users": "fetching users…",
+			"f-lights": "fetching lights…",
+			"f-groups": "fetching groups…",
+			"f-sensors": "fetching sensors…",
+			"f-scenes": "fetching scenes…",
+			"f-rules": "fetching rules…",
+			"f-schedules": "fetching schedules…",
+			"f-rlinks": "fetching resource links…",
+			"f-timezones": "fetching timezones…",
+			"updating-settings": "updating settings…",
+			"settings-updated": "settings updated",
+			"input": "settings / fetch",
+			"output": "bridge information"
+		}
+	}
+}

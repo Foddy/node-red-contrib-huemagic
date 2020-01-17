@@ -1,0 +1,24 @@
+{
+	"hue-temperature":
+	{
+		"config":
+		{
+			"name": "Name",
+			"sensor": "Sensor",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"input-name": "Name des Temperatursensors",
+			"searching": "Suche nach Temperatursensoren…",
+			"none-found": "keine Temperatursensoren gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+		},
+		"node":
+		{
+			"title": "Hue Temperatur",
+			"not-configured": "nicht konfiguriert",
+			"init": "initialisiere…",
+			"not-reachable": "nicht erreichbar",
+			"output": "Temperatur (aktualisiert)"
+		}
+	}
+}

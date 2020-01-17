@@ -1,0 +1,28 @@
+{
+	"hue-motion":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Sensor name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching motion sensors…",
+			"none-found": "No motion sensors found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"sensor": "Sensor"
+		},
+		"node":
+		{
+			"title": "Hue Motion",
+			"not-configured": "not configured",
+			"not-reachable": "not reachable",
+			"motion": "motion detected",
+			"no-motion": "no motion",
+			"activated": "activated",
+			"deactivated": "deactivated",
+			"input": "activate / deactivate",
+			"output": "motion detected"
+		}
+	}
+}

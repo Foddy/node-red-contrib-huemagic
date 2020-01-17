@@ -11,20 +11,25 @@ module.exports = function(RED)
 		let moment = require('moment');
 
 		//
-		// INTERVAL
+		// ACTIVE STATE
 		this.nodeActive = true;
+
+		//
+		// BRIDGE INFORMATION
+		this.bridgeInformation = {};
+
 
 		//
 		// CHECK CONFIG
 		if(bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-bridge.node.not-configured"});
 			return false;
 		}
 
 		//
 		// UPDATE STATE
-		this.status({fill: "grey", shape: "dot", text: "connecting…"});
+		this.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connecting"});
 
 		//
 		// GET INFORMATION
@@ -65,7 +70,10 @@ module.exports = function(RED)
 				message.payload.model.name = bridgeInformation.model.name;
 
 				scope.send(message);
-				scope.status({fill: "grey", shape: "dot", text: "connected" });
+				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" });
+
+				// SAVE BRIDGE INFORMATION
+				scope.bridgeInformation = message.payload;
 			})
 			.catch(error => {
 				scope.error(error);
@@ -105,11 +113,11 @@ module.exports = function(RED)
 					}
 				})
 				.catch(error => {
-					// NO UPDATES AVAILABLE // TRY AGAIN IN 1H
+					// NO UPDATES AVAILABLE // TRY AGAIN IN 3H
 					if(scope.nodeActive == true)
 					{
-						console.log("No Hue Bridge updates available. Checking again in an hour…");
-						setTimeout(function(){ scope.autoUpdateHueBridge(); }, 60000 * 60);
+						console.log("No Hue Bridge updates available. Checking again in three hours…");
+						setTimeout(function(){ scope.autoUpdateHueBridge(); }, 60000 * 180);
 					}
 				});
 			}
@@ -119,21 +127,26 @@ module.exports = function(RED)
 
 		//
 		// COMMANDS
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			var commandSent = false;
 
 			// STARTING TOUCHLINK
 			if(typeof msg.payload.touchLink != 'undefined')
 			{
-				scope.status({fill: "grey", shape: "dot", text: "starting TouchLink…" });
+				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.starting-tl" });
 				bridge.client.bridge.touchlink()
 				.then(() => {
-					scope.status({fill: "blue", shape: "ring", text: "TouchLink started…" });
+					scope.status({fill: "blue", shape: "ring", text: "hue-bridge.node.started-tl" });
+					if(done) { done(); }
 					setTimeout(function(){ scope.getBridgeInformation(); }, 30000);
 				})
 				.catch(error => {
 					scope.error(error);
+					if(done) { done(error); }
 					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 				});
 
@@ -146,145 +159,181 @@ module.exports = function(RED)
 			{
 				if(msg.payload.fetch == "users")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching users…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-users" });
 					bridge.client.users.getAll()
 					.then(users => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.users = users;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "lights")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching lights…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-lights" });
 					bridge.client.lights.getAll()
 					.then(lights => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.lights = lights;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "groups")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching groups…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-groups" });
 					bridge.client.groups.getAll()
 					.then(groups => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.groups = groups;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "sensors")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching sensors…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-sensors" });
 					bridge.client.sensors.getAll()
 					.then(sensors => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.sensors = sensors;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "scenes")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching scenes…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-scenes" });
 					bridge.client.scenes.getAll()
 					.then(scenes => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.scenes = scenes;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "rules")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching rules…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-rules" });
 					bridge.client.rules.getAll()
 					.then(rules => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.rules = rules;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "schedules")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching schedules…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-schedules" });
 					bridge.client.schedules.getAll()
 					.then(schedules => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.schedules = schedules;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "resourceLinks")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching resource links…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-rlinks" });
 					bridge.client.resourceLinks.getAll()
 					.then(resourceLinks => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.resourceLinks = resourceLinks;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
 				else if(msg.payload.fetch == "timeZones")
 				{
-					scope.status({fill: "grey", shape: "dot", text: "fetching timezones…" });
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-timezones" });
 					bridge.client.timeZones.getAll()
 					.then(timeZones => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "connected" }); }, 2000);
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
 
 						var message = {};
 						message.timeZones = timeZones;
-						scope.send(message);
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
 					})
 					.catch(error => {
 						scope.error(error);
+						if(done) { done(error); }
 						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 					});
 				}
@@ -295,7 +344,7 @@ module.exports = function(RED)
 			// UPDATING SETTINGS
 			if(typeof msg.payload.settings != 'undefined')
 			{
-				scope.status({fill: "grey", shape: "dot", text: "updating settings…" });
+				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.updating-settings" });
 				bridge.client.bridge.get()
 				.then(bridgeConfig => {
 					if(typeof msg.payload.settings.name != 'undefined')
@@ -337,11 +386,13 @@ module.exports = function(RED)
 					return bridge.client.bridge.save(bridgeConfig);
 				})
 				.then(bridgeInformation => {
-					scope.status({fill: "green", shape: "dot", text: "config updated" });
+					scope.status({fill: "green", shape: "dot", text: "hue-bridge.node.settings-updated" });
+					if(done) { done(); }
 					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 				})
 				.catch(error => {
 					scope.error(error);
+					if(done) { done(error); }
 					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
 				});
 
@@ -357,7 +408,7 @@ module.exports = function(RED)
 		});
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE
 		this.on('close', function()
 		{
 			scope.nodeActive = false;

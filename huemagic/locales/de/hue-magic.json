@@ -1,0 +1,27 @@
+{
+	"hue-magic":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name der Animation",
+			"loop": "Wiederholen",
+			"loop-endless": "Unendlich wiederholen",
+			"restore": "Wiederherstellen",
+			"restore-state": "Den vorherigen Zustand nach dem Stopp wiederherstellen",
+			"animation": "Animation",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"seconds": "Sek.",
+			"minutes": "Min."
+		},
+		"node":
+		{
+			"title": "Hue Magic",
+			"no-animation": "keine Animation definiert",
+			"animating": "animiere…",
+			"stopped": "gestoppt",
+			"input": "Starte Animation",
+			"output": "Licht oder Gruppe"
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"hue-rules":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Rule name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching rules…",
+			"none-found": "No rules found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"rule": "Rule"
+		},
+		"node":
+		{
+			"title": "Hue Rule",
+			"no-rule": "no rule selected",
+			"init": "initializing…",
+			"enabled": "enabled",
+			"disabled": "disabled",
+			"output": "rule (triggered)",
+			"input": "enable / disable"
+		}
+	}
+}

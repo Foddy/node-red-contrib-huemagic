@@ -1,0 +1,71 @@
+<script type="text/x-red" data-help-name="hue-rules">
+    <p>Hue rule node to receive rule events or to enable / disable rules.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available rules on the bridge. Type in the name of the rule manually or keep the default name. Note that events will only be sent on deploy (once) and if the rule is triggered on the bridge. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+
+    <h3>Enable / Disable</h3>
+    <p>Activates or deactivates the rule based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean</span></dt>
+        <dd>Enables the rule</dd>
+
+        <dt>false<span class="property-type">boolean</span></dt>
+        <dd>Disables the rule</dd>
+    </dl>
+
+    <h3>Trigger events</h3>
+    <p>The event message that the rule node sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>triggered<span class="property-type">string</span></dt>
+        <dd>ISO 8601 date string of the last time rule was triggered</dd>
+    </dl>
+
+    <h3>Additional Rule Info</h3>
+    <p>Additional information about the rule is going to be sent to the <b>msg.info</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerical id of the rule as registered on the bridge</dd>
+
+        <dt>created<span class="property-type">string</span></dt>
+        <dd>ISO 8601 date string of the creation date of the rule</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name of the rule</dd>
+
+        <dt>timesTriggered<span class="property-type">int</span></dt>
+        <dd>Number of times rule was triggered</dd>
+
+        <dt>owner<span class="property-type">string</span></dt>
+        <dd>User who created the rule</dd>
+
+        <dt>status<span class="property-type">string</span></dt>
+        <dd>enabled or disabled, rule is triggerable on enabled</dd>
+    </dl>
+
+    <h3>Rule Conditions</h3>
+    <p>An array of objects representing the rule conditions is going to be sent to the <b>msg.conditions</b> array:</p>
+    <dl class="message-properties">
+        <dt>address<span class="property-type">string</span></dt>
+        <dd>The sensor resource/state location for the condition</dd>
+
+        <dt>operator<span class="property-type">string</span></dt>
+        <dd>The operator for the condition</dd>
+
+        <dt>value<span class="property-type">string</span></dt>
+        <dd>The value used in conjunction with operator</dd>
+    </dl>
+
+    <h3>Rule Actions</h3>
+    <p>An array of objects representing the rule actions is going to be sent to the <b>msg.actions</b> array:</p>
+    <dl class="message-properties">
+        <dt>address<span class="property-type">string</span></dt>
+        <dd>The actionable resource location</dd>
+
+        <dt>method<span class="property-type">string</span></dt>
+        <dd>Type of method for the action (e.g. GET, PUT)</dd>
+
+        <dt>body<span class="property-type">object</span></dt>
+        <dd>The body of the action</dd>
+    </dl>
+</script>

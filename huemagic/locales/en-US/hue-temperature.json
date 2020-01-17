@@ -1,0 +1,24 @@
+{
+	"hue-temperature":
+	{
+		"config":
+		{
+			"name": "Name",
+			"sensor": "Sensor",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"input-name": "Sensor name",
+			"searching": "searching temperature sensors…",
+			"none-found": "No temperature sensors found.",
+			"unknown-error": "Something went wrong. Please retry."
+		},
+		"node":
+		{
+			"title": "Hue Temperature",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"not-reachable": "not reachable!",
+			"output": "temperature (changed)"
+		}
+	}
+}

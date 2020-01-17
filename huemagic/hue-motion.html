@@ -1,14 +1,14 @@
 <script type="text/x-red" data-template-name="hue-motion">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Sensor name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-motion.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-motion.config.input-name">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
         <input type="text" id="node-input-bridge">
     </div>
     <div class="form-row">
-        <label for="node-input-sensorid"><i class="fa fa-eye"></i> Sensor</label>
+        <label for="node-input-sensorid"><i class="fa fa-eye"></i> <span data-i18n="hue-motion.config.sensor"></span></label>
         <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
             <div style="position: absolute; left: 0px; right: 40px;">
                 <input type="text" id="node-input-sensorid" placeholder="1" style="width: 100%"/>
@@ -19,65 +19,10 @@
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-motion.config.skipevents"></span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-motion.config.skipevents-node"></span>
         </label>
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="hue-motion">
-    <p>Hue motion node to control the motion sensor and receive motion events.</p>
-
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available motion sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the "Activate / Deactivate" command. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
-
-    <h3>Activate / Deactivate</h3>
-    <p>Activates or deactivates the motion sensor based on the passed in <b>msg</b> values of:</p>
-    <dl class="message-properties">
-        <dt>true<span class="property-type">boolean</span></dt>
-        <dd>Activates the motion sensor</dd>
-
-        <dt>false<span class="property-type">boolean</span></dt>
-        <dd>Deactivates the motion sensor</dd>
-    </dl>
-
-    <h3>Motion Events</h3>
-    <p>The event message that the motion sensor sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>active<span class="property-type">boolean</span></dt>
-        <dd>Current sensor state</dd>
-
-        <dt>motion<span class="property-type">boolean</span></dt>
-        <dd>Indicates if a motion is detected or not</dd>
-
-        <dt>updated<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the last detected motion</dd>
-    </dl>
-
-    <h3>Additional Sensor Info</h3>
-    <p>Additional information about the sensor is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the sensor as registered on the bridge</dd>
-
-        <dt>uniqueId<span class="property-type">string</span></dt>
-        <dd>Unique Id of the sensor (typically hardware id)</dd>
-
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name for the sensor</dd>
-
-        <dt>type<span class="property-type">string</span></dt>
-        <dd>Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)</dd>
-
-        <dt>softwareVersion<span class="property-type">float</span></dt>
-        <dd>Software version of the sensor</dd>
-
-        <dt>battery<span class="property-type">int</span></dt>
-        <dd>Current battery level of the temperature sensor in percent</dd>
-
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type</dd>
-    </dl>
 </script>
 
 <script type="text/javascript">
@@ -92,13 +37,19 @@
         },
         inputs: 1,
         outputs: 1,
-        inputLabels: 'activate / deactivate',
-        outputLabels: 'motion detected',
+        inputLabels: function() {
+            return this._("hue-motion.node.input");
+        },
+        outputLabels: function() {
+            return this._("hue-motion.node.output");
+        },
         align: 'right',
         icon: "bridge.png",
-        paletteLabel: "Hue Motion",
+        paletteLabel: function() {
+            return this._("hue-motion.node.title");
+        },
         label: function() {
-            return this.name || "Hue Motion Sensor";
+            return this.name || this._("hue-motion.node.title");
         },
         oneditprepare: function()
         {
@@ -115,7 +66,7 @@
             {
                 var current = $('#node-input-sensorid').val();
                 $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 100%"></select>');
-                $('#node-input-sensorid').append('<option selected="selected" value="null">searching motion sensors…</option>');
+                $('#node-input-sensorid').append('<option selected="selected" value="null">'+scope._("hue-motion.config.searching")+'</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})
@@ -124,7 +75,7 @@
 
                     if(motionSensors.length <= 0)
                     {
-                        RED.notify("No motion sensors found.", "error");
+                        RED.notify(scope._("hue-motion.config.none-found"), "error");
                     }
 
                     // RESET OPTIONS
@@ -141,7 +92,7 @@
                 })
                 .fail(function()
                 {
-                    RED.notify("Something went wrong. Please retry.", "error");
+                    RED.notify(scope._("hue-motion.config.unknown-error"), "error");
                 });
             }
 

@@ -1,0 +1,60 @@
+<script type="text/x-red" data-help-name="hue-magic">
+    <p>Hue Magic node for animations</p>
+
+    <h3>Setup</h3>
+    <p>Select whether the animation should be looped indefinitely and / or whether the previous state should be restored after the animation has ended / stopped. Select one of the included animations and connect the node to a group or a light.</p>
+
+    <h3>Start / Stop</h3>
+    <p>Starts or stops an animation based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean</span></dt>
+        <dd>Starts the animation</dd>
+
+        <dt>false<span class="property-type">boolean</span></dt>
+        <dd>Stops the animation</dd>
+    </dl>
+
+    <h3>Custom animations</h3>
+    <p>Alternatively, you can create and use your own animations. To do this, create an array and pass it to <b>msg.payload.steps</b> with the following parameters.</p>
+    <dl class="message-properties">
+        <dt>delay<span class="property-type">int</span></dt>
+        <dd>Execute this frame after the delay (in ms)</dd>
+
+        <dt>animation<span class="property-type">object</span></dt>
+        <dd>Insert all parameters that should be animated here. Supports all values of "Hue Light" and "Hue Group" node.</dd>
+    </dl>
+
+    <h3>Special commands</h3>
+    <p>Sometimes it makes sense for animations to be played out in disorder. For example, to imitate fire more realistically. To do this, create an object and pass it to <b>msg.payload.specials</b> with the following parameters.</p>
+    <dl class="message-properties">
+        <dt>randomOrder<span class="property-type">boolean</span></dt>
+        <dd>Execute steps in random order</dd>
+    </dl>
+
+    <h4>Example (custom animation)</h4>
+<code>
+<pre>
+{
+    "animate": true,
+    "steps": [
+        {
+            "delay": 500,
+            "animation": {
+                "hex": "#FF0000",
+                "transitionTime": 1
+            }
+        },
+        {
+            "delay": 500,
+            "animation": {
+                "hex": "#0000FF",
+                "transitionTime": 1
+            }
+        }
+    ]
+}</pre>
+</code>
+
+    <h3>Tips & Hints</h3>
+    <p>Connect the Hue Magic node to only one light or a whole group node to save API requests on the Hue Bridge. The animation previews can differ slightly from the real result on a lamp / group.</p>
+</script>

@@ -1,0 +1,27 @@
+{
+	"hue-bridge-config":
+	{
+		"config":
+		{
+			"name": "Name",
+			"apikey": "API Key",
+			"missing-ip": "Missing Hue Bridge IP…",
+			"poll": "Poll Interval",
+			"disable-events": "Disable events",
+			"disable-events-info": "Disable events on all nodes",
+			"searching": "Searching for Hue Bridges…",
+			"none-found": "No Hue Bridges found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"invalid": "Sorry. Your selected Hue Bridge is invalid: ",
+			"error-select-first": "Please select your Hue Bridge before trying to create a new user!",
+			"waiting": "waiting 20 seconds…",
+			"new-user-press": "Please press your Hue Bridge button within the next 20 seconds to create a new user!",
+			"retry": "Please retry within 20 seconds…",
+			"success": "User created successfully!"
+		},
+		"node":
+		{
+			"title": "Hue Bridge"
+		}
+	}
+}

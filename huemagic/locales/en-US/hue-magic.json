@@ -1,0 +1,27 @@
+{
+	"hue-magic":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Animation name",
+			"loop": "Loop",
+			"loop-endless": "Run endlessly",
+			"restore": "Restore",
+			"restore-state": "Restore previous state after stop",
+			"animation": "Animation",
+			"unknown-error": "Something went wrong. Please retry.",
+			"seconds": "sec.",
+			"minutes": "min."
+		},
+		"node":
+		{
+			"title": "Hue Magic",
+			"no-animation": "no animation specified",
+			"animating": "animating…",
+			"stopped": "stopped",
+			"input": "run / stop animation",
+			"output": "light or group"
+		}
+	}
+}

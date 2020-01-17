@@ -1,0 +1,31 @@
+{
+	"hue-switch":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Switch name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching Hue Switches…",
+			"none-found": "No Hue Switches found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"switch": "Switch"
+		},
+		"node":
+		{
+			"title": "Hue Switch",
+			"not-configured": "not configured",
+			"waiting": "waiting…",
+			"button-on": "On",
+			"button-dimup": "Dim Up",
+			"button-dimdown": "Dim Down",
+			"button-off": "Off",
+			"action-pressed": "pressed",
+			"action-holded": "holded",
+			"action-shortreleased": "short released",
+			"action-longreleased": "long released",
+			"output": "pressed button"
+		}
+	}
+}

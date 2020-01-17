@@ -18,13 +18,13 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-switch.node.not-configured"});
 			return false;
 		}
 
 		//
 		// UPDATE STATE
-		scope.status({fill: "grey", shape: "dot", text: "waiting…"});
+		scope.status({fill: "grey", shape: "dot", text: "hue-switch.node.waiting"});
 
 		//
 		// ON UPDATE
@@ -42,42 +42,52 @@ module.exports = function(RED)
 
 				// DEFINE HUMAN READABLE BUTTON NAME
 				var buttonName = "";
+				var buttonNameLocalized = "";
 				if(sensor.state.buttonEvent < 2000)
 				{
 					buttonName = "On";
+					buttonNameLocalized = RED._("hue-switch.node.button-on");
 				}
 				else if(sensor.state.buttonEvent < 3000)
 				{
 					buttonName = "Dim Up";
+					buttonNameLocalized = RED._("hue-switch.node.button-dimup");
 				}
 				else if(sensor.state.buttonEvent < 4000)
 				{
 					buttonName = "Dim Down";
+					buttonNameLocalized = RED._("hue-switch.node.button-dimdown");
 				}
 				else
 				{
 					buttonName = "Off";
+					buttonNameLocalized = RED._("hue-switch.node.button-off");
 				}
 
 				// DEFINE HUMAN READABLE BUTTON ACTION
 				var buttonAction = "";
+				var buttonActionLocalized = "";
 				var buttonActionRaw = parseInt(sensor.state.buttonEvent.toString().substring(3));
 
 				if(buttonActionRaw == 0)
 				{
 					buttonAction = "pressed";
+					buttonActionLocalized = RED._("hue-switch.node.action-pressed");
 				}
 				else if(buttonActionRaw == 1)
 				{
 					buttonAction = "holded";
+					buttonActionLocalized = RED._("hue-switch.node.action-holded");
 				}
 				else if(buttonActionRaw == 2)
 				{
 					buttonAction = "short released";
+					buttonActionLocalized = RED._("hue-switch.node.action-shortreleased");
 				}
 				else
 				{
 					buttonAction = "long released";
+					buttonActionLocalized = RED._("hue-switch.node.action-longreleased");
 				}
 
 				var message = {};
@@ -102,16 +112,16 @@ module.exports = function(RED)
 				message.info.model.type = sensor.model.type;
 
 				if(!config.skipevents) { scope.send(message); }
-				scope.status({fill: "green", shape: "dot", text: buttonName + " " + buttonAction});
+				scope.status({fill: "green", shape: "dot", text: buttonNameLocalized + " " + buttonActionLocalized});
 			}
 			else
 			{
-				scope.status({fill: "grey", shape: "dot", text: "waiting…"});
+				scope.status({fill: "grey", shape: "dot", text: "hue-switch.node.waiting"});
 			}
 		});
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('sensor' + config.sensorid);

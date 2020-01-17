@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="hue-temperature">
+    <p>Hue temperature node to receive current (room) temperature in Celsius and Fahrenheit.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available temperature sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only sent on deploy (once) and if the temperature changes. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+
+    <h3>Temperature Events</h3>
+    <p>The event message that the temperature sensor sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>celsius<span class="property-type">float</span></dt>
+        <dd>Temperature in Celsius</dd>
+
+        <dt>fahrenheit<span class="property-type">float</span></dt>
+        <dd>Temperature in Fahrenheit</dd>
+
+        <dt>updated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 date string of the last temperature change</dd>
+    </dl>
+
+    <h3>Additional Sensor Info</h3>
+    <p>Additional information about the sensor is going to be sent to the <b>msg.info</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerical id of the sensor as registered on the bridge</dd>
+
+        <dt>uniqueId<span class="property-type">string</span></dt>
+        <dd>Unique Id of the sensor (typically hardware id)</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name for the sensor</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)</dd>
+
+        <dt>softwareVersion<span class="property-type">float</span></dt>
+        <dd>Software version of the sensor</dd>
+
+        <dt>battery<span class="property-type">int</span></dt>
+        <dd>Current battery level of the temperature sensor in percent</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type</dd>
+    </dl>
+</script>

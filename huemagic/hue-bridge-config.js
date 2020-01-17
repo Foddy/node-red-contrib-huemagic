@@ -217,7 +217,7 @@ module.exports = function(RED)
 		}
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			scope.nodeActive = false;
@@ -247,7 +247,7 @@ module.exports = function(RED)
 	{
 		if(!req.query.ip)
 		{
-			return res.status(500).send("Missing Hue Bridge IP…");
+			return res.status(500).send(RED._("hue-bridge-config.config.missing-ip"));
 	    }
 	    else
 	    {
@@ -272,31 +272,32 @@ module.exports = function(RED)
 	{
 		if(!req.query.ip)
 		{
-			return rescope.status(500).send("Missing Hue Bridge IP…");
+			return rescope.status(500).send(RED._("hue-bridge-config.config.missing-ip"));
 		}
 		else
 		{
 			var request = require('request');
 			let bridgeIP = (req.query.ip).toString();
 
-			request.post('http://'+bridgeIP+'/api', {body: JSON.stringify({"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}) }, function(err,httpResponse,body) {
-			  if(err)
-			  {
-				rescope.end("error");
-			  }
-			  else
-			  {
-			    var bridge = JSON.parse(body);
+			request.post('http://'+bridgeIP+'/api', {body: JSON.stringify({"devicetype": "nodered_" + Math.floor((Math.random() * 100) + 1)}) }, function(err,httpResponse,body)
+			{
+				if(err)
+				{
+					rescope.end("error");
+				}
+				else
+				{
+					var bridge = JSON.parse(body);
 
-			    if(bridge[0].error)
-			    {
-				 rescope.end("error");
-			    }
-			    else
-			    {
-				 rescope.end(JSON.stringify(bridge));
-			    }
-			  }
+					if(bridge[0].error)
+					{
+						rescope.end("error");
+					}
+					else
+					{
+						rescope.end(JSON.stringify(bridge));
+					}
+				}
 			});
 		}
 	});

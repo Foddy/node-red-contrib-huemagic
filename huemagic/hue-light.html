@@ -1,14 +1,14 @@
 <script type="text/x-red" data-template-name="hue-light">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Light name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-light.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-light.config.input-name">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
         <input type="text" id="node-input-bridge">
     </div>
     <div class="form-row">
-        <label for="node-input-lightid"><i class="fa fa-lightbulb-o"></i> Light</label>
+        <label for="node-input-lightid"><i class="fa fa-lightbulb-o"></i> <span data-i18n="hue-light.config.light"></span></label>
         <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
             <div style="position: absolute; left: 0px; right: 40px;">
                 <input type="text" id="node-input-lightid" placeholder="1" style="width: 100%"/>
@@ -19,144 +19,16 @@
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-colornamer"><i class="fa fa-check-circle"></i> <span>Colornamer</span></label>
+        <label for="node-input-colornamer"><i class="fa fa-check-circle"></i> <span data-i18n="hue-light.config.colornamer"></span></label>
         <label for="node-input-colornamer" style="width:70%">
-        <input type="checkbox" id="node-input-colornamer" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Activate color naming</span>
+        <input type="checkbox" id="node-input-colornamer" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-light.config.colornamer-info"></span>
         </label>
     </div>
     <div class="form-row">
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-light.config.skipevents"></span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-light.config.skipevents-node"></span>
         </label>
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="hue-light">
-    <p>Hue light node to control the lights and receive light bulb events.</p>
-
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available lights. Type in the name of the light manually or keep the default device name. Note that events will only be sent if the light bulb state is changed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
-
-    <h3>Turn On / Off (simple)</h3>
-    <p>Changes the light on / off state based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt>msg.payload<span class="property-type">boolean</span></dt>
-        <dd>Will turn on or turn off the light with its previous configuration (color and brightness)</dd>
-    </dl>
-
-    <h3>Turn On / Off (extended)</h3>
-    <p>Changes the light state, effect, color and brightness based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt class="optional">on<span class="property-type">boolean</span></dt>
-        <dd>True to turn on the light bulb, false to turn it off</dd>
-
-        <dt class="optional">brightness<span class="property-type">int</span></dt>
-        <dd>Optionally configurable brightness of the light in percent (0-100)</dd>
-
-        <dt class="optional">incrementBrightness<span class="property-type">int</span></dt>
-        <dd>Increment/decrement brightness by given percentage value</dd>
-
-        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
-        <dd>Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value</dd>
-
-        <dt class="optional">hex<span class="property-type">string</span></dt>
-        <dd>Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value</dd>
-
-        <dt class="optional">color<span class="property-type">string</span></dt>
-        <dd>Optionally configurable human readable color name in english like "red" or "random" for a random color</dd>
-
-        <dt class="optional">image<span class="property-type">string</span></dt>
-        <dd>Optionally configurable image path (remote or local) to apply the most dominant color to the light</dd>
-
-        <dt class="optional">transitionTime<span class="property-type">float</span></dt>
-        <dd>Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)</dd>
-
-        <dt class="optional">colorloop<span class="property-type">float</span></dt>
-        <dd>Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)</dd>
-
-        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Optionally configurable color temperature of the light from 153 to 500</dd>
-
-        <dt class="optional">saturation<span class="property-type">int</span></dt>
-        <dd>Optionally configurable color saturation of the light in percent (from 0 to 100)</dd>
-    </dl>
-
-    <h3>Toggle On / Off (auto)</h3>
-    <p>Turns the light on or off depending on the current state based on the passed in <b>msg.payload</b> value of:</p>
-    <dl class="message-properties">
-        <dt>toggle<span class="property-type">any</span></dt>
-        <dd>Will turn on or turn off the light with the previous configuration (color and brightness)</dd>
-    </dl>
-
-    <h3>Alert Effect</h3>
-    <p>Plays an alert effect based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt>alert<span class="property-type">int</span></dt>
-        <dd>Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state.</dd>
-
-        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
-        <dd>Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value</dd>
-
-        <dt class="optional">hex<span class="property-type">string</span></dt>
-        <dd>Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value</dd>
-
-        <dt class="optional">color<span class="property-type">string</span></dt>
-        <dd>Optionally configurable human readable color name in english like "red" or "random" for a random color</dd>
-    </dl>
-
-    <h3>Light Events</h3>
-    <p>The event message that the light bulb sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>on<span class="property-type">boolean</span></dt>
-        <dd>True for on, false for off</dd>
-
-        <dt>brightness<span class="property-type">int</span></dt>
-        <dd>Current brightness of the light bulb in percent</dd>
-
-        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
-        <dd>Current RGB color value of the light bulb (if supported)</dd>
-
-        <dt class="optional">hex<span class="property-type">string</span></dt>
-        <dd>Current HEX color value of the light bulb (if supported)</dd>
-
-        <dt class="optional">color<span class="property-type">string</span></dt>
-        <dd>Current color name of the light bulb (if supported)</dd>
-
-        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Current color temperature of the light (if supported)</dd>
-
-        <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
-        <dd>ISO 8601 date string of the last light state update</dd>
-    </dl>
-
-    <h3>Additional Light Bulb Info</h3>
-    <p>Additional information about the light bulb is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the light as registered on the bridge</dd>
-
-        <dt>uniqueId<span class="property-type">string</span></dt>
-        <dd>Unique Id of the light (typically hardware id)</dd>
-
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name for the light</dd>
-
-        <dt>type<span class="property-type">string</span></dt>
-        <dd>Type of light (e.g. Extended Color Light, Dimmable Light)</dd>
-
-        <dt>softwareVersion<span class="property-type">float</span></dt>
-        <dd>Software version of the light</dd>
-
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>The model object of the light includes model specific information like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue</dd>
-    </dl>
-
-    <h3>Universal Mode (optional)</h3>
-    <p>Defines the light Id on the Hue Bridge manually if not configured in the node properties (deactivates light update events):</p>
-    <dl class="message-properties">
-        <dt>msg.topic<span class="property-type">int</span></dt>
-        <dd>Manual definition of the light bulb Id</dd>
-    </dl>
 </script>
 
 <script type="text/javascript">
@@ -176,13 +48,19 @@
         },
         inputs: 1,
         outputs: 1,
-        inputLabels: 'turn on / off',
-        outputLabels: 'status',
+        inputLabels: function() {
+            return this._("hue-light.node.input");
+        },
+        outputLabels: function() {
+            return this._("hue-light.node.output");
+        },
         align: 'right',
         icon: "hue-light.png",
-        paletteLabel: "Hue Light",
+        paletteLabel: function() {
+            return this._("hue-light.node.title");
+        },
         label: function() {
-            return this.name || "Hue Light Bulb";
+            return this.name || this._("hue-light.node.title");
         },
         oneditprepare: function()
         {
@@ -199,7 +77,7 @@
             {
                 var current = $('#node-input-lightid').val();
                 $('#node-input-lightid').replaceWith('<select id="node-input-lightid" style="width: 100%"></select>');
-                $('#node-input-lightid').append('<option selected="selected" value="null">searching lights…</option>');
+                $('#node-input-lightid').append('<option selected="selected" value="null">'+scope._("hue-light.config.searching")+'</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/lights', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLPresence"})
@@ -208,7 +86,7 @@
 
                     if(lightBulbs.length <= 0)
                     {
-                        RED.notify("No light bulbs found.", "error");
+                        RED.notify(scope._("hue-light.config.none-found"), "error");
                     }
 
                     // RESET OPTIONS
@@ -225,7 +103,7 @@
                 })
                 .fail(function()
                 {
-                    RED.notify("Something went wrong. Please retry.", "error");
+                    RED.notify(scope._("hue-light.config.unknown-error"), "error");
                 });
             }
 

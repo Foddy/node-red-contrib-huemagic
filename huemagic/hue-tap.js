@@ -18,13 +18,13 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-tap.node.not-configured"});
 			return false;
 		}
 
 		//
 		// UPDATE STATE
-		scope.status({fill: "grey", shape: "dot", text: "waiting…"});
+		scope.status({fill: "grey", shape: "dot", text: "hue-tap.node.waiting"});
 
 		//
 		// ON UPDATE
@@ -76,17 +76,17 @@ module.exports = function(RED)
 				message.info.model.type = sensor.model.type;
 
 				if(!config.skipevents) { scope.send(message); }
-				scope.status({fill: "green", shape: "dot", text: "Button #" + buttonNum + " pressed"});
+				scope.status({fill: "green", shape: "dot", text: RED._("hue-tap.node.pressed-button",{button:buttonNum}) });
 			}
 			else
 			{
-				scope.status({fill: "grey", shape: "dot", text: "waiting…"});
+				scope.status({fill: "grey", shape: "dot", text: "hue-tap.node.waiting"});
 			}
 		});
 
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('sensor' + config.sensorid);

@@ -1,0 +1,26 @@
+{
+	"hue-rules":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name der Regel",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Regeln…",
+			"none-found": "Keine Regeln gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"rule": "Regel"
+		},
+		"node":
+		{
+			"title": "Hue Regel",
+			"no-rule": "keine Regel definiert",
+			"init": "initialisiere…",
+			"enabled": "aktiviert",
+			"disabled": "deaktiviert",
+			"output": "Regel (aktiviert)",
+			"input": "aktivieren / deaktivieren"
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"hue-tap":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Tap name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching Hue Taps…",
+			"none-found": "No Hue Taps found!",
+			"unknown-error": "Something went wrong. Please retry."
+		},
+		"node":
+		{
+			"title": "Hue Tap",
+			"not-configured": "not configured",
+			"waiting": "waiting…",
+			"pressed-button": "Button #__button__ pressed",
+			"output": "pressed button"
+		}
+	}
+}

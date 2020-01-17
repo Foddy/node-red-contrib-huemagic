@@ -1,0 +1,37 @@
+{
+	"hue-group":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Group name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching groups…",
+			"none-found": "No groups found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"group": "Group",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Activate color naming",
+			"all": "All groups / lights"
+		},
+		"node":
+		{
+			"title": "Hue Group",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"universal": "universal mode",
+			"brightness": " (__percent__%)",
+			"all-on": "all lights on",
+			"all-off": "all lights off",
+			"some-on": "some lights on",
+			"turned-on": "turned on",
+			"error-input": "input error",
+			"error-no-id": "No group Id specified.",
+			"error-invalid-sat": "Invalid saturation setting. Only 0 - 254 allowed.",
+			"error-invalid-temp": "Invalid color temprature. Only 153 - 500 allowed.",
+			"input": "turn on / off",
+			"output": "status"
+		}
+	}
+}

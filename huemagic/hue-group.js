@@ -21,7 +21,7 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-group.node.not-configured"});
 			return false;
 		}
 
@@ -29,7 +29,7 @@ module.exports = function(RED)
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
-			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+			this.status({fill: "grey", shape: "dot", text: "hue-group.node.init"});
 		}
 
 
@@ -38,23 +38,23 @@ module.exports = function(RED)
 			bridge.events.on('group' + config.groupid, function(group)
 			{
 				var brightnessPercent = (group.brightness) ? Math.round((100/254)*group.brightness) : -1;
-				var brightnessNotice = (brightnessPercent > -1) ? " ("+ brightnessPercent +"%)" : "";
+				var brightnessNotice = (brightnessPercent > -1) ? RED._("hue-group.node.brightness",{percent:brightnessPercent}) : "";
 
 				if(group.allOn)
 				{
-					scope.status({fill: "yellow", shape: "dot", text: "all lights on" + brightnessNotice});
+					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
 				}
 				else if(group.anyOn)
 				{
-					scope.status({fill: "yellow", shape: "ring", text: "some lights on" + brightnessNotice});
+					scope.status({fill: "yellow", shape: "ring", text: RED._("hue-group.node.some-on") + brightnessNotice});
 				}
 				else if(group.on)
 				{
-					scope.status({fill: "yellow", shape: "dot", text: "turned on" + brightnessNotice});
+					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + brightnessNotice});
 				}
 				else
 				{
-					scope.status({fill: "grey", shape: "dot", text: "all lights off"});
+					scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
 				}
 
 				// SEND STATUS
@@ -106,21 +106,24 @@ module.exports = function(RED)
 		}
 		else
 		{
-			scope.status({fill: "grey", shape: "dot", text: "universal mode"});
+			scope.status({fill: "grey", shape: "dot", text: "hue-group.node.universal"});
 		}
 
 
 		//
 		// TURN ON / OFF GROUP
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			var context = this.context();
 			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
 
 			// CHECK IF GROUP ID IS SET
 			if(isNaN(tempGroupID))
 			{
-				scope.error("No group Id defined.");
+				scope.error(RED._("hue-group.node.error-no-id"));
 				return false;
 			}
 
@@ -133,12 +136,12 @@ module.exports = function(RED)
 					return bridge.client.groups.save(group);
 				})
 				.then(group => {
-					scope.sendGroupStatus(group);
+					scope.sendGroupStatus(group, send, done);
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
-					clearInterval(scope.recheck);
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// TOGGLE ON / OFF
@@ -150,12 +153,12 @@ module.exports = function(RED)
 					return bridge.client.groups.save(group);
 				})
 				.then(group => {
-					scope.sendGroupStatus(group);
+					scope.sendGroupStatus(group, send, done);
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
-					clearInterval(scope.recheck);
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// ALERT EFFECT
@@ -233,7 +236,8 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// ANIMATION STARTED?
@@ -245,7 +249,8 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// ANIMATION STOPPED AND RESTORE ACTIVE?
@@ -269,7 +274,8 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// EXTENDED TURN ON / OFF GROUP
@@ -344,7 +350,7 @@ module.exports = function(RED)
 					{
 						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
 						{
-							scope.error("Invalid saturation setting. Only 0 - 254 allowed", msg);
+							scope.error(RED._("error-invalid-sat"), msg);
 							return false;
 						}
 						else
@@ -363,7 +369,7 @@ module.exports = function(RED)
 						}
 						else
 						{
-							scope.error("Invalid color temprature. Only 153 - 500 allowed", msg);
+							scope.error(RED._("error-invalid-temp"), msg);
 							return false;
 						}
 					}
@@ -405,17 +411,18 @@ module.exports = function(RED)
 					if(typeof msg.payload.transitionTime != 'undefined')
 					{
 						setTimeout(function() {
-							scope.sendGroupStatus(group);
+							scope.sendGroupStatus(group, send, done);
 						}, parseFloat(msg.payload.transitionTime)*1010);
 					}
 					else
 					{
-						scope.sendGroupStatus(group);
+						scope.sendGroupStatus(group, send, done);
 					}
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 		});
@@ -423,27 +430,28 @@ module.exports = function(RED)
 
 		//
 		// SEND GROUP STATUS
-		this.sendGroupStatus = function(group)
+		this.sendGroupStatus = function(group, send, done)
 		{
 			var scope = this;
 			var uniqueStatus = ((group.on) ? "1" : "0") + group.brightness + group.hue + group.saturation + group.colorTemp + ((group.anyOn) ? "1" : "0") + ((group.allOn) ? "1" : "0");
 			var brightnessPercent = Math.round((100/254)*group.brightness);
+			var brightnessNotice = (brightnessPercent > -1) ? RED._("hue-group.node.brightness",{percent:brightnessPercent}) : "";
 
 			if(group.allOn)
 			{
-				scope.status({fill: "yellow", shape: "dot", text: "all lights on ("+ brightnessPercent +"%)"});
+				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
 			}
 			else if(group.anyOn)
 			{
-				scope.status({fill: "yellow", shape: "ring", text: "some lights on ("+ brightnessPercent +"%)"});
+				scope.status({fill: "yellow", shape: "ring", text: RED._("hue-group.node.some-on") + brightnessNotice});
 			}
 			else if(group.on)
 			{
-				scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + brightnessNotice});
 			}
 			else
 			{
-				scope.status({fill: "grey", shape: "dot", text: "all lights off"});
+				scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
 			}
 
 			// SEND STATUS
@@ -491,11 +499,12 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-			if(!config.skipevents) { scope.send(message); }
+			if(!config.skipevents) { send(message); }
+			if(done) { done(); }
 		}
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('group' + config.groupid);

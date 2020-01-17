@@ -1,0 +1,29 @@
+{
+	"hue-scene":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name der Szene",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Szenen…",
+			"none-found": "Keine Szenen gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"group": "Gruppe",
+			"group-none-found": "Keine Gruppen gefunden!",
+			"group-searching": "Suche nach Gruppen…",
+			"groups-all": "Alle Gruppen / Lichter"
+		},
+		"node":
+		{
+			"title": "Hue Szene",
+			"not-configured": "nicht konfiguriert",
+			"recalled": "Szene wiederhergestellt",
+			"recalled-on-group": "Szene auf Gruppe wiederhergestellt",
+			"no-id": "Keine Szenen-ID",
+			"input": "aktiviere Szene",
+			"output": "Szeneninformationen"
+		}
+	}
+}

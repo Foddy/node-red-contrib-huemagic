@@ -1,14 +1,14 @@
 <script type="text/x-red" data-template-name="hue-rules">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Rule name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-rules.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-rules.config.input-name">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
         <input type="text" id="node-input-bridge">
     </div>
     <div class="form-row">
-        <label for="node-input-ruleid"><i class="fa fa-tasks"></i> Rule</label>
+        <label for="node-input-ruleid"><i class="fa fa-tasks"></i> <span data-i18n="hue-rules.config.rule"></span></label>
         <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
             <div style="position: absolute; left: 0px; right: 40px;">
                 <input type="text" id="node-input-ruleid" placeholder="1" style="width: 100%"/>
@@ -19,82 +19,10 @@
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-rules.config.skipevents"></span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-rules.config.skipevents-node"></span>
         </label>
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="hue-rules">
-    <p>Hue rule node to receive rule events or to enable / disable rules.</p>
-
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available rules on the bridge. Type in the name of the rule manually or keep the default name. Note that events will only be sent on deploy (once) and if the rule is triggered on the bridge. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
-
-    <h3>Enable / Disable</h3>
-    <p>Activates or deactivates the rule based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt>true<span class="property-type">boolean</span></dt>
-        <dd>Enables the rule</dd>
-
-        <dt>false<span class="property-type">boolean</span></dt>
-        <dd>Disables the rule</dd>
-    </dl>
-
-    <h3>Trigger events</h3>
-    <p>The event message that the rule node sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>triggered<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the last time rule was triggered</dd>
-    </dl>
-
-    <h3>Additional Rule Info</h3>
-    <p>Additional information about the rule is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the rule as registered on the bridge</dd>
-
-        <dt>created<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the creation date of the rule</dd>
-
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name of the rule</dd>
-
-        <dt>timesTriggered<span class="property-type">int</span></dt>
-        <dd>Number of times rule was triggered</dd>
-
-        <dt>owner<span class="property-type">string</span></dt>
-        <dd>User who created the rule</dd>
-
-        <dt>status<span class="property-type">string</span></dt>
-        <dd>enabled or disabled, rule is triggerable on enabled</dd>
-    </dl>
-
-    <h3>Rule Conditions</h3>
-    <p>An array of objects representing the rule conditions is going to be sent to the <b>msg.conditions</b> array:</p>
-    <dl class="message-properties">
-        <dt>address<span class="property-type">string</span></dt>
-        <dd>The sensor resource/state location for the condition</dd>
-
-        <dt>operator<span class="property-type">string</span></dt>
-        <dd>The operator for the condition</dd>
-
-        <dt>value<span class="property-type">string</span></dt>
-        <dd>The value used in conjunction with operator</dd>
-    </dl>
-
-    <h3>Rule Actions</h3>
-    <p>An array of objects representing the rule actions is going to be sent to the <b>msg.actions</b> array:</p>
-    <dl class="message-properties">
-        <dt>address<span class="property-type">string</span></dt>
-        <dd>The actionable resource location</dd>
-
-        <dt>method<span class="property-type">string</span></dt>
-        <dd>Type of method for the action (e.g. GET, PUT)</dd>
-
-        <dt>body<span class="property-type">object</span></dt>
-        <dd>The body of the action</dd>
-    </dl>
 </script>
 
 <script type="text/javascript">
@@ -109,13 +37,19 @@
         },
         inputs: 1,
         outputs: 1,
-        inputLabels: 'enable / disable',
-        outputLabels: 'rule (triggered)',
+        inputLabels: function() {
+            return this._("hue-rules.node.input");
+        },
+        outputLabels: function() {
+            return this._("hue-rules.node.output");
+        },
         align: 'right',
         icon: "hue-rules.png",
-        paletteLabel: "Hue Rules",
+        paletteLabel: function() {
+            return this._("hue-rules.node.title");
+        },
         label: function() {
-            return this.name || "Hue Rule";
+            return this.name || this._("hue-rules.node.title");
         },
         oneditprepare: function()
         {
@@ -132,7 +66,7 @@
             {
                 var current = $('#node-input-ruleid').val();
                 $('#node-input-ruleid').replaceWith('<select id="node-input-ruleid" style="width: 100%"></select>');
-                $('#node-input-ruleid').append('<option selected="selected" value="null">searching rules…</option>');
+                $('#node-input-ruleid').append('<option selected="selected" value="null">'+scope._("hue-rules.config.searching")+'</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/rules', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
@@ -141,7 +75,7 @@
 
                     if(rules.length <= 0)
                     {
-                        RED.notify("No rules found.", "error");
+                        RED.notify(scope._("hue-rules.config.none-found"), "error");
                     }
 
                     // RESET OPTIONS
@@ -158,7 +92,7 @@
                 })
                 .fail(function()
                 {
-                    RED.notify("Something went wrong. Please retry.", "error");
+                    RED.notify(scope._("hue-rules.config.unknown-error"), "error");
                 });
             }
 

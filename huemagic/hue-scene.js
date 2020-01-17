@@ -14,21 +14,24 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-scene.node.not-configured"});
 			return false;
 		}
 
 		//
 		// ENABLE SCENE
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			var groupID = (typeof msg.payload.group != 'undefined') ? msg.payload.group : config.groupid;
 
 			if(config.sceneid)
 			{
 				bridge.client.scenes.getById(config.sceneid)
 				.then(scene => {
-					scope.proceedSceneAction(scene, groupID);
+					scope.proceedSceneAction(scene, groupID, send, done);
 				});
 			}
 			else if (typeof msg.payload === 'string')
@@ -39,7 +42,7 @@ module.exports = function(RED)
 					{
 						if (scene.name === msg.payload || scene.id === msg.payload)
 						{
-							scope.proceedSceneAction(scene, groupID);
+							scope.proceedSceneAction(scene, groupID, send, done);
 							break;
 						}
 					}
@@ -53,7 +56,7 @@ module.exports = function(RED)
 					{
 						if (scene.name === msg.payload || scene.id === msg.payload)
 						{
-							scope.proceedSceneAction(scene, groupID);
+							scope.proceedSceneAction(scene, groupID, send, done);
 							break;
 						}
 					}
@@ -62,14 +65,14 @@ module.exports = function(RED)
 			else
 			{
 				// ERROR
-				this.status({fill: "red", shape: "ring", text: "No scene Id."});
+				this.status({fill: "red", shape: "ring", text: "hue-scene.node.no-id"});
 			}
 		});
 
 
 		//
 		// PROCEED SCENE ACTION
-		this.proceedSceneAction = function(scene, applyOnGroup = false)
+		this.proceedSceneAction = function(scene, applyOnGroup = false, send, done)
 		{
 			// CHECK IF SCENE SHOULD BE APPLIED TO A GROUP
 			if(applyOnGroup)
@@ -84,7 +87,7 @@ module.exports = function(RED)
 				})
 				.then(groupInfo =>
 				{
-					scope.status({fill: "blue", shape: "dot", text: "scene recalled on group"});
+					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled-on-group"});
 
 					var sendSceneInfo = {payload: {}};
 
@@ -96,7 +99,8 @@ module.exports = function(RED)
 					sendSceneInfo.payload.lastUpdated = scene.lastUpdated;
 					sendSceneInfo.payload.version = scene.version;
 
-					if(!config.skipevents) { scope.send(sendSceneInfo); }
+					if(!config.skipevents) { send(sendSceneInfo); }
+					if(done) { done(); }
 
 					setTimeout(function() {
 						scope.status({});
@@ -104,6 +108,7 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
+					if(done) { done(error); }
 				});
 			}
 			else
@@ -111,7 +116,7 @@ module.exports = function(RED)
 				// RECALL A SCENE
 				bridge.client.scenes.recall(scene)
 				.then(recalledScebe => {
-					scope.status({fill: "blue", shape: "dot", text: "scene recalled"});
+					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});
 
 					var sendSceneInfo = {payload: {}};
 
@@ -123,7 +128,8 @@ module.exports = function(RED)
 					sendSceneInfo.payload.lastUpdated = scene.lastUpdated;
 					sendSceneInfo.payload.version = scene.version;
 
-					if(!config.skipevents) { scope.send(sendSceneInfo); }
+					if(!config.skipevents) { send(sendSceneInfo); }
+					if(done) { done(); }
 
 					setTimeout(function() {
 						scope.status({});
@@ -131,6 +137,7 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
+					if(done) { done(error); }
 				});
 			}
 		}

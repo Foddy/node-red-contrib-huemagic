@@ -14,7 +14,7 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-brightness.node.not-configured"});
 			return false;
 		}
 
@@ -22,7 +22,7 @@ module.exports = function(RED)
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
-			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+			this.status({fill: "grey", shape: "dot", text: "hue-brightness.node.init"});
 		}
 
 		//
@@ -31,7 +31,7 @@ module.exports = function(RED)
 		{
 			if(sensor.config.reachable == false)
 			{
-				scope.status({fill: "red", shape: "ring", text: "not reachable"});
+				scope.status({fill: "red", shape: "ring", text: "hue-brightness.node.not-reachable"});
 			}
 			else
 			{
@@ -65,21 +65,24 @@ module.exports = function(RED)
 
 				if(sensor.state.dark)
 				{
-					scope.status({fill: "blue", shape: "dot", text: realLUX+" Lux (dark)"});
+					var statusMessage = RED._("hue-brightness.node.lux-dark",{lux:realLUX});
+					scope.status({fill: "blue", shape: "dot", text: statusMessage });
 				}
 				else if(sensor.state.daylight)
 				{
-					scope.status({fill: "yellow", shape: "dot", text: realLUX+" Lux (daylight)"});
+					var statusMessage = RED._("hue-brightness.node.lux-daylight",{lux:realLUX});
+					scope.status({fill: "yellow", shape: "dot", text: statusMessage });
 				}
 				else
 				{
-					scope.status({fill: "grey", shape: "dot", text: realLUX+" Lux"});
+					var statusMessage = RED._("hue-brightness.node.lux",{lux:realLUX});
+					scope.status({fill: "grey", shape: "dot", text: statusMessage });
 				}
 			}
 		});
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('sensor' + config.sensorid);

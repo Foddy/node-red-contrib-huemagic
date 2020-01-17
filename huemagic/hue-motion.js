@@ -13,13 +13,13 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-motion.node.not-configured"});
 			return false;
 		}
 
 		//
 		// UPDATE STATE
-		scope.status({fill: "grey", shape: "dot", text: "no motion"});
+		scope.status({fill: "grey", shape: "dot", text: "hue-motion.node.no-motion"});
 
 		//
 		// ON UPDATE
@@ -27,7 +27,7 @@ module.exports = function(RED)
 		{
 			if(sensor.config.reachable == false)
 			{
-				scope.status({fill: "red", shape: "ring", text: "not reachable"});
+				scope.status({fill: "red", shape: "ring", text: "hue-motion.node.not-reachable"});
 			}
 			else if(sensor.config.on == true)
 			{
@@ -51,7 +51,7 @@ module.exports = function(RED)
 					message.info.model.type = sensor.model.type;
 
 					if(!config.skipevents) { scope.send(message); }
-					scope.status({fill: "green", shape: "dot", text: "motion detected"});
+					scope.status({fill: "green", shape: "dot", text: "hue-motion.node.motion"});
 				}
 				else
 				{
@@ -73,20 +73,23 @@ module.exports = function(RED)
 					message.info.model.type = sensor.model.type;
 
 					if(!config.skipevents) { scope.send(message); }
-					scope.status({fill: "grey", shape: "dot", text: "activated"});
+					scope.status({fill: "grey", shape: "dot", text: "hue-motion.node.activated"});
 				}
 			}
 			else if(sensor.config.on == false)
 			{
-				scope.status({fill: "red", shape: "ring", text: "deactivated"});
+				scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
 			}
 		});
 
 
 		//
 		// DISABLE / ENABLE SENSOR
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			if(msg.payload == true || msg.payload == false)
 			{
 				bridge.client.sensors.getById(config.sensorid)
@@ -111,26 +114,28 @@ module.exports = function(RED)
 					message.info.model.name = sensor.model.name;
 					message.info.model.type = sensor.model.type;
 
-					if(!config.skipevents) { scope.send(message); }
+					if(!config.skipevents) { send(message); }
+					if(done) { done(); }
 
 					if(msg.payload == false)
 					{
-						scope.status({fill: "red", shape: "ring", text: "deactivated"});
+						scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
 					}
 					else
 					{
-						scope.status({fill: "green", shape: "dot", text: "activated"});
+						scope.status({fill: "green", shape: "dot", text: "hue-motion.node.activated"});
 					}
 				})
 				.catch(error => {
 					scope.error(error, msg);
+					if(done) { done(error); }
 				});
 			}
 		});
 
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('sensor' + config.sensorid);

@@ -1,0 +1,28 @@
+{
+	"hue-brightness":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Brightness sensor name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching sensors…",
+			"none-found": "No brightness sensors found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"sensor": "Sensor",
+			"all": "All groups / lights"
+		},
+		"node":
+		{
+			"title": "Hue Brightness",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"not-reachable": "not reachable",
+			"lux": "__lux__ Lux",
+			"lux-dark": "__lux__ Lux (dark)",
+			"lux-daylight": "__lux__ Lux (daylight)",
+			"output": "brightness (changed)"
+		}
+	}
+}

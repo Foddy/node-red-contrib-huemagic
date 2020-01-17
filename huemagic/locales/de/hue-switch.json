@@ -1,0 +1,31 @@
+{
+	"hue-switch":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Dimmschalters",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Dimmschaltern…",
+			"none-found": "Keine Dimmschalter gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"switch": "Schalter"
+		},
+		"node":
+		{
+			"title": "Hue Dimmschalter",
+			"not-configured": "nicht konfiguriert",
+			"waiting": "warte…",
+			"button-on": "An",
+			"button-dimup": "Dimmen (heller)",
+			"button-dimdown": "Dimmen (dunkler)",
+			"button-off": "Aus",
+			"action-pressed": "gedrückt",
+			"action-holded": "gehalten",
+			"action-shortreleased": "kurz gedrückt",
+			"action-longreleased": "lange gedruckt",
+			"output": "gedrückte Taste"
+		}
+	}
+}

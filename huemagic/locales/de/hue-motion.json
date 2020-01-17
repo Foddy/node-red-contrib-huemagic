@@ -1,0 +1,28 @@
+{
+	"hue-motion":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Sensors",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Bewegungssensoren…",
+			"none-found": "Keine Bewegungssensoren gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"sensor": "Sensor"
+		},
+		"node":
+		{
+			"title": "Hue Bewegungssensor",
+			"not-configured": "nicht konfiguriert",
+			"not-reachable": "nicht erreichbar",
+			"motion": "Bewegung erkannt",
+			"no-motion": "keine Bewegung",
+			"activated": "aktiviert",
+			"deactivated": "deaktiviert",
+			"input": "aktivieren / deaktivieren",
+			"output": "erkannte Bewegung"
+		}
+	}
+}

@@ -25,11 +25,11 @@ module.exports = function(RED)
 		// INITIALIZE STATUS
 		if(scope.steps == null)
 		{
-			this.status({fill: "grey", shape: "dot", text: "no animation specified"});
+			this.status({fill: "grey", shape: "dot", text: "hue-magic.node.no-animation"});
 		}
 		else
 		{
-			scope.status({fill: "grey", shape: "dot", text: "stopped"});
+			scope.status({fill: "grey", shape: "dot", text: "hue-magic.node.stopped"});
 		}
 
 		//
@@ -80,7 +80,7 @@ module.exports = function(RED)
 
 		//
 		// SET STOP STATUS
-		this.animationStopped = function()
+		this.animationStopped = function(done)
 		{
 			var message = {};
 			message.animation = {};
@@ -88,6 +88,7 @@ module.exports = function(RED)
 			message.animation.restore = restoreState;
 
 			scope.send(message);
+			if (done) { done(); }
 		}
 
 		//
@@ -147,7 +148,7 @@ module.exports = function(RED)
 
 		//
 		// START / STOP ANIMATION
-		this.animate = function(animationSteps)
+		this.animate = function(animationSteps, send, done)
 		{
 			var animation = scope.prepareAnimationSteps(animationSteps);
 
@@ -169,22 +170,25 @@ module.exports = function(RED)
 					}
 
 					// RESTART
-					scope.animate(animationSteps);
+					scope.animate(animationSteps, send, done);
 				}
 				else
 				{
-					scope.animationStopped();
+					scope.animationStopped(done);
 					scope.isAnimating = false;
 
-					scope.status({fill: "grey", shape: "dot", text: "stopped"});
+					scope.status({fill: "grey", shape: "dot", text: "hue-magic.node.stopped"});
 				}
 			});
 		}
 
 		//
 		// ENABLE HUE MAGIC ANIMATION
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			if(scope.steps != null||typeof msg.payload.steps != 'undefined')
 			{
 				scope.steps = (typeof msg.payload.steps != 'undefined') ? msg.payload.steps : scope.steps;
@@ -204,31 +208,32 @@ module.exports = function(RED)
 				{
 					if(scope.isAnimating == false)
 					{
-						scope.status({fill: "green", shape: "dot", text: "animating…"});
+						scope.status({fill: "green", shape: "dot", text: "hue-magic.node.animating"});
 
 						scope.isAnimating = true;
-						scope.animate(scope.steps);
+						scope.animate(scope.steps, send, done);
 					}
 				}
 
 				// TURN OFF ANIMATION
 				if((typeof msg.payload.animate != 'undefined' && msg.payload.animate == false)||msg.payload === false)
 				{
-					scope.animationStopped();
+					scope.animationStopped(done);
 					scope.isAnimating = false;
 
-					scope.status({fill: "grey", shape: "dot", text: "stopped"});
+					scope.status({fill: "grey", shape: "dot", text: "hue-magic.node.stopped"});
 				}
 			}
 			else
 			{
 				// NO ANIMATION SPECIFIED
-				this.status({fill: "red", shape: "ring", text: "no animation specified"});
+				this.status({fill: "red", shape: "ring", text: "hue-magic.node.no-animation"});
+				if(done) { done(); }
 			}
 		});
 
 		//
-		// CLOSE NDOE / REMOVE ANIMATION
+		// CLOSE NODE / REMOVE ANIMATION
 		this.on('close', function()
 		{
 			scope.nodeActive = false;

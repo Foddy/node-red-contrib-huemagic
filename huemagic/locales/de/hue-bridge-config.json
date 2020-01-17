@@ -1,0 +1,27 @@
+{
+	"hue-bridge-config":
+	{
+		"config":
+		{
+			"name": "Name",
+			"apikey": "API-Schlüssel",
+			"missing-ip": "Die IP-Adresse der Hue Bridge fehlt!",
+			"poll": "Abrufintervall",
+			"disable-events": "Mitteilungen deaktivieren",
+			"disable-events-info": "Deaktiviere alle Mitteilungen von allen Knoten",
+			"searching": "Suche nach Hue Bridges…",
+			"none-found": "Keine Hue Bridge gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"invalid": "Sorry. Die ausgewählte Hue Bridge ist ungültig: ",
+			"error-select-first": "Bitte wählen Sie eine Hue Bridge, bevor Sie versuchen einen neuen Nutzer zu erstellen!",
+			"waiting": "warte 20 Sekunden…",
+			"new-user-press": "Bitte betätigen Sie die taste der Hue Bridge innerhalb der nächsten 20 Sekunden!",
+			"retry": "Bitte versuchen Sie es erneut innerhalb von 20 Sekunden!",
+			"success": "Ein neuer Nutzer wurde erfolgreich angelegt!"
+		},
+		"node":
+		{
+			"title": "Hue Bridge"
+		}
+	}
+}

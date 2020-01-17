@@ -22,7 +22,7 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-light.node.not-configured"});
 			return false;
 		}
 
@@ -30,7 +30,7 @@ module.exports = function(RED)
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
-			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+			this.status({fill: "grey", shape: "dot", text: "hue-light.node.init"});
 		}
 
 		//
@@ -48,23 +48,24 @@ module.exports = function(RED)
 						if(light.brightness)
 						{
 							brightnessPercent = Math.round((100/254)*light.brightness);
-							scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+							scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent:brightnessPercent}) });
+
 						}
 						else
 						{
 							// SMART PLUG
 							brightnessPercent = -1;
-							scope.status({fill: "yellow", shape: "dot", text: "turned on"});
+							scope.status({fill: "yellow", shape: "dot", text: "hue-light.node.turned-on"});
 						}
 					}
 					else
 					{
-						scope.status({fill: "grey", shape: "dot", text: "turned off"});
+						scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
 					}
 				}
 				else
 				{
-					scope.status({fill: "red", shape: "ring", text: "not reachable"});
+					scope.status({fill: "red", shape: "ring", text: "hue-light.node.not-reachable"});
 				}
 
 				// DETERMINE TYPE AND SEND STATUS
@@ -114,20 +115,23 @@ module.exports = function(RED)
 		}
 		else
 		{
-			scope.status({fill: "grey", shape: "dot", text: "universal mode"});
+			scope.status({fill: "grey", shape: "dot", text: "hue-light.node.universal"});
 		}
 
 
 		//
 		// TURN ON / OFF LIGHT
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			var tempLightID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.lightid;
 
 			// CHECK IF LIGHT ID IS SET
 			if(tempLightID == false)
 			{
-				scope.error("No light Id defined. Please check the docs.");
+				scope.error(RED._("hue-light.node.error-no-id"));
 				return false;
 			}
 
@@ -144,12 +148,13 @@ module.exports = function(RED)
 					.then(light => {
 						if(light != false)
 						{
-							scope.sendLightStatus(light);
+							scope.sendLightStatus(light, send, done);
 						}
 					})
 					.catch(error => {
 						scope.error(error, msg);
-						scope.status({fill: "red", shape: "ring", text: "input error"});
+						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+						if(done) { done(error); }
 					});
 				}
 			}
@@ -166,12 +171,13 @@ module.exports = function(RED)
 					.then(light => {
 						if(light != false)
 						{
-							scope.sendLightStatus(light);
+							scope.sendLightStatus(light, send, done);
 						}
 					})
 					.catch(error => {
 						scope.error(error, msg);
-						scope.status({fill: "red", shape: "ring", text: "input error"});
+						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+						if(done) { done(error); }
 					});
 				}
 			}
@@ -260,7 +266,8 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// ANIMATION STARTED?
@@ -272,7 +279,8 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// ANIMATION STOPPED AND RESTORE ACTIVE?
@@ -295,7 +303,8 @@ module.exports = function(RED)
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 			// EXTENDED TURN ON / OFF LIGHT
@@ -437,18 +446,19 @@ module.exports = function(RED)
 						if(typeof msg.payload.transitionTime != 'undefined')
 						{
 							setTimeout(function() {
-								scope.sendLightStatus(light);
+								scope.sendLightStatus(light, send, done);
 							}, parseFloat(msg.payload.transitionTime)*1010);
 						}
 						else
 						{
-							scope.sendLightStatus(light);
+							scope.sendLightStatus(light, send, done);
 						}
 					}
 				})
 				.catch(error => {
 					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "input error"});
+					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+					if(done) { done(error); }
 				});
 			}
 		});
@@ -456,7 +466,7 @@ module.exports = function(RED)
 
 		//
 		// SEND LIGHT STATUS
-		this.sendLightStatus = function(light)
+		this.sendLightStatus = function(light, send, done)
 		{
 			var scope = this;
 			var brightnessPercent = 0;
@@ -464,11 +474,11 @@ module.exports = function(RED)
 			if(light.on)
 			{
 				brightnessPercent = Math.round((100/254)*light.brightness);
-				scope.status({fill: "yellow", shape: "dot", text: "turned on ("+ brightnessPercent +"%)"});
+				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent:brightnessPercent}) });
 			}
 			else
 			{
-				scope.status({fill: "grey", shape: "dot", text: "turned off"});
+				scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
 			}
 
 			// DETERMINE TYPE AND SEND STATUS
@@ -512,11 +522,12 @@ module.exports = function(RED)
 			}
 
 			message.payload.updated = moment().format();
-			if(!config.skipevents) { scope.send(message); }
+			if(!config.skipevents) { send(message); }
+			if(done) { done(); }
 		}
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('light' + config.lightid);

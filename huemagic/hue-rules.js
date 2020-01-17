@@ -14,7 +14,7 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.ruleid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "no rule selected"});
+			this.status({fill: "red", shape: "ring", text: "hue-rules.node.no-rule"});
 			return false;
 		}
 
@@ -22,7 +22,7 @@ module.exports = function(RED)
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
-			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+			this.status({fill: "grey", shape: "dot", text: "hue-rules.node.init"});
 		}
 
 		//
@@ -69,25 +69,27 @@ module.exports = function(RED)
 
 			if(rule.status == "enabled")
 			{
-				scope.status({fill: "green", shape: "dot", text: "enabled"});
+				scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
 			}
 			else
 			{
-				scope.status({fill: "red", shape: "ring", text: "disabled"});
+				scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
 			}
 		});
 
 
 		//
 		// DISABLE / ENABLE RULE
-		this.on('input', function(msg)
+		this.on('input', function(msg, send, done)
 		{
+			// Node-RED < 1.0
+			send = send || function() { scope.send.apply(scope,arguments); }
+
 			if(msg.payload == true || msg.payload == false)
 			{
 				bridge.client.rules.getById(config.ruleid)
 				.then(rule => {
 					rule.status = (msg.payload == true) ? 'enabled' : 'disabled';
-
 					return bridge.client.rules.save(rule);
 				})
 				.then(rule => {
@@ -127,25 +129,27 @@ module.exports = function(RED)
 						message.actions.push(actionValues);
 					}
 
-					if(!config.skipevents) { scope.send(message); }
+					if(!config.skipevents) { send(message); }
+					if(done) { done(); }
 
 					if(msg.payload == false)
 					{
-						scope.status({fill: "red", shape: "ring", text: "disabled"});
+						scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
 					}
 					else
 					{
-						scope.status({fill: "green", shape: "dot", text: "enabled"});
+						scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
 					}
 				})
 				.catch(error => {
 					scope.error(error, msg);
+					if(done) { done(error); }
 				});
 			}
 		});
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('rule' + config.ruleid);

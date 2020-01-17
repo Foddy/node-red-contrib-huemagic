@@ -1,0 +1,130 @@
+<script type="text/x-red" data-help-name="hue-group">
+    <p>Hue group node to control whole groups containing lights and receive group events.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available preconfigured groups. Type in the name of the group manually or keep the default name. Note that events will only be sent if the group state is changed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+
+    <h3>Turn On / Off (simple)</h3>
+    <p>Changes the group on / off state based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>msg.payload<span class="property-type">boolean</span></dt>
+        <dd>Will turn on or turn off all lights inside the group with their previous configuration (color and brightness)</dd>
+    </dl>
+
+    <h3>Turn On / Off (extended)</h3>
+    <p>Changes the group state, effect, color and brightness based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt class="optional">on<span class="property-type">boolean</span></dt>
+        <dd>True to turn on all the lights inside the group, false to turn them off</dd>
+
+        <dt class="optional">brightness<span class="property-type">int</span></dt>
+        <dd>Optionally configurable brightness of the lights in percent (0-100)</dd>
+
+        <dt class="optional">incrementBrightness<span class="property-type">int</span></dt>
+        <dd>Increment/decrement brightness by given percentage value</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Optionally configurable human readable color name in english like "red" or "random" for a random color</dd>
+
+        <dt class="optional">image<span class="property-type">string</span></dt>
+        <dd>Optionally configurable image path (remote or local) to apply the most dominant color to the group</dd>
+
+        <dt class="optional">transitionTime<span class="property-type">float</span></dt>
+        <dd>Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)</dd>
+
+        <dt class="optional">colorloop<span class="property-type">float</span></dt>
+        <dd>Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)</dd>
+
+        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
+        <dd>Optionally configurable color temperature of the group lights from 153 to 500</dd>
+
+        <dt class="optional">saturation<span class="property-type">int</span></dt>
+        <dd>Optionally configurable color saturation of the group in percent (from 0 to 100)</dd>
+    </dl>
+
+    <h3>Toggle On / Off (auto)</h3>
+    <p>Turns the lights on or off depending on the current state based on the passed in <b>msg.payload</b> value of:</p>
+    <dl class="message-properties">
+        <dt>toggle<span class="property-type">any</span></dt>
+        <dd>Will turn on or turn off all lights inside the group with their previous configuration (color and brightness)</dd>
+    </dl>
+
+    <h3>Alert Effect</h3>
+    <p>Plays an alert effect based on the passed in <b>msg.payload</b> values of:</p>
+    <dl class="message-properties">
+        <dt>alert<span class="property-type">int</span></dt>
+        <dd>Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state.</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Optionally configurable human readable color name in english like "red" or "random" for a random color</dd>
+    </dl>
+
+    <h3>Group Events</h3>
+    <p>The event message that the group sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>on<span class="property-type">boolean</span></dt>
+        <dd>True for on, false for off</dd>
+
+        <dt>allOn<span class="property-type">boolean</span></dt>
+        <dd>True if all lights in the group are on, false if not</dd>
+
+        <dt>anyOn<span class="property-type">boolean</span></dt>
+        <dd>True if any lights in the group are on, false if none are on</dd>
+
+        <dt>brightness<span class="property-type">int</span></dt>
+        <dd>Current brightness of all lights in the whole group in percent</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Current RGB color value of all lights in the group (if supported)</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Current HEX color value of all lights in the group (if supported)</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Current color name of all lights in the group (if supported)</dd>
+
+        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
+        <dd>Current color temperature of all lights in average in the group (if supported)</dd>
+
+        <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
+        <dd>ISO 8601 date string of the last group state update</dd>
+    </dl>
+
+    <h3>Additional Group Info</h3>
+    <p>Additional information about the group is going to be sent to the <b>msg.info</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Group Id, generated automatically by the bridge</dd>
+
+        <dt>lightIds<span class="property-type">array[int…]</span></dt>
+        <dd>An array of light ids associated with the group</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name for the group</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Type of group (e.g. LightGroup, Luminaire, LightSource, Room)</dd>
+
+        <dt class="optional">model<span class="property-type">object</span></dt>
+        <dd>Huejay (the API behind HueMagic) maintains a list of Philips Hue supported luminaire models. The Group model attribute returns optionally a GroupModel object. This object contains more information about the model like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue</dd>
+    </dl>
+
+    <h3>Universal Mode (optional)</h3>
+    <p>Defines the group Id on the Hue Bridge manually if not configured in the node properties (deactivates group update events):</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manual definition of the group Id</dd>
+    </dl>
+</script>

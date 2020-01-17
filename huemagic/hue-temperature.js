@@ -18,7 +18,7 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "not configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-temperature.node.not-configured"});
 			return false;
 		}
 
@@ -26,7 +26,7 @@ module.exports = function(RED)
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
-			this.status({fill: "grey", shape: "dot", text: "initializing…"});
+			this.status({fill: "grey", shape: "dot", text: "hue-temperature.node.init"});
 		}
 
 		//
@@ -35,7 +35,7 @@ module.exports = function(RED)
 		{
 			if(sensor.config.reachable == false)
 			{
-				scope.status({fill: "red", shape: "ring", text: "not reachable"});
+				scope.status({fill: "red", shape: "ring", text: "hue-temperature.node.not-reachable"});
 			}
 			else if(scope.temperature != sensor.state.temperature)
 			{
@@ -66,7 +66,7 @@ module.exports = function(RED)
 		});
 
 		//
-		// CLOSE NDOE / REMOVE RECHECK INTERVAL
+		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('sensor' + config.sensorid);

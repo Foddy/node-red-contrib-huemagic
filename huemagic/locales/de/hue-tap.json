@@ -1,0 +1,23 @@
+{
+	"hue-tap":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Tap Schalters…",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Tap Schaltern…",
+			"none-found": "Keine Tap Schalter gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+		},
+		"node":
+		{
+			"title": "Hue Tap Schalter",
+			"not-configured": "nicht konfiguriert",
+			"waiting": "warte…",
+			"pressed-button": "Taste #__button__ gedrückt",
+			"output": "gedrückte Taste"
+		}
+	}
+}

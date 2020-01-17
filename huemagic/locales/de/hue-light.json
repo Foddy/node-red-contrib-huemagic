@@ -1,0 +1,33 @@
+{
+	"hue-light":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Lichts",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Lichtern…",
+			"none-found": "Keine Lichter gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"light": "Licht",
+			"colornamer": "Farbnamen",
+			"colornamer-info": "Aktiviere Farbnamen"
+		},
+		"node":
+		{
+			"title": "Hue Licht",
+			"not-configured": "nicht konfiguriert",
+			"init": "initialisiere…",
+			"not-reachable": "nicht erreichbar",
+			"universal": "Universalmodus",
+			"turned-on": "eingeschaltet",
+			"turned-on-percent": "eingeschaltet (__percent__%)",
+			"turned-off": "ausgeschaltet",
+			"error-no-id": "Keine Licht-ID definiert.",
+			"error-input": "Eingabefehler",
+			"input": "Ein- / Ausschalten",
+			"output": "Status"
+		}
+	}
+}

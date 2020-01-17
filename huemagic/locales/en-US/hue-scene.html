@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="hue-scene">
+    <p>Hue Scene node to recall (activate) Hue Scenes.</p>
+
+    <h3>Setup</h3>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available scenes. Type in the name of the scene manually or keep the default scene name. Note that events will only be sent if the scene node receives any command. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+
+    <h3>Activate (preconfigured)</h3>
+    <p>When a scene is configured any passed in value on the scene node activates the preconfigured scene.</p>
+
+    <h3>Activate (dynamic)</h3>
+    <p>When no scene is configured a scene name or scene id must be passed in to activate that scene. It is also possible to pass a group ID dynamically to recall a scene on a specific group only. The following parameters can be passed manually in <b>msg.payload</b>.</p>
+    <dl class="message-properties">
+        <dt>scene<span class="property-type">string</span></dt>
+        <dd>Will activate the scene given by its name or id.</dd>
+
+        <dt>group<span class="property-type">int</span></dt>
+        <dd>Will recall a scene on a specific group by its id.</dd>
+    </dl>
+
+    <h3>Scene Events</h3>
+    <p>The event message that the scene node sends contains the following data in the <b>msg.payload</b> object:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">string</span></dt>
+        <dd>The unique scene id</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>The scene name</dd>
+
+        <dt>lightIds<span class="property-type">array[int…]</span></dt>
+        <dd>Array of associated light ids in the scene</dd>
+
+        <dt>owner<span class="property-type">string</span></dt>
+        <dd>User who created the scene</dd>
+
+        <dt>appData<span class="property-type">object</span></dt>
+        <dd>Object consisting of version and data properties</dd>
+
+        <dt>lastUpdated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 date string when scene was last updated</dd>
+
+        <dt>version<span class="property-type">float</span></dt>
+        <dd>Version number of the scene</dd>
+    </dl>
+</script>

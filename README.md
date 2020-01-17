@@ -20,6 +20,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Easy to use alarm and colorloop effects on light bulbs and whole groups
 * A large selection of animations and the options to apply custom animations
 * Additive state settings on all nodes with multiple commands
+* Localized in English & German
 
 ### Installation
 HueMagic was written for **Node.js 10+** and Node-RED v1.0.3+. It supports Philips Hue API version v1.19.0+.
@@ -63,17 +64,17 @@ Use TouchLink to pair new devices or old devices after a bridge reset. This is c
 ### Fetch all devices and resources
 Use the Fetch command to retrieve various information from the Hue Bridge when needed. Pass the **fetch** property to **msg.payload**.
 
-|      Property     |  Type  | Information                                                   |
-|:-----------------:|:------:|---------------------------------------------------------------|
-|     **users**     | string | Returns an array of User objects in msg.users                 |
-|     **lights**    | string | Returns an array of Light objects in msg.lights               |
-|     **groups**    | string | Returns an array of Group objects in msg.groups               |
-|    **sensors**    | string | Returns an array of Sensor objects in msg.sensors             |
-|     **scenes**    | string | Returns an array of Scene objects in msg.scenes               |
-|     **rules**     | string | Returns an array of Rule objects in msg.rules                 |
-|   **schedules**   | string | Returns an array of Schedule objects in msg.schedules         |
-| **resourceLinks** | string | Returns an array of ResourceLink objects in msg.resourceLinks |
-|   **timeZones**   | string | Returns an array of all available time zones in msg.timeZones |
+|      Property     |  Type  |                                           Information                                          |
+|:-----------------:|:------:|:----------------------------------------------------------------------------------------------:|
+|     **users**     | string | Returns an array of User objects in msg.users & bridge information in msg.info                 |
+|     **lights**    | string | Returns an array of Light objects in msg.lights & bridge information in msg.info               |
+|     **groups**    | string | Returns an array of Group objects in msg.groups & bridge information in msg.info               |
+|    **sensors**    | string | Returns an array of Sensor objects in msg.sensors & bridge information in msg.info             |
+|     **scenes**    | string | Returns an array of Scene objects in msg.scenes & bridge information in msg.info               |
+|     **rules**     | string | Returns an array of Rule objects in msg.rules & bridge information in msg.info                 |
+|   **schedules**   | string | Returns an array of Schedule objects in msg.schedules & bridge information in msg.info         |
+| **resourceLinks** | string | Returns an array of ResourceLink objects in msg.resourceLinks & bridge information in msg.info |
+|   **timeZones**   | string | Returns an array of all available time zones in msg.timeZones & bridge information in msg.info |
 
 ### Hue Bridge Settings
 Changes the Hue Bridge settings based on the passed in **msg.payload.settings** values of:
@@ -532,7 +533,14 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.2.6 (latest)
+### v2.5.0 (latest)
+* HueMagic nodes are now available in German
+* All HueMagic nodes are now compatible with the new Node-RED "complete" & "catch" nodes (Node-RED v1.0+)
+* Hue Bridge fetch actions now also send out an "info" object with further bridge information
+* New Hue Bridge sample flow can be imported directly from Node-RED
+* Code optimizations and clean up
+
+### v2.2.6
 * Hue scenes can now be applied on specific groups
 * Hue Group nodes now support the option to select all groups / lights
 * Optimized Hue Magic node to load dependencies locally

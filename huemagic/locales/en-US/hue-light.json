@@ -1,0 +1,33 @@
+{
+	"hue-light":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Light name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching lights…",
+			"none-found": "No lights found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"light": "Light",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Activate color naming"
+		},
+		"node":
+		{
+			"title": "Hue Light",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"not-reachable": "not reachable",
+			"universal": "universal mode",
+			"turned-on": "turned on",
+			"turned-on-percent": "turned on (__percent__%)",
+			"turned-off": "turned off",
+			"error-no-id": "No light Id defined. Please check the docs.",
+			"error-input": "input error",
+			"input": "turn on / off",
+			"output": "status"
+		}
+	}
+}

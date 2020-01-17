@@ -1,14 +1,14 @@
 <script type="text/x-red" data-template-name="hue-brightness">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Sensor name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-brightness.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-brightness.config.input-name">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
         <input type="text" id="node-input-bridge">
     </div>
     <div class="form-row">
-        <label for="node-input-sensorid"><i class="fa fa-sun-o"></i> Sensor</label>
+        <label for="node-input-sensorid"><i class="fa fa-sun-o"></i> <span data-i18n="hue-brightness.config.sensor"></span></label>
         <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
             <div style="position: absolute; left: 0px; right: 40px;">
                 <input type="text" id="node-input-sensorid" placeholder="1" style="width: 100%"/>
@@ -19,61 +19,10 @@
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span>Skip events</span></label>
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span>Skip events from node</span>
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-brightness.config.skipevents"></span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-brightness.config.skipevents-node"></span>
         </label>
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="hue-brightness">
-    <p>Hue brightness node to receive current light level in Lux and daylight / darkness.</p>
-
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Lux sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent on deploy (once) and if the light level changes. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
-
-    <h3>Light Level Events</h3>
-    <p>The event message that the light sensor sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>lux<span class="property-type">int</span></dt>
-        <dd>Real lux value</dd>
-
-        <dt>lightLevel<span class="property-type">int</span></dt>
-        <dd>Light level</dd>
-
-        <dt>dark<span class="property-type">boolean</span></dt>
-        <dd>True if it's dark</dd>
-
-        <dt>daylight<span class="property-type">boolean</span></dt>
-        <dd>True if daylight recognized</dd>
-
-        <dt>updated<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the last light level update</dd>
-    </dl>
-
-    <h3>Additional Sensor Info</h3>
-    <p>Additional information about the sensor is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the sensor as registered on the bridge</dd>
-
-        <dt>uniqueId<span class="property-type">string</span></dt>
-        <dd>Unique Id of the sensor (typically hardware id)</dd>
-
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name for the sensor</dd>
-
-        <dt>type<span class="property-type">string</span></dt>
-        <dd>Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)</dd>
-
-        <dt>softwareVersion<span class="property-type">float</span></dt>
-        <dd>Software version of the sensor</dd>
-
-        <dt>battery<span class="property-type">int</span></dt>
-        <dd>Current battery level of the temperature sensor in percent</dd>
-
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type</dd>
-    </dl>
 </script>
 
 <script type="text/javascript">
@@ -88,12 +37,16 @@
         },
         inputs: 0,
         outputs: 1,
-        outputLabels: 'brightness (changed)',
+        outputLabels: function() {
+            return this._("hue-brightness.node.output");
+        },
         align: 'right',
         icon: "hue-brightness.png",
-        paletteLabel: "Hue Brightness",
+        paletteLabel: function() {
+            return this._("hue-brightness.node.title");
+        },
         label: function() {
-            return this.name || "Hue Light Sensor";
+            return this.name || this._("hue-brightness.node.title");
         },
         oneditprepare: function()
         {
@@ -110,7 +63,7 @@
             {
                 var current = $('#node-input-sensorid').val();
                 $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 100%"></select>');
-                $('#node-input-sensorid').append('<option selected="selected" value="null">searching brightness sensors…</option>');
+                $('#node-input-sensorid').append('<option selected="selected" value="null">'+scope._("hue-brightness.config.searching")+'</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLLightLevel"})
@@ -119,7 +72,7 @@
 
                     if(lightSensors.length <= 0)
                     {
-                        RED.notify("No light sensors found.", "error");
+                        RED.notify(scope._("hue-brightness.config.none-found"), "error");
                     }
 
                     // RESET OPTIONS
@@ -136,7 +89,7 @@
                 })
                 .fail(function()
                 {
-                    RED.notify("Something went wrong. Please retry.", "error");
+                    RED.notify(scope._("hue-brightness.config.unknown-error"), "error");
                 });
             }
 

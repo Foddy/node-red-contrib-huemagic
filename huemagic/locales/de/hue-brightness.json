@@ -1,0 +1,28 @@
+{
+	"hue-brightness":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Sensors",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Sensoren…",
+			"none-found": "Keine Sensoren gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"sensor": "Sensor",
+			"all": "Alle Gruppen / Lichter"
+		},
+		"node":
+		{
+			"title": "Hue Helligkeitssensor",
+			"not-configured": "nicht konfiguriert",
+			"init": "initialisiert…",
+			"not-reachable": "nicht erreichbar",
+			"lux": "__lux__ Lux",
+			"lux-dark": "__lux__ Lux (dunkel)",
+			"lux-daylight": "__lux__ Lux (hell)",
+			"output": "Helligkeit (aktualisiert)"
+		}
+	}
+}

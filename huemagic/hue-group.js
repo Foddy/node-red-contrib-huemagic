@@ -128,7 +128,7 @@ module.exports = function(RED)
 			}
 
 			// SIMPLE TURN ON / OFF GROUP
-			if(msg.payload == true || msg.payload == false)
+			if(msg.payload === true||msg.payload === false)
 			{
 				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
@@ -285,12 +285,14 @@ module.exports = function(RED)
 				.then(async (group) => {
 
                     // SET GROUP STATE
-                    if (typeof msg.payload.on != 'undefined') {
+                    if (typeof msg.payload != 'undefined' && msg.payload.on)
+                    {
                         group.on = msg.payload.on;
                     }
 
                     // SET BRIGHTNESS
-                    if (typeof msg.payload.brightness != 'undefined') {
+                    if (typeof msg.payload != 'undefined' && msg.payload.brightness)
+                    {
                         if (msg.payload.brightness > 100 || msg.payload.brightness < 0) {
                             scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
                             return false;
@@ -303,7 +305,7 @@ module.exports = function(RED)
                             group.brightness = Math.round((254 / 100) * parseInt(msg.payload.brightness));
                         }
                     }
-                    else if (typeof msg.payload.incrementBrightness != 'undefined')
+                    else if (typeof msg.payload != 'undefined' && msg.payload.incrementBrightness)
 					{
                         if (msg.payload.incrementBrightness > 0)
                         {
@@ -313,7 +315,7 @@ module.exports = function(RED)
 					}
 
 					// SET HUMAN READABLE COLOR
-					if(msg.payload.color && group.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.color && group.xy)
 					{
 						if(msg.payload.color == "random"||msg.payload.color == "any")
 						{
@@ -333,20 +335,20 @@ module.exports = function(RED)
 					}
 
 					// SET RGB COLOR
-					if(msg.payload.rgb && group.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.rgb && group.xy)
 					{
 						group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
 					}
 
 					// SET HEX COLOR
-					if(msg.payload.hex && group.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.hex && group.xy)
 					{
 						var rgbResult = hexRGB((msg.payload.hex).toString());
 						group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 					}
 
 					// SET SATURATION
-					if(msg.payload.saturation && group.saturation)
+					if(typeof msg.payload != 'undefined' && msg.payload.saturation && group.saturation)
 					{
 						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
 						{
@@ -360,7 +362,7 @@ module.exports = function(RED)
 					}
 
 					// SET COLOR TEMPERATURE
-					if(msg.payload.colorTemp && group.colorTemp)
+					if(typeof msg.payload != 'undefined' && msg.payload.colorTemp && group.colorTemp)
 					{
 						let colorTemp = parseInt(msg.payload.colorTemp);
 						if(colorTemp >= 153 && colorTemp <= 500)
@@ -375,13 +377,13 @@ module.exports = function(RED)
 					}
 
 					// SET TRANSITION TIME
-					if(typeof msg.payload.transitionTime != 'undefined')
+					if(typeof msg.payload != 'undefined' && msg.payload.transitionTime)
 					{
 						group.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
 
 					// SET COLORLOOP EFFECT
-					if(msg.payload.colorloop && msg.payload.colorloop > 0 && group.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.colorloop && msg.payload.colorloop > 0 && group.xy)
 					{
 						group.effect = 'colorloop';
 
@@ -393,7 +395,7 @@ module.exports = function(RED)
 					}
 
 					// SET DOMINANT COLORS FROM IMAGE
-					if(msg.payload.image && group.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.image && group.xy)
 					{
 						var colors = await getColors(msg.payload.image);
 						if(colors.length > 0)
@@ -408,7 +410,7 @@ module.exports = function(RED)
 				})
 				.then(group => {
 					// TRANSITION TIME? WAIT…
-					if(typeof msg.payload.transitionTime != 'undefined')
+					if(typeof msg.payload != 'undefined' && msg.payload.transitionTime)
 					{
 						setTimeout(function() {
 							scope.sendGroupStatus(group, send, done);

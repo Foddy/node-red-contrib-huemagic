@@ -136,7 +136,7 @@ module.exports = function(RED)
 			}
 
 			// SIMPLE TURN ON / OFF LIGHT
-			if(msg.payload == true || msg.payload == false)
+			if(msg.payload === true||msg.payload === false)
 			{
 				if(tempLightID != false)
 				{
@@ -275,7 +275,7 @@ module.exports = function(RED)
 			{
 				bridge.client.lights.getById(tempLightID)
 				.then(light => {
-					scope.context().set('lightPreviousState', [light.on ? true : false, light.brightness, light.xy ? light.xy : false]);
+					scope.context().set('lightPreviousState', [(light.on) ? true : false, light.brightness, light.xy ? light.xy : false]);
 				})
 				.catch(error => {
 					scope.error(error, msg);
@@ -313,13 +313,13 @@ module.exports = function(RED)
 				bridge.client.lights.getById(tempLightID)
 				.then(async (light) => {
 					// SET LIGHT STATE
-					if(typeof msg.payload.on != 'undefined')
+					if(typeof msg.payload != 'undefined' && msg.payload.on)
 					{
 						light.on = msg.payload.on;
 					}
 
 					// SET BRIGHTNESS
-					if(typeof msg.payload.brightness != 'undefined')
+					if(typeof msg.payload != 'undefined' && msg.payload.brightness)
 					{
 						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
 						{
@@ -336,7 +336,7 @@ module.exports = function(RED)
 							light.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
 						}
 					}
-					else if(typeof msg.payload.incrementBrightness != 'undefined')
+					else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
 					{
 						if (msg.payload.incrementBrightness > 0)
 						{
@@ -346,7 +346,7 @@ module.exports = function(RED)
 					}
 
 					// SET HUMAN READABLE COLOR OR RANDOM
-					if(msg.payload.color && light.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.color && light.xy)
 					{
 						if(msg.payload.color == "random"||msg.payload.color == "any")
 						{
@@ -366,20 +366,20 @@ module.exports = function(RED)
 					}
 
 					// SET RGB COLOR
-					if(msg.payload.rgb && light.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.rgb && light.xy)
 					{
 						light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.model.id);
 					}
 
 					// SET HEX COLOR
-					if(msg.payload.hex && light.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.hex && light.xy)
 					{
 						var rgbResult = hexRGB((msg.payload.hex).toString());
 						light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
 					}
 
 					// SET COLOR TEMPERATURE
-					if(msg.payload.colorTemp && light.colorTemp)
+					if(typeof msg.payload != 'undefined' && msg.payload.colorTemp && light.colorTemp)
 					{
 						let colorTemp = parseInt(msg.payload.colorTemp);
 						if(colorTemp >= 153 && colorTemp <= 500)
@@ -394,7 +394,7 @@ module.exports = function(RED)
 					}
 
 					// SET SATURATION
-					if(msg.payload.saturation && light.saturation)
+					if(typeof msg.payload != 'undefined' && msg.payload.saturation && light.saturation)
 					{
 						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
 						{
@@ -408,13 +408,13 @@ module.exports = function(RED)
 					}
 
 					// SET TRANSITION TIME
-					if(typeof msg.payload.transitionTime != 'undefined')
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime)
 					{
 						light.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
 
 					// SET COLORLOOP EFFECT
-					if(msg.payload.colorloop && msg.payload.colorloop > 0 && light.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.colorloop && msg.payload.colorloop > 0 && light.xy)
 					{
 						light.effect = 'colorloop';
 
@@ -426,7 +426,7 @@ module.exports = function(RED)
 					}
 
 					// SET DOMINANT COLORS FROM IMAGE
-					if(msg.payload.image && light.xy)
+					if(typeof msg.payload != 'undefined' && msg.payload.image && light.xy)
 					{
 						var colors = await getColors(msg.payload.image);
 						if(colors.length > 0)
@@ -443,7 +443,7 @@ module.exports = function(RED)
 					if(light != false)
 					{
 						// TRANSITION TIME? WAIT…
-						if(typeof msg.payload.transitionTime != 'undefined')
+						if(typeof msg.payload != 'undefined' && msg.payload.transitionTime)
 						{
 							setTimeout(function() {
 								scope.sendLightStatus(light, send, done);

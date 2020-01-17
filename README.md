@@ -533,11 +533,12 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.5.0 (latest)
+### v2.5.1 (latest)
 * HueMagic nodes are now available in German
 * All HueMagic nodes are now compatible with the new Node-RED "complete" & "catch" nodes (Node-RED v1.0+)
 * Hue Bridge fetch actions now also send out an "info" object with further bridge information
 * New Hue Bridge sample flow can be imported directly from Node-RED
+* Fixed an issue with light & group nodes (#122)
 * Code optimizations and clean up
 
 ### v2.2.6

@@ -252,6 +252,7 @@ Changes the group state, effect, color, brightness and other states based on the
 |          **on**         |       boolean      | True to turn on all the lights inside the group, false to turn them off                                                                        |
 |      **brightness**     |         int        | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
 | **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                                       |
+|   **ignoreOffLights**   |       boolean      | If the option is set, turned off lights in the group are ignored when "incrementBrightness" is set                                             |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
 |        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                         |
@@ -533,7 +534,11 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.5.1 (latest)
+### v2.5.2 (latest)
+* Fixed an error with the brightness and transitionTime params on Hue Light & Hue Group nodes (#131)
+* New option "ignoreOffLights" for Hue Group nodes to ignore state changes on turned off lights (#128)
+
+### v2.5.1
 * HueMagic nodes are now available in German
 * All HueMagic nodes are now compatible with the new Node-RED "complete" & "catch" nodes (Node-RED v1.0+)
 * Hue Bridge fetch actions now also send out an "info" object with further bridge information

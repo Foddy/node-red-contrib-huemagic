@@ -319,7 +319,7 @@ module.exports = function(RED)
 					}
 
 					// SET BRIGHTNESS
-					if(typeof msg.payload != 'undefined' && msg.payload.brightness)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
 					{
 						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
 						{
@@ -408,7 +408,7 @@ module.exports = function(RED)
 					}
 
 					// SET TRANSITION TIME
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
 					{
 						light.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
@@ -443,7 +443,7 @@ module.exports = function(RED)
 					if(light != false)
 					{
 						// TRANSITION TIME? WAIT…
-						if(typeof msg.payload != 'undefined' && msg.payload.transitionTime)
+						if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
 						{
 							setTimeout(function() {
 								scope.sendLightStatus(light, send, done);

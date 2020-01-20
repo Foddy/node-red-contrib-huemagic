@@ -291,13 +291,14 @@ module.exports = function(RED)
                     }
 
                     // SET BRIGHTNESS
-                    if (typeof msg.payload != 'undefined' && msg.payload.brightness)
+                    if (typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
                     {
-                        if (msg.payload.brightness > 100 || msg.payload.brightness < 0) {
+                        if(msg.payload.brightness > 100 || msg.payload.brightness < 0) {
                             scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
                             return false;
                         }
-                        else if (msg.payload.brightness == 0) {
+                        else if (msg.payload.brightness == 0)
+                        {
                             group.on = false;
                         }
                         else {
@@ -307,7 +308,7 @@ module.exports = function(RED)
                     }
                     else if (typeof msg.payload != 'undefined' && msg.payload.incrementBrightness)
 					{
-                        if (msg.payload.incrementBrightness > 0)
+                        if(msg.payload.incrementBrightness > 0 && typeof msg.payload.ignoreOffLights == 'undefined')
                         {
                             group.on = true;
                         }
@@ -377,7 +378,7 @@ module.exports = function(RED)
 					}
 
 					// SET TRANSITION TIME
-					if(typeof msg.payload != 'undefined' && msg.payload.transitionTime)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
 					{
 						group.transitionTime = parseFloat(msg.payload.transitionTime);
 					}
@@ -410,7 +411,7 @@ module.exports = function(RED)
 				})
 				.then(group => {
 					// TRANSITION TIME? WAIT…
-					if(typeof msg.payload != 'undefined' && msg.payload.transitionTime)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
 					{
 						setTimeout(function() {
 							scope.sendGroupStatus(group, send, done);

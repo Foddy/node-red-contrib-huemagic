@@ -534,7 +534,10 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.5.2 (latest)
+### v2.5.3 (latest)
+* Fixed an error on Hue Group & Hue Light nodes (#135)
+
+### v2.5.2
 * Fixed an error with the brightness and transitionTime params on Hue Light & Hue Group nodes (#131)
 * New option "ignoreOffLights" for Hue Group nodes to ignore state changes on turned off lights (#128)
 

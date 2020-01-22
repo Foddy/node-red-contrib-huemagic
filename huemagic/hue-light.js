@@ -313,7 +313,7 @@ module.exports = function(RED)
 				bridge.client.lights.getById(tempLightID)
 				.then(async (light) => {
 					// SET LIGHT STATE
-					if(typeof msg.payload != 'undefined' && msg.payload.on)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined')
 					{
 						light.on = msg.payload.on;
 					}
@@ -346,7 +346,7 @@ module.exports = function(RED)
 					}
 
 					// SET HUMAN READABLE COLOR OR RANDOM
-					if(typeof msg.payload != 'undefined' && msg.payload.color && light.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof light.xy != 'undefined')
 					{
 						if(msg.payload.color == "random"||msg.payload.color == "any")
 						{
@@ -366,20 +366,20 @@ module.exports = function(RED)
 					}
 
 					// SET RGB COLOR
-					if(typeof msg.payload != 'undefined' && msg.payload.rgb && light.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && typeof light.xy != 'undefined')
 					{
 						light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.model.id);
 					}
 
 					// SET HEX COLOR
-					if(typeof msg.payload != 'undefined' && msg.payload.hex && light.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined' && typeof light.xy != 'undefined')
 					{
 						var rgbResult = hexRGB((msg.payload.hex).toString());
 						light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
 					}
 
 					// SET COLOR TEMPERATURE
-					if(typeof msg.payload != 'undefined' && msg.payload.colorTemp && light.colorTemp)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof light.colorTemp != 'undefined')
 					{
 						let colorTemp = parseInt(msg.payload.colorTemp);
 						if(colorTemp >= 153 && colorTemp <= 500)
@@ -394,7 +394,7 @@ module.exports = function(RED)
 					}
 
 					// SET SATURATION
-					if(typeof msg.payload != 'undefined' && msg.payload.saturation && light.saturation)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.saturation != 'undefined' && typeof light.saturation != 'undefined')
 					{
 						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
 						{
@@ -414,7 +414,7 @@ module.exports = function(RED)
 					}
 
 					// SET COLORLOOP EFFECT
-					if(typeof msg.payload != 'undefined' && msg.payload.colorloop && msg.payload.colorloop > 0 && light.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0 && typeof light.xy != 'undefined')
 					{
 						light.effect = 'colorloop';
 
@@ -426,7 +426,7 @@ module.exports = function(RED)
 					}
 
 					// SET DOMINANT COLORS FROM IMAGE
-					if(typeof msg.payload != 'undefined' && msg.payload.image && light.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && typeof light.xy != 'undefined')
 					{
 						var colors = await getColors(msg.payload.image);
 						if(colors.length > 0)

@@ -282,10 +282,10 @@ module.exports = function(RED)
 			else
 			{
 				bridge.client.groups.getById(tempGroupID)
-				.then(async (group) => {
-
+				.then(async (group) =>
+				{
                     // SET GROUP STATE
-                    if (typeof msg.payload != 'undefined' && msg.payload.on)
+                    if (typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined')
                     {
                         group.on = msg.payload.on;
                     }
@@ -306,7 +306,7 @@ module.exports = function(RED)
                             group.brightness = Math.round((254 / 100) * parseInt(msg.payload.brightness));
                         }
                     }
-                    else if (typeof msg.payload != 'undefined' && msg.payload.incrementBrightness)
+                    else if (typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
 					{
                         if(msg.payload.incrementBrightness > 0 && typeof msg.payload.ignoreOffLights == 'undefined')
                         {
@@ -316,7 +316,7 @@ module.exports = function(RED)
 					}
 
 					// SET HUMAN READABLE COLOR
-					if(typeof msg.payload != 'undefined' && msg.payload.color && group.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof group.xy != 'undefined')
 					{
 						if(msg.payload.color == "random"||msg.payload.color == "any")
 						{
@@ -336,20 +336,20 @@ module.exports = function(RED)
 					}
 
 					// SET RGB COLOR
-					if(typeof msg.payload != 'undefined' && msg.payload.rgb && group.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && typeof group.xy != 'undefined')
 					{
 						group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
 					}
 
 					// SET HEX COLOR
-					if(typeof msg.payload != 'undefined' && msg.payload.hex && group.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined' && typeof group.xy != 'undefined')
 					{
 						var rgbResult = hexRGB((msg.payload.hex).toString());
 						group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 					}
 
 					// SET SATURATION
-					if(typeof msg.payload != 'undefined' && msg.payload.saturation && group.saturation)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.saturation != 'undefined' && typeof group.saturation != 'undefined')
 					{
 						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
 						{
@@ -363,7 +363,7 @@ module.exports = function(RED)
 					}
 
 					// SET COLOR TEMPERATURE
-					if(typeof msg.payload != 'undefined' && msg.payload.colorTemp && group.colorTemp)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof group.colorTemp != 'undefined')
 					{
 						let colorTemp = parseInt(msg.payload.colorTemp);
 						if(colorTemp >= 153 && colorTemp <= 500)
@@ -384,7 +384,7 @@ module.exports = function(RED)
 					}
 
 					// SET COLORLOOP EFFECT
-					if(typeof msg.payload != 'undefined' && msg.payload.colorloop && msg.payload.colorloop > 0 && group.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0 && typeof group.xy != 'undefined')
 					{
 						group.effect = 'colorloop';
 
@@ -396,7 +396,7 @@ module.exports = function(RED)
 					}
 
 					// SET DOMINANT COLORS FROM IMAGE
-					if(typeof msg.payload != 'undefined' && msg.payload.image && group.xy)
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && typeof group.xy != 'undefined')
 					{
 						var colors = await getColors(msg.payload.image);
 						if(colors.length > 0)

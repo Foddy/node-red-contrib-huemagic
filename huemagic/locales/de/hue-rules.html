@@ -1,0 +1,71 @@
+<script type="text/x-red" data-help-name="hue-rules">
+    <p>Hue Regel Node zum Empfangen von Regelereignissen oder zum Aktivieren / Deaktivieren von Regeln.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Regeln auf der Bridge zu finden. Geben Sie den Namen der Regel manuell ein oder behalten Sie den Standardnamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) gesendet werden und wenn die Regel auf der Bridge ausgelöst wird. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+
+    <h3>Aktivieren / Deaktivieren</h3>
+    <p>Aktiviert oder deaktiviert die Regel basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean</span></dt>
+        <dd>Aktiviert die Regel</dd>
+
+        <dt>false<span class="property-type">boolean</span></dt>
+        <dd>Deaktiviert die Regel</dd>
+    </dl>
+
+    <h3>Regel-Mitteilungen</h3>
+    <p>Die vom Regel-Node gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>triggered<span class="property-type">string</span></dt>
+        <dd>ISO 8601 Datum der letzten Aktivierung</dd>
+    </dl>
+
+    <h3>Zusätzliche Regelinformationen</h3>
+    <p>Zusätzliche Informationen zu der Regel werden an das Objekt <b>msg.info</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerische ID der Regel, wie auf der Bridge registriert</dd>
+
+        <dt>created<span class="property-type">string</span></dt>
+        <dd>ISO 8601 Datum des Erstellungsdatums der Regel</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name der Regel</dd>
+
+        <dt>timesTriggered<span class="property-type">int</span></dt>
+        <dd>Anzahl die angibt wie oft die Regel bereits aktiviert wurde</dd>
+
+        <dt>owner<span class="property-type">string</span></dt>
+        <dd>Nutzer, der die Regel erstellte</dd>
+
+        <dt>status<span class="property-type">string</span></dt>
+        <dd>aktiviert oder deaktiviert, Regel ist auslösbar bei aktiviert</dd>
+    </dl>
+
+    <h3>Regelbedingungen</h3>
+    <p>Ein Array von Objekten, die die Regelbedingungen darstellen, wird an das Array <b>msg.conditions</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>address<span class="property-type">string</span></dt>
+        <dd>Die Sensorressource / der Statusstandort für die Bedingung</dd>
+
+        <dt>operator<span class="property-type">string</span></dt>
+        <dd>Der Operator für die Bedingung</dd>
+
+        <dt>value<span class="property-type">string</span></dt>
+        <dd>Der Wert, der in Verbindung mit dem Operator verwendet wird</dd>
+    </dl>
+
+    <h3>Regelaktionen</h3>
+    <p>Ein Array von Objekten, die die Regelaktionen darstellen, wird an das Array <b>msg.actions</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>address<span class="property-type">string</span></dt>
+        <dd>Der Ort der umsetzbaren Ressource</dd>
+
+        <dt>method<span class="property-type">string</span></dt>
+        <dd>Art der Methode für die Aktion (z.B. GET, PUT)</dd>
+
+        <dt>body<span class="property-type">object</span></dt>
+        <dd>Das Body / Inhalt der Aktion</dd>
+    </dl>
+</script>

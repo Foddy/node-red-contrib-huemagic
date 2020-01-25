@@ -1,0 +1,133 @@
+<script type="text/x-red" data-help-name="hue-light">
+    <p>Hue Licht zum Steuern der Lichter und Empfangen von Glühbirnenereignissen.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Lichter zu finden. Geben Sie den Namen des Lichts manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn sich der Status der Glühbirne ändert. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+
+    <h3>Ein- / Ausschalten (einfach)</h3>
+    <p>Ändert den Licht-Ein / Aus-Status basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt>msg.payload<span class="property-type">boolean</span></dt>
+        <dd>Schaltet das Licht mit der vorherigen Konfiguration (Farbe und Helligkeit) ein oder aus</dd>
+    </dl>
+
+    <h3>Ein- / Ausschalten (erweitert)</h3>
+    <p>Ändert den Lichtzustand, den Effekt, die Farbe und die Helligkeit basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt class="optional">on<span class="property-type">boolean</span></dt>
+        <dd>True, um die Glühbirne einzuschalten, false, um sie auszuschalten</dd>
+
+        <dt class="optional">brightness<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Helligkeit des Lichts in Prozent (0-100)</dd>
+
+        <dt class="optional">brightnessLevel<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Helligkeitsstufe des Lichts (0-254)</dd>
+
+        <dt class="optional">incrementBrightness<span class="property-type">int</span></dt>
+        <dd>Erhöht / verringert die Helligkeit um einen bestimmten Prozentwert</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optional konfigurierbarer RGB-Farbwert der Glühlampe. Sie müssen den RGB-Wert nicht übergeben, wenn Sie bereits einen HEX-Wert übergeben haben</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer HEX-Farbwert der Glühlampe. Sie müssen den HEX-Wert nicht übergeben, wenn Sie bereits einen RGB-Wert übergeben haben</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer, von Menschen lesbarer Farbname in Englisch wie "red" oder "random" für eine zufällige Farbe</dd>
+
+        <dt class="optional">image<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer Bildpfad (Internet oder lokal), um die dominanteste Farbe auf das Licht anzuwenden</dd>
+
+        <dt class="optional">transitionTime<span class="property-type">float</span></dt>
+        <dd>Optional konfigurierbarer temporärer Wert, der den Übergang eines Effekts definiert (Wert in Sekunden, 0 für sofort, 5 für fünf Sekunden)</dd>
+
+        <dt class="optional">colorloop<span class="property-type">float</span></dt>
+        <dd>Optional konfigurierbarer Farbschleifeneffekt. Wert in Sekunden (deaktiviert den Effekt auf den vorherigen Zustand nach x Sekunden)</dd>
+
+        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Farbtemperatur der Leuchte von 153 bis 500</dd>
+
+        <dt class="optional">saturation<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Farbsättigung des Lichts in Prozent (von 0 bis 100)</dd>
+    </dl>
+
+    <h3>Ein- / Ausschalten (automatisch)</h3>
+    <p>Schaltet das Licht abhängig vom aktuellen Status basierend auf dem übergebenen <b>msg.payload</b>-Wert von ein oder aus:</p>
+    <dl class="message-properties">
+        <dt>toggle<span class="property-type">any</span></dt>
+        <dd>Schaltet das Licht mit der vorherigen Konfiguration ein oder aus (Farbe und Helligkeit)</dd>
+    </dl>
+
+    <h3>Alert Effect</h3>
+    <p>Spielt einen Alarmeffekt basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt>alert<span class="property-type">int</span></dt>
+        <dd>Konfigurierbare Anzahl von Sekunden, um den Alarmeffekt abzuspielen (max. 30)</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optional konfigurierbarer RGB-Farbwert des Alarmeffekt. Sie müssen den RGB-Wert nicht übergeben, wenn Sie bereits einen HEX-Wert übergeben haben</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer HEX-Farbwert des Alert-Effekts. Sie müssen den HEX-Wert nicht übergeben, wenn Sie bereits einen RGB-Wert übergeben haben</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer, von Menschen lesbarer Farbname in Englisch wie "red" oder "random" für eine zufällige Farbe</dd>
+    </dl>
+
+    <h3>Licht-Ereignisse</h3>
+    <p>Die vom Licht gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>on<span class="property-type">boolean</span></dt>
+        <dd>True für an, false, für aus</dd>
+
+        <dt>brightness<span class="property-type">int</span></dt>
+        <dd>Aktuelle Helligkeit der Glühbirne in Prozent</dd>
+
+        <dt>brightnessLevel<span class="property-type">int</span></dt>
+        <dd>Aktuelle Helligkeit der Glühbirne (0-254)</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Aktueller RGB-Farbwert der Glühbirne (falls unterstützt)</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Aktueller HEX-Farbwert der Glühbirne (falls unterstützt)</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Aktueller Farbname der Glühbirne (falls unterstützt)</dd>
+
+        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
+        <dd>Aktuelle Farbtemperatur der Glühbirne (falls unterstützt)</dd>
+
+        <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
+        <dd>ISO 8601 Datum der letzten Aktualisierung des Status</dd>
+    </dl>
+
+    <h3>Zusätzliche Glühbirneninformationen</h3>
+    <p>Zusätzliche Informationen zur Glühbirne werden an das Objekt <b>msg.info</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerische ID der auf der Bridge registrierten Glühbirne</dd>
+
+        <dt>uniqueId<span class="property-type">string</span></dt>
+        <dd>Eindeutige ID der Glühbirne (normalerweise Hardware-ID)</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name der Glühbirne</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Glühbirnen-Typ (z.B. Extended Color Light, Dimmable Light)</dd>
+
+        <dt>softwareVersion<span class="property-type">float</span></dt>
+        <dd>Softwareversion der Glühbirne</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>Das Modellobjekt der Glühbirne enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name, model.type, model.colorGamut und model.friendsOfHue</dd>
+    </dl>
+
+    <h3>Universalmodus (optional)</h3>
+    <p>Definiert die Glühbirnen-ID auf der Hue Bridge manuell, wenn sie nicht in den Node-Eigenschaften konfiguriert ist (deaktiviert Lichtaktualisierungsereignisse):</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manuelle Definition der Glühbirnen-ID</dd>
+    </dl>
+</script>

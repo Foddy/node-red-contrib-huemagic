@@ -195,7 +195,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 
 |  Property |        Type        | Information                                                                                                                                          |
 |:---------:|:------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state. |
+| **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30) |
 |  **rgb**  | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                  |
 |  **hex**  |       string       | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                  |
 | **color** |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color effect                                                          |
@@ -277,7 +277,7 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 
 |  Property |        Type        | Information                                                                                                                                                        |
 |:---------:|:------------------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished you have to manually reset the lights to their previous state. |
+| **alert** |  int *(required)*  | Configurable amount of seconds to play the alert effect (max 30) |
 |  **rgb**  | array[int,int,int] | Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value                                |
 |  **hex**  |       string       | Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value                                |
 | **color** |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                         |
@@ -538,7 +538,14 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.5.4 (latest)
+### v2.5.5 (latest)
+* Full German help docs translation of every node
+* Delay between bridge requests has been reduced to 500ms from 700ms
+* New "Strobo", "Random Rainbow" & "SOS" animations for the Hue Magic node
+* Hue Magic previews now also display brightness animations
+* Dependency updates
+
+### v2.5.4
 * New option "brightnessLevel" for Hue Light & Hue Group nodes (#134)
 * Fixed an error on Hue Group & Hue Light nodes (#135)
 * Fixed an error on Hue Magic node and Hue Magic examples (#136)

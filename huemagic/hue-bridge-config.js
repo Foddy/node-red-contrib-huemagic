@@ -42,21 +42,21 @@ module.exports = function(RED)
 
 				return true;
 			})
-			scope.delay(700).then(() => { return "next"; })
+			scope.delay(500).then(() => { return "next"; })
 			scope.client.lights.getAll().then(lights => {
 				let lightUpdates = scope.getUpdates("light", lights);
 				scope.emitUpdates("light", lightUpdates);
 
 				return true;
 			})
-			scope.delay(700).then(() => { return "next"; })
+			scope.delay(500).then(() => { return "next"; })
 			scope.client.groups.getAll().then(groups => {
 				let groupUpdates = scope.getUpdates("group", groups);
 				scope.emitUpdates("group", groupUpdates);
 
 				return true;
 			})
-			scope.delay(700).then(() => { return "next"; })
+			scope.delay(500).then(() => { return "next"; })
 			scope.client.rules.getAll().then(rules => {
 				let ruleUpdates = scope.getUpdates("rule", rules);
 				scope.emitUpdates("rule", ruleUpdates);

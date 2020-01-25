@@ -1,0 +1,50 @@
+<script type="text/x-red" data-help-name="hue-brightness">
+    <p>Hue Helligkeitssensor zum Empfangen des aktuellen Lichtniveaus in Lux und Tageslicht / Dunkelheit.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Helligkeitssensoren zu finden. Geben Sie den Namen des Sensors manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) und bei Änderung des Lichtniveaus gesendet werden. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+
+    <h3>Lichtniveau Mitteilungen</h3>
+    <p>Die vom Lichtsensor gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>lux<span class="property-type">int</span></dt>
+        <dd>Realer Luxwert</dd>
+
+        <dt>lightLevel<span class="property-type">int</span></dt>
+        <dd>Lichtstärke</dd>
+
+        <dt>dark<span class="property-type">boolean</span></dt>
+        <dd>True, wenn Dunkelheit erkannt wurde</dd>
+
+        <dt>daylight<span class="property-type">boolean</span></dt>
+        <dd>True, wenn Tageslicht erkannt wurde</dd>
+
+        <dt>updated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 Datum der letzten Aktualisierung des Lichtniveaus</dd>
+    </dl>
+
+    <h3>Zusätzliche Sensorinformationen</h3>
+    <p>Zusätzliche Informationen zum Sensor werden an das Objekt <b>msg.info</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerische ID des Sensors, wie auf der Bridge registriert</dd>
+
+        <dt>uniqueId<span class="property-type">string</span></dt>
+        <dd>Eindeutige ID des Sensors (normalerweise Hardware-ID)</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name des Sensors</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Sensor-Typ (z.B. Daylight, CLIPTemperature, ZGPSwitch)</dd>
+
+        <dt>softwareVersion<span class="property-type">float</span></dt>
+        <dd>Software-Version des Sensors</dd>
+
+        <dt>battery<span class="property-type">int</span></dt>
+        <dd>Aktueller Batteriestand des Sensors</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>Das Modellobjekt des Sensors enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name und model.type</dd>
+    </dl>
+</script>

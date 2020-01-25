@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="hue-temperature">
+    <p>Hue Temperatur um die aktuelle (Raum-)Temperatur in Celsius und Fahrenheit zu erhalten.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Temperatursensoren zu finden. Geben Sie den Namen des Sensors manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) und bei Temperaturänderungen gesendet werden. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen" ignoriert werden.</p>
+
+    <h3>Temperatur-Ereignisse</h3>
+    <p>Die vom Temperatursensor gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>celsius<span class="property-type">float</span></dt>
+        <dd>Temperatur in Celsius</dd>
+
+        <dt>fahrenheit<span class="property-type">float</span></dt>
+        <dd>Temperatur in Fahrenheit</dd>
+
+        <dt>updated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 Datum der letzten Temperaturänderung</dd>
+    </dl>
+
+    <h3>Zusätzliche Sensorinformationen</h3>
+    <p>Zusätzliche Informationen zum Gerät werden an das Objekt <b>msg.info</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerische ID des Sensors, wie auf der Bridge registriert</dd>
+
+        <dt>uniqueId<span class="property-type">string</span></dt>
+        <dd>Eindeutige ID des Sensors (normalerweise Hardware-ID)</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name des Sensors</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Sensor-Typ (z.B. Daylight, CLIPTemperature, ZGPSwitch)</dd>
+
+        <dt>softwareVersion<span class="property-type">float</span></dt>
+        <dd>Softwareversion des Sensors</dd>
+
+        <dt>battery<span class="property-type">int</span></dt>
+        <dd>Aktueller Batteriestand des Sensors in Prozent</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>Das Modellobjekt des Sensors enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name und model.type</dd>
+    </dl>
+</script>

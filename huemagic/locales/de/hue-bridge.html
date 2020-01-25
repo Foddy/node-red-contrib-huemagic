@@ -1,0 +1,158 @@
+<script type="text/x-red" data-help-name="hue-bridge-node">
+    <p>Der Hue Bridge Node hält die Bridge-Firmware und die angeschlossenen Geräte auf dem neuesten Stand und bietet weitere Informationen und Einrichtungsoptionen für die Bridge.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und legen Sie fest, ob die ausgewählte Bridge Firmware- und andere Geräteupdates automatisch finden und installieren soll.</p>
+
+    <h3>Einstellungen / Status abrufen</h3>
+    <p>Ruft den aktuellen Status / die aktuellen Einstellungen der Bridge ab, indem ein Eingabewert eingegeben wird</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean (Beispiel)</span></dt>
+        <dd>Löst eine Ausgabe des aktuellen Status / der aktuellen Einstellungen aus</dd>
+    </dl>
+
+    <h3>TouchLink-Scan auslösen</h3>
+    <p>Verwenden Sie TouchLink, um neue oder alte Geräte nach einem Bridge-Reset zu koppeln. Dies ist in der Community allgemein als "Lamp Stealer" bekannt. Übergeben Sie dafür die Eigenschaft <b>touchLink</b> an <b>msg.payload</b>.</p>
+    <dl class="message-properties">
+        <dt>touchLink<span class="property-type">boolean (Beispiel)</span></dt>
+        <dd>Richtet Lichter / Geräte in die Bridge ein</dd>
+    </dl>
+
+    <h3>Alle Geräte und Ressourcen abrufen</h3>
+    <p>Verwenden Sie den Fetch-Befehl, um bei Bedarf verschiedene Informationen von der Hue Bridge abzurufen. Übergeben Sie dafür die Eigenschaft <b>fetch</b> an <b>msg.payload</b>.</p>
+    <dl class="message-properties">
+        <dt>users<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Benutzerobjekten in msg.users & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>lights<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Licht-Objekten in msg.lights & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>groups<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Gruppenobjekten in msg.groups & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>sensors<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Sensorobjekten in msg.sensors & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>scenes<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Szenen-Objekten in msg.scenes & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>rules<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Regelobjekten in msg.rules & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>schedules<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von Schedule-Objekten in msg.schedules & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>resourceLinks<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array von ResourceLink-Objekten in msg.resourceLinks & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>timeZones<span class="property-type">string</span></dt>
+        <dd>Gibt ein Array aller verfügbaren Zeitzonen in msg.timeZones & Bridge-Informationen in msg.info zurück</dd>
+    </dl>
+
+    <h3>Hue Bridge Einstellungen</h3>
+    <p>Ändert die Hue Bridge-Einstellungen basierend auf den in <b>msg.payload.settings</b> übergebenen Werten von:</p>
+    <dl class="message-properties">
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name der Bridge</dd>
+
+        <dt>zigbeeChannel<span class="property-type">int</span></dt>
+        <dd>ZigBee-Kanal (zur Kommunikation mit Lichtern)</dd>
+
+        <dt>ipAddress<span class="property-type">string</span></dt>
+        <dd>IP-Adresse (riskant)</dd>
+
+        <dt>dhcpEnabled<span class="property-type">boolean</span></dt>
+        <dd>Gibt an, ob DHCP aktiviert ist</dd>
+
+        <dt>netmask<span class="property-type">string</span></dt>
+        <dd>Netzmaske (riskant)</dd>
+
+        <dt>gateway<span class="property-type">string</span></dt>
+        <dd>Gateway (riskant)</dd>
+
+        <dt>proxyAddress<span class="property-type">string</span></dt>
+        <dd>Proxy-Adresse</dd>
+
+        <dt>proxyPort<span class="property-type">string</span></dt>
+        <dd>Proxy-Port</dd>
+
+        <dt>timeZone<span class="property-type">string</span></dt>
+        <dd>Zeitzone</dd>
+    </dl>
+
+    <h3>Hue Bridge Mitteilungen</h3>
+    <p>Die von der Bridge gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">string</span></dt>
+        <dd>Eindeutige ID der Hue Bridge</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name der Bridge</dd>
+
+        <dt>factoryNew<span class="property-type">boolean</span></dt>
+        <dd>Ob die Bridge fabrikneu ist oder nicht</dd>
+
+        <dt>replacesBridgeId<span class="property-type">string / null</span></dt>
+        <dd>Ersetzt die Bridge-ID (für die Migration von alten Bridges)</dd>
+
+        <dt>dataStoreVersion<span class="property-type">string</span></dt>
+        <dd>Datenspeicherversion</dd>
+
+        <dt>starterKitId<span class="property-type">string</span></dt>
+        <dd>Name des im Werk erstellten Starterkits</dd>
+
+        <dt>softwareVersion<span class="property-type">string</span></dt>
+        <dd>Softwareversion der Bridge</dd>
+
+        <dt>apiVersion<span class="property-type">string</span></dt>
+        <dd>API-Version der Bridge</dd>
+
+        <dt>zigbeeChannel<span class="property-type">int</span></dt>
+        <dd>ZigBee-Kanal (zur Kommunikation mit Lichtern)</dd>
+
+        <dt>macAddress<span class="property-type">string</span></dt>
+        <dd>MAC-Adresse</dd>
+
+        <dt>ipAddress<span class="property-type">string</span></dt>
+        <dd>IP-Adresse</dd>
+
+        <dt>dhcpEnabled<span class="property-type">boolean</span></dt>
+        <dd>Gibt an, ob DHCP aktiviert ist</dd>
+
+        <dt>netmask<span class="property-type">string</span></dt>
+        <dd>Netzmaske</dd>
+
+        <dt>gateway<span class="property-type">string</span></dt>
+        <dd>Gateway</dd>
+
+        <dt>proxyAddress<span class="property-type">string</span></dt>
+        <dd>Proxy-Adresse</dd>
+
+        <dt>proxyPort<span class="property-type">string</span></dt>
+        <dd>Proxy-Port</dd>
+
+        <dt>utcTime<span class="property-type">string</span></dt>
+        <dd>UTC-Zeit der Bridge</dd>
+
+        <dt>timeZone<span class="property-type">string</span></dt>
+        <dd>Zeitzone</dd>
+
+        <dt>localTime<span class="property-type">string</span></dt>
+        <dd>Ortszeit der Bridge</dd>
+
+        <dt>portalServicesEnabled<span class="property-type">boolean</span></dt>
+        <dd>Gibt an, ob Portal-Services aktiviert sind</dd>
+
+        <dt>portalConnected<span class="property-type">boolean</span></dt>
+        <dd>Gibt an, ob das Portal verbunden ist</dd>
+
+        <dt>linkButtonEnabled<span class="property-type">boolean</span></dt>
+        <dd>Gibt an, ob die Verknüpfungstaste aktiviert ist</dd>
+
+        <dt>touchlinkEnabled<span class="property-type">boolean</span></dt>
+        <dd>Gibt an, ob TouchLink aktiviert ist</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>Das Modellobjekt der Bridge enthält modellspezifische Informationen wie model.id, model.manufacturer und model.name</dd>
+    </dl>
+</script>

@@ -1,0 +1,38 @@
+<script type="text/x-red" data-help-name="hue-tap">
+    <p>Hue Tap Schalter um Schaltererignisse zu empfangen.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Tap Schalter zu finden. Geben Sie den Namen manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) und auf Knopfdruck gesendet werden. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+
+    <h3>Tap-Ereignisse</h3>
+    <p>Die vom Tap Schalter gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>button<span class="property-type">int</span></dt>
+        <dd>Gedrückte Tastennummer von 1-4</dd>
+
+        <dt>buttonAlt<span class="property-type">int</span></dt>
+        <dd>Alternative Tastennummer (Rohversion)</dd>
+
+        <dt>updated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 Datum des letzten Zeitpunkts, zu dem eine Taste gedrückt wurde</dd>
+    </dl>
+
+    <h3>Zusätzliche Sensorinformationen</h3>
+    <p>Zusätzliche Informationen zum Sensor werden an das Objekt <b>msg.info</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Numerische ID des Sensors, wie auf der Bridge registriert</dd>
+
+        <dt>uniqueId<span class="property-type">string</span></dt>
+        <dd>Eindeutige ID des Sensors (normalerweise Hardware-ID)</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name des Sensors</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Sensor-Typ (z.B. Daylight, CLIPTemperature, ZGPSwitch)</dd>
+
+        <dt>model<span class="property-type">object</span></dt>
+        <dd>Das Modellobjekt des Sensors enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name und model.type</dd>
+    </dl>
+</script>

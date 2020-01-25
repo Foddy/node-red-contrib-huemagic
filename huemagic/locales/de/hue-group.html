@@ -1,0 +1,136 @@
+<script type="text/x-red" data-help-name="hue-group">
+    <p>Hue Gruppe zur Steuerung ganzer Gruppen mit Lichtern und zum Empfang von Gruppenereignissen.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren vorkonfigurierten Gruppen zu finden. Geben Sie den Namen der Gruppe manuell ein oder behalten Sie den Standardnamen bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn der Gruppenstatus geändert wird. Bei Bedarf können alle Statusaktualisierungen dieses Knotens durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+
+    <h3>Ein- / Ausschalten (einfach)</h3>
+    <p>Ändert den Ein- / Aus-Status der Gruppe basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt>msg.payload<span class="property-type">boolean</span></dt>
+        <dd>Schaltet alle Lichter in der Gruppe mit ihrer vorherigen Konfiguration (Farbe und Helligkeit) ein oder aus</dd>
+    </dl>
+
+    <h3>Ein- / Ausschalten (erweitert)</h3>
+    <p>Ändert den Gruppenstatus, den Effekt, die Farbe und die Helligkeit basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt class="optional">on<span class="property-type">boolean</span></dt>
+        <dd>True, um alle Lichter in der Gruppe einzuschalten, false, um sie auszuschalten</dd>
+
+        <dt class="optional">brightness<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Helligkeit der Lichter in Prozent (0-100)</dd>
+
+        <dt class="optional">brightnessLevel<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Helligkeit der Lichter (0-254)</dd>
+
+        <dt class="optional">incrementBrightness<span class="property-type">int</span></dt>
+        <dd>Erhöht / verringert die Helligkeit um einen bestimmten Prozentwert</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optional konfigurierbarer RGB-Farbwert aller Leuchten innerhalb der Gruppe. Sie müssen den RGB-Wert nicht übergeben, wenn Sie bereits einen HEX-Wert übergeben haben</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer HEX-Farbwert aller Leuchten innerhalb der Gruppe. Sie müssen den HEX-Wert nicht übergeben, wenn Sie bereits einen RGB-Wert übergeben haben</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer, von Menschen lesbarer Farbname in Englisch wie "red" oder "random" für eine zufällige Farbe</dd>
+
+        <dt class="optional">image<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer Bildpfad (Internet oder lokal), um der Gruppe die dominanteste Farbe zuzuweisen</dd>
+
+        <dt class="optional">transitionTime<span class="property-type">float</span></dt>
+        <dd>Optional konfigurierbarer temporärer Wert, der den Übergang eines Effekts definiert (Wert in Sekunden, 0 für sofort, 5 für fünf Sekunden)</dd>
+
+        <dt class="optional">colorloop<span class="property-type">float</span></dt>
+        <dd>Optional konfigurierbarer Farbschleifeneffekt. Wert in Sekunden (deaktiviert den Effekt auf den vorherigen Zustand nach x Sekunden)</dd>
+
+        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Farbtemperatur der Gruppenlichter von 153 bis 500</dd>
+
+        <dt class="optional">saturation<span class="property-type">int</span></dt>
+        <dd>Optional konfigurierbare Farbsättigung der Gruppe in Prozent (von 0 bis 100)</dd>
+    </dl>
+
+    <h3>Ein- / Ausschalten (automatisch)</h3>
+    <p>Schaltet die Lichter abhängig vom aktuellen Status basierend auf dem übergebenen Wert von <b>msg.payload</b> ein oder aus:</p>
+    <dl class="message-properties">
+        <dt>toggle<span class="property-type">any</span></dt>
+        <dd>Schaltet alle Lichter in der Gruppe mit ihrer vorherigen Konfiguration (Farbe und Helligkeit) ein oder aus</dd>
+    </dl>
+
+    <h3>Alarmeffekt</h3>
+    <p>Spielt einen Alarmeffekt basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt>alert<span class="property-type">int</span></dt>
+        <dd>Konfigurierbare Anzahl von Sekunden, um den Alarmeffekt abzuspielen (max. 30)</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Optional konfigurierbarer RGB-Farbwert des Alarmeffekt. Sie müssen den RGB-Wert nicht übergeben, wenn Sie bereits einen HEX-Wert übergeben haben</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer HEX-Farbwert des Alert-Effekts. Sie müssen den HEX-Wert nicht übergeben, wenn Sie bereits einen RGB-Wert übergeben haben</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Optional konfigurierbarer, von Menschen lesbarer Farbname in Englisch wie "red" oder "random" für eine zufällige Farbe</dd>
+    </dl>
+
+    <h3>Gruppen-Ereignisse</h3>
+    <p>Die von der Gruppe gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>on<span class="property-type">boolean</span></dt>
+        <dd>True für an, false, für aus</dd>
+
+        <dt>allOn<span class="property-type">boolean</span></dt>
+        <dd>True wenn alle Lichter in der Gruppe an sind, false wenn alle aus sind</dd>
+
+        <dt>anyOn<span class="property-type">boolean</span></dt>
+        <dd>True wenn manche Lichter in der Gruppe an sind, false wenn alle aus sind</dd>
+
+        <dt>brightness<span class="property-type">int</span></dt>
+        <dd>Aktuelle Helligkeit aller Lichter in der gesamten Gruppe in Prozent</dd>
+
+        <dt>brightnessLevel<span class="property-type">int</span></dt>
+        <dd>Aktuelle Helligkeit aller Lichter in der gesamten Gruppe (0-254)</dd>
+
+        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
+        <dd>Aktueller RGB-Farbwert aller Lichter in der Gruppe (falls unterstützt)</dd>
+
+        <dt class="optional">hex<span class="property-type">string</span></dt>
+        <dd>Aktueller HEX-Farbwert aller Lichter in der Gruppe (falls unterstützt)</dd>
+
+        <dt class="optional">color<span class="property-type">string</span></dt>
+        <dd>Aktueller Farbname aller Lichter in der Gruppe (falls unterstützt)</dd>
+
+        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
+        <dd>Aktuelle Farbtemperatur aller Lichter der Gruppe im Durchschnitt (falls unterstützt)</dd>
+
+        <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
+        <dd>ISO 8601 Datum der letzten Aktualisierung des Gruppenstatus</dd>
+    </dl>
+
+    <h3>Zusätzliche Gruppeninformationen</h3>
+    <p>Zusätzliche Informationen zu der Gruppe werden an das Objekt <b>msg.info</b> gesendet:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">int</span></dt>
+        <dd>Gruppen-ID, die automatisch von der Bridge generiert wird</dd>
+
+        <dt>lightIds<span class="property-type">array[int…]</span></dt>
+        <dd>Ein Array von Lichter-IDs, die der Gruppe zugeordnet sind</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Name der Gruppe</dd>
+
+        <dt>type<span class="property-type">string</span></dt>
+        <dd>Gruppentyp (z.B. LightGroup, Luminaire, LightSource, Room)</dd>
+
+        <dt class="optional">model<span class="property-type">object</span></dt>
+        <dd>Huejay (die API hinter HueMagic) führt eine Liste der von Philips Hue unterstützten Leuchtenmodelle. Das Group Model-Attribut gibt optional ein GroupModel-Objekt zurück. Dieses Objekt enthält weitere Informationen zum Modell, z.B. model.id, model.manufacturer, model.name, model.type, model.colorGamut und model.friendsOfHue</dd>
+    </dl>
+
+    <h3>Universalmodus (optional)</h3>
+    <p>Definiert die Gruppen-ID auf der Hue Bridge manuell, wenn sie nicht in den Node-Eigenschaften konfiguriert ist (deaktiviert Gruppenaktualisierungsmitteilungen):</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manuelle Definition der Gruppen-ID</dd>
+    </dl>
+</script>

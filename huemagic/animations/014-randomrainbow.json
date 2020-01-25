@@ -1,0 +1,33 @@
+{
+   "info":{
+      "name":"Random",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":0,
+         "animation":{
+            "color":"random",
+            "brightness":100,
+            "transitionTime":10
+         }
+      },
+      {
+         "delay":0,
+         "animation":{
+            "color":"random",
+            "brightness":100,
+            "transitionTime":10
+         }
+      },
+      {
+         "delay":0,
+         "animation":{
+            "color":"random",
+            "brightness":100,
+            "transitionTime":10
+         }
+      }
+   ]
+}

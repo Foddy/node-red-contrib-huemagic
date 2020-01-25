@@ -1,0 +1,33 @@
+{
+   "info":{
+      "name":"Strobo",
+      "author":"HueMagic"
+   },
+   "steps":
+   [
+      {
+         "delay":500,
+         "animation":{
+            "color":"random",
+            "brightness":100,
+            "transitionTime":0
+         }
+      },
+      {
+         "delay":500,
+         "animation":{
+            "color":"random",
+            "brightness":100,
+            "transitionTime":0
+         }
+      },
+      {
+         "delay":500,
+         "animation":{
+            "color":"random",
+            "brightness":100,
+            "transitionTime":0
+         }
+      }
+   ]
+}

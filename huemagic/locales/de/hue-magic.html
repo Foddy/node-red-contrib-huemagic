@@ -1,0 +1,60 @@
+<script type="text/x-red" data-help-name="hue-magic">
+    <p>Hue Magic Node für Animationen</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie aus, ob die Animation auf unbestimmte Zeit wiederholt werden soll und / oder ob der vorherige Zustand wiederhergestellt werden soll, nachdem die Animation beendet / gestoppt wurde. Wählen Sie eine der mitgelieferten Animationen aus und verbinden Sie den Knoten mit einer Gruppe oder einem Licht.</p>
+
+    <h3>Starten / Stoppen</h3>
+    <p>Startet oder stoppt eine Animation basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
+    <dl class="message-properties">
+        <dt>true<span class="property-type">boolean</span></dt>
+        <dd>Startet die Animation</dd>
+
+        <dt>false<span class="property-type">boolean</span></dt>
+        <dd>Stoppt die Animation</dd>
+    </dl>
+
+    <h3>Eigene Animationen</h3>
+    <p>Alternativ können Sie eigene Animationen erstellen und anwenden. Dazu erstellen Sie ein Array und übergeben es mit den folgenden Parametern an <b>msg.payload.steps</b>.</p>
+    <dl class="message-properties">
+        <dt>delay<span class="property-type">int</span></dt>
+        <dd>Führe diesen Frame nach der Verzögerung aus (in Millisekunden)</dd>
+
+        <dt>animation<span class="property-type">object</span></dt>
+        <dd>Fügen Sie hier alle Parameter ein, die animiert werden sollen. Unterstützt alle Werte des Nodes "Hue Licht" und "Hue Gruppe".</dd>
+    </dl>
+
+    <h3>Spezielle Kommandos</h3>
+    <p>Manchmal ist es sinnvoll, Animationen ungeordnet abzuspielen. Zum Beispiel, um Feuer realistischer zu imitieren. Dazu erstellen Sie ein Objekt und übergeben es mit den folgenden Parametern an <b>msg.payload.specials</b>.</p>
+    <dl class="message-properties">
+        <dt>randomOrder<span class="property-type">boolean</span></dt>
+        <dd>Führt die Schritte in zufälliger Reihenfolge aus</dd>
+    </dl>
+
+    <h4>Beispiel (eigene Animation)</h4>
+<code>
+<pre>
+{
+    "animate": true,
+    "steps": [
+        {
+            "delay": 500,
+            "animation": {
+                "hex": "#FF0000",
+                "transitionTime": 1
+            }
+        },
+        {
+            "delay": 500,
+            "animation": {
+                "hex": "#0000FF",
+                "transitionTime": 1
+            }
+        }
+    ]
+}</pre>
+</code>
+
+    <h3>Tipps und Hinweise</h3>
+    <p>Verbinden Sie den Hue Magic Node mit nur einem Licht- oder einem gesamten Gruppen-Node, um API-Requests auf der Hue Bridge zu sparen. Die Animationsvorschau kann geringfügig vom tatsächlichen Ergebnis auf einer Lampe / Gruppe abweichen.</p>
+</script>

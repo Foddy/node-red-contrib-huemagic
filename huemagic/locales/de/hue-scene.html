@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="hue-scene">
+    <p>Hue Szene zum Aufrufen (Aktivieren) von Farbszenen.</p>
+
+    <h3>Einrichtung</h3>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Szenen zu finden. Geben Sie den Namen der Szene manuell ein oder behalten Sie den Standardnamen der Szene bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn der Szenen-Node einen Befehl empfängt. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Miteilungen ignorieren" ignoriert werden.</p>
+
+    <h3>Aktivieren (vorkonfiguriert)</h3>
+    <p>Wenn eine Szene konfiguriert ist, wird die vorkonfigurierte Szene durch einen übergebenen Wert auf dem Szenen-Node aktiviert.</p>
+
+    <h3>Aktivieren (dynamisch)</h3>
+    <p>Wenn keine Szene konfiguriert ist, muss ein Szenenname oder eine Szenen-ID übergeben werden, um diese Szene zu aktivieren. Es ist auch möglich, eine Gruppen-ID dynamisch zu übergeben, um eine Szene nur für eine bestimmte Gruppe abzurufen. Die folgenden Parameter können manuell in <b>msg.payload</b> übergeben werden.</p>
+    <dl class="message-properties">
+        <dt>scene<span class="property-type">string</span></dt>
+        <dd>Aktiviert die Szene anhand ihres Namens oder ihrer ID.</dd>
+
+        <dt>group<span class="property-type">int</span></dt>
+        <dd>Ruft eine Szene einer bestimmten Gruppe anhand ihrer ID auf.</dd>
+    </dl>
+
+    <h3>Szenenereignisse</h3>
+    <p>Die Ereignismeldung, die der Szenen-Node sendet, enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt>id<span class="property-type">string</span></dt>
+        <dd>Die eindeutige Szenen-ID</dd>
+
+        <dt>name<span class="property-type">string</span></dt>
+        <dd>Szenen-Name</dd>
+
+        <dt>lightIds<span class="property-type">array[int…]</span></dt>
+        <dd>Array von zugeordneten Lichter-IDs in der Szene</dd>
+
+        <dt>owner<span class="property-type">string</span></dt>
+        <dd>Nutzer, der die Szene erstellte</dd>
+
+        <dt>appData<span class="property-type">object</span></dt>
+        <dd>Objekt bestehend aus Versions- und Dateneigenschaften</dd>
+
+        <dt>lastUpdated<span class="property-type">string</span></dt>
+        <dd>ISO 8601 Datum, als die Szene zuletzt aktualisiert wurde</dd>
+
+        <dt>version<span class="property-type">float</span></dt>
+        <dd>Versionsnummer der Szene</dd>
+    </dl>
+</script>

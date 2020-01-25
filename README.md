@@ -172,6 +172,7 @@ Changes the light state, effect, color, brightness and other states based on the
 |:-----------------------:|:------------------:|-----------------------------------------------------------------------------------------------------------------------------------|
 |          **on**         |       boolean      | Will turn on or turn off the light with its previous configuration (color and brightness)                                         |
 |      **brightness**     |         int        | Optionally configurable brightness of the light in percent (0-100)                                                                |
+|   **brightnessLevel**   |         int        | Optionally configurable brightness of the light (0-254)                                                                           |
 | **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                          |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value |
@@ -203,15 +204,16 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 ### Light Events
 The event message that the light bulb sends contains the following data in the **msg.payload** object. Events will only be sent if the light bulb state is changed.
 
-|    Property    |        Type        |                         Information                        |
-|:--------------:|:------------------:|:----------------------------------------------------------:|
-| **on**         | boolean            | True for on, false for off                                 |
-| **brightness** | int                | Current brightness of the light bulb in percent            |
-| **rgb**        | array[int,int,int] | Current RGB color value of the light bulb (if supported)   |
-| **hex**        | string             | Current HEX color value of the light bulb (if supported)   |
-| **color**      | string             | Current color name of the light bulb (if supported)        |
-| **colorTemp**  | int                | Current color temperature of the light bulb (if supported) |
-| **updated**    | string             | ISO 8601 date string of the last light state update        |
+|       Property      |        Type        |                         Information                        |
+|:-------------------:|:------------------:|:----------------------------------------------------------:|
+|        **on**       |       boolean      | True for on, false for off                                 |
+|    **brightness**   |         int        | Current brightness of the light bulb in percent            |
+| **brightnessLevel** |         int        | Current brightness of the light bulb (0-254)               |
+|       **rgb**       | array[int,int,int] | Current RGB color value of the light bulb (if supported)   |
+|       **hex**       |       string       | Current HEX color value of the light bulb (if supported)   |
+|      **color**      |       string       | Current color name of the light bulb (if supported)        |
+|    **colorTemp**    |         int        | Current color temperature of the light bulb (if supported) |
+|     **updated**     |       string       | ISO 8601 date string of the last light state update        |
 
 ### Additional Light Bulb Information
 The event message that the light bulb sends also contains the following data in the **msg.info** object.
@@ -251,6 +253,7 @@ Changes the group state, effect, color, brightness and other states based on the
 |:-----------------------:|:------------------:|------------------------------------------------------------------------------------------------------------------------------------------------|
 |          **on**         |       boolean      | True to turn on all the lights inside the group, false to turn them off                                                                        |
 |      **brightness**     |         int        | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
+|   **brightnessLevel**   |         int        | Optionally configurable brightness of the lights (0-254)                                                                                       |
 | **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                                       |
 |   **ignoreOffLights**   |       boolean      | If the option is set, turned off lights in the group are ignored when "incrementBrightness" is set                                             |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
@@ -282,17 +285,18 @@ Plays an alert effect based on the passed in **msg.payload** values of:
 ### Group Events
 The event message that the group sends contains the following data in the **msg.payload** object. Events will only be sent if the group state is changed.
 
-|    Property    |        Type        |                             Information                             |
-|:--------------:|:------------------:|:-------------------------------------------------------------------:|
-| **on**         | boolean            | True for on, false for off                                          |
-| **allOn**      | boolean            | True if all lights in the group are on, false if not                |
-| **anyOn**      | boolean            | True if any lights in the group are on, false if none are on        |
-| **brightness** | int                | Current brightness of all lights in the whole group in percent      |
-| **rgb**        | array[int,int,int] | Current RGB color value of all lights in the group (if supported)   |
-| **hex**        | string             | Current HEX color value of all lights in the group (if supported)   |
-| **color**      | string             | Current color name of all lights in the group (if supported)        |
-| **colorTemp**  | int                | Current color temperature of all lights in the group (if supported) |
-| **updated**    | string             | ISO 8601 date string of the last group state update                 |
+|       Property      |        Type        |                             Information                             |
+|:-------------------:|:------------------:|:-------------------------------------------------------------------:|
+|        **on**       |       boolean      | True for on, false for off                                          |
+|      **allOn**      |       boolean      | True if all lights in the group are on, false if not                |
+|      **anyOn**      |       boolean      | True if any lights in the group are on, false if none are on        |
+|    **brightness**   |         int        | Current brightness of all lights in the whole group in percent      |
+| **brightnessLevel** |         int        | Current brightness of all lights in the whole group (0-254)         |
+|       **rgb**       | array[int,int,int] | Current RGB color value of all lights in the group (if supported)   |
+|       **hex**       |       string       | Current HEX color value of all lights in the group (if supported)   |
+|      **color**      |       string       | Current color name of all lights in the group (if supported)        |
+|    **colorTemp**    |         int        | Current color temperature of all lights in the group (if supported) |
+|     **updated**     |       string       | ISO 8601 date string of the last group state update                 |
 
 ### Additional Group Information
 The event message that the group sends also contains the following data in the **msg.info** object.
@@ -534,8 +538,10 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.5.3 (latest)
+### v2.5.4 (latest)
+* New option "brightnessLevel" for Hue Light & Hue Group nodes (#134)
 * Fixed an error on Hue Group & Hue Light nodes (#135)
+* Fixed an error on Hue Magic node and Hue Magic examples (#136)
 
 ### v2.5.2
 * Fixed an error with the brightness and transitionTime params on Hue Light & Hue Group nodes (#131)

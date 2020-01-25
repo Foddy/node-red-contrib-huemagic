@@ -23,13 +23,13 @@ module.exports = function(RED)
 
 		//
 		// INITIALIZE STATUS
-		if(scope.steps == null)
+		if(this.steps == null)
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-magic.node.no-animation"});
 		}
 		else
 		{
-			scope.status({fill: "grey", shape: "dot", text: "hue-magic.node.stopped"});
+			this.status({fill: "grey", shape: "dot", text: "hue-magic.node.stopped"});
 		}
 
 		//
@@ -123,9 +123,8 @@ module.exports = function(RED)
 
 		//
 		// PREPARE ANIMATION STEPS
-		this.prepareAnimationSteps = function(steps)
+		this.prepareAnimationSteps = function(stepsParsed)
 		{
-			var stepsParsed = JSON.parse(steps);
 			var aSteps = [];
 
 			// ANIMATION STARTED (LET DEVICES KNOW)
@@ -191,8 +190,6 @@ module.exports = function(RED)
 
 			if(scope.steps != null||typeof msg.payload.steps != 'undefined')
 			{
-				scope.steps = (typeof msg.payload.steps != 'undefined') ? msg.payload.steps : scope.steps;
-
 				// SPECIALS CONFIG
 				if(typeof msg.payload.specials != 'undefined')
 				{
@@ -208,10 +205,11 @@ module.exports = function(RED)
 				{
 					if(scope.isAnimating == false)
 					{
+						var animationSteps = (typeof msg.payload.steps != 'undefined') ? msg.payload.steps : JSON.parse(scope.steps);
 						scope.status({fill: "green", shape: "dot", text: "hue-magic.node.animating"});
 
 						scope.isAnimating = true;
-						scope.animate(scope.steps, send, done);
+						scope.animate(animationSteps, send, done);
 					}
 				}
 

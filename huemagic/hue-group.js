@@ -64,6 +64,7 @@ module.exports = function(RED)
 				message.payload.allOn = group.allOn;
 				message.payload.anyOn = group.anyOn;
 				message.payload.brightness = brightnessPercent;
+				message.payload.brightnessLevel = group.brightness;
 
 				message.info = {};
 				message.info.id = group.id;
@@ -306,6 +307,23 @@ module.exports = function(RED)
                             group.brightness = Math.round((254 / 100) * parseInt(msg.payload.brightness));
                         }
                     }
+                    else if(typeof msg.payload != 'undefined' && typeof msg.payload.brightnessLevel != 'undefined')
+                    {
+                    	if(msg.payload.brightnessLevel > 254 || msg.payload.brightnessLevel < 0)
+                    	{
+                    		scope.error("Invalid brightness setting. Only 0 - 254 allowed");
+                    		return false;
+                    	}
+                    	else if(msg.payload.brightness == 0)
+                    	{
+                    		group.on = false;
+                    	}
+                    	else
+                    	{
+                    		group.on = true;
+                    		group.brightness = parseInt(msg.payload.brightnessLevel);
+                    	}
+                    }
                     else if (typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
 					{
                         if(msg.payload.incrementBrightness > 0 && typeof msg.payload.ignoreOffLights == 'undefined')
@@ -464,6 +482,7 @@ module.exports = function(RED)
 			message.payload.allOn = group.allOn;
 			message.payload.anyOn = group.anyOn;
 			message.payload.brightness = brightnessPercent;
+			message.payload.brightnessLevel = group.brightness;
 
 			message.info = {};
 			message.info.id = group.id;

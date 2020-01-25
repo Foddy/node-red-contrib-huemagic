@@ -85,7 +85,7 @@
         "z": "f6ddc6bb.8646a8",
         "name": "Custom animation",
         "topic": "",
-        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":500}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":500}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":500}}]}",
+        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":0}}]}",
         "payloadType": "json",
         "repeat": "",
         "crontab": "",

@@ -6,7 +6,9 @@
 			"name": "Name",
 			"input-name": "Hue Bridge name",
 			"autoupdates": "Auto updates",
-			"autoupdates-info": "Activate automatic firmware updates"
+			"autoupdates-info": "Activate automatic firmware updates",
+			"skipglobalevents": "Skip global events",
+			"skipglobalevents-info": "Skip global device updates / messages on this node"
 		},
 		"node":
 		{
@@ -25,6 +27,8 @@
 			"f-schedules": "fetching schedules…",
 			"f-rlinks": "fetching resource links…",
 			"f-timezones": "fetching timezones…",
+			"f-internet": "fetching Internet Services…",
+			"f-portal": "fetching Portal…",
 			"updating-settings": "updating settings…",
 			"settings-updated": "settings updated",
 			"input": "settings / fetch",

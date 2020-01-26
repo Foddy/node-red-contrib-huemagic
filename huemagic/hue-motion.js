@@ -7,7 +7,7 @@ module.exports = function(RED)
 		RED.nodes.createNode(this, config);
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let moment = require('moment');
+		let { HueMotionMessage } = require('../utils/messages');
 
 		//
 		// CHECK CONFIG
@@ -27,57 +27,28 @@ module.exports = function(RED)
 		{
 			if(sensor.config.reachable == false)
 			{
+				// SEND STATUS
 				scope.status({fill: "red", shape: "ring", text: "hue-motion.node.not-reachable"});
 			}
 			else if(sensor.config.on == true)
 			{
+				// SEND STATUS
 				if(sensor.state.presence)
 				{
-					var message = {};
-					message.payload = {active: true, motion: true, updated: moment.utc(sensor.state.lastUpdated).local().format()};
-
-					message.info = {};
-					message.info.id = sensor.id;
-					message.info.uniqueId = sensor.uniqueId;
-					message.info.name = sensor.name;
-					message.info.type = sensor.type;
-					message.info.softwareVersion = sensor.softwareVersion;
-					message.info.battery = sensor.config.battery;
-
-					message.info.model = {};
-					message.info.model.id = sensor.model.id;
-					message.info.model.manufacturer = sensor.model.manufacturer;
-					message.info.model.name = sensor.model.name;
-					message.info.model.type = sensor.model.type;
-
-					if(!config.skipevents) { scope.send(message); }
 					scope.status({fill: "green", shape: "dot", text: "hue-motion.node.motion"});
 				}
 				else
 				{
-					var message = {};
-					message.payload = {active: true, motion: false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
-
-					message.info = {};
-					message.info.id = sensor.id;
-					message.info.uniqueId = sensor.uniqueId;
-					message.info.name = sensor.name;
-					message.info.type = sensor.type;
-					message.info.softwareVersion = sensor.softwareVersion;
-					message.info.battery = sensor.config.battery;
-
-					message.info.model = {};
-					message.info.model.id = sensor.model.id;
-					message.info.model.manufacturer = sensor.model.manufacturer;
-					message.info.model.name = sensor.model.name;
-					message.info.model.type = sensor.model.type;
-
-					if(!config.skipevents) { scope.send(message); }
 					scope.status({fill: "grey", shape: "dot", text: "hue-motion.node.activated"});
 				}
+
+				// SEND MESSAGE
+				var hueMotion = new HueMotionMessage(sensor);
+				if(!config.skipevents) { scope.send(hueMotion.msg); }
 			}
 			else if(sensor.config.on == false)
 			{
+				// SEND STATUS
 				scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
 			}
 		});
@@ -98,25 +69,9 @@ module.exports = function(RED)
 					return bridge.client.sensors.save(sensor);
 				})
 				.then(sensor => {
-					var message = {};
-					message.payload = {active: msg.payload, motion: false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
-					message.info = {};
-					message.info.id = sensor.id;
-					message.info.uniqueId = sensor.uniqueId;
-					message.info.name = sensor.name;
-					message.info.type = sensor.type;
-					message.info.softwareVersion = sensor.softwareVersion;
-					message.info.battery = sensor.config.battery;
+					var hueMotion = new HueMotionMessage(sensor, msg.payload);
 
-					message.info.model = {};
-					message.info.model.id = sensor.model.id;
-					message.info.model.manufacturer = sensor.model.manufacturer;
-					message.info.model.name = sensor.model.name;
-					message.info.model.type = sensor.model.type;
-
-					if(!config.skipevents) { send(message); }
-					if(done) { done(); }
-
+					// SEND STATUS
 					if(msg.payload == false)
 					{
 						scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
@@ -125,6 +80,10 @@ module.exports = function(RED)
 					{
 						scope.status({fill: "green", shape: "dot", text: "hue-motion.node.activated"});
 					}
+
+					// SEND MESSAGE
+					if(!config.skipevents) { send(hueMotion.msg); }
+					if(done) { done(); }
 				})
 				.catch(error => {
 					scope.error(error, msg);

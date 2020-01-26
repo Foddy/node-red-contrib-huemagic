@@ -9,14 +9,13 @@ module.exports = function(RED)
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
 		let path = require('path');
-		let moment = require('moment');
+		let { HueLightMessage } = require('../utils/messages');
+
+		// HELPER
 		let rgb = require('../utils/rgb');
-		let rgbHex = require('rgb-hex');
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
-		let colornamer = require('color-namer');
 		let getColors = require('get-image-colors');
-
 
 		//
 		// CHECK CONFIG
@@ -39,21 +38,23 @@ module.exports = function(RED)
 		{
 			bridge.events.on('light' + config.lightid, function(light)
 			{
+				var hueLight = new HueLightMessage(light, config);
 				var brightnessPercent = 0;
+
+				// SEND STATUS
 				if(light.reachable)
 				{
 					if(light.on)
 					{
-						// CHECK IF LIGHT
+						// IS LIGHT?
 						if(light.brightness)
 						{
-							brightnessPercent = Math.round((100/254)*light.brightness);
-							scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent:brightnessPercent}) });
-
+							brightnessPercent = hueLight.msg.payload.brightness;
+							scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent: brightnessPercent}) });
 						}
+						// IS SMART PLUG
 						else
 						{
-							// SMART PLUG
 							brightnessPercent = -1;
 							scope.status({fill: "yellow", shape: "dot", text: "hue-light.node.turned-on"});
 						}
@@ -68,50 +69,8 @@ module.exports = function(RED)
 					scope.status({fill: "red", shape: "ring", text: "hue-light.node.not-reachable"});
 				}
 
-				// DETERMINE TYPE AND SEND STATUS
-				var message = {};
-				message.payload = {};
-				message.payload.on = light.on;
-				message.payload.brightness = brightnessPercent;
-				message.payload.brightnessLevel = light.brightness;
-				message.payload.reachable = light.reachable;
-
-				message.info = {};
-				message.info.id = light.id;
-				message.info.uniqueId = light.uniqueId;
-				message.info.name = light.name;
-				message.info.type = light.type;
-				message.info.softwareVersion = light.softwareVersion;
-
-				message.info.model = {};;
-				message.info.model.id = light.model.id;
-				message.info.model.manufacturer = light.model.manufacturer;
-				message.info.model.name = light.model.name;
-				message.info.model.type = light.model.type;
-				message.info.model.colorGamut = light.model.colorGamut;
-				message.info.model.friendsOfHue = light.model.friendsOfHue;
-
-				if(light.xy)
-				{
-					var rgbColor = rgb.convertXYtoRGB(light.xy[0], light.xy[1], light.brightness);
-
-					message.payload.rgb = rgbColor;
-					message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
-
-					if(config.colornamer == true)
-					{
-						var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-						message.payload.color = cNamesArray.basic[0]["name"];
-					}
-				}
-
-				if(light.colorTemp)
-				{
-					message.payload.colorTemp = light.colorTemp;
-				}
-
-				message.payload.updated = moment().format();
-				if(!config.skipevents) { scope.send(message); }
+				// SEND MESSAGE
+				if(!config.skipevents) { scope.send(hueLight.msg); }
 			});
 		}
 		else
@@ -486,62 +445,20 @@ module.exports = function(RED)
 		// SEND LIGHT STATUS
 		this.sendLightStatus = function(light, send, done)
 		{
-			var scope = this;
-			var brightnessPercent = 0;
+			var hueLight = new HueLightMessage(light, config);
 
+			// SEND STATUS
 			if(light.on)
 			{
-				brightnessPercent = Math.round((100/254)*light.brightness);
-				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent:brightnessPercent}) });
+				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent: hueLight.msg.payload.brightness}) });
 			}
 			else
 			{
 				scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
 			}
 
-			// DETERMINE TYPE AND SEND STATUS
-			var message = {};
-			message.payload = {};
-			message.payload.on = light.on;
-			message.payload.brightness = brightnessPercent;
-			message.payload.brightnessLevel = light.brightness;
-
-			message.info = {};
-			message.info.id = light.id;
-			message.info.uniqueId = light.uniqueId;
-			message.info.name = light.name;
-			message.info.type = light.type;
-			message.info.softwareVersion = light.softwareVersion;
-
-			message.info.model = {};;
-			message.info.model.id = light.model.id;
-			message.info.model.manufacturer = light.model.manufacturer;
-			message.info.model.name = light.model.name;
-			message.info.model.type = light.model.type;
-			message.info.model.colorGamut = light.model.colorGamut;
-			message.info.model.friendsOfHue = light.model.friendsOfHue;
-
-			if(light.xy)
-			{
-				var rgbColor = rgb.convertXYtoRGB(light.xy[0], light.xy[1], light.brightness);
-
-				message.payload.rgb = rgbColor;
-				message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
-
-				if(config.colornamer == true)
-				{
-					var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-					message.payload.color = cNamesArray.basic[0]["name"];
-				}
-			}
-
-			if(light.colorTemp)
-			{
-				message.payload.colorTemp = light.colorTemp;
-			}
-
-			message.payload.updated = moment().format();
-			if(!config.skipevents) { send(message); }
+			// SEND MESSAGE
+			if(!config.skipevents) { send(hueLight.msg); }
 			if(done) { done(); }
 		}
 

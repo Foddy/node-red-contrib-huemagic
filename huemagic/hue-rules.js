@@ -8,7 +8,7 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let moment = require('moment');
+		let { HueRulesMessage } = require('../utils/messages');
 
 		//
 		// CHECK CONFIG
@@ -29,44 +29,7 @@ module.exports = function(RED)
 		// ON UPDATE
 		bridge.events.on('rule' + config.ruleid, function(rule)
 		{
-			var lastTriggered = moment.utc(rule.lastTriggered).local().format();
-
-			var message = {};
-			message.payload = {};
-			message.payload.triggered = (rule.lastTriggered != null) ? lastTriggered : false;
-
-			message.info = {};
-			message.info.id = rule.id;
-			message.info.created = moment.utc(rule.created).local().format();
-			message.info.name = rule.name;
-			message.info.timesTriggered = rule.timesTriggered;
-			message.info.owner = rule.owner;
-			message.info.status = rule.status;
-
-			message.conditions = [];
-			for (let condition of rule.conditions)
-			{
-				var conditionValues = {};
-				conditionValues.address = condition.address;
-				conditionValues.operator = condition.operator;
-				conditionValues.value = condition.value;
-
-				message.conditions.push(conditionValues);
-			}
-
-			message.actions = [];
-			for (let action of rule.actions)
-			{
-				var actionValues = {};
-				actionValues.address = action.address;
-				actionValues.method = action.method;
-				actionValues.body = action.body;
-
-				message.actions.push(actionValues);
-			}
-
-			if(!config.skipevents) { scope.send(message); }
-
+			// SEND STATUS
 			if(rule.status == "enabled")
 			{
 				scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
@@ -74,6 +37,13 @@ module.exports = function(RED)
 			else
 			{
 				scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
+			}
+
+			// SEND MESSAGE
+			if(!config.skipevents)
+			{
+				var hueRule = new HueRulesMessage(rule);
+				scope.send(hueRule.msg);
 			}
 		});
 
@@ -93,45 +63,7 @@ module.exports = function(RED)
 					return bridge.client.rules.save(rule);
 				})
 				.then(rule => {
-					var lastTriggered = moment.utc(rule.lastTriggered).local().format();
-
-					var message = {};
-					message.payload = {};
-					message.payload.triggered = (rule.lastTriggered != null) ? lastTriggered : false;
-
-					message.info = {};
-					message.info.id = rule.id;
-					message.info.created = moment.utc(rule.created).local().format();
-					message.info.name = rule.name;
-					message.info.timesTriggered = rule.timesTriggered;
-					message.info.owner = rule.owner;
-					message.info.status = rule.status;
-
-					message.conditions = [];
-					for (let condition of rule.conditions)
-					{
-						var conditionValues = {};
-						conditionValues.address = condition.address;
-						conditionValues.operator = condition.operator;
-						conditionValues.value = condition.value;
-
-						message.conditions.push(conditionValues);
-					}
-
-					message.actions = [];
-					for (let action of rule.actions)
-					{
-						var actionValues = {};
-						actionValues.address = action.address;
-						actionValues.method = action.method;
-						actionValues.body = action.body;
-
-						message.actions.push(actionValues);
-					}
-
-					if(!config.skipevents) { send(message); }
-					if(done) { done(); }
-
+					// SEND STATUS
 					if(msg.payload == false)
 					{
 						scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
@@ -140,6 +72,14 @@ module.exports = function(RED)
 					{
 						scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
 					}
+
+					// SEND MESSAGE
+					if(!config.skipevents)
+					{
+						var hueRule = new HueRulesMessage(rule);
+						send(hueRule.msg);
+					}
+					if(done) { done(); }
 				})
 				.catch(error => {
 					scope.error(error, msg);

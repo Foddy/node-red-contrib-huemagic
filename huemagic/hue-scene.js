@@ -8,7 +8,7 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let huejay = require('huejay');
+		let { HueSceneMessage } = require('../utils/messages');
 
 		//
 		// CHECK CONFIG
@@ -87,21 +87,18 @@ module.exports = function(RED)
 				})
 				.then(groupInfo =>
 				{
+					// SEND STATUS
 					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled-on-group"});
 
-					var sendSceneInfo = {payload: {}};
-
-					sendSceneInfo.payload.id = scene.id;
-					sendSceneInfo.payload.name = scene.name;
-					sendSceneInfo.payload.lightIds = scene.lightIds.join(', ');
-					sendSceneInfo.payload.owner = scene.owner;
-					sendSceneInfo.payload.appData = scene.appData;
-					sendSceneInfo.payload.lastUpdated = scene.lastUpdated;
-					sendSceneInfo.payload.version = scene.version;
-
-					if(!config.skipevents) { send(sendSceneInfo); }
+					// SEND MESSAGE
+					if(!config.skipevents)
+					{
+						var hueScene = new HueSceneMessage(scene);
+						send(hueScene.msg);
+					}
 					if(done) { done(); }
 
+					// RESET STATUS AFTER 3 SEC
 					setTimeout(function() {
 						scope.status({});
 					}, 3000);
@@ -115,22 +112,19 @@ module.exports = function(RED)
 			{
 				// RECALL A SCENE
 				bridge.client.scenes.recall(scene)
-				.then(recalledScebe => {
+				.then(recalledScene => {
+					// SEND STATUS
 					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});
 
-					var sendSceneInfo = {payload: {}};
-
-					sendSceneInfo.payload.id = scene.id;
-					sendSceneInfo.payload.name = scene.name;
-					sendSceneInfo.payload.lightIds = scene.lightIds.join(', ');
-					sendSceneInfo.payload.owner = scene.owner;
-					sendSceneInfo.payload.appData = scene.appData;
-					sendSceneInfo.payload.lastUpdated = scene.lastUpdated;
-					sendSceneInfo.payload.version = scene.version;
-
-					if(!config.skipevents) { send(sendSceneInfo); }
+					// SEND MESSAGE
+					if(!config.skipevents)
+					{
+						var hueScene = new HueSceneMessage(scene);
+						send(hueScene.msg);
+					}
 					if(done) { done(); }
 
+					// RESET STATUS AFTER 3 SEC
 					setTimeout(function() {
 						scope.status({});
 					}, 3000);

@@ -64,17 +64,19 @@ Use TouchLink to pair new devices or old devices after a bridge reset. This is c
 ### Fetch all devices and resources
 Use the Fetch command to retrieve various information from the Hue Bridge when needed. Pass the **fetch** property to **msg.payload**.
 
-|      Property     |  Type  |                                           Information                                          |
-|:-----------------:|:------:|:----------------------------------------------------------------------------------------------:|
-|     **users**     | string | Returns an array of User objects in msg.users & bridge information in msg.info                 |
-|     **lights**    | string | Returns an array of Light objects in msg.lights & bridge information in msg.info               |
-|     **groups**    | string | Returns an array of Group objects in msg.groups & bridge information in msg.info               |
-|    **sensors**    | string | Returns an array of Sensor objects in msg.sensors & bridge information in msg.info             |
-|     **scenes**    | string | Returns an array of Scene objects in msg.scenes & bridge information in msg.info               |
-|     **rules**     | string | Returns an array of Rule objects in msg.rules & bridge information in msg.info                 |
-|   **schedules**   | string | Returns an array of Schedule objects in msg.schedules & bridge information in msg.info         |
-| **resourceLinks** | string | Returns an array of ResourceLink objects in msg.resourceLinks & bridge information in msg.info |
-|   **timeZones**   | string | Returns an array of all available time zones in msg.timeZones & bridge information in msg.info |
+|       Property       |  Type  |                                                        Information                                                        |
+|:--------------------:|:------:|:-------------------------------------------------------------------------------------------------------------------------:|
+|       **users**      | string | Returns an array of User objects in msg.users & bridge information in msg.info                                            |
+|      **lights**      | string | Returns an array of Light objects in msg.lights & bridge information in msg.info                                          |
+|      **groups**      | string | Returns an array of Group objects in msg.groups & bridge information in msg.info                                          |
+|      **sensors**     | string | Returns an array of Sensor objects in msg.sensors & bridge information in msg.info                                        |
+|      **scenes**      | string | Returns an array of Scene objects in msg.scenes & bridge information in msg.info                                          |
+|       **rules**      | string | Returns an array of Rule objects in msg.rules & bridge information in msg.info                                            |
+|     **schedules**    | string | Returns an array of Schedule objects in msg.schedules & bridge information in msg.info                                    |
+|   **resourceLinks**  | string | Returns an array of ResourceLink objects in msg.resourceLinks & bridge information in msg.info                            |
+|     **timeZones**    | string | Returns an array of all available time zones in msg.timeZones & bridge information in msg.info                            |
+| **internetServices** | string | Returns an object of all available internet services information in msg.internetServices & bridge information in msg.info |
+|      **portal**      | string | Returns an object of all available portal information in msg.portal & bridge information in msg.info                      |
 
 ### Hue Bridge Settings
 Changes the Hue Bridge settings based on the passed in **msg.payload.settings** values of:
@@ -120,6 +122,14 @@ The event message that the bridge sends contains the following data in the **msg
 | **linkButtonEnabled**     | boolean       | Whether or not link button is enabled                                                                                   |
 | **touchlinkEnabled**      | boolean       | Whether or not TouchLink is enabled                                                                                     |
 | **model**                 | object        | The model object of the bridge includes model specific information like the model.id, model.manufacturer and model.name |
+
+### Global update events
+The bridge also sends events when a certain active resource (lights, groups, sensors, etc.) changes its status.
+
+|     Property    |  Type  |                                          Information                                          |
+|:---------------:|:------:|:---------------------------------------------------------------------------------------------:|
+| **msg.updated** | object | The whole object of the device (check docs)                                                   |
+| **msg.type**    | string | Can be one of the following: light, group, rule, motion, brightness, temperature, switch, tap |
 
 ## Hue Magic
 Use the Hue Magic node to apply animations on Hue Lights or Hue Groups. Connect the Hue Magic node to only one light or a whole group node to save API requests on the Hue Bridge. The animation previews can differ slightly from the real result on a lamp / group.
@@ -538,7 +548,13 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.5.5 (latest)
+### v2.6.0 (latest)
+* Hue Bridge node can now fetch "Portal" and "Internet Services" information
+* Global device updates are now also pushed to the Hue Bridge node (check docs under "Global update events")
+* Removed software update logs on the Bridge (#93)
+* Message structures from each node are now outsourced
+
+### v2.5.5
 * Full German help docs translation of every node
 * Delay between bridge requests has been reduced to 500ms from 700ms
 * New "Strobo", "Random Rainbow" & "SOS" animations for the Hue Magic node

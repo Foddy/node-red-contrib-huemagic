@@ -2,7 +2,7 @@
     <p>Hue Bridge node keeps the Hue Bridge firmware and connected devices up-to-date and provides more information and setup options for the bridge.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and choose if the selected bridge should automatically find and install firmware and other device updates.</p>
+    <p>Select the preconfigured Hue Bridge and choose if the selected bridge should automatically find and install firmware and other device updates. If you activate the "Skip global events" option, this node will not send messages from updated and active devices and other ressources.</p>
 
     <h3>Get settings / status</h3>
     <p>Retrieves the current status / settings of the bridge by injecting any input value</p>
@@ -47,6 +47,12 @@
 
         <dt>timeZones<span class="property-type">string</span></dt>
         <dd>Returns an array of all available time zones in msg.timeZones & bridge information in msg.info</dd>
+
+        <dt>internetServices<span class="property-type">string</span></dt>
+        <dd>Returns an object of all available internet services information in msg.internetServices & bridge information in msg.info</dd>
+
+        <dt>portal<span class="property-type">string</span></dt>
+        <dd>Returns an object of all available portal information in msg.portal & bridge information in msg.info</dd>
     </dl>
 
     <h3>Hue Bridge Settings</h3>
@@ -154,5 +160,15 @@
 
         <dt>model<span class="property-type">object</span></dt>
         <dd>The model object of the bridge includes model specific information like the model.id, model.manufacturer and model.name</dd>
+    </dl>
+
+    <h3>Global update events</h3>
+    <p>The bridge also sends events when a certain active resource (lights, groups, sensors, etc.) changes its status.</p>
+    <dl class="message-properties">
+        <dt>msg.updated<span class="property-type">object</span></dt>
+        <dd>The whole object of the device (check docs)</dd>
+
+        <dt>msg.type<span class="property-type">string</span></dt>
+        <dd>Can be one of the following: light, group, rule, motion, brightness, temperature, switch, tap</dd>
     </dl>
 </script>

@@ -6,7 +6,9 @@
 			"name": "Name",
 			"input-name": "Hue Bridge Name",
 			"autoupdates": "Auto-Updates",
-			"autoupdates-info": "Automatische Firmware-Updates aktivieren"
+			"autoupdates-info": "Automatische Firmware-Updates aktivieren",
+			"skipglobalevents": "Mitteilungen ignorieren",
+			"skipglobalevents-info": "Globale Aktualisierungsmitteilungen auf diesem Node ignorieren"
 		},
 		"node":
 		{
@@ -25,6 +27,8 @@
 			"f-schedules": "hole Zeitpläne…",
 			"f-rlinks": "hole Ressourcen-Links…",
 			"f-timezones": "hole Zeitzonen…",
+			"f-internet": "hole Internet-Services…",
+			"f-portal": "hole Portal…",
 			"updating-settings": "aktualisiere Einstellungen…",
 			"settings-updated": "Einstellungen aktualisiert",
 			"input": "Einstellungen / Abrufen",

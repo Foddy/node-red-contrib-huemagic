@@ -8,6 +8,7 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
+		let { HueTemperatureMessage } = require('../utils/messages');
 		let moment = require('moment');
 
 		//
@@ -35,33 +36,20 @@ module.exports = function(RED)
 		{
 			if(sensor.config.reachable == false)
 			{
+				// SEND STATUS
 				scope.status({fill: "red", shape: "ring", text: "hue-temperature.node.not-reachable"});
 			}
 			else if(scope.temperature != sensor.state.temperature)
 			{
+				// STORE CURRENT TEMPERATURE
+				var hueTemperature = new HueTemperatureMessage(sensor);
 				scope.temperature = sensor.state.temperature;
-				var celsius = Math.round(sensor.state.temperature * 100) / 100;
-				var fahrenheit = Math.round(((celsius * 1.8)+32) * 100) / 100;
 
-				var message = {};
-				message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+				// SEND STATUS
+				scope.status({fill: "yellow", shape: "dot", text: hueTemperature.msg.payload.celsius+" °C / "+hueTemperature.msg.payload.fahrenheit+" °F"});
 
-				message.info = {};
-				message.info.id = sensor.id;
-				message.info.uniqueId = sensor.uniqueId;
-				message.info.name = sensor.name;
-				message.info.type = sensor.type;
-				message.info.softwareVersion = sensor.softwareVersion;
-				message.info.battery = sensor.config.battery;
-
-				message.info.model = {};
-				message.info.model.id = sensor.model.id;
-				message.info.model.manufacturer = sensor.model.manufacturer;
-				message.info.model.name = sensor.model.name;
-				message.info.model.type = sensor.model.type;
-
-				if(!config.skipevents) { scope.send(message); }
-				scope.status({fill: "yellow", shape: "dot", text: celsius+" °C / "+fahrenheit+" °F"});
+				// SEND MESSAGE
+				if(!config.skipevents) { scope.send(hueTemperature.msg); }
 			}
 		});
 

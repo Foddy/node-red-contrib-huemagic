@@ -2,7 +2,7 @@
     <p>Der Hue Bridge Node hält die Bridge-Firmware und die angeschlossenen Geräte auf dem neuesten Stand und bietet weitere Informationen und Einrichtungsoptionen für die Bridge.</p>
 
     <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und legen Sie fest, ob die ausgewählte Bridge Firmware- und andere Geräteupdates automatisch finden und installieren soll.</p>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und legen Sie fest, ob die ausgewählte Bridge Firmware- und andere Geräteupdates automatisch finden und installieren soll. Wenn Sie die Option "Mitteilungen ignorieren" aktivieren, wird dieser Node keine Mitteilungen von aktualisierten und aktiven Geräten und anderen Ressourcen schicken.</p>
 
     <h3>Einstellungen / Status abrufen</h3>
     <p>Ruft den aktuellen Status / die aktuellen Einstellungen der Bridge ab, indem ein Eingabewert eingegeben wird</p>
@@ -47,6 +47,12 @@
 
         <dt>timeZones<span class="property-type">string</span></dt>
         <dd>Gibt ein Array aller verfügbaren Zeitzonen in msg.timeZones & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>internetServices<span class="property-type">string</span></dt>
+        <dd>Gibt ein Objekt aller verfügbaren Informationen von Internet Services in msg.internetServices & Bridge-Informationen in msg.info zurück</dd>
+
+        <dt>portal<span class="property-type">string</span></dt>
+        <dd>Gibt ein Objekt aller verfügbaren Portal-Informationen in msg.portal & Bridge-Informationen in msg.info zurück</dd>
     </dl>
 
     <h3>Hue Bridge Einstellungen</h3>
@@ -154,5 +160,15 @@
 
         <dt>model<span class="property-type">object</span></dt>
         <dd>Das Modellobjekt der Bridge enthält modellspezifische Informationen wie model.id, model.manufacturer und model.name</dd>
+    </dl>
+
+    <h3>Globale Aktualisierungsmitteilungen</h3>
+    <p>Die Bridge shickt auch Events ab, wenn eine bestimmte, aktive Ressource (Lichter, Gruppen, Sensoren etc.) den Status ändert.</p>
+    <dl class="message-properties">
+        <dt>msg.updated<span class="property-type">object</span></dt>
+        <dd>Das gesamte Object der Ressource (siehe Dokumentation)</dd>
+
+        <dt>msg.type<span class="property-type">string</span></dt>
+        <dd>Kann folgende Werte beinhalten: light, group, rule, motion, brightness, temperature, switch, tap</dd>
     </dl>
 </script>

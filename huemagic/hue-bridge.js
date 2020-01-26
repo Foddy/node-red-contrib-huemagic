@@ -8,7 +8,11 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let moment = require('moment');
+		let { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueSwitchMessage, HueTapMessage, HueTemperatureMessage } = require('../utils/messages');
+
+		// PREVENT DEVICE MESSAGES IN FIRST 5 SECONDS
+		this.deviceUpdates = false;
+		setTimeout(function(){ scope.deviceUpdates = true; }, 5000);
 
 		//
 		// ACTIVE STATE
@@ -37,43 +41,12 @@ module.exports = function(RED)
 		{
 			bridge.client.bridge.get()
 			.then(bridgeInformation => {
-				var message = {};
-				message.payload = {};
-				message.payload.id = bridgeInformation.id;
-				message.payload.name = bridgeInformation.name;
-				message.payload.factoryNew = bridgeInformation.factoryNew;
-				message.payload.replacesBridgeId = bridgeInformation.replacesBridgeId;
-				message.payload.dataStoreVersion = bridgeInformation.dataStoreVersion;
-				message.payload.starterKitId = bridgeInformation.starterKitId;
-				message.payload.softwareVersion = bridgeInformation.softwareVersion;
-				message.payload.apiVersion = bridgeInformation.apiVersion;
-				message.payload.zigbeeChannel = bridgeInformation.zigbeeChannel;
-				message.payload.macAddress = bridgeInformation.macAddress;
-				message.payload.ipAddress = bridgeInformation.ipAddress;
-				message.payload.dhcpEnabled = bridgeInformation.dhcpEnabled;
-				message.payload.netmask = bridgeInformation.netmask;
-				message.payload.gateway = bridgeInformation.gateway;
-				message.payload.proxyAddress = bridgeInformation.proxyAddress;
-				message.payload.proxyPort = bridgeInformation.proxyPort;
-				message.payload.utcTime = bridgeInformation.utcTime;
-				message.payload.timeZone = bridgeInformation.timeZone;
-				message.payload.localTime = bridgeInformation.localTime;
-				message.payload.portalServicesEnabled = bridgeInformation.portalServicesEnabled;
-				message.payload.portalConnected = bridgeInformation.portalConnected;
-				message.payload.linkButtonEnabled = bridgeInformation.linkButtonEnabled;
-				message.payload.touchlinkEnabled = bridgeInformation.touchlinkEnabled;
-				message.payload.autoUpdatesEnabled = config.autoupdates;
-
-				message.payload.model = {};
-				message.payload.model.id = bridgeInformation.model.id;
-				message.payload.model.manufacturer = bridgeInformation.model.manufacturer;
-				message.payload.model.name = bridgeInformation.model.name;
-
-				scope.send(message);
+				var hueBridge = new HueBridgeMessage(bridgeInformation, config);
+				scope.send(hueBridge.msg);
 				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" });
 
 				// SAVE BRIDGE INFORMATION
-				scope.bridgeInformation = message.payload;
+				scope.bridgeInformation = hueBridge.msg.payload;
 			})
 			.catch(error => {
 				scope.error(error);
@@ -88,7 +61,6 @@ module.exports = function(RED)
 		// INITIAL START
 		this.getBridgeInformation();
 
-
 		//
 		// AUTO UPDATES?
 		this.autoUpdateHueBridge = function()
@@ -97,18 +69,15 @@ module.exports = function(RED)
 			{
 				bridge.client.softwareUpdate.check()
 				.then(() => {
-					console.log("Checking for Hue Bridge updates…");
 					return bridge.client.softwareUpdate.get();
 				})
 				.then(softwareUpdate => {
-					console.log(softwareUpdate);
 					return bridge.client.softwareUpdate.install();
 				})
 				.then(() => {
 					// UPDATING // CHECK STATUS IN 5 MINUTES
 					if(scope.nodeActive == true)
 					{
-						console.log("Updating Hue Bridge Firmware and Lights…");
 						setTimeout(function(){ scope.getBridgeInformation(); }, 60000 * 5);
 					}
 				})
@@ -116,7 +85,6 @@ module.exports = function(RED)
 					// NO UPDATES AVAILABLE // TRY AGAIN IN 3H
 					if(scope.nodeActive == true)
 					{
-						console.log("No Hue Bridge updates available. Checking again in three hours…");
 						setTimeout(function(){ scope.autoUpdateHueBridge(); }, 60000 * 180);
 					}
 				});
@@ -124,6 +92,90 @@ module.exports = function(RED)
 		}
 
 		this.autoUpdateHueBridge();
+
+		//
+		// DEVICE UPDATES
+		if(!config.skipglobalevents)
+		{
+			bridge.events.on('globalDeviceUpdates', function(message)
+			{
+				if(scope.deviceUpdates == false) { return; }
+
+				let type = message.type;
+				let payload = message.payload;
+				var detType = type;
+
+				// CONSTRUCT MESSAGE
+				var message = {};
+				message.updated = {};
+
+				// ADD PAYLOAD
+				if(type == "light")
+				{
+					let hueLight = new HueLightMessage(payload, {colornamer: true});
+					message.updated = hueLight.msg;
+				}
+				else if(type == "group")
+				{
+					let hueGroup = new HueGroupMessage(payload, {colornamer: true});
+					message.updated = hueGroup.msg;
+				}
+				else if(type == "rule")
+				{
+					let hueRules = new HueRulesMessage(payload);
+					message.updated = hueRules.msg;
+				}
+				else if(type == "sensor")
+				{
+					// DETERMINE TYPE
+					if(payload.type == "ZLLPresence")
+					{
+						let hueMotion = new HueMotionMessage(payload);
+						message.updated = hueMotion.msg;
+
+						detType = "motion";
+					}
+					else if(payload.type == "ZLLLightLevel")
+					{
+						let hueBrightness = new HueBrightnessMessage(payload);
+						message.updated = hueBrightness.msg;
+
+						detType = "brightness";
+					}
+					else if(payload.type == "ZLLTemperature")
+					{
+						let hueTemperature = new HueTemperatureMessage(payload);
+						message.updated = hueTemperature.msg;
+
+						detType = "temperature";
+					}
+					else if(payload.type == "ZLLSwitch")
+					{
+						let hueSwitch = new HueSwitchMessage(payload);
+						message.updated = hueSwitch.msg;
+
+						detType = "switch";
+					}
+					else if(payload.type == "ZGPSwitch")
+					{
+						let hueTap = new HueTapMessage(sensor);
+						message.updated = hueTap.msg;
+
+						detType = "tap";
+					}
+				}
+
+				// ADD TYPE
+				message.updated.type = detType;
+
+				// ADD BRIDGE INFORMATION
+				message.info = scope.bridgeInformation;
+
+				// SEND MESSAGE
+				scope.send(message);
+			});
+		}
+
 
 		//
 		// COMMANDS
@@ -326,6 +378,46 @@ module.exports = function(RED)
 
 						var message = {};
 						message.timeZones = timeZones;
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
+					})
+					.catch(error => {
+						scope.error(error);
+						if(done) { done(error); }
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "internetServices")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-internet" });
+					bridge.client.internetServices.get()
+					.then(internetServices => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
+
+						var message = {};
+						message.internetServices = internetServices;
+						message.info = scope.bridgeInformation;
+
+						send(message);
+						if(done) { done(); }
+					})
+					.catch(error => {
+						scope.error(error);
+						if(done) { done(error); }
+						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
+					});
+				}
+				else if(msg.payload.fetch == "portal")
+				{
+					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-portal" });
+					bridge.client.portal.get()
+					.then(portal => {
+						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
+
+						var message = {};
+						message.portal = portal;
 						message.info = scope.bridgeInformation;
 
 						send(message);

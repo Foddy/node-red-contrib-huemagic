@@ -209,10 +209,11 @@ module.exports = function(RED)
 		// EMIT UPDATES
 		this.emitUpdates = function(device, updates)
 		{
-			for (let deviceUpdate of updates)
+			for(let deviceUpdate of updates)
 			{
 				let eventName = device + deviceUpdate.id;
 				scope.events.emit(eventName, deviceUpdate);
+				scope.events.emit("globalDeviceUpdates", {type: device, payload: deviceUpdate});
 			}
 		}
 

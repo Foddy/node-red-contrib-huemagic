@@ -9,12 +9,12 @@ module.exports = function(RED)
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
 		let path = require('path');
-		let moment = require('moment');
+		let { HueGroupMessage } = require('../utils/messages');
+
+		// HELPER
 		let rgb = require('../utils/rgb');
-		let rgbHex = require('rgb-hex');
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
-		let colornamer = require('color-namer');
 		let getColors = require('get-image-colors');
 
 		//
@@ -37,8 +37,8 @@ module.exports = function(RED)
 		{
 			bridge.events.on('group' + config.groupid, function(group)
 			{
-				var brightnessPercent = (group.brightness) ? Math.round((100/254)*group.brightness) : -1;
-				var brightnessNotice = (brightnessPercent > -1) ? RED._("hue-group.node.brightness",{percent:brightnessPercent}) : "";
+				var hueGroup = new HueGroupMessage(group, config);
+				var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
 
 				if(group.allOn)
 				{
@@ -57,52 +57,8 @@ module.exports = function(RED)
 					scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
 				}
 
-				// SEND STATUS
-				var message = {};
-				message.payload = {};
-				message.payload.on = group.on;
-				message.payload.allOn = group.allOn;
-				message.payload.anyOn = group.anyOn;
-				message.payload.brightness = brightnessPercent;
-				message.payload.brightnessLevel = group.brightness;
-
-				message.info = {};
-				message.info.id = group.id;
-				message.info.lightIds = group.lightIds.join(', ');
-				message.info.name = group.name;
-				message.info.type = group.type;
-
-				if(group.modelId !== undefined)
-				{
-					message.info.model = {};
-					message.info.model.id = group.model.id;
-					message.info.model.uniqueId = group.uniqueId;
-					message.info.model.manufacturer = group.model.manufacturer;
-					message.info.model.name = group.model.name;
-					message.info.model.type = group.model.type;
-				}
-
-				if(group.xy)
-				{
-					var rgbColor = rgb.convertXYtoRGB(group.xy[0], group.xy[1], group.brightness);
-
-					message.payload.rgb = rgbColor;
-					message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
-
-					if(config.colornamer == true)
-					{
-						var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-						message.payload.color = cNamesArray.basic[0]["name"];
-					}
-				}
-
-				if(group.colorTemp)
-				{
-					message.payload.colorTemp = group.colorTemp;
-				}
-
-				message.payload.updated = moment().format();
-				if(!config.skipevents) { scope.send(message); }
+				// SEND MESSAGE
+				if(!config.skipevents) { scope.send(hueGroup.msg); }
 			});
 		}
 		else
@@ -453,11 +409,10 @@ module.exports = function(RED)
 		// SEND GROUP STATUS
 		this.sendGroupStatus = function(group, send, done)
 		{
-			var scope = this;
-			var uniqueStatus = ((group.on) ? "1" : "0") + group.brightness + group.hue + group.saturation + group.colorTemp + ((group.anyOn) ? "1" : "0") + ((group.allOn) ? "1" : "0");
-			var brightnessPercent = Math.round((100/254)*group.brightness);
-			var brightnessNotice = (brightnessPercent > -1) ? RED._("hue-group.node.brightness",{percent:brightnessPercent}) : "";
+			var hueGroup = new HueGroupMessage(group, config);
+			var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
 
+			// SEND STATUS
 			if(group.allOn)
 			{
 				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
@@ -475,53 +430,8 @@ module.exports = function(RED)
 				scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
 			}
 
-			// SEND STATUS
-			var message = {};
-			message.payload = {};
-			message.payload.on = group.on;
-			message.payload.allOn = group.allOn;
-			message.payload.anyOn = group.anyOn;
-			message.payload.brightness = brightnessPercent;
-			message.payload.brightnessLevel = group.brightness;
-
-			message.info = {};
-			message.info.id = group.id;
-			message.info.lightIds = group.lightIds.join(', ');
-			message.info.name = group.name;
-			message.info.type = group.type;
-			message.info.class = group.class;
-
-			if(group.modelId !== undefined)
-			{
-				message.info.model = {};
-				message.info.model.id = group.model.id;
-				message.info.model.uniqueId = group.uniqueId;
-				message.info.model.manufacturer = group.model.manufacturer;
-				message.info.model.name = group.model.name;
-				message.info.model.type = group.model.type;
-			}
-
-			if(group.xy)
-			{
-				var rgbColor = rgb.convertXYtoRGB(group.xy[0], group.xy[1], group.brightness);
-
-				message.payload.rgb = rgbColor;
-				message.payload.hex = rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]);
-
-				if(config.colornamer == true)
-				{
-					var cNamesArray = colornamer(rgbHex(rgbColor[0], rgbColor[1], rgbColor[2]));
-					message.payload.color = cNamesArray.basic[0]["name"];
-				}
-			}
-
-			if(group.colorTemp)
-			{
-				message.payload.colorTemp = group.colorTemp;
-			}
-
-			message.payload.updated = moment().format();
-			if(!config.skipevents) { send(message); }
+			// SEND MESSAGE
+			if(!config.skipevents) { send(hueGroup.msg); }
 			if(done) { done(); }
 		}
 

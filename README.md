@@ -191,6 +191,7 @@ Changes the light state, effect, color, brightness and other states based on the
 |    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) |
 |      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        |
 |      **colorTemp**      |         int        | Optionally configurable color temperature of the light from 153 to 500                                                            |
+| **incrementColorTemp**  |         int        | Increment/decrement color temperature by given value                                                                              |
 |      **saturation**     |         int        | Optionally configurable color saturation of the light in percent (from 0 to 100)                                                  |
 
 ### Toggle on / off (auto)
@@ -273,6 +274,7 @@ Changes the group state, effect, color, brightness and other states based on the
 |    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
 |      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
 |      **colorTemp**      |         int        | Optionally configurable color temperature of the group lights from 153 to 500                                                                  |
+| **incrementColorTemp**  |         int        | Increment/decrement color temperature by given value                                                                                           |
 |      **saturation**     |         int        | Optionally configurable color saturation of the group in percent (from 0 to 100)                                                               |
 
 ### Toggle on / off (auto)

@@ -350,6 +350,10 @@ module.exports = function(RED)
 							return false;
 						}
 					}
+                    else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined')
+                    {
+                        group.incrementColorTemp = parseInt(msg.payload.incrementColorTemp, 10) || 0;
+                    }
 
 					// SET TRANSITION TIME
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')

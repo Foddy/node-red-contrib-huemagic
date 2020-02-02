@@ -369,6 +369,10 @@ module.exports = function(RED)
 							return false;
 						}
 					}
+                    else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined')
+                    {
+                        light.incrementColorTemp = parseInt(msg.payload.incrementColorTemp, 10) || 0;
+                    }
 
 					// SET SATURATION
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.saturation != 'undefined' && typeof light.saturation != 'undefined')

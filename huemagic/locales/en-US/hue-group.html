@@ -24,7 +24,13 @@
         <dd>Optionally configurable brightness level of the lights (0-254)</dd>
 
         <dt class="optional">incrementBrightness<span class="property-type">int</span></dt>
-        <dd>Increment/decrement brightness by given percentage value</dd>
+        <dd>Increment brightness by given percentage value</dd>
+
+        <dt class="optional">decrementBrightness<span class="property-type">int</span></dt>
+        <dd>Decrement brightness by given percentage value</dd>
+
+        <dt class="optional">ignoreOffLights<span class="property-type">boolean</span></dt>
+        <dd>If the option is set, turned off lights in the group are ignored when "incrementBrightness / decrementBrightness" is set</dd>
 
         <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
         <dd>Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value</dd>

@@ -183,7 +183,8 @@ Changes the light state, effect, color, brightness and other states based on the
 |          **on**         |       boolean      | Will turn on or turn off the light with its previous configuration (color and brightness)                                         |
 |      **brightness**     |         int        | Optionally configurable brightness of the light in percent (0-100)                                                                |
 |   **brightnessLevel**   |         int        | Optionally configurable brightness of the light (0-254)                                                                           |
-| **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                          |
+| **incrementBrightness** |         int        | Increment brightness by given percentage value                                                                          |
+| **decrementBrightness** |         int        | Decrement brightness by given percentage value                                                                          |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value |
 |        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                          |
@@ -265,8 +266,9 @@ Changes the group state, effect, color, brightness and other states based on the
 |          **on**         |       boolean      | True to turn on all the lights inside the group, false to turn them off                                                                        |
 |      **brightness**     |         int        | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
 |   **brightnessLevel**   |         int        | Optionally configurable brightness of the lights (0-254)                                                                                       |
-| **incrementBrightness** |         int        | Increment/decrement brightness by given percentage value                                                                                       |
-|   **ignoreOffLights**   |       boolean      | If the option is set, turned off lights in the group are ignored when "incrementBrightness" is set                                             |
+| **incrementBrightness** |         int        | Increment brightness by given percentage value                                                                                       |
+| **decrementBrightness** |         int        | Decrement brightness by given percentage value                                                                                       |
+|   **ignoreOffLights**   |       boolean      | If the option is set, turned off lights in the group are ignored when "incrementBrightness / decrementBrightness" is set                                             |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
 |        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                         |
@@ -549,6 +551,12 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 |   **body**  | object | The body of the action                        |
 
 # Changelog
+
+### v2.6.1 (latest)
+* New option "incrementColorTemp" and "decrementBrightness" for Hue Light & Hue Group nodes ([#142](https://github.com/Foddy/node-red-contrib-huemagic/pull/142) / [#141](https://github.com/Foddy/node-red-contrib-huemagic/issues/141))
+* Fixed an issue on the Hue Scene node ([#139](https://github.com/Foddy/node-red-contrib-huemagic/issues/139))
+* Fixed an issue on the Hue Switch node ([#138](https://github.com/Foddy/node-red-contrib-huemagic/issues/138))
+* Removed brightness layer on Hue Magic animation previews due to performance issues
 
 ### v2.6.0 (latest)
 * Hue Bridge node can now fetch "Portal" and "Internet Services" information

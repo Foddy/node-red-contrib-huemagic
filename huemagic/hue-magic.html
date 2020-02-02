@@ -314,7 +314,7 @@
                         var duration = 0;
                         var isFirst = true;
                         var keyframes = [];
-                        var keyframesBrightness = [];
+                        // var keyframesBrightness = [];
                         $.each(animation.steps, function(z, oneStep)
                         {
                             duration += oneStep.delay;
@@ -333,7 +333,7 @@
 
                             // SET CURRENT STEP COLOR
                             keyframes.push(addPreviewFrame(oneStep));
-                            keyframesBrightness.push(addPreviewFrameBrightness(oneStep));
+                            // keyframesBrightness.push(addPreviewFrameBrightness(oneStep));
                         });
 
                         // REPEAT KEYFRAMES FOR SMOOTH TRANSITIONS
@@ -341,7 +341,7 @@
                         while (r < 10)
                         {
                             keyframes = keyframes.concat(keyframes);
-                            keyframesBrightness = keyframesBrightness.concat(keyframesBrightness);
+                            // keyframesBrightness = keyframesBrightness.concat(keyframesBrightness);
                             r++;
                         }
 
@@ -355,13 +355,13 @@
                         });
 
                         // INITIALIZE BRIGHTNESS ANIMATION
-                        var animationBrightness = anime({
-                            targets: animationTemplate.find("div.brightness")[0],
-                            loop: true,
-                            autoplay: true,
-                            easing: 'linear',
-                            keyframes: keyframesBrightness
-                        });
+                        // var animationBrightness = anime({
+                        //     targets: animationTemplate.find("div.brightness")[0],
+                        //     loop: true,
+                        //     autoplay: true,
+                        //     easing: 'linear',
+                        //     keyframes: keyframesBrightness
+                        // });
 
                         // NORMALIZE DUR IN SECONDS
                         duration = duration/1000;

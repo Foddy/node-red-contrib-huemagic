@@ -321,6 +321,14 @@ module.exports = function(RED)
 						}
 						light.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
 					}
+					else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+					{
+						if (msg.payload.decrementBrightness > 0)
+						{
+							light.on = true;
+						}
+						light.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.decrementBrightness))*-1;
+					}
 
 					// SET HUMAN READABLE COLOR OR RANDOM
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof light.xy != 'undefined')

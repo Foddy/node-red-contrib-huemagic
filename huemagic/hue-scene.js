@@ -25,7 +25,7 @@ module.exports = function(RED)
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
 
-			var groupID = (typeof msg.payload.group != 'undefined') ? msg.payload.group : config.groupid;
+			var groupID = (typeof msg.payload != 'undefined' && typeof msg.payload.group != 'undefined') ? msg.payload.group : config.groupid;
 
 			if(config.sceneid)
 			{

@@ -288,6 +288,14 @@ module.exports = function(RED)
                         }
                         group.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
 					}
+					else if (typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+					{
+                        if(msg.payload.decrementBrightness > 0 && typeof msg.payload.ignoreOffLights == 'undefined')
+                        {
+                            group.on = true;
+                        }
+                        group.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.decrementBrightness))*-1;
+					}
 
 					// SET HUMAN READABLE COLOR
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof group.xy != 'undefined')

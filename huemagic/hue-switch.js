@@ -86,7 +86,7 @@ module.exports = function(RED)
 				if(!config.skipevents)
 				{
 					var hueSwitch = new HueSwitchMessage(sensor);
-					send(hueSwitch.msg);
+					scope.send(hueSwitch.msg);
 				}
 			}
 			else

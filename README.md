@@ -558,7 +558,7 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 * Fixed an issue on the Hue Switch node ([#138](https://github.com/Foddy/node-red-contrib-huemagic/issues/138))
 * Removed brightness layer on Hue Magic animation previews due to performance issues
 
-### v2.6.0 (latest)
+### v2.6.0
 * Hue Bridge node can now fetch "Portal" and "Internet Services" information
 * Global device updates are now also pushed to the Hue Bridge node (check docs under "Global update events")
 * Removed software update logs on the Bridge (#93)

@@ -453,11 +453,12 @@ Use the Hue Temperature node to receive current (room) temperature in Celsius an
 ### Temperature Events
 The event message that the temperature sensor sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if the temperature changes.
 
-|    Property    |  Type  |                     Information                     |
-|:--------------:|:------:|:---------------------------------------------------:|
-| **celsius**    | float  | Temperature in Celsius                              |
-| **fahrenheit** | float  | Temperature in Fahrenheit                           |
-| **updated**    | string | ISO 8601 date string of the last temperature change |
+|     Property    |  Type  |                     Information                     |
+|:---------------:|:------:|:---------------------------------------------------:|
+| **celsius**     | float  | Temperature in Celsius                              |
+| **fahrenheit**  | float  | Temperature in Fahrenheit                           |
+| **deviceValue** | int    | Temperature value of the sensor (original value)    |
+| **updated**     | string | ISO 8601 date string of the last temperature change |
 
 ### Additional Temperature Sensor Information
 The event message that the temperature sensor sends also contains the following data in the **msg.info** object.
@@ -552,7 +553,13 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.6.1 (latest)
+### v2.6.2 (latest)
+* New original temperature parameter on Hue Temperature nodes
+* Nodes are now sending their status once after passing an action ([#150](https://github.com/Foddy/node-red-contrib-huemagic/issues/150) & [#153](https://github.com/Foddy/node-red-contrib-huemagic/issues/153))
+* Fixed an issue on the Hue Motion node ([#145](https://github.com/Foddy/node-red-contrib-huemagic/issues/145))
+* Dependency updates
+
+### v2.6.1
 * New option "incrementColorTemp" and "decrementBrightness" for Hue Light & Hue Group nodes ([#142](https://github.com/Foddy/node-red-contrib-huemagic/pull/142) / [#141](https://github.com/Foddy/node-red-contrib-huemagic/issues/141))
 * Fixed an issue on the Hue Scene node ([#139](https://github.com/Foddy/node-red-contrib-huemagic/issues/139))
 * Fixed an issue on the Hue Switch node ([#138](https://github.com/Foddy/node-red-contrib-huemagic/issues/138))

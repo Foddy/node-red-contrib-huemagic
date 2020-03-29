@@ -216,7 +216,7 @@ class HueMotionMessage
 	constructor(sensor, active = true)
 	{
 		this.message = {};
-		this.message.payload = {active: active, motion: (sensor.state.presence) ? true : false, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+		this.message.payload = {active: active, motion: (sensor.state.presence) ? true : false, updated: (sensor.state.lastUpdated) ? moment.utc(sensor.state.lastUpdated).local().format() : moment().local().format() };
 
 		this.message.info = {};
 		this.message.info.id = sensor.id;
@@ -441,11 +441,12 @@ class HueTemperatureMessage
 {
 	constructor(sensor)
 	{
+		var deviceValue = sensor.state.temperature*100;
 		var celsius = Math.round(sensor.state.temperature * 100) / 100;
 		var fahrenheit = Math.round(((celsius * 1.8)+32) * 100) / 100;
 
 		this.message = {};
-		this.message.payload = {celsius: celsius, fahrenheit: fahrenheit, updated: moment.utc(sensor.state.lastUpdated).local().format()};
+		this.message.payload = {celsius: celsius, fahrenheit: fahrenheit, deviceValue: deviceValue, updated: moment.utc(sensor.state.lastUpdated).local().format()};
 
 		this.message.info = {};
 		this.message.info.id = sensor.id;

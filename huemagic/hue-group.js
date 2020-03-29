@@ -92,9 +92,6 @@ module.exports = function(RED)
 					group.on = msg.payload;
 					return bridge.client.groups.save(group);
 				})
-				.then(group => {
-					scope.sendGroupStatus(group, send, done);
-				})
 				.catch(error => {
 					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
@@ -108,9 +105,6 @@ module.exports = function(RED)
 				.then(group => {
 					group.on = (group.on) ? false : true;
 					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					scope.sendGroupStatus(group, send, done);
 				})
 				.catch(error => {
 					scope.error(error, msg);
@@ -394,19 +388,6 @@ module.exports = function(RED)
 					}
 
 					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					// TRANSITION TIME? WAIT…
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
-					{
-						setTimeout(function() {
-							scope.sendGroupStatus(group, send, done);
-						}, parseFloat(msg.payload.transitionTime)*1010);
-					}
-					else
-					{
-						scope.sendGroupStatus(group, send, done);
-					}
 				})
 				.catch(error => {
 					scope.error(error, msg);

@@ -50,6 +50,10 @@ module.exports = function(RED)
 			{
 				// SEND STATUS
 				scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
+
+				// SEND MESSAGE
+				var hueMotion = new HueMotionMessage(sensor, false);
+				if(!config.skipevents) { scope.send(hueMotion.msg); }
 			}
 		});
 

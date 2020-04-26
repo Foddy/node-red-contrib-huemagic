@@ -84,6 +84,17 @@ module.exports = function(RED)
 				return false;
 			}
 
+			// GET CURRENT STATE
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			{
+				bridge.client.groups.getById(tempGroupID)
+				.then(group => {
+					return scope.sendGroupStatus(group, send, done);
+				});
+
+				return true;
+			}
+
 			// SIMPLE TURN ON / OFF GROUP
 			if(msg.payload === true||msg.payload === false)
 			{
@@ -364,15 +375,24 @@ module.exports = function(RED)
 					}
 
 					// SET COLORLOOP EFFECT
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0 && typeof group.xy != 'undefined')
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && typeof group.xy != 'undefined')
 					{
-						group.effect = 'colorloop';
-
-						// DISABLE AFTER
-						setTimeout(function() {
+						if(msg.payload.colorloop === true) {
+							group.effect = 'colorloop';
+						}
+						else if(msg.payload.colorloop === false) {
 							group.effect = 'none';
-							bridge.client.groups.save(group)
-						}, parseFloat(msg.payload.colorloop)*1000);
+						}
+						// ENABLE FOR TIME INTERVAL
+						else if(msg.payload.colorloop > 0) {
+							group.effect = 'colorloop';
+
+							// DISABLE AFTER
+							setTimeout(function() {
+								group.effect = 'none';
+								bridge.client.lights.save(light);
+							}, parseFloat(msg.payload.colorloop)*1000);
+						}
 					}
 
 					// SET DOMINANT COLORS FROM IMAGE

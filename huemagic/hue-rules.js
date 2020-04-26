@@ -55,6 +55,7 @@ module.exports = function(RED)
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
 
+			// CONTROL
 			if(msg.payload == true || msg.payload == false)
 			{
 				bridge.client.rules.getById(config.ruleid)

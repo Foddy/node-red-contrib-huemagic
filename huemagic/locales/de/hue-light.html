@@ -44,8 +44,8 @@
         <dt class="optional">transitionTime<span class="property-type">float</span></dt>
         <dd>Optional konfigurierbarer temporärer Wert, der den Übergang eines Effekts definiert (Wert in Sekunden, 0 für sofort, 5 für fünf Sekunden)</dd>
 
-        <dt class="optional">colorloop<span class="property-type">float</span></dt>
-        <dd>Optional konfigurierbarer Farbschleifeneffekt. Wert in Sekunden (deaktiviert den Effekt auf den vorherigen Zustand nach x Sekunden)</dd>
+        <dt class="optional">colorloop<span class="property-type">float / boolean</span></dt>
+        <dd>Optional konfigurierbarer Farbschleifeneffekt. Float = deaktiviert den Effekt nach x Sekunden oder Boolean um den Effekt zu aktivieren / deaktivieren</dd>
 
         <dt class="optional">colorTemp<span class="property-type">int</span></dt>
         <dd>Optional konfigurierbare Farbtemperatur der Leuchte von 153 bis 500</dd>
@@ -55,6 +55,9 @@
 
         <dt class="optional">saturation<span class="property-type">int</span></dt>
         <dd>Optional konfigurierbare Farbsättigung des Lichts in Prozent (von 0 bis 100)</dd>
+
+        <dt class="optional">status<span class="property-type">any</span></dt>
+        <dd>Gibt den aktuellen Status des Nodes zurück, ohne eine Aktion durchzuführen</dd>
     </dl>
 
     <h3>Ein- / Ausschalten (automatisch)</h3>

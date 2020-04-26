@@ -65,6 +65,19 @@ module.exports = function(RED)
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
 
+			// GET CURRENT STATE
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			{
+				bridge.client.sensors.getById(config.sensorid)
+				.then(sensor => {
+					var hueMotion = new HueMotionMessage(sensor, (sensor.config.on) ? true : false);
+					return send(hueMotion.msg);
+				});
+
+				return true;
+			}
+
+			// CONTROL
 			if(msg.payload == true || msg.payload == false)
 			{
 				bridge.client.sensors.getById(config.sensorid)

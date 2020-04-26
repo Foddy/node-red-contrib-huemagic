@@ -44,8 +44,8 @@
         <dt class="optional">transitionTime<span class="property-type">float</span></dt>
         <dd>Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)</dd>
 
-        <dt class="optional">colorloop<span class="property-type">float</span></dt>
-        <dd>Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)</dd>
+        <dt class="optional">colorloop<span class="property-type">float / boolean</span></dt>
+        <dd>Optionally configurable color loop effect. Float = disables the effect after x seconds / Boolean to turn on / off the effect</dd>
 
         <dt class="optional">colorTemp<span class="property-type">int</span></dt>
         <dd>Optionally configurable color temperature of the light from 153 to 500</dd>
@@ -55,6 +55,9 @@
 
         <dt class="optional">saturation<span class="property-type">int</span></dt>
         <dd>Optionally configurable color saturation of the light in percent (from 0 to 100)</dd>
+
+        <dt class="optional">status<span class="property-type">any</span></dt>
+        <dd>Returns the current status message of the node without taking any action</dd>
     </dl>
 
     <h3>Toggle On / Off (auto)</h3>

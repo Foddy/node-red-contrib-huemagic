@@ -1,0 +1,10 @@
+{
+	"hue-button":
+	{
+		"node":
+		{
+			"not-configured": "nicht konfiguriert",
+			"waiting": "waiting…"
+		}
+	}
+}

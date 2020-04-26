@@ -95,6 +95,17 @@ module.exports = function(RED)
 				return false;
 			}
 
+			// GET CURRENT STATE
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			{
+				bridge.client.lights.getById(tempLightID)
+				.then(light => {
+					return scope.sendLightStatus(light, send, done);
+				});
+
+				return true;
+			}
+
 			// SIMPLE TURN ON / OFF LIGHT
 			if(msg.payload === true||msg.payload === false)
 			{

@@ -183,17 +183,18 @@ Changes the light state, effect, color, brightness and other states based on the
 |          **on**         |       boolean      | Will turn on or turn off the light with its previous configuration (color and brightness)                                         |
 |      **brightness**     |         int        | Optionally configurable brightness of the light in percent (0-100)                                                                |
 |   **brightnessLevel**   |         int        | Optionally configurable brightness of the light (0-254)                                                                           |
-| **incrementBrightness** |         int        | Increment brightness by given percentage value                                                                          |
-| **decrementBrightness** |         int        | Decrement brightness by given percentage value                                                                          |
+| **incrementBrightness** |         int        | Increment brightness by given percentage value                                                                                    |
+| **decrementBrightness** |         int        | Decrement brightness by given percentage value                                                                                    |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value |
-|        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                          |
+|        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                            |
 |        **image**        |       string       | Optionally configurable image path (remote or local) to apply the most dominant color to the light                                |
 |    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds) |
-|      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)        |
+|      **colorloop**      |   float / boolean  | Optionally configurable color loop effect. Float = disables the effect after x seconds / Boolean to turn on / off the effect      |
 |      **colorTemp**      |         int        | Optionally configurable color temperature of the light from 153 to 500                                                            |
 | **incrementColorTemp**  |         int        | Increment/decrement color temperature by given value                                                                              |
 |      **saturation**     |         int        | Optionally configurable color saturation of the light in percent (from 0 to 100)                                                  |
+|       **status**        |         any        | Returns the current status message of the node without taking any action                                                          |
 
 ### Toggle on / off (auto)
 Turns the light on or off depending on the current state based on the passed in **msg.payload** value of:
@@ -266,18 +267,19 @@ Changes the group state, effect, color, brightness and other states based on the
 |          **on**         |       boolean      | True to turn on all the lights inside the group, false to turn them off                                                                        |
 |      **brightness**     |         int        | Optionally configurable brightness of the lights in percent (0-100)                                                                            |
 |   **brightnessLevel**   |         int        | Optionally configurable brightness of the lights (0-254)                                                                                       |
-| **incrementBrightness** |         int        | Increment brightness by given percentage value                                                                                       |
-| **decrementBrightness** |         int        | Decrement brightness by given percentage value                                                                                       |
-|   **ignoreOffLights**   |       boolean      | If the option is set, turned off lights in the group are ignored when "incrementBrightness / decrementBrightness" is set                                             |
+| **incrementBrightness** |         int        | Increment brightness by given percentage value                                                                                                 |
+| **decrementBrightness** |         int        | Decrement brightness by given percentage value                                                                                                 |
+|   **ignoreOffLights**   |       boolean      | If the option is set, turned off lights in the group are ignored when "incrementBrightness / decrementBrightness" is set                       |
 |         **rgb**         | array[int,int,int] | Optionally configurable RGB color value of all lights inside the group. You don't need to pass the RGB value if you already passed a HEX value |
 |         **hex**         |       string       | Optionally configurable HEX color value of all lights inside the group. You don't need to pass the HEX value if you already passed a RGB value |
 |        **color**        |       string       | Optionally configurable human readable color name in english like "red" or "random" for a random color                                         |
 |        **image**        |       string       | Optionally configurable image path (remote or local) to apply the most dominant color to the group                                             |
 |    **transitionTime**   |        float       | Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)              |
-|      **colorloop**      |        float       | Optionally configurable color loop effect. Value in seconds (deactivates the effect to the previous state after x seconds)                     |
+|      **colorloop**      |   float / boolean  | Optionally configurable color loop effect. Float = disables the effect after x seconds / Boolean to turn on / off the effect                   |
 |      **colorTemp**      |         int        | Optionally configurable color temperature of the group lights from 153 to 500                                                                  |
 | **incrementColorTemp**  |         int        | Increment/decrement color temperature by given value                                                                                           |
 |      **saturation**     |         int        | Optionally configurable color saturation of the group in percent (from 0 to 100)                                                               |
+|       **status**        |         any        | Returns the current status message of the node without taking any action                                                                       |
 
 ### Toggle on / off (auto)
 Turns the lights on or off depending on the current state based on the passed in **msg.payload** value of:
@@ -419,9 +421,10 @@ Use the Hue Motion node to control the motion sensor and receive motion events.
 ### Activate / Deactivate Sensor
 Activates or deactivates the motion sensor based on the passed in **msg** values of:
 
-|   Property  |   Type  |                       Information                       |
-|:-----------:|:-------:|:-------------------------------------------------------:|
-| **payload** | boolean | True to activate the motion sensor, false to deactivate |
+|   Property  |   Type  |                              Information                                 |
+|:-----------:|:-------:|:------------------------------------------------------------------------:|
+| **payload** | boolean | True to activate the motion sensor, false to deactivate                  |
+| **status**  |   any   | Returns the current status message of the node without taking any action |
 
 ### Motion Events
 The event message that the motion sensor sends contains the following data in the **msg.payload** object. Events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the *Activate / Deactivate* command.
@@ -553,7 +556,12 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.6.2 (latest)
+### v2.6.4 (latest)
+* The colorloop effect in Hue group & Hue Light nodes can now be activated and deactivated manually ([#158](https://github.com/Foddy/node-red-contrib-huemagic/pull/158)
+* New status property for Hue Light, Hue Group & Hue Motion nodes to request the current status of the devices ([#154](https://github.com/Foddy/node-red-contrib-huemagic/issues/154) & [#156](https://github.com/Foddy/node-red-contrib-huemagic/issues/156))
+* Dependency updates
+
+### v2.6.2
 * New original temperature parameter on Hue Temperature nodes
 * Nodes are now sending their status once after passing an action ([#150](https://github.com/Foddy/node-red-contrib-huemagic/issues/150) & [#153](https://github.com/Foddy/node-red-contrib-huemagic/issues/153))
 * Fixed an issue on the Hue Motion node ([#145](https://github.com/Foddy/node-red-contrib-huemagic/issues/145))

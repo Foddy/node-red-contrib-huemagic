@@ -391,15 +391,24 @@ module.exports = function(RED)
 					}
 
 					// SET COLORLOOP EFFECT
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0 && typeof light.xy != 'undefined')
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && typeof light.xy != 'undefined')
 					{
-						light.effect = 'colorloop';
-
-						// DISABLE AFTER
-						setTimeout(function() {
+						if(msg.payload.colorloop === true) {
+							light.effect = 'colorloop';
+						}
+						else if(msg.payload.colorloop === false) {
 							light.effect = 'none';
-							bridge.client.lights.save(light);
-						}, parseFloat(msg.payload.colorloop)*1000);
+						}
+						// ENABLE FOR TIME INTERVAL
+						else if(msg.payload.colorloop > 0) {
+							light.effect = 'colorloop';
+
+							// DISABLE AFTER
+							setTimeout(function() {
+								light.effect = 'none';
+								bridge.client.lights.save(light);
+							}, parseFloat(msg.payload.colorloop)*1000);
+						}
 					}
 
 					// SET DOMINANT COLORS FROM IMAGE

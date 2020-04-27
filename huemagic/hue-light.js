@@ -116,6 +116,10 @@ module.exports = function(RED)
 						light.on = msg.payload;
 						return bridge.client.lights.save(light);
 					})
+					.then(light => {
+						if(!config.lightid) { scope.sendLightStatus(light, send, done); }
+						return light;
+					})
 					.catch(error => {
 						scope.error(error, msg);
 						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
@@ -132,6 +136,10 @@ module.exports = function(RED)
 					.then(light => {
 						light.on = (light.on) ? false : true;
 						return bridge.client.lights.save(light);
+					})
+					.then(light => {
+						if(!config.lightid) { scope.sendLightStatus(light, send, done); }
+						return light;
 					})
 					.catch(error => {
 						scope.error(error, msg);
@@ -188,6 +196,10 @@ module.exports = function(RED)
 					light.brightness = 254;
 					light.transitionTime = 0;
 					return bridge.client.lights.save(light);
+				})
+				.then(light => {
+					if(!config.lightid) { scope.sendLightStatus(light, send, done); }
+					return light;
 				})
 				.then(light => {
 					// ACTIVATE ALERT
@@ -435,6 +447,10 @@ module.exports = function(RED)
 					}
 
 					return bridge.client.lights.save(light);
+				})
+				.then(light => {
+					if(!config.lightid) { scope.sendLightStatus(light, send, done); }
+					return light;
 				})
 				.catch(error => {
 					scope.error(error, msg);

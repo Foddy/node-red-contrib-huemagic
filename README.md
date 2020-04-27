@@ -556,8 +556,9 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 
 # Changelog
 
-### v2.6.4 (latest)
-* The colorloop effect in Hue group & Hue Light nodes can now be activated and deactivated manually ([#158](https://github.com/Foddy/node-red-contrib-huemagic/pull/158)
+### v2.6.5 (latest)
+* Fixed an error on Hue Group & Hue Light nodes ([#161](https://github.com/Foddy/node-red-contrib-huemagic/issues/161)
+* The colorloop effect in Hue Group & Hue Light nodes can now be activated and deactivated manually ([#158](https://github.com/Foddy/node-red-contrib-huemagic/pull/158)
 * New status property for Hue Light, Hue Group & Hue Motion nodes to request the current status of the devices ([#154](https://github.com/Foddy/node-red-contrib-huemagic/issues/154) & [#156](https://github.com/Foddy/node-red-contrib-huemagic/issues/156))
 * Dependency updates
 

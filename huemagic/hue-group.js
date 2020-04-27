@@ -33,7 +33,7 @@ module.exports = function(RED)
 		}
 
 
-		if(typeof config.groupid != 'undefined')
+		if(config.groupid)
 		{
 			bridge.events.on('group' + config.groupid, function(group)
 			{
@@ -77,8 +77,8 @@ module.exports = function(RED)
 			var context = this.context();
 			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
 
-			// CHECK IF GROUP ID IS SET
-			if(isNaN(tempGroupID))
+			// CHECK IF LIGHT ID IS SET
+			if(tempGroupID == false)
 			{
 				scope.error(RED._("hue-group.node.error-no-id"));
 				return false;
@@ -103,6 +103,10 @@ module.exports = function(RED)
 					group.on = msg.payload;
 					return bridge.client.groups.save(group);
 				})
+				.then(group => {
+					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
+					return group;
+				})
 				.catch(error => {
 					scope.error(error, msg);
 					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
@@ -116,6 +120,10 @@ module.exports = function(RED)
 				.then(group => {
 					group.on = (group.on) ? false : true;
 					return bridge.client.groups.save(group);
+				})
+				.then(group => {
+					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
+					return group;
 				})
 				.catch(error => {
 					scope.error(error, msg);
@@ -176,6 +184,10 @@ module.exports = function(RED)
 					// ACTIVATE ALERT
 					group.alert = 'lselect';
 					return bridge.client.groups.save(group);
+				})
+				.then(group => {
+					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
+					return group;
 				})
 				.then(group => {
 					// TURN OFF ALERT
@@ -408,6 +420,10 @@ module.exports = function(RED)
 					}
 
 					return bridge.client.groups.save(group);
+				})
+				.then(group => {
+					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
+					return group;
 				})
 				.catch(error => {
 					scope.error(error, msg);

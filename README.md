@@ -581,7 +581,7 @@ This node also sends the entire last state data (before the update) in the **msg
 # Changelog
 
 ### v2.7.0 (latest)
-* Fixed an error on Hue Scene nodes ([#164](https://github.com/Foddy/node-red-contrib-huemagic/issues/164)
+* Fixed an error on Hue Scene nodes ([#164](https://github.com/Foddy/node-red-contrib-huemagic/issues/164))
 * New "lastState" property on every node (except Hue Magic & Hue Scene) with the last state before the update
 
 ### v2.6.5

@@ -10,6 +10,9 @@ module.exports = function(RED)
 		let bridge = RED.nodes.getNode(config.bridge);
 		let { HueRulesMessage } = require('../utils/messages');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		//
 		// CHECK CONFIG
 		if(!config.ruleid || bridge == null)
@@ -42,9 +45,12 @@ module.exports = function(RED)
 			// SEND MESSAGE
 			if(!config.skipevents)
 			{
-				var hueRule = new HueRulesMessage(rule);
+				var hueRule = new HueRulesMessage(rule, lastState);
 				scope.send(hueRule.msg);
 			}
+
+			// SAVE LAST STATE
+			lastState = rule;
 		});
 
 
@@ -77,8 +83,11 @@ module.exports = function(RED)
 					// SEND MESSAGE
 					if(!config.skipevents)
 					{
-						var hueRule = new HueRulesMessage(rule);
+						var hueRule = new HueRulesMessage(rule, lastState);
 						send(hueRule.msg);
+
+						// SAVE LAST STATE
+						lastState = rule;
 					}
 					if(done) { done(); }
 				})

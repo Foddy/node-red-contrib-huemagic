@@ -139,4 +139,7 @@
         <dt>msg.topic<span class="property-type">int</span></dt>
         <dd>Manuelle Definition der Glühbirnen-ID</dd>
     </dl>
+
+    <h3>Letzte Zustandsinformationen</h3>
+    <p>Dieser Node schickt auch die gesamten letzten Zustandsinformationen (vor dem Update) in das <b>msg.lastState</b>-Objekt. Dieses kann entweder false (Boolean) or die Objekte payload (msg.lastState.payload) und info (msg.lastState.info) beinhalten. Der Rückgabewert "false" wird nur dann gesendet, wenn es keinen letzten Zustand gab oder der Node neu erstellt oder gestartet wurde.</p>
 </script>

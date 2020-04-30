@@ -25,7 +25,19 @@ module.exports = function(RED)
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
 
-			var groupID = (typeof msg.payload != 'undefined' && typeof msg.payload.group != 'undefined') ? msg.payload.group : config.groupid;
+			var groupID = config.groupid;
+			var sceneDef = config.sceneid;
+
+			// PASSED SCENE NAME?
+			if(typeof msg.payload === 'string' || msg.payload instanceof String)
+			{
+				sceneDef = msg.payload;
+			}
+			else
+			{
+				groupID = (typeof msg.payload != 'undefined' && typeof msg.payload.group != 'undefined') ? msg.payload.group : groupID;
+				sceneDef = (typeof msg.payload != 'undefined' && typeof msg.payload.scene != 'undefined') ? msg.payload.scene : sceneDef;
+			}
 
 			if(config.sceneid)
 			{
@@ -34,27 +46,18 @@ module.exports = function(RED)
 					scope.proceedSceneAction(scene, groupID, send, done);
 				});
 			}
-			else if (typeof msg.payload === 'string')
+			else if(sceneDef)
 			{
 				bridge.client.scenes.getAll()
 				.then(scenes => {
 					for (var scene of scenes)
 					{
-						if (scene.name === msg.payload || scene.id === msg.payload)
+						if(scene.id == sceneDef)
 						{
 							scope.proceedSceneAction(scene, groupID, send, done);
 							break;
 						}
-					}
-				});
-			}
-			else if (typeof msg.payload != 'undefined' && typeof msg.payload.scene != 'undefined')
-			{
-				bridge.client.scenes.getAll()
-				.then(scenes => {
-					for (var scene of scenes)
-					{
-						if (scene.name === msg.payload || scene.id === msg.payload)
+						else if(scene.name == sceneDef)
 						{
 							scope.proceedSceneAction(scene, groupID, send, done);
 							break;

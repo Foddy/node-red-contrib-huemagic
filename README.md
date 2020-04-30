@@ -247,6 +247,9 @@ Defines the light Id on the Hue Bridge manually if not configured in the node pr
 |:-------------:|:----:|:--------------------------------------:|
 | **msg.topic** | int  | Manual definition of the light bulb Id |
 
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
+
 ## Hue Groups
 Use the Hue Group node to control whole groups containing lights and receive group events.
 
@@ -332,6 +335,9 @@ Defines the group Id on the Hue Bridge manually if not configured in the node pr
 |:-------------:|:----:|:---------------------------------:|
 | **msg.topic** | int  | Manual definition of the group Id |
 
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
+
 ## Hue Scenes
 Use the Hue Scene node to recall / activate preconfigured scenes on the bridge and receive scene information.
 
@@ -386,6 +392,9 @@ The event message that the Hue Tap device sends also contains the following data
 | **type**     | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
 | **model**    | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
+
 ## Hue Switch
 Use the Hue Switch node to receive button events.
 
@@ -412,6 +421,9 @@ The event message that the Hue Wireless Dimmer Switch device sends also contains
 | **type**     | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
 | **battery**  | int    | Current battery level of the Hue Switch in percent                                                                                  |
 | **model**    | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
 
 ## Hue Motion Sensor
 Use the Hue Motion node to control the motion sensor and receive motion events.
@@ -448,6 +460,9 @@ The event message that the motion sensor sends also contains the following data 
 | **battery**         | int    | Current battery level of the temperature sensor in percent                                                                          |
 | **model**           | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
 
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
+
 ## Hue Temperature Sensor
 Use the Hue Temperature node to receive current (room) temperature in Celsius and Fahrenheit.
 
@@ -475,6 +490,9 @@ The event message that the temperature sensor sends also contains the following 
 | **softwareVersion** |  float | Software version of the sensor                                                                                                      |
 |     **battery**     |   int  | Current battery level of the temperature sensor in percent                                                                          |
 |      **model**      | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
 
 ## Hue Lux Sensor
 Use the Hue Brightness node to receive the current light level in Lux and daylight / darkness.
@@ -504,6 +522,9 @@ The event message that the lux sensor sends also contains the following data in 
 | **softwareVersion** |  float | Software version of the sensor                                                                                                      |
 |     **battery**     |   int  | Current battery level of the temperature sensor in percent                                                                          |
 |      **model**      | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
 
 ## Hue Rules
 Hue rule node to receive rule events or to enable / disable rules.
@@ -554,9 +575,16 @@ An array of objects representing the rule actions is going to be sent to **msg.a
 |  **method** | string | Type of method for the action (e.g. GET, PUT) |
 |   **body**  | object | The body of the action                        |
 
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
+
 # Changelog
 
-### v2.6.5 (latest)
+### v2.7.0 (latest)
+* Fixed an error on Hue Scene nodes ([#164](https://github.com/Foddy/node-red-contrib-huemagic/issues/164)
+* New "lastState" property on every node (except Hue Magic & Hue Scene) with the last state before the update
+
+### v2.6.5
 * Fixed an error on Hue Group & Hue Light nodes ([#161](https://github.com/Foddy/node-red-contrib-huemagic/issues/161)
 * The colorloop effect in Hue Group & Hue Light nodes can now be activated and deactivated manually ([#158](https://github.com/Foddy/node-red-contrib-huemagic/pull/158)
 * New status property for Hue Light, Hue Group & Hue Motion nodes to request the current status of the devices ([#154](https://github.com/Foddy/node-red-contrib-huemagic/issues/154) & [#156](https://github.com/Foddy/node-red-contrib-huemagic/issues/156))

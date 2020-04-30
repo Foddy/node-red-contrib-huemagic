@@ -11,6 +11,9 @@ module.exports = function(RED)
 		let path = require('path');
 		let { HueLightMessage } = require('../utils/messages');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		// HELPER
 		let rgb = require('../utils/rgb');
 		let hexRGB = require('hex-rgb');
@@ -38,7 +41,7 @@ module.exports = function(RED)
 		{
 			bridge.events.on('light' + config.lightid, function(light)
 			{
-				var hueLight = new HueLightMessage(light, config);
+				var hueLight = new HueLightMessage(light, config, lastState);
 				var brightnessPercent = 0;
 
 				// SEND STATUS
@@ -71,6 +74,9 @@ module.exports = function(RED)
 
 				// SEND MESSAGE
 				if(!config.skipevents) { scope.send(hueLight.msg); }
+
+				// SAVE LAST STATE
+				lastState = light;
 			});
 		}
 		else
@@ -465,7 +471,7 @@ module.exports = function(RED)
 		// SEND LIGHT STATUS
 		this.sendLightStatus = function(light, send, done)
 		{
-			var hueLight = new HueLightMessage(light, config);
+			var hueLight = new HueLightMessage(light, config, lastState);
 
 			// SEND STATUS
 			if(light.on)
@@ -480,6 +486,9 @@ module.exports = function(RED)
 			// SEND MESSAGE
 			if(!config.skipevents) { send(hueLight.msg); }
 			if(done) { done(); }
+
+			// SAVE LAST STATE
+			lastState = light;
 		}
 
 		//

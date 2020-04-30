@@ -56,7 +56,7 @@ class HueBridgeMessage
 // HUE BRIGHTNESS
 class HueBrightnessMessage
 {
-	constructor(sensor)
+	constructor(sensor, lastState = false)
 	{
 		var realLUX = sensor.state.lightLevel - 1;
 		realLUX = realLUX / 10000;
@@ -83,6 +83,18 @@ class HueBrightnessMessage
 		this.message.info.model.manufacturer = sensor.model.manufacturer;
 		this.message.info.model.name = sensor.model.name;
 		this.message.info.model.type = sensor.model.type;
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueBrightnessMessage(lastState, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()
@@ -96,7 +108,7 @@ class HueBrightnessMessage
 // HUE GROUP
 class HueGroupMessage
 {
-	constructor(group, config)
+	constructor(group, config, lastState = false)
 	{
 		this.message = {};
 		this.message.payload = {};
@@ -143,6 +155,18 @@ class HueGroupMessage
 		}
 
 		this.message.payload.updated = moment().format();
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueGroupMessage(lastState, config, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()
@@ -156,7 +180,7 @@ class HueGroupMessage
 // HUE LIGHT
 class HueLightMessage
 {
-	constructor(light, config)
+	constructor(light, config, lastState = false)
 	{
 		this.message = {};
 		this.message.payload = {};
@@ -200,6 +224,18 @@ class HueLightMessage
 		}
 
 		this.message.payload.updated = moment().format();
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueLightMessage(lastState, config, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()
@@ -213,7 +249,7 @@ class HueLightMessage
 // HUE MOTION
 class HueMotionMessage
 {
-	constructor(sensor, active = true)
+	constructor(sensor, active = true, lastState = false)
 	{
 		this.message = {};
 		this.message.payload = {active: active, motion: (sensor.state.presence) ? true : false, updated: (sensor.state.lastUpdated) ? moment.utc(sensor.state.lastUpdated).local().format() : moment().local().format() };
@@ -231,6 +267,18 @@ class HueMotionMessage
 		this.message.info.model.manufacturer = sensor.model.manufacturer;
 		this.message.info.model.name = sensor.model.name;
 		this.message.info.model.type = sensor.model.type;
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueMotionMessage(lastState, active, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()
@@ -244,7 +292,7 @@ class HueMotionMessage
 // HUE RULES
 class HueRulesMessage
 {
-	constructor(rule)
+	constructor(rule, lastState = false)
 	{
 		this.message = {};
 		this.message.payload = {};
@@ -278,6 +326,18 @@ class HueRulesMessage
 			actionValues.body = action.body;
 
 			this.message.actions.push(actionValues);
+		}
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueRulesMessage(lastState, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
 		}
 	}
 
@@ -317,7 +377,7 @@ class HueSceneMessage
 // HUE SWITCH
 class HueSwitchMessage
 {
-	constructor(sensor)
+	constructor(sensor, lastState = false)
 	{
 		// DEFINE HUMAN READABLE BUTTON NAME
 		var buttonName = "";
@@ -379,6 +439,18 @@ class HueSwitchMessage
 		this.message.info.model.manufacturer = sensor.model.manufacturer;
 		this.message.info.model.name = sensor.model.name;
 		this.message.info.model.type = sensor.model.type;
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueSwitchMessage(lastState, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()
@@ -392,7 +464,7 @@ class HueSwitchMessage
 // HUE TAP
 class HueTapMessage
 {
-	constructor(sensor)
+	constructor(sensor, lastState = false)
 	{
 		var buttonNum = 0;
 		if(sensor.state.buttonEvent == 34)
@@ -426,6 +498,18 @@ class HueTapMessage
 		this.message.info.model.manufacturer = sensor.model.manufacturer;
 		this.message.info.model.name = sensor.model.name;
 		this.message.info.model.type = sensor.model.type;
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueTapMessage(lastState, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()
@@ -439,7 +523,7 @@ class HueTapMessage
 // HUE TEMPERATURE
 class HueTemperatureMessage
 {
-	constructor(sensor)
+	constructor(sensor, lastState = false)
 	{
 		var deviceValue = sensor.state.temperature*100;
 		var celsius = Math.round(sensor.state.temperature * 100) / 100;
@@ -461,6 +545,18 @@ class HueTemperatureMessage
 		this.message.info.model.manufacturer = sensor.model.manufacturer;
 		this.message.info.model.name = sensor.model.name;
 		this.message.info.model.type = sensor.model.type;
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueTemperatureMessage(lastState, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
 	}
 
 	get msg()

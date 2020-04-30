@@ -11,6 +11,9 @@ module.exports = function(RED)
 		let path = require('path');
 		let { HueGroupMessage } = require('../utils/messages');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		// HELPER
 		let rgb = require('../utils/rgb');
 		let hexRGB = require('hex-rgb');
@@ -37,7 +40,7 @@ module.exports = function(RED)
 		{
 			bridge.events.on('group' + config.groupid, function(group)
 			{
-				var hueGroup = new HueGroupMessage(group, config);
+				var hueGroup = new HueGroupMessage(group, config, lastState);
 				var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
 
 				if(group.allOn)
@@ -59,6 +62,9 @@ module.exports = function(RED)
 
 				// SEND MESSAGE
 				if(!config.skipevents) { scope.send(hueGroup.msg); }
+
+				// SAVE LAST STATE
+				lastState = group;
 			});
 		}
 		else
@@ -438,7 +444,7 @@ module.exports = function(RED)
 		// SEND GROUP STATUS
 		this.sendGroupStatus = function(group, send, done)
 		{
-			var hueGroup = new HueGroupMessage(group, config);
+			var hueGroup = new HueGroupMessage(group, config, lastState);
 			var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
 
 			// SEND STATUS
@@ -462,6 +468,9 @@ module.exports = function(RED)
 			// SEND MESSAGE
 			if(!config.skipevents) { send(hueGroup.msg); }
 			if(done) { done(); }
+
+			// SAVE LAST STATE
+			lastState = group;
 		}
 
 		//

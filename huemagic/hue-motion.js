@@ -9,6 +9,9 @@ module.exports = function(RED)
 		let bridge = RED.nodes.getNode(config.bridge);
 		let { HueMotionMessage } = require('../utils/messages');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		//
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
@@ -43,8 +46,11 @@ module.exports = function(RED)
 				}
 
 				// SEND MESSAGE
-				var hueMotion = new HueMotionMessage(sensor);
+				var hueMotion = new HueMotionMessage(sensor, null, lastState);
 				if(!config.skipevents) { scope.send(hueMotion.msg); }
+
+				// SAVE LAST STATE
+				lastState = sensor;
 			}
 			else if(sensor.config.on == false)
 			{
@@ -52,8 +58,11 @@ module.exports = function(RED)
 				scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
 
 				// SEND MESSAGE
-				var hueMotion = new HueMotionMessage(sensor, false);
+				var hueMotion = new HueMotionMessage(sensor, false, lastState);
 				if(!config.skipevents) { scope.send(hueMotion.msg); }
+
+				// SAVE LAST STATE
+				lastState = sensor;
 			}
 		});
 
@@ -70,7 +79,11 @@ module.exports = function(RED)
 			{
 				bridge.client.sensors.getById(config.sensorid)
 				.then(sensor => {
-					var hueMotion = new HueMotionMessage(sensor, (sensor.config.on) ? true : false);
+					var hueMotion = new HueMotionMessage(sensor, (sensor.config.on) ? true : false, lastState);
+
+					// SAVE LAST STATE
+					lastState = sensor;
+
 					return send(hueMotion.msg);
 				});
 
@@ -86,7 +99,7 @@ module.exports = function(RED)
 					return bridge.client.sensors.save(sensor);
 				})
 				.then(sensor => {
-					var hueMotion = new HueMotionMessage(sensor, msg.payload);
+					var hueMotion = new HueMotionMessage(sensor, msg.payload, lastState);
 
 					// SEND STATUS
 					if(msg.payload == false)
@@ -101,6 +114,9 @@ module.exports = function(RED)
 					// SEND MESSAGE
 					if(!config.skipevents) { send(hueMotion.msg); }
 					if(done) { done(); }
+
+					// SAVE LAST STATE
+					lastState = sensor;
 				})
 				.catch(error => {
 					scope.error(error, msg);

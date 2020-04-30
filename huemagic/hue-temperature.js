@@ -11,6 +11,9 @@ module.exports = function(RED)
 		let { HueTemperatureMessage } = require('../utils/messages');
 		let moment = require('moment');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		//
 		// MEMORY
 		this.temperature = -1000;
@@ -42,7 +45,7 @@ module.exports = function(RED)
 			else if(scope.temperature != sensor.state.temperature)
 			{
 				// STORE CURRENT TEMPERATURE
-				var hueTemperature = new HueTemperatureMessage(sensor);
+				var hueTemperature = new HueTemperatureMessage(sensor, lastState);
 				scope.temperature = sensor.state.temperature;
 
 				// SEND STATUS
@@ -50,6 +53,9 @@ module.exports = function(RED)
 
 				// SEND MESSAGE
 				if(!config.skipevents) { scope.send(hueTemperature.msg); }
+
+				// SAVE LAST STATE
+				lastState = sensor;
 			}
 		});
 

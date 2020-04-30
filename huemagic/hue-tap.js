@@ -10,6 +10,9 @@ module.exports = function(RED)
 		var bridge = RED.nodes.getNode(config.bridge);
 		let { HueTapMessage } = require('../utils/messages');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		//
 		// MEMORY
 		this.lastUpdated = false;
@@ -43,8 +46,11 @@ module.exports = function(RED)
 				}
 
 				// SEND MESSAGE
-				var hueTap = new HueTapMessage(sensor);
+				var hueTap = new HueTapMessage(sensor, lastState);
 				if(!config.skipevents) { scope.send(hueTap.msg); }
+
+				// SAVE LAST STATE
+				lastState = sensor;
 
 				// SEND STATUS
 				scope.status({fill: "green", shape: "dot", text: RED._("hue-tap.node.pressed-button",{button: hueTap.msg.payload.button}) });

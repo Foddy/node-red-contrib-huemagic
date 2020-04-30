@@ -139,4 +139,7 @@
         <dt>msg.topic<span class="property-type">int</span></dt>
         <dd>Manual definition of the light bulb Id</dd>
     </dl>
+
+    <h3>Last State Information</h3>
+    <p>This node also sends the entire last state data (before the update) in the <b>msg.lastState</b> object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.</p>
 </script>

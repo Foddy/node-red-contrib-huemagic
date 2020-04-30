@@ -10,6 +10,9 @@ module.exports = function(RED)
 		let bridge = RED.nodes.getNode(config.bridge);
 		let { HueBrightnessMessage } = require('../utils/messages');
 
+		// SAVE LAST STATE
+		var lastState = false;
+
 		//
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
@@ -35,9 +38,12 @@ module.exports = function(RED)
 			}
 			else
 			{
-				var hueBrightness = new HueBrightnessMessage(sensor);
+				var hueBrightness = new HueBrightnessMessage(sensor, lastState);
 				var realLUX = hueBrightness.msg.payload.lux;
 				if(!config.skipevents) { scope.send(hueBrightness.msg); }
+
+				// SAVE LAST STATE
+				lastState = sensor;
 
 				if(sensor.state.dark)
 				{

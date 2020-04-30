@@ -47,4 +47,7 @@
         <dt>model<span class="property-type">object</span></dt>
         <dd>Das Modellobjekt des Sensors enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name und model.type</dd>
     </dl>
+
+    <h3>Letzte Zustandsinformationen</h3>
+    <p>Dieser Node schickt auch die gesamten letzten Zustandsinformationen (vor dem Update) in das <b>msg.lastState</b>-Objekt. Dieses kann entweder false (Boolean) or die Objekte payload (msg.lastState.payload) und info (msg.lastState.info) beinhalten. Der Rückgabewert "false" wird nur dann gesendet, wenn es keinen letzten Zustand gab oder der Node neu erstellt oder gestartet wurde.</p>
 </script>

@@ -47,7 +47,7 @@
     "async": "^3.2.0",
     "hex-rgb": "^4.1.0",
     "huejay": "^1.9.0",
-    "moment": "^2.24.0",
+    "moment": "^2.26.0",
     "rgb-hex": "^3.0.0",
     "request": "^2.88.2",
     "colornames": "^1.1.1",

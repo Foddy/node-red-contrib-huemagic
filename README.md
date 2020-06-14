@@ -23,7 +23,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Localized in English & German
 
 ### Installation
-HueMagic was written for **Node.js 10+** and Node-RED v1.0.3+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 12+** and Node-RED v1.0.6+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related Node-RED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -580,13 +580,19 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.7.0 (latest)
+### v2.7.1 (latest)
+* Fixed a problem with "0" as topic in Hue Group nodes ([#166](https://github.com/Foddy/node-red-contrib-huemagic/issues/166))
+* Fixed an issue with the active property on Hue Motion nodes ([#172](https://github.com/Foddy/node-red-contrib-huemagic/issues/172))
+* Fixed a problem with "random" as a color command on Hue Group & Light nodes ([#167](https://github.com/Foddy/node-red-contrib-huemagic/issues/167))
+* Dependency & readme updates
+
+### v2.7.0
 * Fixed an error on Hue Scene nodes ([#164](https://github.com/Foddy/node-red-contrib-huemagic/issues/164))
 * New "lastState" property on every node (except Hue Magic & Hue Scene) with the last state before the update
 
 ### v2.6.5
-* Fixed an error on Hue Group & Hue Light nodes ([#161](https://github.com/Foddy/node-red-contrib-huemagic/issues/161)
-* The colorloop effect in Hue Group & Hue Light nodes can now be activated and deactivated manually ([#158](https://github.com/Foddy/node-red-contrib-huemagic/pull/158)
+* Fixed an error on Hue Group & Hue Light nodes ([#161](https://github.com/Foddy/node-red-contrib-huemagic/issues/161))
+* The colorloop effect in Hue Group & Hue Light nodes can now be activated and deactivated manually ([#158](https://github.com/Foddy/node-red-contrib-huemagic/pull/158))
 * New status property for Hue Light, Hue Group & Hue Motion nodes to request the current status of the devices ([#154](https://github.com/Foddy/node-red-contrib-huemagic/issues/154) & [#156](https://github.com/Foddy/node-red-contrib-huemagic/issues/156))
 * Dependency updates
 
@@ -777,7 +783,7 @@ Do you like HueMagic? If so, make sure to give this project a star! If you want 
 <a href="https://bit.ly/2JDJAKk" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/3p0j0X0L2Q2V2a2p3j2T/huemagic-donate-coffee.svg" width="164.2"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://bit.ly/2CW70ZY" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1X2Z2I3X1H1T1M3U3p0d/huemagic-donate-light.svg" width="186.32"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://bit.ly/2yIRj5t" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1R0h422r2q1Z0a0H2w42/huemagic-donate-sensor.svg" width="202.11"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/0i20323o0H1k393z0t2g/huemagic-donate-anything.svg" width="165.79"></a>
 
 ***
-<a href="https://www.browserstack.com"><img src="https://cloud.foddys.com/mmBs/Logo-01.svg" width="200"></a>
+<a href="https://www.jetbrains.com/?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/jb.svg" height="100"></a> <a href="https://www.browserstack.com?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/browserstack.svg" height="100"></a>
 
-HueMagic is sponsored by [BrowserStack](https://www.browserstack.com) for cross browser compatibility testing on real browsers.
+HueMagic for Node-RED is sponsored by [JetBrains](https://www.jetbrains.com/?from=HueMagic) and [BrowserStack](https://www.browserstack.com?from=HueMagic).<br>
 *Released under the [Apache License 2.0](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)).*

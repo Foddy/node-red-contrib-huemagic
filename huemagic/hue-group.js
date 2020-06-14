@@ -81,10 +81,10 @@ module.exports = function(RED)
 			send = send || function() { scope.send.apply(scope,arguments); }
 
 			var context = this.context();
-			var tempGroupID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
+			var tempGroupID = (typeof msg.topic != 'undefined') ? parseInt(msg.topic) : config.groupid;
 
-			// CHECK IF LIGHT ID IS SET
-			if(tempGroupID == false)
+			// CHECK IF GROUP ID IS SET
+			if(typeof tempGroupID == 'undefined')
 			{
 				scope.error(RED._("hue-group.node.error-no-id"));
 				return false;
@@ -158,7 +158,7 @@ module.exports = function(RED)
 						}
 						else if(typeof msg.payload.color != 'undefined')
 						{
-							if(msg.payload.color == "random"||msg.payload.color == "any")
+							if(new RegExp("random|any|whatever").test(msg.payload.color))
 							{
 								var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 								var rgbResult = hexRGB(randomColor);
@@ -323,7 +323,7 @@ module.exports = function(RED)
 					// SET HUMAN READABLE COLOR
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof group.xy != 'undefined')
 					{
-						if(msg.payload.color == "random"||msg.payload.color == "any")
+						if(new RegExp("random|any|whatever").test(msg.payload.color))
 						{
 							var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 							var rgbResult = hexRGB(randomColor);

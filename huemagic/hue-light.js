@@ -175,7 +175,7 @@ module.exports = function(RED)
 						}
 						else if(typeof msg.payload.color != 'undefined')
 						{
-							if(msg.payload.color == "random"||msg.payload.color == "any")
+							if(new RegExp("random|any|whatever").test(msg.payload.color))
 							{
 								var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 								var rgbResult = hexRGB(randomColor);
@@ -350,7 +350,7 @@ module.exports = function(RED)
 					// SET HUMAN READABLE COLOR OR RANDOM
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof light.xy != 'undefined')
 					{
-						if(msg.payload.color == "random"||msg.payload.color == "any")
+						if(new RegExp("random|any|whatever").test(msg.payload.color))
 						{
 							var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 							var rgbResult = hexRGB(randomColor);

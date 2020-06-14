@@ -46,7 +46,7 @@ module.exports = function(RED)
 				}
 
 				// SEND MESSAGE
-				var hueMotion = new HueMotionMessage(sensor, null, lastState);
+				var hueMotion = new HueMotionMessage(sensor, true, lastState);
 				if(!config.skipevents) { scope.send(hueMotion.msg); }
 
 				// SAVE LAST STATE

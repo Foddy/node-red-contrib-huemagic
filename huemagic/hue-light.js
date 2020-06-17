@@ -92,10 +92,10 @@ module.exports = function(RED)
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
 
-			var tempLightID = (typeof msg.topic != 'undefined' && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.lightid;
+			var tempLightID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.lightid;
 
 			// CHECK IF LIGHT ID IS SET
-			if(tempLightID == false)
+			if(tempLightID == null)
 			{
 				scope.error(RED._("hue-light.node.error-no-id"));
 				return false;

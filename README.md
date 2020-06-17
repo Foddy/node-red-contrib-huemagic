@@ -580,7 +580,10 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.7.1 (latest)
+### v2.7.2 (latest)
+* Fixed an issue with Hue Group nodes ([#178](https://github.com/Foddy/node-red-contrib-huemagic/issues/178))
+
+### v2.7.1
 * Fixed a problem with "0" as topic in Hue Group nodes ([#166](https://github.com/Foddy/node-red-contrib-huemagic/issues/166))
 * Fixed an issue with the active property on Hue Motion nodes ([#172](https://github.com/Foddy/node-red-contrib-huemagic/issues/172))
 * Fixed a problem with "random" as a color command on Hue Group & Light nodes ([#167](https://github.com/Foddy/node-red-contrib-huemagic/issues/167))

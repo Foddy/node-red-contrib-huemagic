@@ -81,10 +81,10 @@ module.exports = function(RED)
 			send = send || function() { scope.send.apply(scope,arguments); }
 
 			var context = this.context();
-			var tempGroupID = (typeof msg.topic != 'undefined') ? parseInt(msg.topic) : config.groupid;
+			var tempGroupID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
 
 			// CHECK IF GROUP ID IS SET
-			if(typeof tempGroupID == 'undefined')
+			if(tempGroupID == null)
 			{
 				scope.error(RED._("hue-group.node.error-no-id"));
 				return false;

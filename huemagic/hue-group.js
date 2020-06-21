@@ -13,9 +13,11 @@ module.exports = function(RED)
 
 		// SAVE LAST STATE
 		var lastState = false;
+		var futureState = null;
 
 		// HELPER
 		let rgb = require('../utils/rgb');
+		let merge = require('../utils/merge');
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
 		let getColors = require('get-image-colors');
@@ -42,6 +44,12 @@ module.exports = function(RED)
 			{
 				var hueGroup = new HueGroupMessage(group, config, lastState);
 				var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
+
+				// HAS FUTURE STATE?
+				if(futureState != null && group.anyOn)
+				{
+					scope.applyCommands(futureState, null, null);
+				}
 
 				if(group.allOn)
 				{
@@ -79,7 +87,14 @@ module.exports = function(RED)
 		{
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
+			scope.applyCommands(msg, send, done);
+		});
 
+
+		//
+		// APPLY COMMANDS
+		this.applyCommands = function(msg, send = null, done = null)
+		{
 			var context = this.context();
 			var tempGroupID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
 
@@ -107,24 +122,6 @@ module.exports = function(RED)
 				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
 					group.on = msg.payload;
-					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
-					return group;
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
-					if(done) { done(error); }
-				});
-			}
-			// TOGGLE ON / OFF
-			else if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
-			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
-					group.on = (group.on) ? false : true;
 					return bridge.client.groups.save(group);
 				})
 				.then(group => {
@@ -264,10 +261,26 @@ module.exports = function(RED)
 				bridge.client.groups.getById(tempGroupID)
 				.then(async (group) =>
 				{
+					// HAS FUTURE STATE? -> MERGE INPUT
+					if(futureState != null)
+					{
+						// MERGE
+						msg = merge.deep(futureState, msg);
+
+						// RESET
+						futureState = null;
+					}
+
                     // SET GROUP STATE
                     if (typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined')
                     {
                         group.on = msg.payload.on;
+                    }
+
+                    // TOGGLE ON / OFF
+                    if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
+                    {
+                    	group.on = group.on ? false : true;
                     }
 
                     // SET BRIGHTNESS
@@ -425,10 +438,29 @@ module.exports = function(RED)
 						}
 					}
 
+					// SAVE FOR LATER MODE?
+					if(!group.on)
+					{
+						futureState = msg;
+
+						// IGNORE ON/OFF & TOGGLE
+						if(typeof futureState.payload != 'undefined')
+						{
+							delete futureState.payload.on;
+							delete futureState.payload.toggle;
+						}
+
+						// ANY OTHER COMMANDS?
+						if(typeof futureState.payload != 'undefined' && Object.keys(futureState.payload).length > 0)
+						{
+							return group;
+						}
+					}
+
 					return bridge.client.groups.save(group);
 				})
 				.then(group => {
-					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
+					scope.sendGroupStatus(group, send, done);
 					return group;
 				})
 				.catch(error => {
@@ -437,7 +469,7 @@ module.exports = function(RED)
 					if(done) { done(error); }
 				});
 			}
-		});
+		}
 
 
 		//
@@ -466,7 +498,7 @@ module.exports = function(RED)
 			}
 
 			// SEND MESSAGE
-			if(!config.skipevents) { send(hueGroup.msg); }
+			if(!config.skipevents && send) { send(hueGroup.msg); }
 			if(done) { done(); }
 
 			// SAVE LAST STATE

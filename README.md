@@ -20,6 +20,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Easy to use alarm and colorloop effects on light bulbs and whole groups
 * A large selection of animations and the options to apply custom animations
 * Additive state settings on all nodes with multiple commands
+* Can change states even if the corresponding devices are offline
 * Localized in English & German
 
 ### Installation
@@ -580,7 +581,11 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.7.2 (latest)
+### v2.8.0 (latest)
+* Hue Light & Hue Group nodes can now receive commands even if the devices are off ([#110](https://github.com/Foddy/node-red-contrib-huemagic/issues/110) & [#155](https://github.com/Foddy/node-red-contrib-huemagic/issues/155))
+* Hue Light nodes now set their status to switched off when they are not reachable ([#170](https://github.com/Foddy/node-red-contrib-huemagic/issues/170))
+
+### v2.7.2
 * Fixed an issue with Hue Group nodes ([#178](https://github.com/Foddy/node-red-contrib-huemagic/issues/178))
 
 ### v2.7.1
@@ -779,12 +784,9 @@ This node also sends the entire last state data (before the update) in the **msg
 
 
 ***
-<a href="https://en.wikipedia.org/wiki/Stuttgart" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/0S331Q0T312D3T1p061W/huemagic-made-with-love.svg" width="555"></a>
+<a href="https://en.wikipedia.org/wiki/Stuttgart" target="_blank"><img src="https://gistcdn.githack.com/Foddy/0e2e2598e98ecdf3c9990dcf809c1752/raw/1807bc9d75aee1484be2f78678e14959497f764a/madewithlove.svg" height="50"></a>
 
-Do you like HueMagic? If so, make sure to give this project a star! If you want to support the development, you can also do so with a donation. Just choose below, which amount or for what purpose you want to donate. HueMagic remains completely free for everyone - even without a donation. Thank you! :)
-
-<a href="https://bit.ly/2JDJAKk" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/3p0j0X0L2Q2V2a2p3j2T/huemagic-donate-coffee.svg" width="164.2"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://bit.ly/2CW70ZY" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1X2Z2I3X1H1T1M3U3p0d/huemagic-donate-light.svg" width="186.32"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://bit.ly/2yIRj5t" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1R0h422r2q1Z0a0H2w42/huemagic-donate-sensor.svg" width="202.11"></a><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/1i0E2B3q0P0c113m3t0k/line.svg" width="30"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U" target="_blank"><img src="https://d3vv6lp55qjaqc.cloudfront.net/items/0i20323o0H1k393z0t2g/huemagic-donate-anything.svg" width="165.79"></a>
-
+Do you like HueMagic? If so, make sure to give this project a star! If you want to support the development, you can also do so with a donation. HueMagic remains completely free for everyone - even without a donation. Thank you! :)
 ***
 <a href="https://www.jetbrains.com/?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/jb.svg" height="50"></a> <a href="https://www.browserstack.com?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/browserstack.svg" height="50"></a>
 

@@ -13,9 +13,11 @@ module.exports = function(RED)
 
 		// SAVE LAST STATE
 		var lastState = false;
+		var futureState = null;
 
 		// HELPER
 		let rgb = require('../utils/rgb');
+		let merge = require('../utils/merge');
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
 		let getColors = require('get-image-colors');
@@ -49,6 +51,12 @@ module.exports = function(RED)
 				{
 					if(light.on)
 					{
+						// HAS FUTURE STATE?
+						if(futureState != null)
+						{
+							scope.applyCommands(futureState, null, null);
+						}
+
 						// IS LIGHT?
 						if(light.brightness)
 						{
@@ -69,7 +77,8 @@ module.exports = function(RED)
 				}
 				else
 				{
-					scope.status({fill: "red", shape: "ring", text: "hue-light.node.not-reachable"});
+					var offNotReachableStatus = RED._("hue-light.node.turned-off") + " (" + RED._("hue-light.node.not-reachable") + ")";
+					scope.status({fill: "red", shape: "ring", text: offNotReachableStatus});
 				}
 
 				// SEND MESSAGE
@@ -91,7 +100,14 @@ module.exports = function(RED)
 		{
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
+			scope.applyCommands(msg, send, done);
+		});
 
+
+		//
+		// APPLY COMMANDS
+		this.applyCommands = function(msg, send = null, done = null)
+		{
 			var tempLightID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.lightid;
 
 			// CHECK IF LIGHT ID IS SET
@@ -120,27 +136,6 @@ module.exports = function(RED)
 					bridge.client.lights.getById(tempLightID)
 					.then(light => {
 						light.on = msg.payload;
-						return bridge.client.lights.save(light);
-					})
-					.then(light => {
-						if(!config.lightid) { scope.sendLightStatus(light, send, done); }
-						return light;
-					})
-					.catch(error => {
-						scope.error(error, msg);
-						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
-						if(done) { done(error); }
-					});
-				}
-			}
-			// TOGGLE ON / OFF
-			else if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
-			{
-				if(tempLightID != false)
-				{
-					bridge.client.lights.getById(tempLightID)
-					.then(light => {
-						light.on = (light.on) ? false : true;
 						return bridge.client.lights.save(light);
 					})
 					.then(light => {
@@ -289,10 +284,27 @@ module.exports = function(RED)
 			{
 				bridge.client.lights.getById(tempLightID)
 				.then(async (light) => {
+
+					// HAS FUTURE STATE? -> MERGE INPUT
+					if(futureState != null)
+					{
+						// MERGE
+						msg = merge.deep(futureState, msg);
+
+						// RESET
+						futureState = null;
+					}
+
 					// SET LIGHT STATE
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined')
 					{
 						light.on = msg.payload.on;
+					}
+
+					// TOGGLE ON / OFF
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
+					{
+						light.on = light.on ? false : true;
 					}
 
 					// SET BRIGHTNESS
@@ -452,10 +464,31 @@ module.exports = function(RED)
 						}
 					}
 
+					// SAVE FOR LATER MODE?
+					if(!light.on||!light.reachable)
+					{
+						// SAVE FUTURE STATE
+						futureState = msg;
+
+						// IGNORE ON/OFF & TOGGLE
+						if(typeof futureState.payload != 'undefined')
+						{
+							delete futureState.payload.on;
+							delete futureState.payload.toggle;
+						}
+
+						// ANY OTHER COMMANDS?
+						if(typeof futureState.payload != 'undefined' && Object.keys(futureState.payload).length > 0)
+						{
+							return light;
+						}
+					}
+
+					// SAVE STATE
 					return bridge.client.lights.save(light);
 				})
 				.then(light => {
-					if(!config.lightid) { scope.sendLightStatus(light, send, done); }
+					scope.sendLightStatus(light, send, done);
 					return light;
 				})
 				.catch(error => {
@@ -464,7 +497,7 @@ module.exports = function(RED)
 					if(done) { done(error); }
 				});
 			}
-		});
+		}
 
 
 		//
@@ -484,7 +517,7 @@ module.exports = function(RED)
 			}
 
 			// SEND MESSAGE
-			if(!config.skipevents) { send(hueLight.msg); }
+			if(!config.skipevents && send) { send(hueLight.msg); }
 			if(done) { done(); }
 
 			// SAVE LAST STATE

@@ -184,9 +184,9 @@ class HueLightMessage
 	{
 		this.message = {};
 		this.message.payload = {};
-		this.message.payload.on = light.on;
-		this.message.payload.brightness = (light.brightness) ? Math.round((100/254)*light.brightness) : -1;
-		this.message.payload.brightnessLevel = light.brightness;
+		this.message.payload.on = (light.reachable) ? light.on : false;
+		this.message.payload.brightness = (light.reachable) ? ((light.brightness) ? Math.round((100/254)*light.brightness) : -1) : 0;
+		this.message.payload.brightnessLevel = (light.reachable) ? light.brightness : 0;
 		this.message.payload.reachable = light.reachable;
 
 		this.message.info = {};

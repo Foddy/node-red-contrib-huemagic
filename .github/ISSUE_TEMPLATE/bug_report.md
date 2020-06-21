@@ -22,9 +22,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Please complete the following information:**
- - NodeRED version: [...]
+ - Node-RED version: [...]
  - NodeJS version: [...]
- - Device running NodeRED: [...]
+ - Device running Node-RED: [...]
 
 **Additional context**
 Add any other context about the problem here.

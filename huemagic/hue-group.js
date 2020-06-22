@@ -116,26 +116,8 @@ module.exports = function(RED)
 				return true;
 			}
 
-			// SIMPLE TURN ON / OFF GROUP
-			if(msg.payload === true||msg.payload === false)
-			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
-					group.on = msg.payload;
-					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
-					return group;
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
-					if(done) { done(error); }
-				});
-			}
 			// ALERT EFFECT
-			else if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
 				bridge.client.groups.getById(tempGroupID)
 				.then(group => {
@@ -261,6 +243,15 @@ module.exports = function(RED)
 				bridge.client.groups.getById(tempGroupID)
 				.then(async (group) =>
 				{
+					// SET GROUP STATE SIMPLE MODE
+					if(msg.payload === true||msg.payload === false)
+					{
+						var command = msg.payload;
+						msg.payload = {
+							on: command
+						};
+					}
+
 					// HAS FUTURE STATE? -> MERGE INPUT
 					if(futureState != null)
 					{

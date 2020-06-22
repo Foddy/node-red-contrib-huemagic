@@ -581,7 +581,10 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.8.0 (latest)
+### v2.8.1 (latest)
+* Improved the speed of "future states" in Hue Group & Hue Light nodes
+
+### v2.8.0
 * Hue Light & Hue Group nodes can now receive commands even if the devices are off ([#110](https://github.com/Foddy/node-red-contrib-huemagic/issues/110) & [#155](https://github.com/Foddy/node-red-contrib-huemagic/issues/155))
 * Hue Light nodes now set their status to switched off when they are not reachable ([#170](https://github.com/Foddy/node-red-contrib-huemagic/issues/170))
 

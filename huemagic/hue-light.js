@@ -128,29 +128,9 @@ module.exports = function(RED)
 				return true;
 			}
 
-			// SIMPLE TURN ON / OFF LIGHT
-			if(msg.payload === true||msg.payload === false)
-			{
-				if(tempLightID != false)
-				{
-					bridge.client.lights.getById(tempLightID)
-					.then(light => {
-						light.on = msg.payload;
-						return bridge.client.lights.save(light);
-					})
-					.then(light => {
-						if(!config.lightid) { scope.sendLightStatus(light, send, done); }
-						return light;
-					})
-					.catch(error => {
-						scope.error(error, msg);
-						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
-						if(done) { done(error); }
-					});
-				}
-			}
+
 			// ALERT EFFECT
-			else if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
 				bridge.client.lights.getById(tempLightID)
 				.then(light => {
@@ -285,6 +265,15 @@ module.exports = function(RED)
 				bridge.client.lights.getById(tempLightID)
 				.then(async (light) => {
 
+					// SET LIGHT STATE SIMPLE MODE
+					if(msg.payload === true||msg.payload === false)
+					{
+						var command = msg.payload;
+						msg.payload = {
+							on: command
+						};
+					}
+
 					// HAS FUTURE STATE? -> MERGE INPUT
 					if(futureState != null)
 					{
@@ -300,6 +289,7 @@ module.exports = function(RED)
 					{
 						light.on = msg.payload.on;
 					}
+
 
 					// TOGGLE ON / OFF
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')

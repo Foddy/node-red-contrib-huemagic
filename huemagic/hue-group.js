@@ -243,6 +243,9 @@ module.exports = function(RED)
 				bridge.client.groups.getById(tempGroupID)
 				.then(async (group) =>
 				{
+					// IS GROUP ON?
+					var isCurrentlyOn = group.on;
+
 					// SET GROUP STATE SIMPLE MODE
 					if(msg.payload === true||msg.payload === false)
 					{
@@ -430,7 +433,7 @@ module.exports = function(RED)
 					}
 
 					// SAVE FOR LATER MODE?
-					if(!group.on)
+					if(!group.on&&isCurrentlyOn==false)
 					{
 						futureState = msg;
 

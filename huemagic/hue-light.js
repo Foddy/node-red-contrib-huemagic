@@ -128,7 +128,6 @@ module.exports = function(RED)
 				return true;
 			}
 
-
 			// ALERT EFFECT
 			if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
@@ -264,6 +263,8 @@ module.exports = function(RED)
 			{
 				bridge.client.lights.getById(tempLightID)
 				.then(async (light) => {
+					// IS LIGHT ON?
+					var isCurrentlyOn = light.on;
 
 					// SET LIGHT STATE SIMPLE MODE
 					if(msg.payload === true||msg.payload === false)
@@ -289,7 +290,6 @@ module.exports = function(RED)
 					{
 						light.on = msg.payload.on;
 					}
-
 
 					// TOGGLE ON / OFF
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
@@ -455,7 +455,7 @@ module.exports = function(RED)
 					}
 
 					// SAVE FOR LATER MODE?
-					if(!light.on||!light.reachable)
+					if((!light.on||!light.reachable)&&isCurrentlyOn==false)
 					{
 						// SAVE FUTURE STATE
 						futureState = msg;

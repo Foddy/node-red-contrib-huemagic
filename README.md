@@ -581,7 +581,11 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.8.1 (latest)
+### v2.8.2 (latest)
+* Fixed an issue with Hue Light & Hue Group nodes on extended mode ([#179](https://github.com/Foddy/node-red-contrib-huemagic/issues/179))
+* Dependency updates
+
+### v2.8.1
 * Improved the speed of "future states" in Hue Group & Hue Light nodes
 
 ### v2.8.0

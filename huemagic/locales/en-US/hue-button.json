@@ -1,0 +1,31 @@
+{
+	"hue-button":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Button name",
+			"skipevents": "Skip events",
+			"skipevents-node": "Skip events from node",
+			"searching": "Searching Hue Buttons…",
+			"none-found": "No Hue Button found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"switch": "Button"
+		},
+		"node":
+		{
+			"title": "Hue Button",
+			"not-configured": "not configured",
+			"waiting": "waiting…",
+			"button-on": "On",
+			"button-dimup": "Dim Up",
+			"button-dimdown": "Dim Down",
+			"button-off": "Off",
+			"action-pressed": "pressed",
+			"action-holded": "holded",
+			"action-shortreleased": "short released",
+			"action-longreleased": "long released",
+			"output": "pressed button"
+		}
+	}
+}

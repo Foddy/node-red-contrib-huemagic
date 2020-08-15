@@ -2,7 +2,7 @@ module.exports = function(RED)
 {
 	"use strict";
 
-	function HueSwitch(config)
+	function HueButton(config)
 	{
 		RED.nodes.createNode(this, config);
 
@@ -109,5 +109,5 @@ module.exports = function(RED)
 		});
 	}
 
-	RED.nodes.registerType("hue-switch", HueSwitch);
+	RED.nodes.registerType("hue-button", HueButton);
 }

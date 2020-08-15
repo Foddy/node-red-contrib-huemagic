@@ -52,36 +52,36 @@
         {
             var scope = this;
 
-            function manualSwitchID()
+            function manualButtonID()
             {
                 var current = $('#node-input-sensorid').val();
                 $('#node-input-sensorid').replaceWith('<input type="text" id="node-input-sensorid" style="width: 100%"/>');
                 $('#node-input-sensorid').val(current);
             }
 
-            function searchAndSelectHueSwitchID()
+            function searchAndSelectHueButtonID()
             {
                 var current = $('#node-input-sensorid').val();
                 $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 100%"></select>');
-                $('#node-input-sensorid').append('<option selected="selected" value="null">'+scope._("hue-switch.config.searching")+'</option>');
+                $('#node-input-sensorid').append('<option selected="selected" value="null">'+scope._("hue-button.config.searching")+'</option>');
 
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
                 $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLSwitch"})
                 .done( function(data) {
-                    var hueSwitches = JSON.parse(data);
+                    var hueButtons = JSON.parse(data);
 
-                    if(hueSwitches.length <= 0)
+                    if(hueButtons.length <= 0)
                     {
-                        RED.notify(scope._("hue-switch.config.none-found"), "error");
+                        RED.notify(scope._("hue-button.config.none-found"), "error");
                     }
 
                     // RESET OPTIONS
                     $('#node-input-sensorid').empty();
 
-                    // SET SWITCHES AS OPTIONS
-                    hueSwitches.forEach(function(sensor)
+                    // SET BUTTONS AS OPTIONS
+                    hueButtons.forEach(function(sensor)
                     {
-                        if(sensor.model == "Hue Wireless Dimmer Switch")
+                        //if(sensor.model == "Hue Wireless Dimmer Switch")
                         {
                             $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
                         }
@@ -105,13 +105,13 @@
                 }
             });
 
-            $('#node-config-input-scan-switches-sensors').click(function()
+            $('#node-config-input-scan-buttons-sensors').click(function()
             {
                 if($('#node-input-sensorid').prop("tagName") === "INPUT")
                 {
-                    searchAndSelectHueSwitchID();
+                    searchAndSelectHueButtonID();
                 } else {
-                    manualSwitchID();
+                    manualButtonID();
                 }
             });
         }

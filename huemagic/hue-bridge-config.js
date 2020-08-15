@@ -325,11 +325,11 @@ module.exports = function(RED)
 			{
 				if(sensor.type == type)
 				{
-					console.log(JSON.stringify(sensor));
 					var oneSensor = {};
 					oneSensor.id = sensor.id;
 					oneSensor.name = sensor.name;
 					oneSensor.model = sensor.model.name;
+					oneSensor.json = sensor;
 
 					allSensorDevices.push(oneSensor);
 				}

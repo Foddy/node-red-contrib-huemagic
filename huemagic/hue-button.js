@@ -8,7 +8,7 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueSwitchMessage } = require('../utils/messages');
+		let { HueButtonMessage } = require('../utils/messages');
 
 		// SAVE LAST STATE
 		var lastState = false;
@@ -21,13 +21,13 @@ module.exports = function(RED)
 		// CHECK CONFIG
 		if(!config.sensorid || bridge == null)
 		{
-			this.status({fill: "red", shape: "ring", text: "hue-switch.node.not-configured"});
+			this.status({fill: "red", shape: "ring", text: "hue-button.node.not-configured"});
 			return false;
 		}
 
 		//
 		// UPDATE STATE
-		scope.status({fill: "grey", shape: "dot", text: "hue-switch.node.waiting"});
+		scope.status({fill: "grey", shape: "dot", text: "hue-button.node.waiting"});
 
 		//
 		// ON UPDATE
@@ -47,19 +47,19 @@ module.exports = function(RED)
 				var buttonNameLocalized = "";
 				if(sensor.state.buttonEvent < 2000)
 				{
-					buttonNameLocalized = RED._("hue-switch.node.button-on");
+					buttonNameLocalized = RED._("hue-button.node.button-on");
 				}
 				else if(sensor.state.buttonEvent < 3000)
 				{
-					buttonNameLocalized = RED._("hue-switch.node.button-dimup");
+					buttonNameLocalized = RED._("hue-button.node.button-dimup");
 				}
 				else if(sensor.state.buttonEvent < 4000)
 				{
-					buttonNameLocalized = RED._("hue-switch.node.button-dimdown");
+					buttonNameLocalized = RED._("hue-button.node.button-dimdown");
 				}
 				else
 				{
-					buttonNameLocalized = RED._("hue-switch.node.button-off");
+					buttonNameLocalized = RED._("hue-button.node.button-off");
 				}
 
 				// DEFINE HUMAN READABLE BUTTON ACTION
@@ -67,19 +67,19 @@ module.exports = function(RED)
 				var buttonActionRaw = parseInt(sensor.state.buttonEvent.toString().substring(3));
 				if(buttonActionRaw == 0)
 				{
-					buttonActionLocalized = RED._("hue-switch.node.action-pressed");
+					buttonActionLocalized = RED._("hue-button.node.action-pressed");
 				}
 				else if(buttonActionRaw == 1)
 				{
-					buttonActionLocalized = RED._("hue-switch.node.action-holded");
+					buttonActionLocalized = RED._("hue-button.node.action-holded");
 				}
 				else if(buttonActionRaw == 2)
 				{
-					buttonActionLocalized = RED._("hue-switch.node.action-shortreleased");
+					buttonActionLocalized = RED._("hue-button.node.action-shortreleased");
 				}
 				else
 				{
-					buttonActionLocalized = RED._("hue-switch.node.action-longreleased");
+					buttonActionLocalized = RED._("hue-button.node.action-longreleased");
 				}
 
 				// SEND STATUS
@@ -88,8 +88,8 @@ module.exports = function(RED)
 				// SEND MESSAGE
 				if(!config.skipevents)
 				{
-					var hueSwitch = new HueSwitchMessage(sensor, lastState);
-					scope.send(hueSwitch.msg);
+					var hueButton = new HueButtonMessage(sensor, lastState);
+					scope.send(hueButton.msg);
 				}
 
 				// SAVE LAST STATE
@@ -97,7 +97,7 @@ module.exports = function(RED)
 			}
 			else
 			{
-				scope.status({fill: "grey", shape: "dot", text: "hue-switch.node.waiting"});
+				scope.status({fill: "grey", shape: "dot", text: "hue-button.node.waiting"});
 			}
 		});
 

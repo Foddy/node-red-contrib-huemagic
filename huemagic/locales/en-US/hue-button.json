@@ -10,7 +10,7 @@
 			"searching": "Searching Hue Buttons…",
 			"none-found": "No Hue Button found!",
 			"unknown-error": "Something went wrong. Please retry.",
-			"switch": "Button"
+			"button": "Button"
 		},
 		"node":
 		{

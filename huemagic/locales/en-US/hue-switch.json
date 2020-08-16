@@ -22,7 +22,7 @@
 			"button-dimdown": "Dim Down",
 			"button-off": "Off",
 			"action-pressed": "pressed",
-			"action-holded": "holded",
+			"action-holded": "held",
 			"action-shortreleased": "short released",
 			"action-longreleased": "long released",
 			"output": "pressed button"

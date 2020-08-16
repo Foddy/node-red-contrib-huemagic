@@ -28,7 +28,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('hue-button',{
         category: 'HueMagic',
-        color: '#65bff7',
+        color: '#0345fc',
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
@@ -81,7 +81,7 @@
                     // SET BUTTONS AS OPTIONS
                     hueButtons.forEach(function(sensor)
                     {
-                        if(sensor.model_id == "ROM001")
+                        if(sensor.model_id == "ROM001") //to make sure it is a Smart Button
                         {
                             $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
                         }

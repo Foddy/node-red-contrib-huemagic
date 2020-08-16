@@ -2,19 +2,19 @@
     <p>Hue Smart Button node to receive button events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Hue Switch devices. Type in the name manually or keep the default device name. Note that events will only sent on deploy (once) and if a button is pressed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Hue Smart Button devices. Type in the name manually or keep the default device name. Note that events will only sent on deploy (once) and if the button is pressed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
 
     <h3>Switch Events</h3>
-    <p>The event message that the Hue Switch sends contains the following data in the <b>msg.payload</b> object:</p>
+    <p>The event message that the Hue Smart Button sends contains the following data in the <b>msg.payload</b> object:</p>
     <dl class="message-properties">
         <dt>button<span class="property-type">int</span></dt>
-        <dd>Pressed button id</dd>
+        <dd>Pressed button id, 1002 for normal press, 1003 for long press (release) and 1001 during long press.</dd>
 
         <dt>name<span class="property-type">string</span></dt>
-        <dd>Human readable pressed button name (On, Dim Up, Dim Down, Off)</dd>
+        <dd>Human readable pressed button name (always On)</dd>
 
         <dt>action<span class="property-type">string</span></dt>
-        <dd>Human readable pressed button action (pressed, holded, short released, long released)</dd>
+        <dd>Human readable pressed button action (short released, long released, holded)</dd>
 
         <dt>updated<span class="property-type">string</span></dt>
         <dd>ISO 8601 date string of the last time when a button was pressed</dd>

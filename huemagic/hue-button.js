@@ -43,25 +43,6 @@ module.exports = function(RED)
 					return;
 				}
 
-				// DEFINE HUMAN READABLE BUTTON NAME
-				var buttonNameLocalized = "";
-				if(sensor.state.buttonEvent < 2000)
-				{
-					buttonNameLocalized = RED._("hue-button.node.button-on");
-				}
-				else if(sensor.state.buttonEvent < 3000)
-				{
-					buttonNameLocalized = RED._("hue-button.node.button-dimup");
-				}
-				else if(sensor.state.buttonEvent < 4000)
-				{
-					buttonNameLocalized = RED._("hue-button.node.button-dimdown");
-				}
-				else
-				{
-					buttonNameLocalized = RED._("hue-button.node.button-off");
-				}
-
 				// DEFINE HUMAN READABLE BUTTON ACTION
 				var buttonActionLocalized = "";
 				var buttonActionRaw = parseInt(sensor.state.buttonEvent.toString().substring(3));
@@ -83,7 +64,7 @@ module.exports = function(RED)
 				}
 
 				// SEND STATUS
-				scope.status({fill: "green", shape: "dot", text: buttonNameLocalized + " " + buttonActionLocalized});
+				scope.status({fill: "green", shape: "dot", text: buttonActionLocalized});
 
 				// SEND MESSAGE
 				if(!config.skipevents)

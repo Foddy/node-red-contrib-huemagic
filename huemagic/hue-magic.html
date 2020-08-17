@@ -217,6 +217,9 @@
                         return rgb;
                     }
 
+                    function randomHexColor() {
+                        return '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, "0");
+                    }
 
                     // FRAMES
                     function addPreviewFrame(step)
@@ -242,7 +245,7 @@
                         {
                             if(step.animation.color == "random"||step.animation.color == "any")
                             {
-                                color = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+                                color = randomHexColor();
                             }
                             else
                             {

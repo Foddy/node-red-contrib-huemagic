@@ -21,6 +21,7 @@ module.exports = function(RED)
 		let hexRGB = require('hex-rgb');
 		let colornames = require("colornames");
 		let getColors = require('get-image-colors');
+		let {randomHexColor} = require('../utils/color');
 
 		//
 		// CHECK CONFIG
@@ -139,7 +140,7 @@ module.exports = function(RED)
 						{
 							if(new RegExp("random|any|whatever").test(msg.payload.color))
 							{
-								var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+								var randomColor = randomHexColor();
 								var rgbResult = hexRGB(randomColor);
 								group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 							}
@@ -332,7 +333,7 @@ module.exports = function(RED)
 					{
 						if(new RegExp("random|any|whatever").test(msg.payload.color))
 						{
-							var randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+							var randomColor = randomHexColor();
 							var rgbResult = hexRGB(randomColor);
 							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
 						}

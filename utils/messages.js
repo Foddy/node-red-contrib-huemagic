@@ -461,6 +461,93 @@ class HueSwitchMessage
 
 
 //
+// HUE BUTTON
+class HueButtonMessage
+{
+	constructor(sensor, lastState = false)
+	{
+		// DEFINE HUMAN READABLE BUTTON NAME
+		var buttonName = "";
+		if(sensor.state.buttonEvent < 2000)
+		{
+			buttonName = "On";
+		}
+		else if(sensor.state.buttonEvent < 3000)
+		{
+			buttonName = "Dim Up";
+		}
+		else if(sensor.state.buttonEvent < 4000)
+		{
+			buttonName = "Dim Down";
+		}
+		else
+		{
+			buttonName = "Off";
+		}
+
+		// DEFINE HUMAN READABLE BUTTON ACTION
+		var buttonAction = "";
+		var buttonActionRaw = parseInt(sensor.state.buttonEvent.toString().substring(3));
+
+		if(buttonActionRaw == 0)
+		{
+			buttonAction = "pressed";
+		}
+		else if(buttonActionRaw == 1)
+		{
+			buttonAction = "holded";
+		}
+		else if(buttonActionRaw == 2)
+		{
+			buttonAction = "short released";
+		}
+		else
+		{
+			buttonAction = "long released";
+		}
+
+		this.message = {};
+		this.message.payload = {};
+		this.message.payload.button = sensor.state.buttonEvent;
+		this.message.payload.name = buttonName;
+		this.message.payload.action = buttonAction;
+		this.message.payload.updated = moment.utc(sensor.state.lastUpdated).local().format();
+
+		this.message.info = {};
+		this.message.info.id = sensor.id;
+		this.message.info.uniqueId = sensor.uniqueId;
+		this.message.info.name = sensor.name;
+		this.message.info.type = sensor.type;
+		this.message.info.softwareVersion = sensor.softwareVersion;
+		this.message.info.battery = sensor.config.battery;
+
+		this.message.info.model = {};
+		this.message.info.model.id = sensor.model.id;
+		this.message.info.model.manufacturer = sensor.model.manufacturer;
+		this.message.info.model.name = sensor.model.name;
+		this.message.info.model.type = sensor.model.type;
+
+		// LAST STATE?
+		if(lastState != false)
+		{
+			var lastStateMessage = new HueSwitchMessage(lastState, false);
+			this.message.lastState = lastStateMessage.msg;
+			delete this.message.lastState.lastState;
+		}
+		else
+		{
+			this.message.lastState = false;
+		}
+	}
+
+	get msg()
+	{
+		return this.message;
+	}
+}
+
+
+//
 // HUE TAP
 class HueTapMessage
 {

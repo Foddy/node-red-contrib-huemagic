@@ -8,7 +8,7 @@ module.exports = function(RED)
 
 		var scope = this;
 		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueSwitchMessage } = require('../utils/messages');
+		let { HueButtonMessage } = require('../utils/messages');
 
 		// SAVE LAST STATE
 		var lastState = false;
@@ -69,7 +69,7 @@ module.exports = function(RED)
 				// SEND MESSAGE
 				if(!config.skipevents)
 				{
-					var hueButton = new HueSwitchMessage(sensor, lastState);
+					var hueButton = new HueButtonMessage(sensor, lastState);
 					scope.send(hueButton.msg);
 				}
 

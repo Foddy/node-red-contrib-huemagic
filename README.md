@@ -4,7 +4,7 @@
 
 [![Travis](https://img.shields.io/travis/Foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/) [![Dependencies](https://david-dm.org/foddy/node-red-contrib-huemagic.svg?style=flat-square)](https://david-dm.org/foddy/node-red-contrib-huemagic) [![npm](https://img.shields.io/npm/dt/node-red-contrib-huemagic.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic) [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U) [![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE)
 
-HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue bridges, lights, groups, scenes, rules, taps, switches, motion sensors, temperature sensors and Lux sensors.
+HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue bridges, lights, groups, scenes, rules, taps, switches, buttons, motion sensors, temperature sensors and Lux sensors.
 
 ### Features
 * Simple and comprehensive control of the Hue Bridge and connected devices
@@ -24,7 +24,7 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Localized in English & German
 
 ### Installation
-HueMagic was written for **Node.js 12+** and Node-RED v1.0.6+. It supports Philips Hue API version v1.19.0+.
+HueMagic was written for **Node.js 12+** and Node-RED v1.1.3+. It supports Philips Hue API version v1.19.0+.
 _Please make sure, that you deactivate / remove other Philips Hue related Node-RED nodes before installing HueMagic!_
 
 `npm install node-red-contrib-huemagic`
@@ -38,6 +38,7 @@ _Please make sure, that you deactivate / remove other Philips Hue related Node-R
 - [Hue Scenes](#hue-scenes)
 - [Hue Taps](#hue-tap)
 - [Hue Wireless Dimmer Switches](#hue-switch)
+- [Hue Buttons](#hue-button)
 - [Hue Motion Sensors](#hue-motion-sensor)
 - [Hue Temperature Sensors](#hue-temperature-sensor)
 - [Hue Lux Sensors](#hue-lux-sensor)
@@ -371,7 +372,7 @@ The event message that the scene node sends contains the following data in the *
 ## Hue Tap
 Use the Hue Tap node to receive button events.
 
-![Hue Scene Example](https://user-images.githubusercontent.com/5302050/62820493-48dc5100-bb65-11e9-8932-e9f152b3c048.png)
+![Hue Tap Example](https://user-images.githubusercontent.com/5302050/62820493-48dc5100-bb65-11e9-8932-e9f152b3c048.png)
 
 ### Button Events
 The event message that the Hue Tap device sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
@@ -399,7 +400,7 @@ This node also sends the entire last state data (before the update) in the **msg
 ## Hue Switch
 Use the Hue Switch node to receive button events.
 
-![Hue Scene Example](https://user-images.githubusercontent.com/5302050/62820494-48dc5100-bb65-11e9-82eb-0c8bc9e5be40.png)
+![Hue Switch Example](https://user-images.githubusercontent.com/5302050/62820494-48dc5100-bb65-11e9-82eb-0c8bc9e5be40.png)
 
 ### Button Events
 The event message that the Hue Wireless Dimmer Switch sends contains the following data in the **msg.payload** object. Events will only sent on deploy (once) and if a button is pressed.
@@ -413,6 +414,36 @@ The event message that the Hue Wireless Dimmer Switch sends contains the followi
 
 ### Additional Hue Switch Information
 The event message that the Hue Wireless Dimmer Switch device sends also contains the following data in the **msg.info** object.
+
+|   Property   |  Type  |                                                             Information                                                             |
+|:------------:|:------:|:-----------------------------------------------------------------------------------------------------------------------------------:|
+| **id**       | int    | Numerical id of the sensor as registered on the bridge                                                                              |
+| **uniqueId** | string | Unique Id of the sensor (typically hardware id)                                                                                     |
+| **name**     | string | Name for the sensor                                                                                                                 |
+| **type**     | string | Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)                                                                             |
+| **battery**  | int    | Current battery level of the Hue Switch in percent                                                                                  |
+| **model**    | object | The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type |
+
+### Last State Information
+This node also sends the entire last state data (before the update) in the **msg.lastState** object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.
+
+## Hue Button
+Use the Hue Button node to receive button events.
+
+![Hue Button Example](https://user-images.githubusercontent.com/5302050/90398480-cbadbb00-e099-11ea-8406-a48988c421bd.png)
+
+### Button Events
+The event message that the Hue Smart Button sends contains the following data in the **msg.payload** object.
+
+|   Property  |  Type  |                                                              Information                                                              |
+|:-----------:|:------:|:-------------------------------------------------------------------------------------------------------------------------------------:|
+| **button**  | int    | Pressed button id, 1002 for normal press, 1003 for long press (release) and 1001 during long press. 								   |
+| **name**    | string | Human readable pressed button name *(always On)*                                           			                               |
+| **action**  | string | Human readable pressed button action *(short released, long released, holded)*                         		                       |
+| **updated** | string | ISO 8601 date string of the last button event                                                                                         |
+
+### Additional Hue Button Information
+The event message that the Hue Button device sends also contains the following data in the **msg.info** object.
 
 |   Property   |  Type  |                                                             Information                                                             |
 |:------------:|:------:|:-----------------------------------------------------------------------------------------------------------------------------------:|
@@ -581,7 +612,13 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.8.2 (latest)
+### v2.8.5 (latest)
+* Optimized random color mode for Hue Magic, Hue Light & Hue Group nodes ([#190](https://github.com/Foddy/node-red-contrib-huemagic/pull/190))
+* New Hue Button node ([#190](https://github.com/Foddy/node-red-contrib-huemagic/pull/191))
+* Updated README and Hue Button node docs (+ localized in German)
+* Dependency updates
+
+### v2.8.2
 * Fixed an issue with Hue Light & Hue Group nodes on extended mode ([#179](https://github.com/Foddy/node-red-contrib-huemagic/issues/179))
 * Dependency updates
 

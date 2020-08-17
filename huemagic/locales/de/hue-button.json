@@ -1,0 +1,28 @@
+{
+	"hue-button":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Buttons",
+			"skipevents": "Mitteilungen ignorieren",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"searching": "Suche nach Hue Buttons…",
+			"none-found": "Kein Hue Button gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"button": "Button"
+		},
+		"node":
+		{
+			"title": "Hue Button",
+			"not-configured": "nicht konfiguriert",
+			"waiting": "warte…",
+			"button-on": "An",
+			"action-pressed": "gedrückt",
+			"action-holded": "gehalten",
+			"action-shortreleased": "kurz gedrückt",
+			"action-longreleased": "lange gedruckt",
+			"output": "gedrückte Taste"
+		}
+	}
+}

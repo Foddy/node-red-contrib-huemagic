@@ -1,0 +1,119 @@
+<script type="text/x-red" data-template-name="hue-button">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-button.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-button.config.input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sensorid"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="hue-button.config.button"></span></label>
+        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+            <div style="position: absolute; left: 0px; right: 40px;">
+                <input type="text" id="node-input-sensorid" placeholder="1" style="width: 100%"/>
+            </div>
+            <a id="node-config-input-scan-buttons-sensors" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-button.config.skipevents"></span></label>
+        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-button.config.skipevents-node"></span>
+        </label>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-button',{
+        category: 'HueMagic',
+        color: '#347aeb',
+        defaults: {
+            name: {value:""},
+            bridge: {type: "hue-bridge", required: true},
+            sensorid: {value:"", required: true, validate: RED.validators.number()},
+            skipevents: {value: false}
+        },
+        inputs: 0,
+        outputs: 1,
+        outputLabels: function() {
+            return this._("hue-button.node.output");
+        },
+        align: 'right',
+        icon: "hue-button.png",
+        paletteLabel: function() {
+            return this._("hue-button.node.title");
+        },
+        label: function() {
+            return this.name || this._("hue-button.node.title");
+        },
+        oneditprepare: function()
+        {
+            var scope = this;
+
+            function manualButtonID()
+            {
+                var current = $('#node-input-sensorid').val();
+                $('#node-input-sensorid').replaceWith('<input type="text" id="node-input-sensorid" style="width: 100%"/>');
+                $('#node-input-sensorid').val(current);
+            }
+
+            function searchAndSelectHueButtonID()
+            {
+                var current = $('#node-input-sensorid').val();
+                $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 100%"></select>');
+                $('#node-input-sensorid').append('<option selected="selected" value="null">'+scope._("hue-button.config.searching")+'</option>');
+
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLSwitch"})
+                .done( function(data) {
+                    var hueButtons = JSON.parse(data);
+
+                    if(hueButtons.length <= 0)
+                    {
+                        RED.notify(scope._("hue-button.config.none-found"), "error");
+                    }
+
+                    // RESET OPTIONS
+                    $('#node-input-sensorid').empty();
+
+                    // SET BUTTONS AS OPTIONS
+                    hueButtons.forEach(function(sensor)
+                    {
+                        if(sensor.model_id == "ROM001") //to make sure it is a Smart Button
+                        {
+                            $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        }
+                    });
+
+                    // SELECT CURRENT VALUE
+                    $('#node-input-sensorid').val(current);
+                })
+                .fail(function()
+                {
+                    RED.notify("Something went wrong. Please retry.", "error");
+                });
+            }
+
+            $(document).on('change', '#node-input-sensorid', function()
+            {
+                var sensorName = $('#node-input-sensorid option:selected').text();
+                if(sensorName.length > 0)
+                {
+                    $('#node-input-name').val(sensorName);
+                }
+            });
+
+            $('#node-config-input-scan-buttons-sensors').click(function()
+            {
+                if($('#node-input-sensorid').prop("tagName") === "INPUT")
+                {
+                    searchAndSelectHueButtonID();
+                } else {
+                    manualButtonID();
+                }
+            });
+        }
+    });
+</script>

@@ -34,6 +34,7 @@
       "hue-scene": "huemagic/hue-scene.js",
       "hue-tap": "huemagic/hue-tap.js",
       "hue-switch": "huemagic/hue-switch.js",
+      "hue-button": "huemagic/hue-button.js",
       "hue-motion": "huemagic/hue-motion.js",
       "hue-temperature": "huemagic/hue-temperature.js",
       "hue-brightness": "huemagic/hue-brightness.js",

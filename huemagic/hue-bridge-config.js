@@ -329,6 +329,7 @@ module.exports = function(RED)
 					oneSensor.id = sensor.id;
 					oneSensor.name = sensor.name;
 					oneSensor.model = sensor.model.name;
+					oneSensor.model_id = sensor.attributes.attributes.modelid;
 
 					allSensorDevices.push(oneSensor);
 				}

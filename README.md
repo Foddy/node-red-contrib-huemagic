@@ -612,11 +612,10 @@ This node also sends the entire last state data (before the update) in the **msg
 
 # Changelog
 
-### v2.8.5 (latest)
+### v2.8.6 (latest)
 * Optimized random color mode for Hue Magic, Hue Light & Hue Group nodes ([#190](https://github.com/Foddy/node-red-contrib-huemagic/pull/190))
 * New Hue Button node ([#190](https://github.com/Foddy/node-red-contrib-huemagic/pull/191))
 * Updated README and Hue Button node docs (+ localized in German)
-* Dependency updates
 
 ### v2.8.2
 * Fixed an issue with Hue Light & Hue Group nodes on extended mode ([#179](https://github.com/Foddy/node-red-contrib-huemagic/issues/179))

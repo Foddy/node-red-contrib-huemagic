@@ -53,6 +53,6 @@
     "request": "^2.88.2",
     "colornames": "^1.1.1",
     "color-namer": "^1.4.0",
-    "get-image-colors": "^2.0.1"
+    "get-image-colors": "^4.0.0"
   }
 }

@@ -10,6 +10,7 @@ module.exports = function(RED)
 		let bridge = RED.nodes.getNode(config.bridge);
 		let { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueSwitchMessage, HueTapMessage, HueTemperatureMessage } = require('../utils/messages');
 
+		//
 		// PREVENT DEVICE MESSAGES IN FIRST 5 SECONDS
 		this.deviceUpdates = false;
 		setTimeout(function(){ scope.deviceUpdates = true; }, 5000);
@@ -21,7 +22,6 @@ module.exports = function(RED)
 		//
 		// BRIDGE INFORMATION
 		this.bridgeInformation = {};
-
 
 		//
 		// CHECK CONFIG
@@ -175,7 +175,6 @@ module.exports = function(RED)
 				scope.send(message);
 			});
 		}
-
 
 		//
 		// COMMANDS

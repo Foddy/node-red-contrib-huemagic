@@ -10,7 +10,9 @@
 			"searching": "Searching Hue Buttons…",
 			"none-found": "No Hue Button found!",
 			"unknown-error": "Something went wrong. Please retry.",
-			"button": "Button"
+			"button": "Button",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -22,7 +24,9 @@
 			"action-holded": "held",
 			"action-shortreleased": "short released",
 			"action-longreleased": "long released",
-			"output": "pressed button"
+			"input": "status query",
+			"output": "pressed button",
+			"universal": "universal mode"
 		}
 	}
 }

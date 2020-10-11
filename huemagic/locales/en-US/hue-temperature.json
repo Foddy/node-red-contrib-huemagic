@@ -10,7 +10,9 @@
 			"input-name": "Sensor name",
 			"searching": "searching temperature sensors…",
 			"none-found": "No temperature sensors found.",
-			"unknown-error": "Something went wrong. Please retry."
+			"unknown-error": "Something went wrong. Please retry.",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -18,7 +20,9 @@
 			"not-configured": "not configured",
 			"init": "initializing…",
 			"not-reachable": "not reachable!",
-			"output": "temperature (changed)"
+			"input": "status query",
+			"output": "temperature (changed)",
+			"universal": "universal mode"
 		}
 	}
 }

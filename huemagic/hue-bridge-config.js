@@ -112,7 +112,6 @@ module.exports = function(RED)
 			this.recheckSensors();
 		}
 
-
 		// DETERMINE UPDATES
 		this.getUpdates = function(mode, content)
 		{
@@ -213,6 +212,7 @@ module.exports = function(RED)
 			{
 				let eventName = device + deviceUpdate.id;
 				scope.events.emit(eventName, deviceUpdate);
+				scope.events.emit(device, deviceUpdate);
 				scope.events.emit("globalDeviceUpdates", {type: device, payload: deviceUpdate});
 			}
 		}

@@ -26,8 +26,7 @@
     </div>
     <div class="form-row form-animations">
         <div class="animation template">
-            <div class="color"></div>
-            <div class="brightness"></div>
+            <img src="#" class="color">
             <div class="info">
                 <span><name>Name</name> <dur>(dur)</dur></span>
             </div>
@@ -43,9 +42,10 @@
     display: grid;
     -ms-grid-columns: 30% 3.29% 30% 3.29% 30%;
     grid-template-columns: 30% 30% 30%;
-    grid-gap: 3.29%;
+    grid-gap: 2.29% 3.29%;
 
     max-width: 40vw;
+    padding-bottom: 85px;
 }
 
 .form-animations .animation
@@ -53,12 +53,15 @@
     position: relative;
     cursor: pointer;
 
+    border-radius: 20px;
     overflow: hidden;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
 
-    border: 3px solid #fff;
+    border: 2px solid #fff;
+    -webkit-transition: -webkit-box-shadow 333ms ease-in-out;
+    transition: -webkit-box-shadow 333ms ease-in-out;
+    -o-transition: box-shadow 333ms ease-in-out;
+    transition: box-shadow 333ms ease-in-out;
+    transition: box-shadow 333ms ease-in-out, -webkit-box-shadow 333ms ease-in-out;
 }
 
 .form-animations .animation.template
@@ -66,9 +69,14 @@
     display: none;
 }
 
+.form-animations .animation:active
+{
+    opacity: 0.7;
+}
+
 .form-animations .animation.selected
 {
-    border: 3px solid #000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1), 0 6px 13px rgba(0,0,0,0.23);
 }
 
 .form-animations .animation .color
@@ -82,23 +90,7 @@
     width: 100%;
 
     z-index: 1;
-}
-
-.form-animations .animation .brightness
-{
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    height: 100%;
-    width: 100%;
-
-    z-index: 11;
-    opacity: 0;
-
-    background: rgb(0,0,0);
-    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(77,77,77,1) 100%);
+    pointer-events: none;
 }
 
 .form-animations .animation .info
@@ -116,17 +108,13 @@
 
 .form-animations .animation .info span
 {
-    display: inline-block;
-    margin: 0 auto;
-
+    display: block;
+    margin: 0 12px;
     color: #000;
     background-color: rgba(255,255,255,0.8);
     font-size: 11px;
-    padding: 2.5px 5px;
-
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    padding: 2.5px 0;
+    border-radius: 8px;
 }
 
 .form-animations .animation .info span name
@@ -185,203 +173,50 @@
             this.animations = [];
 
             var preset = $('#node-input-preset').val();
-            $.getScript("hue/assets/anime.js", function( data, textStatus, jqxhr )
+
+            // LOAD ANIMATIONS
+            $.get('hue/animations?nc=' + Math.random())
+            .done( function(data)
             {
-                // LOAD ANIMATIONS
-                $.get('hue/animations?nc=' + Math.random())
-                .done( function(data)
+                // LOGIC
+                scope.animations = JSON.parse(data);
+                $.each(scope.animations, function(i, animation)
                 {
-                    // HELPER
-                    function rgbToHex(r, g, b)
+                    var animationTemplate = $(".animation.template").clone();
+                    animationTemplate.removeClass("template");
+
+                    // APPLY INFORMATION
+                    animationTemplate.attr("data-id", animation.info.id);
+                    animationTemplate.attr("data-name", animation.info.name);
+                    animationTemplate.attr("data-steps", JSON.stringify(animation.steps));
+                    animationTemplate.find("name").html(animation.info.name);
+                    animationTemplate.find(".color").attr("src", "hue/animations/" + animation.info.id + ".gif");
+
+                    // IS SELECTED?
+                    if(preset == animation.info.id)
                     {
-                        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        animationTemplate.addClass("selected");
                     }
 
-                    function adjustBrightness(hex, lum)
-                    {
-                        hex = String(hex).replace(/[^0-9a-f]/gi, '');
-                        if (hex.length < 6)
-                        {
-                            hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-                        }
-                        lum = lum || 0;
+                    // CALC DURATION IN SECONDS AND ANIMATION
+                    var duration = 0;
+                    $.each(animation.steps, function(z, oneStep) { duration += oneStep.delay; });
 
-                        var rgb = "#", c, i;
-                        for (i = 0; i < 3; i++)
-                        {
-                            c = parseInt(hex.substr(i*2,2), 16);
-                            c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-                            rgb += ("00"+c).substr(c.length);
-                        }
+                    // NORMALIZE DUR IN SECONDS
+                    duration = duration/1000;
 
-                        return rgb;
-                    }
+                    // HUMAN READABLE DURATION
+                    var suffix = (duration <= 60) ? scope._("hue-magic.config.seconds") : scope._("hue-magic.config.minutes");
+                    duration = (duration <= 60) ? (Math.round(duration * 10) / 10) : (Math.round( (duration/60) * 10 ) / 10);
+                    animationTemplate.find("dur").html("("+duration + " " + suffix + ")");
 
-                    function randomHexColor() {
-                        return '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, "0");
-                    }
-
-                    // FRAMES
-                    function addPreviewFrame(step)
-                    {
-                        // TRANSITION?
-                        var stepTransition = 300;
-                        if(typeof step.animation.transitionTime != 'undefined')
-                        {
-                            stepTransition = parseFloat(step.animation.transitionTime)*1000;
-                        }
-
-                        // DEFINE COLOR
-                        var color = "#fff";
-                        if(typeof step.animation.rgb != 'undefined')
-                        {
-                            color = rgbToHex(step.animation.rgb[0], step.animation.rgb[1], step.animation.rgb[2]);
-                        }
-                        else if(typeof step.animation.hex != 'undefined')
-                        {
-                            color = step.animation.hex;
-                        }
-                        else if(typeof step.animation.color != 'undefined')
-                        {
-                            if(step.animation.color == "random"||step.animation.color == "any")
-                            {
-                                color = randomHexColor();
-                            }
-                            else
-                            {
-                                color = step.animation.color;
-                            }
-                        }
-
-                        // ADJUST COLOR BRIGHTNESS
-                        if(typeof step.animation.brightness != 'undefined')
-                        {
-                            var lum = (step.animation.brightness/100)-1;
-                            color = adjustBrightness(color, (lum < -0.5) ? -0.5 : lum);
-                        }
-
-                        return { background: color, delay: step.delay, duration: stepTransition };
-                    }
-
-                    function addPreviewFrameBrightness(step)
-                    {
-                        // TRANSITION?
-                        var stepTransition = 300;
-                        if(typeof step.animation.transitionTime != 'undefined')
-                        {
-                            stepTransition = parseFloat(step.animation.transitionTime)*1000;
-                        }
-
-                        // ADJUST COLOR BRIGHTNESS
-                        var opacity = 0;
-                        if(typeof step.animation.brightness != 'undefined')
-                        {
-                            opacity = 1-(step.animation.brightness/100);
-                            opacity = (opacity > 0.5) ? 0.5 : opacity;
-                        }
-
-                        return { opacity: opacity, delay: step.delay, duration: stepTransition };
-                    }
-
-                    // LOGIC
-                    scope.animations = JSON.parse(data);
-                    $.each(scope.animations, function(i, animation)
-                    {
-                        var animationTemplate = $(".animation.template").clone();
-                        animationTemplate.removeClass("template");
-
-                        // APPLY INFORMATION
-                        animationTemplate.attr("data-id", animation.info.id);
-                        animationTemplate.attr("data-name", animation.info.name);
-                        animationTemplate.attr("data-steps", JSON.stringify(animation.steps));
-                        animationTemplate.find("name").html(animation.info.name);
-
-                        // SPECIAL CONFIGS?
-                        var randomOrder = false;
-                        if(typeof animation.specials != 'undefined')
-                        {
-                            // APPLY RANDOM ORDER CONFIG
-                            if(typeof animation.specials.randomOrder != 'undefined')
-                            {
-                                randomOrder = animation.specials.randomOrder;
-                            }
-                        }
-
-                        // IS SELECTED?
-                        if(preset == animation.info.id)
-                        {
-                            animationTemplate.addClass("selected");
-                        }
-
-                        // CALC DURATION IN SECONDS AND ANIMATION
-                        var duration = 0;
-                        var isFirst = true;
-                        var keyframes = [];
-                        // var keyframesBrightness = [];
-                        $.each(animation.steps, function(z, oneStep)
-                        {
-                            duration += oneStep.delay;
-
-                            // TRANSITION?
-                            if(typeof oneStep.animation.transitionTime != 'undefined')
-                            {
-                                duration += parseFloat(oneStep.animation.transitionTime)*1000;
-                            }
-
-                            if(isFirst == true)
-                            {
-                                oneStep.animation.transitionTime = 0;
-                                isFirst = false;
-                            }
-
-                            // SET CURRENT STEP COLOR
-                            keyframes.push(addPreviewFrame(oneStep));
-                            // keyframesBrightness.push(addPreviewFrameBrightness(oneStep));
-                        });
-
-                        // REPEAT KEYFRAMES FOR SMOOTH TRANSITIONS
-                        var r = 0;
-                        while (r < 10)
-                        {
-                            keyframes = keyframes.concat(keyframes);
-                            // keyframesBrightness = keyframesBrightness.concat(keyframesBrightness);
-                            r++;
-                        }
-
-                        // INITIALIZE COLOR ANIMATION
-                        var animationColorPreview = anime({
-                            targets: animationTemplate.find("div.color")[0],
-                            loop: true,
-                            autoplay: true,
-                            easing: 'linear',
-                            keyframes: keyframes
-                        });
-
-                        // INITIALIZE BRIGHTNESS ANIMATION
-                        // var animationBrightness = anime({
-                        //     targets: animationTemplate.find("div.brightness")[0],
-                        //     loop: true,
-                        //     autoplay: true,
-                        //     easing: 'linear',
-                        //     keyframes: keyframesBrightness
-                        // });
-
-                        // NORMALIZE DUR IN SECONDS
-                        duration = duration/1000;
-
-                        // HUMAN READABLE DURATION
-                        var suffix = (duration <= 60) ? scope._("hue-magic.config.seconds") : scope._("hue-magic.config.minutes");
-                        duration = (duration <= 60) ? (Math.round(duration * 10) / 10) : (Math.round( (duration/60) * 10 ) / 10);
-                        animationTemplate.find("dur").html("("+duration + " " + suffix + ")");
-
-                        // PUSH TO FRONTEND
-                        animationTemplate.appendTo(".form-animations");
-                    });
-                })
-                .fail(function()
-                {
-                    RED.notify(scope._("hue-magic.config.unknown-error"), "error");
+                    // PUSH TO FRONTEND
+                    animationTemplate.appendTo(".form-animations");
                 });
+            })
+            .fail(function()
+            {
+                RED.notify(scope._("hue-magic.config.unknown-error"), "error");
             });
 
             // SELECT ANIMATION

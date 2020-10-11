@@ -10,7 +10,9 @@
 			"searching": "Suche nach Bewegungssensoren…",
 			"none-found": "Keine Bewegungssensoren gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"sensor": "Sensor"
+			"sensor": "Sensor",
+			"universalevents": "Universelle Mitteilungen",
+			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
 		},
 		"node":
 		{
@@ -21,8 +23,9 @@
 			"no-motion": "keine Bewegung",
 			"activated": "aktiviert",
 			"deactivated": "deaktiviert",
-			"input": "aktivieren / deaktivieren",
-			"output": "erkannte Bewegung"
+			"input": "aktivieren / deaktivieren / Statusabfrage",
+			"output": "erkannte Bewegung",
+			"universal": "Universalmodus"
 		}
 	}
 }

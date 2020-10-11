@@ -5,6 +5,11 @@ module.exports =
 
 function mergeDeep(...objects)
 {
+    // CLEANUP FROM HTTP NODE
+    delete objects.req;
+    delete objects.res;
+
+    // BEGIN MERGING …
     const isObject = obj => obj && typeof obj === 'object';
     return objects.reduce((prev, obj) =>
     {

@@ -2,7 +2,7 @@
     <p>Hue Helligkeitssensor zum Empfangen des aktuellen Lichtniveaus in Lux und Tageslicht / Dunkelheit.</p>
 
     <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Helligkeitssensoren zu finden. Geben Sie den Namen des Sensors manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) und bei Änderung des Lichtniveaus gesendet werden. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Helligkeitssensoren zu finden. Geben Sie den Namen des Sensors manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) und bei Änderung des Lichtniveaus gesendet werden. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden. Wenn Sie diesen Node im Universalmodus betreiben, können Sie optional auch auswählen, ob dieser Node alle Mitteilungen von anderen Nodes desselben Typs empfangen und ausgeben soll.</p>
 
     <h3>Lichtniveau Mitteilungen</h3>
     <p>Die vom Lichtsensor gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
@@ -46,6 +46,20 @@
 
         <dt>model<span class="property-type">object</span></dt>
         <dd>Das Modellobjekt des Sensors enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name und model.type</dd>
+    </dl>
+
+    <h3>Status abfragen</h3>
+    <p>Ruft den Status des Sensors ab, indem folgende Parameter an das <b>msg.payload</b> übergeben werden:</p>
+    <dl class="message-properties">
+        <dt class="optional">status<span class="property-type">any</span></dt>
+        <dd>Gibt den aktuellen Status des Nodes zurück, ohne eine Aktion durchzuführen</dd>
+    </dl>
+
+    <h3>Universalmodus (optional)</h3>
+    <p>Definiert die Sensor-ID auf der Hue Bridge manuell, wenn sie nicht in den Node-Eigenschaften konfiguriert ist:</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manuelle Definition der Sensor-ID</dd>
     </dl>
 
     <h3>Letzte Zustandsinformationen</h3>

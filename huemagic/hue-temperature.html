@@ -23,6 +23,11 @@
         <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-temperature.config.skipevents-node"></span>
         </label>
     </div>
+    <div class="form-row">
+        <label for="node-input-universalevents"><i class="fa fa-bullhorn"></i> <span data-i18n="hue-temperature.config.universalevents"></span></label>
+        <input type="checkbox" id="node-input-universalevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-temperature.config.universalevents-node"></span>
+        </label>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -32,11 +37,19 @@
         defaults: {
             name: {value:""},
             bridge: {type: "hue-bridge", required: true},
-            sensorid: {value:"", required: true, validate: RED.validators.number()},
-            skipevents: {value: false}
+            sensorid: {value:"", required: false, validate: function(id) {
+                if(id.length < 1) { return true; }
+                else if(!isNaN(id)) { return true; }
+                else { return false; }
+            }},
+            skipevents: {value: false},
+            universalevents: {value: false}
         },
-        inputs: 0,
+        inputs: 1,
         outputs: 1,
+        inputLabels: function() {
+            return this._("hue-temperature.node.input");
+        },
         outputLabels: function() {
             return this._("hue-temperature.node.output");
         },

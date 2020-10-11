@@ -9,7 +9,9 @@
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
 			"searching": "Suche nach Tap Schaltern…",
 			"none-found": "Keine Tap Schalter gefunden!",
-			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"universalevents": "Universelle Mitteilungen",
+			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
 		},
 		"node":
 		{
@@ -17,7 +19,9 @@
 			"not-configured": "nicht konfiguriert",
 			"waiting": "warte…",
 			"pressed-button": "Taste #__button__ gedrückt",
-			"output": "gedrückte Taste"
+			"input": "Statusabfrage",
+			"output": "gedrückte Taste",
+			"universal": "Universalmodus"
 		}
 	}
 }

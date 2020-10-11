@@ -10,7 +10,9 @@
 			"searching": "Searching Hue Switches…",
 			"none-found": "No Hue Switches found!",
 			"unknown-error": "Something went wrong. Please retry.",
-			"switch": "Switch"
+			"switch": "Switch",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -25,7 +27,9 @@
 			"action-holded": "held",
 			"action-shortreleased": "short released",
 			"action-longreleased": "long released",
-			"output": "pressed button"
+			"input": "status query",
+			"output": "pressed button",
+			"universal": "universal mode"
 		}
 	}
 }

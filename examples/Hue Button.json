@@ -1,0 +1,40 @@
+[
+    {
+        "id": "d5d4a606.0f05",
+        "type": "tab",
+        "label": "Hue Button (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Button node"
+    },
+    {
+        "id": "897758f5.e19ee8",
+        "type": "debug",
+        "z": "d5d4a606.0f05",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 330,
+        "y": 60,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "b190f9f5.2d8f",
+        "type": "hue-button",
+        "z": "d5d4a606.0f05",
+        "name": "",
+        "sensorid": "",
+        "skipevents": false,
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "897758f5.e19ee8"
+            ]
+        ]
+    }
+]

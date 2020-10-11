@@ -2,7 +2,7 @@
     <p>Hue Gruppe zur Steuerung ganzer Gruppen mit Lichtern und zum Empfang von Gruppenereignissen.</p>
 
     <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren vorkonfigurierten Gruppen zu finden. Geben Sie den Namen der Gruppe manuell ein oder behalten Sie den Standardnamen bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn der Gruppenstatus geändert wird. Bei Bedarf können alle Statusaktualisierungen dieses Knotens durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren vorkonfigurierten Gruppen zu finden. Geben Sie den Namen der Gruppe manuell ein oder behalten Sie den Standardnamen bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn der Gruppenstatus geändert wird. Bei Bedarf können alle Statusaktualisierungen dieses Knotens durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden. Wenn Sie diesen Node im Universalmodus betreiben, können Sie optional auch auswählen, ob dieser Node alle Mitteilungen von anderen Nodes desselben Typs empfangen und ausgeben soll.</p>
 
     <h3>Ein- / Ausschalten (einfach)</h3>
     <p>Ändert den Ein- / Aus-Status der Gruppe basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
@@ -50,8 +50,8 @@
         <dt class="optional">colorloop<span class="property-type">float / boolean</span></dt>
         <dd>Optional konfigurierbarer Farbschleifeneffekt. Float = deaktiviert den Effekt nach x Sekunden oder Boolean um den Effekt zu aktivieren / deaktivieren</dd>
 
-        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Optional konfigurierbare Farbtemperatur der Gruppenlichter von 153 bis 500</dd>
+        <dt class="optional">colorTemp<span class="property-type">int / string</span></dt>
+        <dd>Optional konfigurierbare Farbtemperatur der Gruppenlichter von 153 bis 500 oder ein String mit "cold", "normal", "warm" oder "auto"</dd>
 
         <dt class="optional">incrementColorTemp<span class="property-type">int</span></dt>
         <dd>Erhöht / verringert die Farbtemperatur um einen bestimmten Wert</dd>

@@ -2,7 +2,7 @@
     <p>Hue group node to control whole groups containing lights and receive group events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available preconfigured groups. Type in the name of the group manually or keep the default name. Note that events will only be sent if the group state is changed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available preconfigured groups. Type in the name of the group manually or keep the default name. Note that events will only be sent if the group state is changed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option. If you operate this node in universal mode, you can optionally also choose whether this node should receive and output all events from other nodes of the same type.</p>
 
     <h3>Turn On / Off (simple)</h3>
     <p>Changes the group on / off state based on the passed in <b>msg.payload</b> values of:</p>
@@ -51,7 +51,7 @@
         <dd>Optionally configurable color loop effect. Float = disables the effect after x seconds / Boolean to turn on / off the effect</dd>
 
         <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Optionally configurable color temperature of the group lights from 153 to 500</dd>
+        <dd>Optionally configurable color temperature of the group lights from 153 to 500 or a string with "cold", "normal", "warm" or "auto"</dd>
 
         <dt class="optional">incrementColorTemp<span class="property-type">int</span></dt>
         <dd>Increment/decrement color temperature by given value</dd>

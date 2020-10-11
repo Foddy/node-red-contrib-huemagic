@@ -10,7 +10,9 @@
 			"input-name": "Name des Temperatursensors",
 			"searching": "Suche nach Temperatursensoren…",
 			"none-found": "keine Temperatursensoren gefunden!",
-			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"universalevents": "Universelle Mitteilungen",
+			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
 		},
 		"node":
 		{
@@ -18,7 +20,9 @@
 			"not-configured": "nicht konfiguriert",
 			"init": "initialisiere…",
 			"not-reachable": "nicht erreichbar",
-			"output": "Temperatur (aktualisiert)"
+			"input": "Statusabfrage",
+			"output": "Temperatur (aktualisiert)",
+			"universal": "Universalmodus"
 		}
 	}
 }

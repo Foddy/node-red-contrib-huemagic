@@ -10,6 +10,7 @@ module.exports = function(RED)
 		let bridge = RED.nodes.getNode(config.bridge);
 		let path = require('path');
 		let { HueGroupMessage } = require('../utils/messages');
+		var universalMode = false;
 
 		// SAVE LAST STATE
 		var lastState = false;
@@ -32,26 +33,40 @@ module.exports = function(RED)
 		}
 
 		//
+		// UNIVERSAL MODE?
+		if(!config.groupid)
+		{
+			universalMode = true;
+			this.status({fill: "grey", shape: "dot", text: "hue-group.node.universal"});
+		}
+
+		//
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-group.node.init"});
 		}
 
+		//
+		// ON UPDATE
+		if(config.groupid) { bridge.events.on('group' + config.groupid, function(group) { scope.receivedUpdates(group) }); }
+		if(!config.groupid && config.universalevents && config.universalevents == true) { bridge.events.on('group', function(group) { scope.receivedUpdates(group) }); }
 
-		if(config.groupid)
+		//
+		// RECEIVED UPDATES
+		this.receivedUpdates = function(group)
 		{
-			bridge.events.on('group' + config.groupid, function(group)
+			var hueGroup = new HueGroupMessage(group, config, lastState);
+			var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
+
+			// HAS FUTURE STATE?
+			if(futureState != null && group.anyOn)
 			{
-				var hueGroup = new HueGroupMessage(group, config, lastState);
-				var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
+				scope.applyCommands(futureState, null, null);
+			}
 
-				// HAS FUTURE STATE?
-				if(futureState != null && group.anyOn)
-				{
-					scope.applyCommands(futureState, null, null);
-				}
-
+			if(universalMode == false)
+			{
 				if(group.allOn)
 				{
 					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
@@ -68,19 +83,14 @@ module.exports = function(RED)
 				{
 					scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
 				}
+			}
 
-				// SEND MESSAGE
-				if(!config.skipevents) { scope.send(hueGroup.msg); }
+			// SEND MESSAGE
+			if(!config.skipevents) { scope.send(hueGroup.msg); }
 
-				// SAVE LAST STATE
-				lastState = group;
-			});
+			// SAVE LAST STATE
+			lastState = group;
 		}
-		else
-		{
-			scope.status({fill: "grey", shape: "dot", text: "hue-group.node.universal"});
-		}
-
 
 		//
 		// TURN ON / OFF GROUP
@@ -90,7 +100,6 @@ module.exports = function(RED)
 			send = send || function() { scope.send.apply(scope,arguments); }
 			scope.applyCommands(msg, send, done);
 		});
-
 
 		//
 		// APPLY COMMANDS
@@ -378,15 +387,45 @@ module.exports = function(RED)
 					// SET COLOR TEMPERATURE
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof group.colorTemp != 'undefined')
 					{
-						let colorTemp = parseInt(msg.payload.colorTemp);
-						if(colorTemp >= 153 && colorTemp <= 500)
+						// DETERMINE IF AUTOMATIC, WARM, COLD, INT
+						if(!isNaN(msg.payload.colorTemp))
 						{
-							group.colorTemp = parseInt(msg.payload.colorTemp);
+							let colorTemp = parseInt(msg.payload.colorTemp);
+							if(colorTemp >= 153 && colorTemp <= 500)
+							{
+								group.colorTemp = parseInt(msg.payload.colorTemp);
+							}
+							else
+							{
+								scope.error(RED._("error-invalid-temp"), msg);
+								return false;
+							}
+						}
+						else if(msg.payload.colorTemp == "cold")
+						{
+							group.colorTemp = 153;
+						}
+						else if(msg.payload.colorTemp == "normal")
+						{
+							group.colorTemp = 240;
+						}
+						else if(msg.payload.colorTemp == "warm")
+						{
+							group.colorTemp = 400;
 						}
 						else
 						{
-							scope.error(RED._("error-invalid-temp"), msg);
-							return false;
+							// AUTOMATIC
+							var hour = (new Date()).getHours();
+							var minute = (new Date()).getMinutes();
+							var time = hour + minute * 0.01667;
+
+							var autoTemperature = Math.floor(3.125 * time ** 2 - 87.5 * time + 812);
+							autoTemperature = (autoTemperature < 153) ? 153 : autoTemperature;
+							autoTemperature = (autoTemperature > 400) ? 400 : autoTemperature;
+
+							// SET TEMPERATURE
+							group.colorTemp = autoTemperature;
 						}
 					}
                     else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined')
@@ -466,30 +505,32 @@ module.exports = function(RED)
 			}
 		}
 
-
 		//
 		// SEND GROUP STATUS
 		this.sendGroupStatus = function(group, send, done)
 		{
-			var hueGroup = new HueGroupMessage(group, config, lastState);
+			var hueGroup = new HueGroupMessage(group, config, (universalMode == false) ? lastState : false);
 			var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
 
 			// SEND STATUS
-			if(group.allOn)
+			if(universalMode == false)
 			{
-				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
-			}
-			else if(group.anyOn)
-			{
-				scope.status({fill: "yellow", shape: "ring", text: RED._("hue-group.node.some-on") + brightnessNotice});
-			}
-			else if(group.on)
-			{
-				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + brightnessNotice});
-			}
-			else
-			{
-				scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
+				if(group.allOn)
+				{
+					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
+				}
+				else if(group.anyOn)
+				{
+					scope.status({fill: "yellow", shape: "ring", text: RED._("hue-group.node.some-on") + brightnessNotice});
+				}
+				else if(group.on)
+				{
+					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + brightnessNotice});
+				}
+				else
+				{
+					scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
+				}
 			}
 
 			// SEND MESSAGE
@@ -505,6 +546,7 @@ module.exports = function(RED)
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('group' + config.groupid);
+			bridge.events.removeAllListeners('group');
 		});
 	}
 

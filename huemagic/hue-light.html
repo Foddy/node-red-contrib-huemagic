@@ -29,6 +29,11 @@
         <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-light.config.skipevents-node"></span>
         </label>
     </div>
+    <div class="form-row">
+        <label for="node-input-universalevents"><i class="fa fa-bullhorn"></i> <span data-i18n="hue-light.config.universalevents"></span></label>
+        <input type="checkbox" id="node-input-universalevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-light.config.universalevents-node"></span>
+        </label>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -44,7 +49,8 @@
                 else { return false; }
             }},
             colornamer: {value: true},
-            skipevents: {value: false}
+            skipevents: {value: false},
+            universalevents: {value: false}
         },
         inputs: 1,
         outputs: 1,

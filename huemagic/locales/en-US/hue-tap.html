@@ -2,7 +2,7 @@
     <p>Hue Tap node to receive button events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Hue Tap devices. Type in the name manually or keep the default device name. Note that events will only sent on deploy (once) and if a button is pressed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Hue Tap devices. Type in the name manually or keep the default device name. Note that events will only sent on deploy (once) and if a button is pressed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option. If you operate this node in universal mode, you can optionally also choose whether this node should receive and output all events from other nodes of the same type.</p>
 
     <h3>Tap Events</h3>
     <p>The event message that the Hue Tap sends contains the following data in the <b>msg.payload</b> object:</p>
@@ -34,6 +34,20 @@
 
         <dt>model<span class="property-type">object</span></dt>
         <dd>The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type</dd>
+    </dl>
+
+    <h3>Check status</h3>
+    <p>Retrieves the status of the device by passing the following parameters to the <b>msg.payload</b>:</p>
+    <dl class="message-properties">
+        <dt class="optional">status<span class="property-type">any</span></dt>
+        <dd>Returns the current status of the node without taking any action</dd>
+    </dl>
+
+    <h3>Universal Mode (optional)</h3>
+    <p>Defines the sensor Id on the Hue Bridge manually if not configured in the node properties:</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manual definition of the sensor Id</dd>
     </dl>
 
     <h3>Last State Information</h3>

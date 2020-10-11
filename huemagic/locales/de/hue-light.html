@@ -2,7 +2,7 @@
     <p>Hue Licht zum Steuern der Lichter und Empfangen von Glühbirnenereignissen.</p>
 
     <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Lichter zu finden. Geben Sie den Namen des Lichts manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn sich der Status der Glühbirne ändert. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+    <p>Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Lichter zu finden. Geben Sie den Namen des Lichts manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur gesendet werden, wenn sich der Status der Glühbirne ändert. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden. Wenn Sie diesen Node im Universalmodus betreiben, können Sie optional auch auswählen, ob dieser Node alle Mitteilungen von anderen Nodes desselben Typs empfangen und ausgeben soll.</p>
 
     <h3>Ein- / Ausschalten (einfach)</h3>
     <p>Ändert den Licht-Ein / Aus-Status basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
@@ -48,7 +48,7 @@
         <dd>Optional konfigurierbarer Farbschleifeneffekt. Float = deaktiviert den Effekt nach x Sekunden oder Boolean um den Effekt zu aktivieren / deaktivieren</dd>
 
         <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Optional konfigurierbare Farbtemperatur der Leuchte von 153 bis 500</dd>
+        <dd>Optional konfigurierbare Farbtemperatur der Leuchte von 153 bis 500 oder ein String mit "cold", "normal", "warm" oder "auto"</dd>
 
         <dt class="optional">incrementColorTemp<span class="property-type">int</span></dt>
         <dd>Erhöht / verringert die Farbtemperatur um einen bestimmten Wert</dd>

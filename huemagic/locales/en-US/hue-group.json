@@ -13,7 +13,9 @@
 			"group": "Group",
 			"colornamer": "Colornamer",
 			"colornamer-info": "Activate color naming",
-			"all": "All groups / lights"
+			"all": "All groups / lights",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{

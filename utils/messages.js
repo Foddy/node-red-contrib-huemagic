@@ -530,7 +530,7 @@ class HueButtonMessage
 		// LAST STATE?
 		if(lastState != false)
 		{
-			var lastStateMessage = new HueSwitchMessage(lastState, false);
+			var lastStateMessage = new HueButtonMessage(lastState, false);
 			this.message.lastState = lastStateMessage.msg;
 			delete this.message.lastState.lastState;
 		}

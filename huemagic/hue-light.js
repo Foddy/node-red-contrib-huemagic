@@ -10,6 +10,7 @@ module.exports = function(RED)
 		let bridge = RED.nodes.getNode(config.bridge);
 		let path = require('path');
 		let { HueLightMessage } = require('../utils/messages');
+		var universalMode = false;
 
 		// SAVE LAST STATE
 		var lastState = false;
@@ -32,6 +33,14 @@ module.exports = function(RED)
 		}
 
 		//
+		// UNIVERSAL MODE?
+		if(!config.lightid)
+		{
+			universalMode = true;
+			this.status({fill: "grey", shape: "dot", text: "hue-light.node.universal"});
+		}
+
+		//
 		// UPDATE STATE
 		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
 		{
@@ -40,24 +49,29 @@ module.exports = function(RED)
 
 		//
 		// ON UPDATE
-		if(config.lightid)
+		if(config.lightid) { bridge.events.on('light' + config.lightid, function(light) { scope.receivedUpdates(light) }); }
+		if(!config.lightid && config.universalevents && config.universalevents == true) { bridge.events.on('light', function(light) { scope.receivedUpdates(light) }); }
+
+		//
+		// RECEIVED UPDATES
+		this.receivedUpdates = function(light)
 		{
-			bridge.events.on('light' + config.lightid, function(light)
+			var hueLight = new HueLightMessage(light, config, (universalMode == false) ? lastState : false);
+			var brightnessPercent = 0;
+
+			// SEND STATUS
+			if(light.reachable)
 			{
-				var hueLight = new HueLightMessage(light, config, lastState);
-				var brightnessPercent = 0;
-
-				// SEND STATUS
-				if(light.reachable)
+				if(light.on)
 				{
-					if(light.on)
+					// HAS FUTURE STATE?
+					if(futureState != null)
 					{
-						// HAS FUTURE STATE?
-						if(futureState != null)
-						{
-							scope.applyCommands(futureState, null, null);
-						}
+						scope.applyCommands(futureState, null, null);
+					}
 
+					if(universalMode == false)
+					{
 						// IS LIGHT?
 						if(light.brightness)
 						{
@@ -71,29 +85,31 @@ module.exports = function(RED)
 							scope.status({fill: "yellow", shape: "dot", text: "hue-light.node.turned-on"});
 						}
 					}
-					else
+
+				}
+				else
+				{
+					if(universalMode == false)
 					{
 						scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
 					}
 				}
-				else
+			}
+			else
+			{
+				if(universalMode == false)
 				{
 					var offNotReachableStatus = RED._("hue-light.node.turned-off") + " (" + RED._("hue-light.node.not-reachable") + ")";
 					scope.status({fill: "red", shape: "ring", text: offNotReachableStatus});
 				}
+			}
 
-				// SEND MESSAGE
-				if(!config.skipevents) { scope.send(hueLight.msg); }
+			// SEND MESSAGE
+			if(!config.skipevents) { scope.send(hueLight.msg); }
 
-				// SAVE LAST STATE
-				lastState = light;
-			});
+			// SAVE LAST STATE
+			lastState = light;
 		}
-		else
-		{
-			scope.status({fill: "grey", shape: "dot", text: "hue-light.node.universal"});
-		}
-
 
 		//
 		// TURN ON / OFF LIGHT
@@ -103,7 +119,6 @@ module.exports = function(RED)
 			send = send || function() { scope.send.apply(scope,arguments); }
 			scope.applyCommands(msg, send, done);
 		});
-
 
 		//
 		// APPLY COMMANDS
@@ -386,15 +401,45 @@ module.exports = function(RED)
 					// SET COLOR TEMPERATURE
 					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof light.colorTemp != 'undefined')
 					{
-						let colorTemp = parseInt(msg.payload.colorTemp);
-						if(colorTemp >= 153 && colorTemp <= 500)
+						// DETERMINE IF AUTOMATIC, WARM, COLD, INT
+						if(!isNaN(msg.payload.colorTemp))
 						{
-							light.colorTemp = parseInt(msg.payload.colorTemp);
+							let colorTemp = parseInt(msg.payload.colorTemp);
+							if(colorTemp >= 153 && colorTemp <= 500)
+							{
+								light.colorTemp = parseInt(msg.payload.colorTemp);
+							}
+							else
+							{
+								scope.error("Invalid color temprature. Only 153 - 500 allowed");
+								return false;
+							}
+						}
+						else if(msg.payload.colorTemp == "cold")
+						{
+							light.colorTemp = 153;
+						}
+						else if(msg.payload.colorTemp == "normal")
+						{
+							light.colorTemp = 240;
+						}
+						else if(msg.payload.colorTemp == "warm")
+						{
+							light.colorTemp = 400;
 						}
 						else
 						{
-							scope.error("Invalid color temprature. Only 153 - 500 allowed");
-							return false;
+							// AUTOMATIC
+							var hour = (new Date()).getHours();
+							var minute = (new Date()).getMinutes();
+							var time = hour + minute * 0.01667;
+
+							var autoTemperature = Math.floor(3.125 * time ** 2 - 87.5 * time + 812);
+							autoTemperature = (autoTemperature < 153) ? 153 : autoTemperature;
+							autoTemperature = (autoTemperature > 400) ? 400 : autoTemperature;
+
+							// SET TEMPERATURE
+							light.colorTemp = autoTemperature;
 						}
 					}
                     else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined')
@@ -490,7 +535,6 @@ module.exports = function(RED)
 			}
 		}
 
-
 		//
 		// SEND LIGHT STATUS
 		this.sendLightStatus = function(light, send, done)
@@ -498,13 +542,16 @@ module.exports = function(RED)
 			var hueLight = new HueLightMessage(light, config, lastState);
 
 			// SEND STATUS
-			if(light.on)
+			if(universalMode == false)
 			{
-				scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent: hueLight.msg.payload.brightness}) });
-			}
-			else
-			{
-				scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
+				if(light.on)
+				{
+					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent: hueLight.msg.payload.brightness}) });
+				}
+				else
+				{
+					scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
+				}
 			}
 
 			// SEND MESSAGE
@@ -520,6 +567,7 @@ module.exports = function(RED)
 		this.on('close', function()
 		{
 			bridge.events.removeAllListeners('light' + config.lightid);
+			bridge.events.removeAllListeners('light');
 		});
 	}
 

@@ -11,7 +11,9 @@
 			"none-found": "Keine Sensoren gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
 			"sensor": "Sensor",
-			"all": "Alle Gruppen / Lichter"
+			"all": "Alle Gruppen / Lichter",
+			"universalevents": "Universelle Mitteilungen",
+			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
 		},
 		"node":
 		{
@@ -22,7 +24,9 @@
 			"lux": "__lux__ Lux",
 			"lux-dark": "__lux__ Lux (dunkel)",
 			"lux-daylight": "__lux__ Lux (hell)",
-			"output": "Helligkeit (aktualisiert)"
+			"input": "Statusabfrage",
+			"output": "Helligkeit (aktualisiert)",
+			"universal": "Universalmodus"
 		}
 	}
 }

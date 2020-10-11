@@ -2,10 +2,10 @@
     <p>Hue motion node to control the motion sensor and receive motion events.</p>
 
     <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available motion sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the "Activate / Deactivate" command. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+    <p>Select the preconfigured Hue Bridge and hit the search button to find all available motion sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent if a motion is detected, if a motion stops or if the motion sensor receives the "Activate / Deactivate" command. If necessary, all status updates of this node can be ignored by activating the "Skip events" option. If you operate this node in universal mode, you can optionally also choose whether this node should receive and output all events from other nodes of the same type.</p>
 
     <h3>Activate / Deactivate</h3>
-    <p>Activates or deactivates the motion sensor based on the passed in <b>msg</b> values of:</p>
+    <p>Activates or deactivates the motion sensor or returns the current status based on the passed in <b>msg</b> values of:</p>
     <dl class="message-properties">
         <dt>true<span class="property-type">boolean</span></dt>
         <dd>Activates the motion sensor</dd>
@@ -53,6 +53,13 @@
 
         <dt>model<span class="property-type">object</span></dt>
         <dd>The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type</dd>
+    </dl>
+
+    <h3>Universal Mode (optional)</h3>
+    <p>Defines the sensor Id on the Hue Bridge manually if not configured in the node properties:</p>
+    <dl class="message-properties">
+        <dt>msg.topic<span class="property-type">int</span></dt>
+        <dd>Manual definition of the sensor Id</dd>
     </dl>
 
     <h3>Last State Information</h3>

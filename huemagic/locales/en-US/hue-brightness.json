@@ -11,7 +11,9 @@
 			"none-found": "No brightness sensors found!",
 			"unknown-error": "Something went wrong. Please retry.",
 			"sensor": "Sensor",
-			"all": "All groups / lights"
+			"all": "All groups / lights",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -22,7 +24,9 @@
 			"lux": "__lux__ Lux",
 			"lux-dark": "__lux__ Lux (dark)",
 			"lux-daylight": "__lux__ Lux (daylight)",
-			"output": "brightness (changed)"
+			"input": "status query",
+			"output": "brightness (changed)",
+			"universal": "universal mode"
 		}
 	}
 }

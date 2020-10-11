@@ -10,7 +10,9 @@
 			"searching": "Suche nach Dimmschaltern…",
 			"none-found": "Keine Dimmschalter gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"switch": "Schalter"
+			"switch": "Schalter",
+			"universalevents": "Universelle Mitteilungen",
+			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
 		},
 		"node":
 		{
@@ -25,7 +27,9 @@
 			"action-holded": "gehalten",
 			"action-shortreleased": "kurz gedrückt",
 			"action-longreleased": "lange gedruckt",
-			"output": "gedrückte Taste"
+			"input": "Statusabfrage",
+			"output": "gedrückte Taste",
+			"universal": "Universalmodus"
 		}
 	}
 }

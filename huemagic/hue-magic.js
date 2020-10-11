@@ -270,6 +270,14 @@ module.exports = function(RED)
 	});
 
 	//
+	// GET ANIMATION PREVIEWS
+	RED.httpAdmin.get('/hue/animations/:file', function(req, res, next)
+	{
+		let path = require("path");
+		res.sendFile(path.resolve(__dirname, 'animations', 'previews', req.params.file));
+	});
+
+	//
 	// GET ASSETS
 	RED.httpAdmin.get('/hue/assets/:file', function(req, res, next)
 	{

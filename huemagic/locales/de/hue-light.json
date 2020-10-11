@@ -12,7 +12,9 @@
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
 			"light": "Licht",
 			"colornamer": "Farbnamen",
-			"colornamer-info": "Aktiviere Farbnamen"
+			"colornamer-info": "Aktiviere Farbnamen",
+			"universalevents": "Universelle Mitteilungen",
+			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
 		},
 		"node":
 		{
@@ -26,6 +28,7 @@
 			"turned-off": "ausgeschaltet",
 			"error-no-id": "Keine Licht-ID definiert.",
 			"error-input": "Eingabefehler",
+			"error-invalid-temp": "Ungültige Farbtemperatur. Erlaubt sind Werte zwischen 153 - 500.",
 			"input": "Ein- / Ausschalten",
 			"output": "Status"
 		}

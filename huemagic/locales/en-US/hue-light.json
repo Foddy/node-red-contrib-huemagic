@@ -12,7 +12,9 @@
 			"unknown-error": "Something went wrong. Please retry.",
 			"light": "Light",
 			"colornamer": "Colornamer",
-			"colornamer-info": "Activate color naming"
+			"colornamer-info": "Activate color naming",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -26,6 +28,7 @@
 			"turned-off": "turned off",
 			"error-no-id": "No light Id defined. Please check the docs.",
 			"error-input": "input error",
+			"error-invalid-temp": "Invalid color temprature. Only 153 - 500 allowed.",
 			"input": "turn on / off",
 			"output": "status"
 		}

@@ -9,7 +9,9 @@
 			"skipevents-node": "Skip events from node",
 			"searching": "Searching Hue Taps…",
 			"none-found": "No Hue Taps found!",
-			"unknown-error": "Something went wrong. Please retry."
+			"unknown-error": "Something went wrong. Please retry.",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -17,7 +19,9 @@
 			"not-configured": "not configured",
 			"waiting": "waiting…",
 			"pressed-button": "Button #__button__ pressed",
-			"output": "pressed button"
+			"input": "status query",
+			"output": "pressed button",
+			"universal": "universal mode"
 		}
 	}
 }

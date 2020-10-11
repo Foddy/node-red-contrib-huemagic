@@ -10,7 +10,9 @@
 			"searching": "Searching motion sensors…",
 			"none-found": "No motion sensors found!",
 			"unknown-error": "Something went wrong. Please retry.",
-			"sensor": "Sensor"
+			"sensor": "Sensor",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
 		},
 		"node":
 		{
@@ -21,8 +23,9 @@
 			"no-motion": "no motion",
 			"activated": "activated",
 			"deactivated": "deactivated",
-			"input": "activate / deactivate",
-			"output": "motion detected"
+			"input": "activate / deactivate / status",
+			"output": "motion detected",
+			"universal": "universal mode"
 		}
 	}
 }

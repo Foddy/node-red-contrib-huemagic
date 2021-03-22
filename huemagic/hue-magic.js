@@ -206,6 +206,7 @@ module.exports = function(RED)
 					if(scope.isAnimating == false)
 					{
 						var animationSteps = (typeof msg.payload.steps != 'undefined') ? msg.payload.steps : JSON.parse(scope.steps);
+						scope.steps = animationSteps;
 						scope.status({fill: "green", shape: "dot", text: "hue-magic.node.animating"});
 
 						scope.isAnimating = true;

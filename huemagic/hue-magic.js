@@ -187,8 +187,14 @@ module.exports = function(RED)
 		{
 			// Node-RED < 1.0
 			send = send || function() { scope.send.apply(scope,arguments); }
+			
+			if(typeof msg.payload.steps != 'undefined') {
+				scope.steps = msg.payload.steps;
+				//we animate if we receive steps from the input.
+				msg.payload.animate = true;
+			}
 
-			if(scope.steps != null||typeof msg.payload.steps != 'undefined')
+			if(scope.steps != null)
 			{
 				// SPECIALS CONFIG
 				if(typeof msg.payload.specials != 'undefined')
@@ -201,12 +207,11 @@ module.exports = function(RED)
 				}
 
 				// TURN ON ANIMATION
-				if(typeof msg.payload.animate == 'undefined'||msg.payload.animate == true||msg.payload === true)
+				if(msg.payload.animate == true||msg.payload === true)
 				{
+					var animationSteps = typeof scope.steps === 'string' ? JSON.parse(scope.steps) : scope.steps;
 					if(scope.isAnimating == false)
 					{
-						var animationSteps = (typeof msg.payload.steps != 'undefined') ? msg.payload.steps : JSON.parse(scope.steps);
-						scope.steps = animationSteps;
 						scope.status({fill: "green", shape: "dot", text: "hue-magic.node.animating"});
 
 						scope.isAnimating = true;

@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "async": "^3.2.0",
-    "hex-rgb": "^4.2.0",
+    "hex-rgb": "^5.0.0",
     "huejay": "^1.9.0",
     "moment": "^2.29.1",
     "rgb-hex": "^3.0.0",

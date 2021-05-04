@@ -54,7 +54,7 @@
     "hex-rgb": "^4.2.0",
     "huejay": "^1.9.0",
     "moment": "^2.29.1",
-    "rgb-hex": "^3.0.0",
+    "rgb-hex": "^4.0.0",
     "request": "^2.88.2",
     "colornames": "^1.1.1",
     "color-namer": "^1.4.0",

@@ -13,10 +13,10 @@
         "name": "",
         "endless": true,
         "restore": false,
-        "preset": null,
-        "steps": null,
-        "x": 370,
-        "y": 120,
+        "preset": "",
+        "steps": "",
+        "x": 490,
+        "y": 160,
         "wires": [
             [
                 "f5819321.8928f8"
@@ -28,32 +28,36 @@
         "type": "inject",
         "z": "f6ddc6bb.8646a8",
         "name": "Start animation",
-        "topic": "",
-        "payload": "true",
-        "payloadType": "bool",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 160,
-        "y": 60,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 160,
         "wires": [
             [
                 "652f80ad.692fe"
             ]
         ],
-        "icon": "font-awesome/fa-power-off"
+        "icon": "font-awesome/fa-circle"
     },
     {
         "id": "f5819321.8928f8",
         "type": "hue-light",
         "z": "f6ddc6bb.8646a8",
-        "name": "",
-        "lightid": "",
         "colornamer": true,
         "skipevents": false,
-        "x": 580,
-        "y": 120,
+        "initevents": false,
+        "x": 680,
+        "y": 160,
         "wires": [
             []
         ]
@@ -63,41 +67,82 @@
         "type": "inject",
         "z": "f6ddc6bb.8646a8",
         "name": "Stop animation",
-        "topic": "",
-        "payload": "false",
-        "payloadType": "bool",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 160,
-        "y": 120,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 200,
         "wires": [
             [
                 "652f80ad.692fe"
             ]
         ],
-        "icon": "font-awesome/fa-power-off"
+        "icon": "font-awesome/fa-circle-o"
     },
     {
         "id": "5b111243.1e472c",
         "type": "inject",
         "z": "f6ddc6bb.8646a8",
         "name": "Custom animation",
-        "topic": "",
-        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":0}}]}",
-        "payloadType": "json",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":0}}]}",
+        "payloadType": "json",
         "x": 150,
-        "y": 180,
+        "y": 300,
         "wires": [
             [
                 "652f80ad.692fe"
             ]
         ],
         "icon": "font-awesome/fa-magic"
+    },
+    {
+        "id": "ea1b64ce5ba37564",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "FIRST STEPS (double click me)",
+        "info": "Click on the \"Hue Magic\" node and select a pre-made animation from the list. Then click on the \"Hue Light\" node to select a light that should be animated by the \"Hue Magic\" node. If you have not yet set up a bridge, you will be asked to set one up here before you can complete the configuration of the node.\n\nAs soon as the \"Hue Magic\" node is connected to the \"Hue Light\" node and you have deployed the changes in Node-RED, the node can receive and execute your animation.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "b632a445364cbc5d",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Animation controls",
+        "info": "",
+        "x": 110,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "20cdbc9acd4ecf73",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Custom animation",
+        "info": "",
+        "x": 110,
+        "y": 260,
+        "wires": []
     }
 ]

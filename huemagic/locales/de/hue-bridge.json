@@ -5,34 +5,23 @@
 		{
 			"name": "Name",
 			"input-name": "Hue Bridge Name",
-			"autoupdates": "Auto-Updates",
-			"autoupdates-info": "Automatische Firmware-Updates aktivieren",
-			"skipglobalevents": "Mitteilungen ignorieren",
-			"skipglobalevents-info": "Globale Aktualisierungsmitteilungen auf diesem Node ignorieren"
+			"skipglobalevents-info": "Globale Aktualisierungsmitteilungen auf diesem Node ignorieren",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken"
 		},
 		"node":
 		{
 			"title": "Hue Bridge",
 			"not-configured": "nicht konfiguriert",
-			"connecting": "wird verbunden…",
+			"connecting": "verbinden…",
 			"connected": "verbunden",
 			"starting-tl": "starte TouchLink…",
 			"started-tl": "TouchLink gestartet",
-			"f-users": "hole Benutzer…",
-			"f-lights": "hole Lichter…",
-			"f-groups": "hole Gruppen…",
-			"f-sensors": "hole Sensoren…",
-			"f-scenes": "hole Szenen…",
-			"f-rules": "hole Regeln…",
-			"f-schedules": "hole Zeitpläne…",
-			"f-rlinks": "hole Ressourcen-Links…",
-			"f-timezones": "hole Zeitzonen…",
-			"f-internet": "hole Internet-Services…",
-			"f-portal": "hole Portal…",
+			"f-ressources": "hole Ressouren…",
 			"updating-settings": "aktualisiere Einstellungen…",
 			"settings-updated": "Einstellungen aktualisiert",
 			"input": "Einstellungen / Abrufen",
-			"output": "Bridge Informationen"
+			"output": "Bridge Informationen",
+			"statusmsg": "Status erfolgreich abgefragt…"
 		}
 	}
 }

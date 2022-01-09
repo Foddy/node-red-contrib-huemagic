@@ -1,6 +1,8 @@
 /node_modules
 /npm-debug.log
 /package-lock.json
+/yarn-lock.json
 /helper
 .DS_Store
 *.icloud
+*.paw

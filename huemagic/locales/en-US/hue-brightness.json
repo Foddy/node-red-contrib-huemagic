@@ -5,8 +5,8 @@
 		{
 			"name": "Name",
 			"input-name": "Brightness sensor name",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"searching": "Searching sensors…",
 			"none-found": "No brightness sensors found!",
 			"unknown-error": "Something went wrong. Please retry.",
@@ -19,6 +19,7 @@
 		{
 			"title": "Hue Brightness",
 			"not-configured": "not configured",
+			"deactivated": "deactivated",
 			"init": "initializing…",
 			"not-reachable": "not reachable",
 			"lux": "__lux__ Lux",
@@ -26,7 +27,9 @@
 			"lux-daylight": "__lux__ Lux (daylight)",
 			"input": "status query",
 			"output": "brightness (changed)",
-			"universal": "universal mode"
+			"universal": "universal mode",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

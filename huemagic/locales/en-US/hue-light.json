@@ -5,8 +5,8 @@
 		{
 			"name": "Name",
 			"input-name": "Light name",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"searching": "Searching lights…",
 			"none-found": "No lights found!",
 			"unknown-error": "Something went wrong. Please retry.",
@@ -30,7 +30,9 @@
 			"error-input": "input error",
 			"error-invalid-temp": "Invalid color temprature. Only 153 - 500 allowed.",
 			"input": "turn on / off",
-			"output": "status"
+			"output": "status",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

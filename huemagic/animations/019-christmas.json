@@ -1,0 +1,30 @@
+{
+	"info":{
+		"name":"Christmas",
+		"author":"HueMagic"
+	},
+	"steps":[
+		{
+			"delay":5000,
+			"animation":{
+				"hex":"#0ca90c",
+				"brightness":100,
+				"transitionTime":2
+			}
+		},
+		{
+			"delay":5000,
+			"animation":{
+				"hex":"#ce0d0d",
+				"transitionTime":2
+			}
+		},
+		{
+			"delay":5000,
+			"animation":{
+				"hex":"#3225de",
+				"transitionTime":2
+			}
+		}
+	]
+}

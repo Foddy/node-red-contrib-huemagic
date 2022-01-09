@@ -5,10 +5,8 @@
 		{
 			"name": "Name",
 			"input-name": "Hue Bridge name",
-			"autoupdates": "Auto updates",
-			"autoupdates-info": "Activate automatic firmware updates",
-			"skipglobalevents": "Skip global events",
-			"skipglobalevents-info": "Skip global device updates / messages on this node"
+			"skipglobalevents-info": "Skip global device updates / messages on this node",
+			"sendinitevents-node": "Do not suppress initialization event"
 		},
 		"node":
 		{
@@ -18,21 +16,12 @@
 			"connected": "connected",
 			"starting-tl": "starting TouchLink…",
 			"started-tl": "TouchLink started…",
-			"f-users": "fetching users…",
-			"f-lights": "fetching lights…",
-			"f-groups": "fetching groups…",
-			"f-sensors": "fetching sensors…",
-			"f-scenes": "fetching scenes…",
-			"f-rules": "fetching rules…",
-			"f-schedules": "fetching schedules…",
-			"f-rlinks": "fetching resource links…",
-			"f-timezones": "fetching timezones…",
-			"f-internet": "fetching Internet Services…",
-			"f-portal": "fetching Portal…",
+			"f-ressources": "fetching ressources…",
 			"updating-settings": "updating settings…",
 			"settings-updated": "settings updated",
 			"input": "settings / fetch",
-			"output": "bridge information"
+			"output": "bridge information",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

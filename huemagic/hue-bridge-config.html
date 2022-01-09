@@ -1,38 +1,41 @@
 <script type="text/x-red" data-template-name="hue-bridge">
 	<div class="form-row">
 		<label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-bridge-config.config.name"></span></label>
-		<input type="text" id="node-config-input-name">
+		<input type="text" id="node-config-input-name" style="width: calc(100% - 105px)">
 	</div>
 	<div class="form-row">
 		<label for="node-config-input-bridge"><i class="fa fa-server"></i> Bridge IP</label>
-		<div style="display: inline-block; position: relative; width: 70%; height: 20px;">
-            <div style="position: absolute; left: 0px; right: 40px;">
+		<div style="display: inline-flex; width: calc(100% - 105px)">
+            <div id="input-select-toggle" style="flex-grow: 1;">
                 <input type="text" id="node-config-input-bridge" placeholder="X.X.X.X[:PORT]" style="width: 100%"/>
             </div>
-            <a id="node-config-input-scan" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+            <button id="node-config-input-scan" type="button" class="red-ui-button" style="margin-left: 10px;">
                 <i class="fa fa-search"></i>
-            </a>
+            </button>
         </div>
 	</div>
 	<div class="form-row">
 		<label for="node-config-input-key"><i class="fa fa-key"></i> <span data-i18n="hue-bridge-config.config.apikey"></span></label>
-		<div style="display: inline-block; position: relative; width: 70%; height: 20px;">
-            <div style="position: absolute; left: 0px; right: 40px;">
+		<div style="display: inline-flex; width: calc(100% - 105px)">
+            <div style="flex-grow: 1;">
                 <input type="text" id="node-config-input-key" style="width: 100%"/>
             </div>
-            <a id="node-config-input-register" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+            <button id="node-config-input-register" type="button" class="red-ui-button" style="margin-left: 10px;">
                 <i class="fa fa-user-circle-o"></i>
-            </a>
+            </button>
         </div>
 	</div>
+	<div class="form-row" style="margin-top: 30px">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-autoupdates" style="flex: 15px;">
+            <span data-i18n="hue-bridge-config.config.autoupdates" style="width: 100%; margin-left: 10px;"></span>
+        </div>
+    </div>
 	<div class="form-row">
-		<label for="node-config-input-interval"><i class="fa fa-clock-o"></i> <span data-i18n="hue-bridge-config.config.poll"></span></label>
-		<input type="text" placeholder="3000" id="node-config-input-interval">
-	</div>
-	<div class="form-row">
-		<label for="node-config-input-disableupdates"><i class="fa fa-sign-out"></i> <span data-i18n="hue-bridge-config.config.disable-events"></span></label>
-		<input type="checkbox" id="node-config-input-disableupdates" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-bridge-config.config.disable-events-info"></span>
-		</label>
+		<div style="display: inline-flex; width: calc(100% - 105px)">
+			<input type="checkbox" id="node-config-input-disableupdates" style="flex: 15px;">
+			<span data-i18n="hue-bridge-config.config.disable-events-info" style="width: 100%; margin-left: 10px;"></span>
+		</div>
 	</div>
 </script>
 
@@ -41,93 +44,134 @@
 		category: "config",
 		color: '#c7d8d8',
 		defaults: {
-			name: {value:"Hue Bridge", required: true},
-			bridge: {value:"", required: true},
-			key: {value:"", required: true},
-			interval: {
-				value: 3000,
-				required: true,
-				validate: function(v) {
-					return (/^[0-9]+/.test(v) && parseInt(v,10) >= 500);
-				}
-			},
-			disableupdates: {value: false}
+			name: { value:"Hue Bridge", required: true },
+			bridge: { value:"", required: true },
+			key: { value:"", required: true },
+			autoupdates: { value: true },
+			disableupdates: { value: false }
 		},
 		icon: "hue-bridge-config.png",
-		paletteLabel: function() {
-		    return this._("hue-bridge-config.node.title");
-		},
 		label: function() {
 			return this.name;
 		},
+		paletteLabel: function() {
+		    return this._("hue-bridge-config.node.title");
+		},
 		oneditprepare: function()
 		{
-			var scope = this;
+			const scope = this;
+			let options = [];
 
-			function manualBridgeIP()
+			function manualInput()
 			{
+				// GET CURRENT SELECTED VALUE
 				var current = $('#node-config-input-bridge').val();
-				$('#node-config-input-bridge').replaceWith('<input type="text" id="node-config-input-bridge" style="width: 100%"/>');
-				$('#node-config-input-bridge').val(current);
+
+				// REMOVE SELECT FIELD
+				$('#input-select-toggle').empty();
+
+				// CREATE NEW INPUT FIELD
+				$('#input-select-toggle').append('<input type="text" id="node-config-input-bridge" placeholder="X.X.X.X[:PORT]" style="width: 100%" value="'+current+'" />');
+
+				// CHANGE BUTTON ICON
+				var button = $("#node-config-input-scan");
+				var buttonIcon = button.find("i");
+				buttonIcon.removeClass("fa-pencil");
+				buttonIcon.addClass("fa-search");
 			}
 
-			function searchAndSelectBridge()
+			function searchAndSelect()
 			{
+				// GET CURRENT SELECTED VALUE
 				var current = $('#node-config-input-bridge').val();
-				$('#node-config-input-bridge').replaceWith('<select id="node-config-input-bridge" style="width: 100%"></select>');
-				$('#node-config-input-bridge').append('<option selected="selected" value="null">'+scope._("hue-bridge-config.config.searching")+'</option>');
 
+				// TRIGGER SEARCHING NOTIFICATION
+				var notification = RED.notify(scope._("hue-bridge-config.config.searching"), { type: "compact", modal: true, fixed: true });
+
+				// GET THE SENSORS
 				$.get('hue/bridges')
 				.done( function(data) {
-					var bridges = JSON.parse(data);
+				    var allRessources = JSON.parse(data);
+				    if(allRessources.length <= 0)
+				    {
+				        notification.close();
+				        RED.notify(scope._("hue-bridge-config.config.none-found"), { type: "error" });
+				        return false;
+				    }
 
-					if(bridges.length <= 0)
-					{
-						RED.notify(scope._("hue-bridge-config.config.none-found"), "error");
-					}
+				    // SET OPTIONS
+				    allRessources.forEach(function(ressource)
+				    {
+				        options[ressource.ip] = { value: ressource.ip, label: ressource.ip };
+				    });
 
-					// RESET OPTIONS
-					$('#node-config-input-bridge').empty();
+				    // SELECT CURRENT VALUE
+				    $("#node-config-input-bridge").typedInput({
+				        types: [
+				            {
+				                value: current,
+				                options: Object.values(options)
+				            }
+				        ]
+				    });
 
-					// SET BRIDGES AS OPTIONS
-					bridges.forEach(function(bridge)
-					{
-						$('#node-config-input-bridge').append('<option value="' + bridge.ip + '">' + bridge.ip + '</option>');
-					});
+				    // CHANGE BUTTON ICON
+				    var button = $("#node-config-input-scan");
+				    var buttonIcon = button.find("i");
+				    buttonIcon.removeClass("fa-search");
+				    buttonIcon.addClass("fa-pencil");
 
-					// SELECT CURRENT VALUE
-					$('#node-config-input-bridge').val(current);
+				    // CLOSE SEARCH NOTIFICATION
+				    notification.close();
 				})
 				.fail(function()
 				{
-					RED.notify(scope._("hue-bridge-config.config.unknown-error"), "error");
+				    notification.close();
+				    RED.notify(scope._("hue-bridge-config.config.unknown-error"), "error");
 				});
 			}
 
-			$(document).on('change', '#node-config-input-bridge', function()
+			// CHANGED BRIDGE IP? -> GET NAME (IF POSSIBLE)
+			$(document).off('change', '#node-config-input-bridge');
+			$(document).on('change', '#node-config-input-bridge', function(e)
 			{
-				var currentBridgeIP = $('#node-config-input-bridge').val();
-				if(currentBridgeIP.length > 6)
+				let currentBridgeIP = $(e.currentTarget).val();
+				if(currentBridgeIP.length > 3)
 				{
-					$.get('hue/name', { ip: currentBridgeIP } )
+					// TRIGGER SEARCHING NOTIFICATION
+					var notification = RED.notify(scope._("hue-bridge-config.config.connecting"), { type: "compact", modal: true, fixed: true });
+
+					$.ajax({
+						url: 'hue/name',
+						type: "GET",
+						data: { ip: currentBridgeIP },
+						timeout: 3000
+					})
 					.done( function(data)
 					{
 						$('#node-config-input-name').val(data);
+						setTimeout(function() { notification.close(); }, 500);
 					})
 					.fail(function(err)
 					{
-						RED.notify(scope._("hue-bridge-config.config.invalid") + err, "error");
+						// CLOSE SEARCH NOTIFICATION
+						notification.close();
+
+						RED.notify(scope._("hue-bridge-config.config.invalid") + err.statusText, "error");
 					});
 				}
 			});
 
+			// TOGGLE SELECT/INPUT FIELD
 			$('#node-config-input-scan').click(function()
 			{
-				if($('#node-config-input-bridge').prop("tagName") === "INPUT")
+				if($('#input-select-toggle').find(".red-ui-typedInput-container").length > 0)
 				{
-					searchAndSelectBridge();
-				} else {
-					manualBridgeIP();
+				    manualInput();
+				}
+				else
+				{
+				    searchAndSelect();
 				}
 			});
 

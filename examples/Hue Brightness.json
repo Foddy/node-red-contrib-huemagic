@@ -7,7 +7,32 @@
         "info": "Example use of the Hue Brightness node"
     },
     {
-        "id": "a9304ae0.8a9bf",
+        "id": "bc4daa7a.ddc16",
+        "type": "hue-brightness",
+        "z": "d081bb24.81a8d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "4cf0eb6d2a66fd14"
+            ]
+        ]
+    },
+    {
+        "id": "6a8f3df98e7625b8",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "FIRST STEPS (double click me)",
+        "info": "Click on the \"Hue Brightness\" node and select both your bridge and a sensor from the list. If you have not yet set up a bridge, you will be asked to set one up before you can finish configuring the node.\n\nAs soon as the node is connected to your bridge and the sensor and you have deployed the changes in Node-RED, the node can receive and execute your commands. The \"Hue Brightness\" node automatically outputs a message each time as soon as the status of the sensor on the bridge has been updated (new light level registered). You will receive the updated status and all of its information in the message that is issued.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "4cf0eb6d2a66fd14",
         "type": "debug",
         "z": "d081bb24.81a8d",
         "name": "Information",
@@ -15,26 +40,111 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "x": 410,
-        "y": 60,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
         "wires": [],
         "icon": "font-awesome/fa-info-circle"
     },
     {
-        "id": "bc4daa7a.ddc16",
-        "type": "hue-brightness",
+        "id": "433f55c9fedd4e3b",
+        "type": "comment",
         "z": "d081bb24.81a8d",
-        "name": "",
-        "sensorid": "",
-        "skipevents": false,
-        "x": 140,
-        "y": 60,
+        "name": "Get the current status",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88b02ac839431cc1",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
         "wires": [
             [
-                "a9304ae0.8a9bf"
+                "bc4daa7a.ddc16"
             ]
-        ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "bd060e6399f15f95",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Turn on / off the device",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "15c9417b8ed13b49",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Turn on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "89e7bcee38350561",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Turn off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
     }
 ]

@@ -7,49 +7,18 @@
         "info": "Example use of the Hue Rules node"
     },
     {
-        "id": "f55a8fb1.7794c8",
-        "type": "inject",
+        "id": "a6ec7e31e3edf26b",
+        "type": "comment",
         "z": "7bca3b4f.9070fc",
-        "name": "Enable rule",
-        "topic": "",
-        "payload": "true",
-        "payloadType": "bool",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 160,
-        "y": 60,
-        "wires": [
-            [
-                "fe008f45.8665a8"
-            ]
-        ],
-        "icon": "font-awesome/fa-power-off"
-    },
-    {
-        "id": "a262b4ba.579538",
-        "type": "inject",
-        "z": "7bca3b4f.9070fc",
-        "name": "Disable rule",
-        "topic": "",
-        "payload": "false",
-        "payloadType": "bool",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
+        "name": "FIRST STEPS (double click me)",
+        "info": "Click on the \"Hue Rule\" node and select both your bridge and a rule from the list. If you have not yet set up a bridge, you will be asked to set one up before you can finish configuring the node.\n\nAs soon as the node is connected to your bridge and you have deployed the changes in Node-RED, the node can receive and execute your commands. You will receive the updated status and all of its information about the rule in the message that is issued.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner).",
         "x": 150,
-        "y": 120,
-        "wires": [
-            [
-                "fe008f45.8665a8"
-            ]
-        ],
-        "icon": "font-awesome/fa-power-off"
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
     },
     {
-        "id": "a4f953ad.fd937",
+        "id": "863710a19fb12c5e",
         "type": "debug",
         "z": "7bca3b4f.9070fc",
         "name": "Information",
@@ -57,25 +26,124 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "x": 550,
-        "y": 60,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
         "wires": [],
         "icon": "font-awesome/fa-info-circle"
     },
     {
-        "id": "fe008f45.8665a8",
-        "type": "hue-rules",
+        "id": "c3f358fa89e66d78",
+        "type": "comment",
         "z": "7bca3b4f.9070fc",
-        "name": "",
-        "ruleid": "",
-        "skipevents": false,
-        "x": 360,
-        "y": 60,
+        "name": "Get the current status",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "403636a610280894",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
         "wires": [
             [
-                "a4f953ad.fd937"
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "0fab9398dcc9c797",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Enable / disable the rule",
+        "info": "",
+        "x": 130,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "40f06e621e0643f0",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Enable",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "bde15ecaf96f1323",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Disable",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "7bc8bf9290a86c68",
+        "type": "hue-rules",
+        "z": "7bca3b4f.9070fc",
+        "skipevents": false,
+        "initevents": false,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "863710a19fb12c5e"
             ]
         ]
     }

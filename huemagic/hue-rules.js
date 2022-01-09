@@ -6,51 +6,72 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueRulesMessage } = require('../utils/messages');
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
 
-		// SAVE LAST STATE
-		var lastState = false;
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
 
 		//
 		// CHECK CONFIG
-		if(!config.ruleid || bridge == null)
+		if(bridge == null)
 		{
 			this.status({fill: "red", shape: "ring", text: "hue-rules.node.no-rule"});
 			return false;
 		}
 
 		//
+		// UNIVERSAL MODE?
+		if(!config.ruleid)
+		{
+			this.status({fill: "grey", shape: "dot", text: "hue-rules.node.universal"});
+		}
+
+		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined' || bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-rules.node.init"});
 		}
 
 		//
-		// ON UPDATE
-		bridge.events.on('rule' + config.ruleid, function(rule)
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("rule", config.ruleid, function(info)
 		{
-			// SEND STATUS
-			if(rule.status == "enabled")
-			{
-				scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
-			}
-			else
-			{
-				scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
-			}
+			let currentState = bridge.get("rule", info.id);
 
-			// SEND MESSAGE
-			if(!config.skipevents)
+			// RESSOURCE FOUND?
+			if(currentState !== false)
 			{
-				var hueRule = new HueRulesMessage(rule, lastState);
-				scope.send(hueRule.msg);
-			}
+				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
+				if(config.ruleid)
+				{
+					if(currentState.payload.enabled == true)
+					{
+						scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
+					}
+					else
+					{
+						scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
+					}
+				}
 
-			// SAVE LAST STATE
-			lastState = rule;
+				// SEND MESSAGE
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				{
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
+
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+				}
+			}
 		});
 
 
@@ -58,51 +79,50 @@ module.exports = function(RED)
 		// DISABLE / ENABLE RULE
 		this.on('input', function(msg, send, done)
 		{
-			// Node-RED < 1.0
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
 			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
 
-			// CONTROL
-			if(msg.payload == true || msg.payload == false)
+			// SAVE LAST COMMAND
+			scope.lastCommand = msg;
+
+			// CREATE PATCH
+			let patchObject = {};
+
+			// DEFINE SENSOR ID & CURRENT STATE
+			const tempRuleID = (msg.topic != null) ? msg.topic : config.ruleid;
+			let currentState = bridge.get("rule", "rule_" + tempRuleID);
+
+			// CONTROL RULE
+			if(msg.payload === true || msg.payload === false)
 			{
-				bridge.client.rules.getById(config.ruleid)
-				.then(rule => {
-					rule.status = (msg.payload == true) ? 'enabled' : 'disabled';
-					return bridge.client.rules.save(rule);
-				})
-				.then(rule => {
-					// SEND STATUS
-					if(msg.payload == false)
-					{
-						scope.status({fill: "red", shape: "ring", text: "hue-rules.node.disabled"});
-					}
-					else
-					{
-						scope.status({fill: "green", shape: "dot", text: "hue-rules.node.enabled"});
-					}
+				if(msg.payload === currentState.payload.enabled) { return false; }
+				patchObject["status"] = (msg.payload == true) ? 'enabled' : 'disabled';
 
-					// SEND MESSAGE
-					if(!config.skipevents)
-					{
-						var hueRule = new HueRulesMessage(rule, lastState);
-						send(hueRule.msg);
+				// PATCH!
+				bridge.patch("rules", "/rules/"+config.ruleid, patchObject, 1)
+				.then(function(response) { bridge.refetchRule(tempRuleID); })
+				.catch(function(errors) { scope.error(errors);  });
 
-						// SAVE LAST STATE
-						lastState = rule;
-					}
-					if(done) { done(); }
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					if(done) { done(error); }
-				});
+				// DONE?
+				if(done) { done(); }
 			}
-		});
+			else
+			{
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
 
-		//
-		// CLOSE NODE / REMOVE EVENT LISTENER
-		this.on('close', function()
-		{
-			bridge.events.removeAllListeners('rule' + config.ruleid);
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) {done();}
+			}
 		});
 	}
 

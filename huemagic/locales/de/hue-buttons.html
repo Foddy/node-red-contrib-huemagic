@@ -1,0 +1,58 @@
+<script type="text/markdown" data-help-name="hue-buttons">
+Der „Hue Buttons“-Node empfängt Schaltereignisse von an der Bridge angeschlossenen Eingabegeräten.
+
+### Einrichtung
+
+Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Schalter zu finden. Wenn Sie die ID des Schalters bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Sie können intern entweder einen neuen Namen für den Schalter vergeben oder den vordefinierten Namen des Geräts beibehalten. Optional können Sie auch alle automatischen Statusmeldungen dieses Nodes deaktivieren, indem Sie die Einstellung „Ignoriere die Mitteilungen des Nodes“ anklicken. Der Node wird anschließend keine Schaltereignisse mehr ausgeben. Alternativ können Sie auch auswählen, ob die Initialisierungsnachricht des Nodes beim Start von Node-RED nicht unterdrückt werden soll. Wenn Sie diese Einstellung aktivieren, erhalten Sie nach jedem Deploy eine Statusmeldung des aktuell ausgewählten Schalters.
+
+Wenn Sie keinen Schalter auswählen und die Node-Konfiguration so anwenden, arbeitet der Node im sogenannten „Universalmodus“. In diesem Modus empfängt der Node alle Statusmitteilungen desselben Typs und gibt diese aus.
+
+### Status abrufen
+
+Gibt den aktuellen Status des Schalters aus, sobald ein `msg.payload`-Objekt mit folgendem Inhalt an den Node übergeben wurde. Sie können alternativ auch den Button in der Node-RED-Oberfläche betätigen, ohne vorher eine Nachricht an den Node übergeben zu müssen.
+
+: status (boolean) : Gibt den aktuellen Status des Schalters zurück
+
+### Statusnachrichten des Nodes
+
+Sobald eine Taste gedrückt wurde, wird folgende Statusnachricht vom Node zurückgegeben:
+
+#### Statusobjekt unter `msg.payload`
+
+: reachable (boolean | string) : `true` wenn der Schalter mit der Bridge verbunden ist, `unknown` wenn der Verbindungsstatus abweicht
+: connectionStatus (string) : Der aktuelle Verbindugsstatus mit der Bridge in Form eines Strings. Kann `connected`, `disconnected`, `connectivity_issue` oder `unidirectional_incoming` als Wert beinhalten
+: button (int | boolean) : Nummerische Kennung der Taste, die zuletzt betätigt wurde oder `false`, wenn keine Taste gedrückt wurde
+: action (string | boolean) : `false` wenn keine Taste gedrückt wurde oder `initial_press`, `repeat`, `short_release`, `long_release` oder `double_short_release` in Form eines Strings
+: updated (string) : Zeitpunkt der letzten Aktualisierung der Ressource von HueMagic (ISO 8601)
+
+#### Informationen zum Schalter unter `msg.info`
+
+: id (string) : Gibt die neue ID des Schalters an
+: idV1 (string | boolean) : Gibt die alte ID des Schalters an
+: uniqueId (string) : Die eindeutige ID des Schalters
+: deviceId (string) : Die eindeutige ID des Geräts
+: name (string) : Der aktuell eingestellte Name des Schalters
+: type (string) : Der Typ des Schalters (immer `button`)
+: softwareVersion (string) : Die aktuelle Firmware des Schalters
+: battery (float) : Der aktuelle Batteriestand des Schalters
+: batteryState (string) : Der aktuelle Status des Batteriestands. Kann `normal`, `low` oder `critical` als Wert beinhalten
+: model (object) : Beinhaltet die Modellinformationen des Schalters unter `id`, `manufacturer`, `name`, `type` und `certified`
+
+#### Zustandsänderungen unter `msg.updated`
+
+Listet einzelne Parameter in Form eines Objekts auf, die sich im Vergleich zum letzten Zustand des Schalters geändert haben. Wenn keine Änderungen registriert wurden, ist dieses Objekt leer.
+
+#### Letzter Stand des Schalters unter `msg.lastState`
+
+Beinhaltet das komplette Statusobjekt (siehe Ausgabewerte oben) des letzten Zustands vor der zuletzt registrierten Änderung. Wenn der letzte Zustand von HueMagic noch nicht registriert wurde, wird `false` ausgegeben.
+
+#### Letzter Befehl unter `msg.command` (optional)
+
+Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wird der gesamte Befehl der ausgeführt wurde mit ausgegeben. Andernfalls wird dieses Objekt vom Node nicht ausgegeben.
+
+### Beispiele von HueMagic
+
+HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
+
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
+</script>

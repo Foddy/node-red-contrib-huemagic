@@ -5,14 +5,12 @@
 		{
 			"name": "Name",
 			"sensor": "Sensor",
-			"skipevents": "Mitteilungen ignorieren",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
 			"input-name": "Name des Temperatursensors",
 			"searching": "Suche nach Temperatursensoren…",
 			"none-found": "keine Temperatursensoren gefunden!",
-			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"universalevents": "Universelle Mitteilungen",
-			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
 		},
 		"node":
 		{
@@ -22,7 +20,10 @@
 			"not-reachable": "nicht erreichbar",
 			"input": "Statusabfrage",
 			"output": "Temperatur (aktualisiert)",
-			"universal": "Universalmodus"
+			"universal": "Universalmodus",
+			"deactivated": "deaktiviert",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…"
 		}
 	}
 }

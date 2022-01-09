@@ -1,12 +1,12 @@
 {
-	"hue-button":
+	"hue-buttons":
 	{
 		"config":
 		{
 			"name": "Name",
 			"input-name": "Button name",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"searching": "Searching Hue Buttons…",
 			"none-found": "No Hue Button found!",
 			"unknown-error": "Something went wrong. Please retry.",
@@ -16,7 +16,7 @@
 		},
 		"node":
 		{
-			"title": "Hue Button",
+			"title": "Hue Buttons",
 			"not-configured": "not configured",
 			"waiting": "waiting…",
 			"button-on": "On",
@@ -26,7 +26,9 @@
 			"action-longreleased": "long released",
 			"input": "status query",
 			"output": "pressed button",
-			"universal": "universal mode"
+			"universal": "universal mode",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

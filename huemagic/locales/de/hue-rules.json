@@ -5,8 +5,8 @@
 		{
 			"name": "Name",
 			"input-name": "Name der Regel",
-			"skipevents": "Mitteilungen ignorieren",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
 			"searching": "Suche nach Regeln…",
 			"none-found": "Keine Regeln gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
@@ -20,7 +20,10 @@
 			"enabled": "aktiviert",
 			"disabled": "deaktiviert",
 			"output": "Regel (aktiviert)",
-			"input": "aktivieren / deaktivieren"
+			"input": "aktivieren / deaktivieren",
+			"universal": "Universalmodus",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…"
 		}
 	}
 }

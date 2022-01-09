@@ -6,10 +6,10 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let async = require('async');
-		var isEndless = config.endless;
-		var restoreState = config.restore;
+		const scope = this;
+		const async = require('async');
+		const isEndless = config.endless;
+		const restoreState = config.restore;
 
 		// STEPS INITIALIZATION
 		this.steps = config.steps;
@@ -182,22 +182,25 @@ module.exports = function(RED)
 		}
 
 		//
-		// ENABLE HUE MAGIC ANIMATION
+		// START THE HUEMAGIC ANIMATION
 		this.on('input', function(msg, send, done)
 		{
-			// Node-RED < 1.0
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
 			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
 			
-			if(typeof msg.payload.steps != 'undefined') {
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.steps != 'undefined')
+			{
 				scope.steps = msg.payload.steps;
-				//we animate if we receive steps from the input.
 				msg.payload.animate = true;
 			}
+
+			const playFromButton = (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "play");
 
 			if(scope.steps != null)
 			{
 				// SPECIALS CONFIG
-				if(typeof msg.payload.specials != 'undefined')
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.specials != 'undefined')
 				{
 					// APPLY RANDOM ORDER CONFIG
 					if(typeof msg.payload.specials.randomOrder != 'undefined')
@@ -207,7 +210,7 @@ module.exports = function(RED)
 				}
 
 				// TURN ON ANIMATION
-				if(msg.payload.animate == true||msg.payload === true)
+				if(typeof msg.payload != 'undefined' && msg.payload.animate == true||msg.payload === true||playFromButton === true)
 				{
 					var animationSteps = typeof scope.steps === 'string' ? JSON.parse(scope.steps) : scope.steps;
 					if(scope.isAnimating == false)
@@ -220,7 +223,7 @@ module.exports = function(RED)
 				}
 
 				// TURN OFF ANIMATION
-				if((typeof msg.payload.animate != 'undefined' && msg.payload.animate == false)||msg.payload === false)
+				if((typeof msg.payload != 'undefined' && typeof msg.payload.animate != 'undefined' && msg.payload.animate == false)||msg.payload === false)
 				{
 					scope.animationStopped(done);
 					scope.isAnimating = false;
@@ -250,25 +253,32 @@ module.exports = function(RED)
 	// GET ANIMATIONS
 	RED.httpAdmin.get('/hue/animations', function(req, res, next)
 	{
-		let fs = require("fs");
-		let path = require("path");
+		const fs = require("fs");
+		const path = require("path");
+		const dir = path.resolve(__dirname, 'animations');
 
 		var allAnimations = [];
-		var dir = path.resolve(__dirname, 'animations');
-
-		fs.readdirSync(dir).forEach(filename => {
-			var filepath = path.resolve(dir, filename);
-			var stat = fs.statSync(filepath);
-			var isFile = stat.isFile();
-			var fileID = path.basename(filepath, '.json');
-
-			if(isFile)
+		fs.readdirSync(dir).forEach(function(filename)
+		{
+			try
 			{
-				var animation = JSON.parse(fs.readFileSync(filepath, "utf8"));
-				animation.info.id = fileID;
+				var filepath = path.resolve(dir, filename);
+				var stat = fs.statSync(filepath);
+				var isFile = stat.isFile();
+				var fileID = path.basename(filepath, '.json');
 
-				allAnimations.push(animation);
-			};
+				if(isFile)
+				{
+					var animation = JSON.parse(fs.readFileSync(filepath, "utf8"));
+					animation.info.id = fileID;
+
+					allAnimations.push(animation);
+				};
+			}
+			catch(e)
+			{
+				console.log(fileID, e);
+			}
 		});
 
 		// SEND ALL ANIMATIONS
@@ -280,7 +290,10 @@ module.exports = function(RED)
 	RED.httpAdmin.get('/hue/animations/:file', function(req, res, next)
 	{
 		let path = require("path");
-		res.sendFile(path.resolve(__dirname, 'animations', 'previews', req.params.file));
+		res.sendFile(req.params.file, {
+			root: path.resolve(__dirname, 'animations', 'previews'),
+			dotfiles: 'deny'
+		});
 	});
 
 	//
@@ -288,6 +301,9 @@ module.exports = function(RED)
 	RED.httpAdmin.get('/hue/assets/:file', function(req, res, next)
 	{
 		let path = require("path");
-		res.sendFile(path.resolve(__dirname, 'assets', req.params.file));
+		res.sendFile(req.params.file, {
+			root: path.resolve(__dirname, 'assets'),
+			dotfiles: 'deny'
+		});
 	});
 }

@@ -1,0 +1,197 @@
+<script type="text/x-red" data-template-name="hue-buttons">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-buttons.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-buttons.config.input-name" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sensorid"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="hue-buttons.config.button"></span></label>
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <div id="input-select-toggle" style="flex-grow: 1;">
+                <input type="text" id="node-input-sensorid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%"/>
+            </div>
+            <button id="node-config-input-scan-buttons-sensors" type="button" class="red-ui-button" style="margin-left: 10px;">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+    <div class="form-row" style="margin-top: 30px">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipevents" style="flex: 15px;">
+            <span data-i18n="hue-buttons.config.skipevents-node" style="width: 100%; margin-left: 10px;"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
+            <span data-i18n="hue-buttons.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-buttons',{
+        category: 'HueMagic',
+        color: '#347aeb',
+        defaults: {
+            name: { value:"" },
+            bridge: { type: "hue-bridge", required: true },
+            sensorid: { value:"", required: false },
+            skipevents: { value: false },
+            initevents: { value: false }
+        },
+        align: 'left',
+        icon: "hue-buttons.png",
+        inputs: 1,
+        outputs: 1,
+        label: function() {
+            return this.name || this._("hue-buttons.node.title");
+        },
+        paletteLabel: function() {
+            return this._("hue-buttons.node.title");
+        },
+        inputLabels: function() {
+            return this._("hue-buttons.node.input");
+        },
+        outputLabels: function() {
+            return this._("hue-buttons.node.output");
+        },
+        oneditprepare: function()
+        {
+            const scope = this;
+            let options = [];
+
+            function manualInput()
+            {
+                // GET CURRENT SELECTED VALUE
+                var current = $('#node-input-sensorid').val();
+
+                // REMOVE SELECT FIELD
+                $('#input-select-toggle').empty();
+
+                // CREATE NEW INPUT FIELD
+                $('#input-select-toggle').append('<input type="text" id="node-input-sensorid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%" value="'+current+'" />');
+
+                // CHANGE BUTTON ICON
+                var button = $("#node-config-input-scan-buttons-sensors");
+                var buttonIcon = button.find("i");
+                buttonIcon.removeClass("fa-pencil");
+                buttonIcon.addClass("fa-search");
+            }
+
+            function searchAndSelect()
+            {
+                // GET CURRENT BRIDGE CONFIGURATION
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                if(!bridgeConfig) { return false; }
+
+                // GET CURRENT SELECTED VALUE
+                var current = $('#node-input-sensorid').val();
+
+                // TRIGGER SEARCHING NOTIFICATION
+                var notification = RED.notify(scope._("hue-buttons.config.searching"), { type: "compact", modal: true, fixed: true });
+
+                // GET THE SENSORS
+                $.get('hue/ressources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "button" })
+                .done( function(data) {
+                    var allRessources = JSON.parse(data);
+                    if(allRessources.length <= 0)
+                    {
+                        notification.close();
+                        RED.notify(scope._("hue-buttons.config.none-found"), { type: "error" });
+                        return false;
+                    }
+
+                    // SET OPTIONS
+                    allRessources.forEach(function(ressource)
+                    {
+                        if(ressource.model)
+                        {
+                            options[ressource.id] = { value: ressource.id, label: ressource.name + " ("+ressource.model+")" };
+                        }
+                        else
+                        {
+                            options[ressource.id] = { value: ressource.id, label: ressource.name };
+                        }
+                    });
+
+                    // SELECT CURRENT VALUE
+                    $("#node-input-sensorid").typedInput({
+                        types: [
+                            {
+                                value: current,
+                                options: Object.values(options)
+                            }
+                        ]
+                    });
+
+                    // CHANGE BUTTON ICON
+                    var button = $("#node-config-input-scan-buttons-sensors");
+                    var buttonIcon = button.find("i");
+                    buttonIcon.removeClass("fa-search");
+                    buttonIcon.addClass("fa-pencil");
+
+                    // CLOSE SEARCH NOTIFICATION
+                    notification.close();
+                })
+                .fail(function()
+                {
+                    notification.close();
+                    RED.notify(scope._("hue-buttons.config.unknown-error"), "error");
+                });
+            }
+
+            // CHANGED SENSOR ID? -> REPLACE NAME (IF POSSIBLE)
+            $(document).on('change', '#node-input-sensorid', function(e)
+            {
+                let currentSelectedOptionID = $(e.currentTarget).val();
+                let currentSelectedOptionValue = (currentSelectedOptionID.length > 0 && options[currentSelectedOptionID]) ? options[currentSelectedOptionID].label : false;
+
+                if(currentSelectedOptionValue !== false)
+                {
+                    $('#node-input-name').val(currentSelectedOptionValue.split(" (")[0]);
+                }
+            });
+
+            // TOGGLE SELECT/INPUT FIELD
+            $('#node-config-input-scan-buttons-sensors').click(function()
+            {
+                if($('#input-select-toggle').find(".red-ui-typedInput-container").length > 0)
+                {
+                    manualInput();
+                }
+                else
+                {
+                    searchAndSelect();
+                }
+            });
+        },
+        button: {
+            enabled: function() {
+                return (this.sensorid && this.sensorid.length > 1)
+            },
+            visible: function() {
+                return (this.sensorid && this.sensorid.length > 1)
+            },
+            onclick: function()
+            {
+                const node = this;
+                if(node.bridge)
+                {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({ __user_inject_props__: "status"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-buttons.node.statusmsg"), { type: "success", id: "status", timeout: 2000 });
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>

@@ -1,32 +1,34 @@
 <script type="text/x-red" data-template-name="hue-brightness">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-brightness.config.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-brightness.config.input-name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-brightness.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
-        <input type="text" id="node-input-bridge">
+        <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
         <label for="node-input-sensorid"><i class="fa fa-sun-o"></i> <span data-i18n="hue-brightness.config.sensor"></span></label>
-        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
-            <div style="position: absolute; left: 0px; right: 40px;">
-                <input type="text" id="node-input-sensorid" placeholder="1" style="width: 100%"/>
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <div id="input-select-toggle" style="flex-grow: 1;">
+                <input type="text" id="node-input-sensorid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%"/>
             </div>
-            <a id="node-config-input-scan-temp-sensors" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+            <button id="node-config-input-scan-temp-sensors" type="button" class="red-ui-button" style="margin-left: 10px;">
                 <i class="fa fa-search"></i>
-            </a>
+            </button>
+        </div>
+    </div>
+    <div class="form-row" style="margin-top: 30px">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipevents" style="flex: 15px;">
+            <span data-i18n="hue-brightness.config.skipevents-node" style="width: 100%; margin-left: 10px;"></span>
         </div>
     </div>
     <div class="form-row">
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-brightness.config.skipevents"></span></label>
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-brightness.config.skipevents-node"></span>
-        </label>
-    </div>
-    <div class="form-row">
-        <label for="node-input-universalevents"><i class="fa fa-bullhorn"></i> <span data-i18n="hue-brightness.config.universalevents"></span></label>
-        <input type="checkbox" id="node-input-universalevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-brightness.config.universalevents-node"></span>
-        </label>
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
+            <span data-i18n="hue-brightness.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        </div>
     </div>
 </script>
 
@@ -35,95 +37,161 @@
         category: 'HueMagic',
         color: '#f1c40f',
         defaults: {
-            name: {value:""},
-            bridge: {type: "hue-bridge", required: true},
-            sensorid: {value:"", required: false, validate: function(id) {
-                if(id.length < 1) { return true; }
-                else if(!isNaN(id)) { return true; }
-                else { return false; }
-            }},
-            skipevents: {value: false},
-            universalevents: {value: false}
+            name: { value:"" },
+            bridge: { type: "hue-bridge", required: true },
+            sensorid: { value:"", required: false },
+            skipevents: { value: false },
+            initevents: { value: false }
         },
+        align: 'left',
+        icon: "hue-brightness.png",
         inputs: 1,
         outputs: 1,
+        label: function() {
+            return this.name || this._("hue-brightness.node.title");
+        },
+        paletteLabel: function() {
+            return this._("hue-brightness.node.title");
+        },
         inputLabels: function() {
             return this._("hue-brightness.node.input");
         },
         outputLabels: function() {
             return this._("hue-brightness.node.output");
         },
-        align: 'right',
-        icon: "hue-brightness.png",
-        paletteLabel: function() {
-            return this._("hue-brightness.node.title");
-        },
-        label: function() {
-            return this.name || this._("hue-brightness.node.title");
-        },
         oneditprepare: function()
         {
-            var scope = this;
+            const scope = this;
+            let options = [];
 
-            function manualLightSensorID()
+            function manualInput()
             {
+                // GET CURRENT SELECTED VALUE
                 var current = $('#node-input-sensorid').val();
-                $('#node-input-sensorid').replaceWith('<input type="text" id="node-input-sensorid" style="width: 100%"/>');
-                $('#node-input-sensorid').val(current);
+
+                // REMOVE SELECT FIELD
+                $('#input-select-toggle').empty();
+
+                // CREATE NEW INPUT FIELD
+                $('#input-select-toggle').append('<input type="text" id="node-input-sensorid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%" value="'+current+'" />');
+
+                // CHANGE BUTTON ICON
+                var button = $("#node-config-input-scan-temp-sensors");
+                var buttonIcon = button.find("i");
+                buttonIcon.removeClass("fa-pencil");
+                buttonIcon.addClass("fa-search");
             }
 
-            function searchAndSelectLightSensorID()
+            function searchAndSelect()
             {
-                var current = $('#node-input-sensorid').val();
-                $('#node-input-sensorid').replaceWith('<select id="node-input-sensorid" style="width: 100%"></select>');
-                $('#node-input-sensorid').append('<option selected="selected" value="null">'+scope._("hue-brightness.config.searching")+'</option>');
-
+                // GET CURRENT BRIDGE CONFIGURATION
                 var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('hue/sensors', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "ZLLLightLevel"})
-                .done( function(data) {
-                    var lightSensors = JSON.parse(data);
+                if(!bridgeConfig) { return false; }
 
-                    if(lightSensors.length <= 0)
+                // GET CURRENT SELECTED VALUE
+                var current = $('#node-input-sensorid').val();
+
+                // TRIGGER SEARCHING NOTIFICATION
+                var notification = RED.notify(scope._("hue-brightness.config.searching"), { type: "compact", modal: true, fixed: true });
+
+                // GET THE SENSORS
+                $.get('hue/ressources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "motion" })
+                .done( function(data) {
+                    var allRessources = JSON.parse(data);
+                    if(allRessources.length <= 0)
                     {
-                        RED.notify(scope._("hue-brightness.config.none-found"), "error");
+                        notification.close();
+                        RED.notify(scope._("hue-brightness.config.none-found"), { type: "light_level" });
+                        return false;
                     }
 
-                    // RESET OPTIONS
-                    $('#node-input-sensorid').empty();
-
-                    // SET TEMPERATURE SENSORS AS OPTIONS
-                    lightSensors.forEach(function(sensor)
+                    // SET OPTIONS
+                    allRessources.forEach(function(ressource)
                     {
-                        $('#node-input-sensorid').append('<option value="' + sensor.id + '">' + sensor.name + '</option>');
+                        if(ressource.model)
+                        {
+                            options[ressource.id] = { value: ressource.id, label: ressource.name + " ("+ressource.model+")" };
+                        }
+                        else
+                        {
+                            options[ressource.id] = { value: ressource.id, label: ressource.name };
+                        }
                     });
 
                     // SELECT CURRENT VALUE
-                    $('#node-input-sensorid').val(current);
+                    $("#node-input-sensorid").typedInput({
+                        types: [
+                            {
+                                value: current,
+                                options: Object.values(options)
+                            }
+                        ]
+                    });
+
+                    // CHANGE BUTTON ICON
+                    var button = $("#node-config-input-scan-temp-sensors");
+                    var buttonIcon = button.find("i");
+                    buttonIcon.removeClass("fa-search");
+                    buttonIcon.addClass("fa-pencil");
+
+                    // CLOSE SEARCH NOTIFICATION
+                    notification.close();
                 })
                 .fail(function()
                 {
+                    notification.close();
                     RED.notify(scope._("hue-brightness.config.unknown-error"), "error");
                 });
             }
 
-            $(document).on('change', '#node-input-sensorid', function()
+            // CHANGED SENSOR ID? -> REPLACE NAME (IF POSSIBLE)
+            $(document).on('change', '#node-input-sensorid', function(e)
             {
-                var sensorName = $('#node-input-sensorid option:selected').text();
-                if(sensorName.length > 0)
+                let currentSelectedOptionID = $(e.currentTarget).val();
+                let currentSelectedOptionValue = (currentSelectedOptionID.length > 0 && options[currentSelectedOptionID]) ? options[currentSelectedOptionID].label : false;
+
+                if(currentSelectedOptionValue !== false)
                 {
-                    $('#node-input-name').val(sensorName);
+                    $('#node-input-name').val(currentSelectedOptionValue.split(" (")[0]);
                 }
             });
 
+            // TOGGLE SELECT/INPUT FIELD
             $('#node-config-input-scan-temp-sensors').click(function()
             {
-                if($('#node-input-sensorid').prop("tagName") === "INPUT")
+                if($('#input-select-toggle').find(".red-ui-typedInput-container").length > 0)
                 {
-                    searchAndSelectLightSensorID();
-                } else {
-                    manualLightSensorID();
+                    manualInput();
+                }
+                else
+                {
+                    searchAndSelect();
                 }
             });
+        },
+        button: {
+            enabled: function() {
+                return (this.sensorid && this.sensorid.length > 1)
+            },
+            visible: function() {
+                return (this.sensorid && this.sensorid.length > 1)
+            },
+            onclick: function()
+            {
+                const node = this;
+                if(node.bridge)
+                {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({ __user_inject_props__: "status"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-brightness.node.statusmsg"), { type: "success", id: "status", timeout: 2000 });
+                        }
+                    });
+                }
+            }
         }
     });
 </script>

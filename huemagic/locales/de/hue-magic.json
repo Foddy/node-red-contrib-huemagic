@@ -21,7 +21,8 @@
 			"animating": "animiere…",
 			"stopped": "gestoppt",
 			"input": "Starte Animation",
-			"output": "Licht oder Gruppe"
+			"output": "Licht oder Gruppe",
+			"playmsg": "Animation gestartet…"
 		}
 	}
 }

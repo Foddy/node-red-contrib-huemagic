@@ -1,81 +1,149 @@
 [
     {
-        "id": "d081bb24.81a8d",
+        "id": "073fb607f8039ef2",
         "type": "tab",
         "label": "Hue Motion (example)",
         "disabled": false,
         "info": "Example use of the Hue Motion node"
     },
     {
-        "id": "c97e16b9.1ce368",
-        "type": "inject",
-        "z": "d081bb24.81a8d",
-        "name": "Turn on",
-        "topic": "",
-        "payload": "true",
-        "payloadType": "bool",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 130,
-        "y": 60,
-        "wires": [
-            [
-                "acfd6da8.7d8a58"
-            ]
-        ],
-        "icon": "font-awesome/fa-power-off"
+        "id": "3ba8c03bba2a097d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "FIRST STEPS (double click me)",
+        "info": "Click on the \"Hue Motion\" node and select both your bridge and a sensor from the list. If you have not yet set up a bridge, you will be asked to set one up before you can finish configuring the node.\n\nAs soon as the node is connected to your bridge and the sensor and you have deployed the changes in Node-RED, the node can receive and execute your commands. The \"Hue Motion\" node automatically outputs a message each time as soon as the status of the sensor on the bridge has been updated (a movement has been registered). You will receive the updated status and all of its information in the message that is issued.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
     },
     {
-        "id": "711947a4.fc72e8",
-        "type": "inject",
-        "z": "d081bb24.81a8d",
-        "name": "Turn off",
-        "topic": "",
-        "payload": "false",
-        "payloadType": "bool",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 130,
-        "y": 120,
-        "wires": [
-            [
-                "acfd6da8.7d8a58"
-            ]
-        ],
-        "icon": "font-awesome/fa-power-off"
-    },
-    {
-        "id": "a9304ae0.8a9bf",
+        "id": "bce07ce0ad34cdf5",
         "type": "debug",
-        "z": "d081bb24.81a8d",
+        "z": "073fb607f8039ef2",
         "name": "Information",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "x": 590,
-        "y": 60,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
         "wires": [],
         "icon": "font-awesome/fa-info-circle"
     },
     {
-        "id": "acfd6da8.7d8a58",
-        "type": "hue-motion",
-        "z": "d081bb24.81a8d",
-        "name": "",
-        "sensorid": "",
-        "skipevents": false,
-        "x": 350,
-        "y": 60,
+        "id": "23deb12245fdbc7c",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Get the current status",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0b68e8b6eeeb0ed5",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
         "wires": [
             [
-                "a9304ae0.8a9bf"
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "fe83e4d605d6b41d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Turn on / off the device",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "87fc103f2b958513",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Turn on",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e2668753efecb01a",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Turn off",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "1a1e1a628faa15dc",
+        "type": "hue-motion",
+        "z": "073fb607f8039ef2",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "bce07ce0ad34cdf5"
             ]
         ]
     }

@@ -1,174 +1,93 @@
-<script type="text/x-red" data-help-name="hue-bridge-node">
-    <p>Der Hue Bridge Node hält die Bridge-Firmware und die angeschlossenen Geräte auf dem neuesten Stand und bietet weitere Informationen und Einrichtungsoptionen für die Bridge.</p>
+<script type="text/markdown" data-help-name="hue-bridge-node">
+Der „Hue Bridge“-Node ist ein universeller Node, der alle Einstellungen der Bridge und Statusmeldungen anderer Nodes ausgeben kann.
 
-    <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und legen Sie fest, ob die ausgewählte Bridge Firmware- und andere Geräteupdates automatisch finden und installieren soll. Wenn Sie die Option "Mitteilungen ignorieren" aktivieren, wird dieser Node keine Mitteilungen von aktualisierten und aktiven Geräten und anderen Ressourcen schicken.</p>
+### Einrichtung
 
-    <h3>Einstellungen / Status abrufen</h3>
-    <p>Ruft den aktuellen Status / die aktuellen Einstellungen der Bridge ab, indem ein Eingabewert eingegeben wird</p>
-    <dl class="message-properties">
-        <dt>true<span class="property-type">boolean (Beispiel)</span></dt>
-        <dd>Löst eine Ausgabe des aktuellen Status / der aktuellen Einstellungen aus</dd>
-    </dl>
+Wählen Sie zunächst die gewünschte Hue Bridge aus. Sie können optional alle automatischen Statusmeldungen dieses Nodes deaktivieren, indem Sie die Einstellung „Globale Aktualisierungsmitteilungen auf diesem Node ignorieren“ anklicken. Der Node wird anschließend keine Geräteupdates mehr ausgeben.
 
-    <h3>TouchLink-Scan auslösen</h3>
-    <p>Verwenden Sie TouchLink, um neue oder alte Geräte nach einem Bridge-Reset zu koppeln. Dies ist in der Community allgemein als "Lamp Stealer" bekannt. Übergeben Sie dafür die Eigenschaft <b>touchLink</b> an <b>msg.payload</b>.</p>
-    <dl class="message-properties">
-        <dt>touchLink<span class="property-type">boolean (Beispiel)</span></dt>
-        <dd>Richtet Lichter / Geräte in die Bridge ein</dd>
-    </dl>
+Alternativ können Sie auch auswählen, ob die Initialisierungsnachrichten aller Nodes beim Start von Node-RED nicht unterdrückt werden sollen. Wenn Sie diese Einstellung aktivieren, erhalten Sie nach jedem Deploy jeweils eine Statusmeldung von allen Ressourcen, die mit der Bridge verbunden sind.
 
-    <h3>Alle Geräte und Ressourcen abrufen</h3>
-    <p>Verwenden Sie den Fetch-Befehl, um bei Bedarf verschiedene Informationen von der Hue Bridge abzurufen. Übergeben Sie dafür die Eigenschaft <b>fetch</b> an <b>msg.payload</b>.</p>
-    <dl class="message-properties">
-        <dt>users<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Benutzerobjekten in msg.users & Bridge-Informationen in msg.info zurück</dd>
+### Einstellungen / Status abrufen
 
-        <dt>lights<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Licht-Objekten in msg.lights & Bridge-Informationen in msg.info zurück</dd>
+Gibt den aktuellen Status / Einstellungen der Bridge aus, sobald folgende Nachricht an den Node geschickt wurde. Sie können alternativ auch den Button in der Node-RED-Oberfläche betätigen, ohne vorher eine Nachricht an den Node übergeben zu müssen.
 
-        <dt>groups<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Gruppenobjekten in msg.groups & Bridge-Informationen in msg.info zurück</dd>
+: payload (boolean) : Gibt den aktuellen Status der Bridge zurück
 
-        <dt>sensors<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Sensorobjekten in msg.sensors & Bridge-Informationen in msg.info zurück</dd>
+### TouchLink-Scan auslösen
 
-        <dt>scenes<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Szenen-Objekten in msg.scenes & Bridge-Informationen in msg.info zurück</dd>
+Sie können mittels eines „TouchLink-Scans“ neue oder alte Geräte mit der Bridge koppeln (z. B. nach einem Reset). Übergeben Sie dafür das Objekt `msg.payload` mit folgendem Inhalt:
 
-        <dt>rules<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Regelobjekten in msg.rules & Bridge-Informationen in msg.info zurück</dd>
+: touchLink (boolean) : Koppelt alte oder neue Geräte mit der Bridge
 
-        <dt>schedules<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von Schedule-Objekten in msg.schedules & Bridge-Informationen in msg.info zurück</dd>
+### Alle Geräte und Ressourcen abrufen
 
-        <dt>resourceLinks<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array von ResourceLink-Objekten in msg.resourceLinks & Bridge-Informationen in msg.info zurück</dd>
+Mit dem „fetch“-Befehl können Sie eine Liste von spezifischen Geräten ausgeben, die aktuell mit der Bridge verbunden sind. Übergeben Sie dafür das Objekt `msg.payload` mit folgendem Inhalt:
 
-        <dt>timeZones<span class="property-type">string</span></dt>
-        <dd>Gibt ein Array aller verfügbaren Zeitzonen in msg.timeZones & Bridge-Informationen in msg.info zurück</dd>
+: fetch (string | array[string, …]) : Kann `light`, `group`, `button`, `motion`, `temperature`, `light_level` oder `rule` als Wert(e) annehmen
 
-        <dt>internetServices<span class="property-type">string</span></dt>
-        <dd>Gibt ein Objekt aller verfügbaren Informationen von Internet Services in msg.internetServices & Bridge-Informationen in msg.info zurück</dd>
+### Hue Bridge Einstellungen ändern
 
-        <dt>portal<span class="property-type">string</span></dt>
-        <dd>Gibt ein Objekt aller verfügbaren Portal-Informationen in msg.portal & Bridge-Informationen in msg.info zurück</dd>
-    </dl>
+Mit dem folgenden Befehl können Sie spezifische Einstellungen auf der Bridge ändern. Bitte beachten Sie, dass das Ändern der Netzwerkeinstellungen die Neukonfiguration der Bridge auf HueMagic erfordert. Übergeben Sie das Objekt `msg.payload.settings` mit folgenden Einstellungsmöglichkeiten an den Node:
 
-    <h3>Hue Bridge Einstellungen</h3>
-    <p>Ändert die Hue Bridge-Einstellungen basierend auf den in <b>msg.payload.settings</b> übergebenen Werten von:</p>
-    <dl class="message-properties">
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name der Bridge</dd>
+: name (string) : Ändert den Namen der Bridge und muss mind. 4 bis max. 16 Zeichen enthalten
+: zigbeeChannel (int) : Ändert den aktuellen ZigBee-Kanal (entweder `11`, `15`, `20`, `25` oder `0`)
+: ipAddress (string) : Ändert die IP-Adresse in den Netzwerkeinstellungen
+: dhcpEnabled (boolean) : `true`, aktiviert DHCP in den Netzwerkeinstellungen, `false`, deaktiviert die Einstellung
+: netmask (string) : Ändert die Netzwerkmaske in den Netzwerkeinstellungen
+: gateway (string) : Gibt das Gateway in den Netzwerkeinstellungen an
+: proxyAddress (string) : Stellt eine Proxy-Adresse in den Netzwerkeinstellungen ein
+: proxyPort (string | int) : Gibt den Port des Proxys in den Netzwerkeinstellungen an
+: timeZone (string) : Ändert die aktuell eingestellte Zeitzone auf der Bridge
 
-        <dt>zigbeeChannel<span class="property-type">int</span></dt>
-        <dd>ZigBee-Kanal (zur Kommunikation mit Lichtern)</dd>
+### Statusnachrichten des Nodes
 
-        <dt>ipAddress<span class="property-type">string</span></dt>
-        <dd>IP-Adresse (riskant)</dd>
+Die Statusmittilungen des „Hue Bridge“-Nodes sind dynamisch. Sie folgen zwar einem bestimmten Muster, können aber in ihrer Ausgabe variieren, je nachdem welche Aktion auf dem Node gerade ausgeführt wurde.
 
-        <dt>dhcpEnabled<span class="property-type">boolean</span></dt>
-        <dd>Gibt an, ob DHCP aktiviert ist</dd>
+#### Statusobjekt unter `msg.payload`
 
-        <dt>netmask<span class="property-type">string</span></dt>
-        <dd>Netzmaske (riskant)</dd>
+: id (string) : Eindeutige ID der Hue Bridge
+: name (string) : Aktuell eingestellter Name
+: factoryNew (boolean) : Indikator, ob die Bridge fabrikneu ist
+: replacesBridgeId (string | boolean) : Gibt die alte Bridge-ID aus (wenn eine Migration durchgeführt wurde) oder `false` aus
+: dataStoreVersion (string) : Version des Datenspeichers
+: starterKitId (string | boolean) : Name des im Werk erstellten Starterkits oder `false`
+: softwareVersion (string) : Softwareversion der Bridge
+: apiVersion (string) : API-Version der Bridge
+: zigbeeChannel (int) : Aktuell verwendeter ZigBee-Kanal
+: macAddress (string) : MAC-Adresse der Bridge
+: ipAddress (string) : IP-Adresse der Bridge
+: dhcpEnabled (boolean) : Gibt an, ob DHCP aktiviert ist
+: netmask (string) : Netzmaske der Bridge
+: gateway (string) : Gateway der Bridge
+: proxyAddress (string | false) : Aktuell verwendete Proxy-Adresse oder `false`
+: proxyPort (string) : Aktuell verwender Proxy-Port
+: utcTime (string) : UTC-Zeit auf der Bridge
+: timeZone (string) : Aktuell eingestellte Zeitzone auf der Bridge
+: localTime (string) : Lokale Zeitzone
+: portalServicesEnabled (boolean) : Gibt an, ob Portal-Services aktiviert sind
+: portalConnected (boolean) : Gibt an, ob die Bridge mit dem Portal verbunden ist
+: linkButtonEnabled (boolean) : Gibt an, ob die Verknüpfungstaste aktiviert ist
+: touchlinkEnabled (boolean) : Gibt an, ob TouchLink aktiviert ist
+: autoUpdatesEnabled (boolean) : Gibt an, ob die HueMagic automatisch nach Updates sucht
+: users (array[object, …]) : Liste aller Nutzer auf der Bridge (Array mit Objekten)
+: updated (string) : Zeitpunkt der letzten Aktualisierung der Ressource von HueMagic (ISO 8601)
+: model (object) : Beinhaltet die Modellinformationen der Bridge unter `id`, `manufacturer` und `name`
 
-        <dt>gateway<span class="property-type">string</span></dt>
-        <dd>Gateway (riskant)</dd>
+#### Fetch-Ergebnisse unter `msg.results` (optional)
 
-        <dt>proxyAddress<span class="property-type">string</span></dt>
-        <dd>Proxy-Adresse</dd>
+Wenn der „fetch“-Befehl auf dem Node angewendet wurde, gibt die Bridge die entsprechenden Resultate unter dem `msg.results`-Objekt aus. Das Objekt beinhaltet die abgefragten Ressourcengruppen, die wiederum alle entsprechenden Ressourcen in Form eines Arrays beinhalten.
 
-        <dt>proxyPort<span class="property-type">string</span></dt>
-        <dd>Proxy-Port</dd>
+#### Globale Statusmitteilungen unter `msg.updated` (optional)
 
-        <dt>timeZone<span class="property-type">string</span></dt>
-        <dd>Zeitzone</dd>
-    </dl>
+Sofern nicht deaktiviert, gibt der Node für jede Ressource auf der Bridge eine aktualisierte Statusmeldung aus. Die Statusmeldung unter *msg.updated* folgt dem Muster der jeweiligen Ressource und variiert je nach Typ des Geräts, welches zuletzt aktualisiert wurde.
 
-    <h3>Hue Bridge Mitteilungen</h3>
-    <p>Die von der Bridge gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">string</span></dt>
-        <dd>Eindeutige ID der Hue Bridge</dd>
+#### Letzter Befehl unter `msg.command` (optional)
 
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name der Bridge</dd>
+Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wird der gesamte Befehl der ausgeführt wurde mit ausgegeben. Andernfalls wird dieses Objekt vom Node nicht ausgegeben.
 
-        <dt>factoryNew<span class="property-type">boolean</span></dt>
-        <dd>Ob die Bridge fabrikneu ist oder nicht</dd>
+### Beispiele von HueMagic
 
-        <dt>replacesBridgeId<span class="property-type">string / null</span></dt>
-        <dd>Ersetzt die Bridge-ID (für die Migration von alten Bridges)</dd>
+HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
 
-        <dt>dataStoreVersion<span class="property-type">string</span></dt>
-        <dd>Datenspeicherversion</dd>
-
-        <dt>starterKitId<span class="property-type">string</span></dt>
-        <dd>Name des im Werk erstellten Starterkits</dd>
-
-        <dt>softwareVersion<span class="property-type">string</span></dt>
-        <dd>Softwareversion der Bridge</dd>
-
-        <dt>apiVersion<span class="property-type">string</span></dt>
-        <dd>API-Version der Bridge</dd>
-
-        <dt>zigbeeChannel<span class="property-type">int</span></dt>
-        <dd>ZigBee-Kanal (zur Kommunikation mit Lichtern)</dd>
-
-        <dt>macAddress<span class="property-type">string</span></dt>
-        <dd>MAC-Adresse</dd>
-
-        <dt>ipAddress<span class="property-type">string</span></dt>
-        <dd>IP-Adresse</dd>
-
-        <dt>dhcpEnabled<span class="property-type">boolean</span></dt>
-        <dd>Gibt an, ob DHCP aktiviert ist</dd>
-
-        <dt>netmask<span class="property-type">string</span></dt>
-        <dd>Netzmaske</dd>
-
-        <dt>gateway<span class="property-type">string</span></dt>
-        <dd>Gateway</dd>
-
-        <dt>proxyAddress<span class="property-type">string</span></dt>
-        <dd>Proxy-Adresse</dd>
-
-        <dt>proxyPort<span class="property-type">string</span></dt>
-        <dd>Proxy-Port</dd>
-
-        <dt>utcTime<span class="property-type">string</span></dt>
-        <dd>UTC-Zeit der Bridge</dd>
-
-        <dt>timeZone<span class="property-type">string</span></dt>
-        <dd>Zeitzone</dd>
-
-        <dt>localTime<span class="property-type">string</span></dt>
-        <dd>Ortszeit der Bridge</dd>
-
-        <dt>portalServicesEnabled<span class="property-type">boolean</span></dt>
-        <dd>Gibt an, ob Portal-Services aktiviert sind</dd>
-
-        <dt>portalConnected<span class="property-type">boolean</span></dt>
-        <dd>Gibt an, ob das Portal verbunden ist</dd>
-
-        <dt>linkButtonEnabled<span class="property-type">boolean</span></dt>
-        <dd>Gibt an, ob die Verknüpfungstaste aktiviert ist</dd>
-
-        <dt>touchlinkEnabled<span class="property-type">boolean</span></dt>
-        <dd>Gibt an, ob TouchLink aktiviert ist</dd>
-
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>Das Modellobjekt der Bridge enthält modellspezifische Informationen wie model.id, model.manufacturer und model.name</dd>
-    </dl>
-
-    <h3>Globale Aktualisierungsmitteilungen</h3>
-    <p>Die Bridge shickt auch Events ab, wenn eine bestimmte, aktive Ressource (Lichter, Gruppen, Sensoren etc.) den Status ändert.</p>
-    <dl class="message-properties">
-        <dt>msg.updated<span class="property-type">object</span></dt>
-        <dd>Das gesamte Object der Ressource (siehe Dokumentation)</dd>
-
-        <dt>msg.type<span class="property-type">string</span></dt>
-        <dd>Kann folgende Werte beinhalten: light, group, rule, motion, brightness, temperature, switch, tap</dd>
-    </dl>
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

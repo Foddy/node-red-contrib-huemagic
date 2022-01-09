@@ -6,9 +6,19 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueSceneMessage } = require('../utils/messages');
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
+
+		// GET TARGET WIRED GROUPS
+		this.targetGroups = {};
+		for (var w = scope.wires[0].length - 1; w >= 0; w--)
+		{
+			let oneWiredNode = RED.nodes.getNode(scope.wires[0][w]);
+			if(oneWiredNode && oneWiredNode.type == "hue-group" && oneWiredNode.exportedConfig && oneWiredNode.exportedConfig.groupid && oneWiredNode.exportedConfig.groupid.length > 1)
+			{
+				this.targetGroups[oneWiredNode.exportedConfig.groupid] = true;
+			}
+		}
 
 		//
 		// CHECK CONFIG
@@ -22,122 +32,81 @@ module.exports = function(RED)
 		// ENABLE SCENE
 		this.on('input', function(msg, send, done)
 		{
-			// Node-RED < 1.0
-			send = send || function() { scope.send.apply(scope,arguments); }
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
+			done = done || function() { scope.done.apply(scope,arguments); }
 
-			var groupID = config.groupid;
-			var sceneDef = config.sceneid;
+			// TARGET GROUP & SCENE
+			const groupIDS = (typeof msg.payload != 'undefined' && typeof msg.payload.group != 'undefined') ? msg.payload.group : [];
+			const sceneDef = (typeof msg.payload != 'undefined' && typeof msg.payload.scene != 'undefined') ? msg.payload.scene : config.sceneid;
 
-			// PASSED SCENE NAME?
-			if(typeof msg.payload === 'string' || msg.payload instanceof String)
-			{
-				sceneDef = msg.payload;
-			}
-			else
-			{
-				groupID = (typeof msg.payload != 'undefined' && typeof msg.payload.group != 'undefined') ? msg.payload.group : groupID;
-				sceneDef = (typeof msg.payload != 'undefined' && typeof msg.payload.scene != 'undefined') ? msg.payload.scene : sceneDef;
-			}
+			// PREPARE TARGET GROUPS
+			let copyOfTargetGroups = Object.keys(scope.targetGroups);
+			if(typeof groupIDS == 'string') { copyOfTargetGroups.push(groupIDS); }
+			else if(typeof groupIDS == 'object') { copyOfTargetGroups.concat(groupIDS); }
+			else { return false; }
 
-			if(config.sceneid)
-			{
-				bridge.client.scenes.getById(config.sceneid)
-				.then(scene => {
-					scope.proceedSceneAction(scene, groupID, send, done);
-				});
-			}
-			else if(sceneDef)
-			{
-				bridge.client.scenes.getAll()
-				.then(scenes => {
-					for (var scene of scenes)
-					{
-						if(scene.id == sceneDef)
-						{
-							scope.proceedSceneAction(scene, groupID, send, done);
-							break;
-						}
-						else if(scene.name == sceneDef)
-						{
-							scope.proceedSceneAction(scene, groupID, send, done);
-							break;
-						}
-					}
-				});
-			}
-			else
+			// CREATE PATCH
+			let patchObject = {};
+
+			// NO SCENE?
+			if(!sceneDef)
 			{
 				// ERROR
 				this.status({fill: "red", shape: "ring", text: "hue-scene.node.no-id"});
+				scope.error("Scene ID not found");
+				return false;
 			}
-		});
 
-
-		//
-		// PROCEED SCENE ACTION
-		this.proceedSceneAction = function(scene, applyOnGroup = false, send, done)
-		{
-			// CHECK IF SCENE SHOULD BE APPLIED TO A GROUP
-			if(applyOnGroup)
+			// RECALL ON GROUP? -> USE API v1
+			if(copyOfTargetGroups.length > 0)
 			{
-				var groupID = parseInt(applyOnGroup);
-				bridge.client.groups.getById(groupID)
-				.then(group =>
-				{
-					group.on = true;
-					group.scene = scene;
-					return bridge.client.groups.save(group);
-				})
-				.then(groupInfo =>
-				{
-					// SEND STATUS
-					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled-on-group"});
+				let targetSceneID = bridge.ressources[sceneDef].id_v1.replace("/scenes/", "");
 
-					// SEND MESSAGE
-					if(!config.skipevents)
+				// SEND STATUS
+				scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled-on-group"})
+
+				// FIND GROUP AND RECALL SCENE
+				for (var g = copyOfTargetGroups.length - 1; g >= 0; g--)
+				{
+					let targetGroup = bridge.get("group", copyOfTargetGroups[g]);
+
+					if(targetGroup)
 					{
-						var hueScene = new HueSceneMessage(scene);
-						send(hueScene.msg);
+						bridge.patch("group", targetGroup.info.idV1 + "/action", { "scene": targetSceneID }, 1)
+						.catch(function(errors) {
+							scope.error(errors);
+						});
 					}
-					if(done) { done(); }
+				}
 
-					// RESET STATUS AFTER 3 SEC
-					setTimeout(function() {
-						scope.status({});
-					}, 3000);
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					if(done) { done(error); }
-				});
+				// RESET STATUS AFTER 2 SECONDS
+				setTimeout(function() {
+					scope.status({});
+				}, 2000);
 			}
 			else
 			{
-				// RECALL A SCENE
-				bridge.client.scenes.recall(scene)
-				.then(recalledScene => {
-					// SEND STATUS
-					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});
+				// RECALL SCENE
+				patchObject["recall"] = { status: "active" };
 
-					// SEND MESSAGE
-					if(!config.skipevents)
-					{
-						var hueScene = new HueSceneMessage(scene);
-						send(hueScene.msg);
-					}
+				// CHANGE NODE UI STATE
+				scope.status({fill: "grey", shape: "ring", text: "hue-scene.node.command"});
+
+				// PATCH!
+				bridge.patch("scene", sceneDef, patchObject)
+				.then(function()
+				{
+					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});
 					if(done) { done(); }
 
-					// RESET STATUS AFTER 3 SEC
+					// RESET STATUS AFTER 1 SECOND
 					setTimeout(function() {
 						scope.status({});
-					}, 3000);
+					}, 1000);
 				})
-				.catch(error => {
-					scope.error(error, msg);
-					if(done) { done(error); }
-				});
+				.catch(function(errors) { scope.error(errors);  });
 			}
-		}
+		});
 	}
 
 	RED.nodes.registerType("hue-scene", HueScene);

@@ -6,23 +6,21 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let path = require('path');
-		let { HueGroupMessage } = require('../utils/messages');
-		var universalMode = false;
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
 
-		// SAVE LAST STATE
-		var lastState = false;
-		var futureState = null;
+		// EXPORT CONFIG
+		this.exportedConfig = config;
+
+		// SAVE FUTURE PATCH
+		this.futurePatchState = {};
+
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
 
 		// HELPER
-		let rgb = require('../utils/rgb');
-		let merge = require('../utils/merge');
-		let hexRGB = require('hex-rgb');
-		let colornames = require("colornames");
-		let getColors = require('get-image-colors');
-		let {randomHexColor} = require('../utils/color');
+		const colorUtils = require('./utils/color');
+		const merge = require('./utils/merge');
 
 		//
 		// CHECK CONFIG
@@ -36,7 +34,6 @@ module.exports = function(RED)
 		// UNIVERSAL MODE?
 		if(!config.groupid)
 		{
-			universalMode = true;
 			this.status({fill: "grey", shape: "dot", text: "hue-group.node.universal"});
 		}
 
@@ -48,163 +45,230 @@ module.exports = function(RED)
 		}
 
 		//
-		// ON UPDATE
-		if(config.groupid) { bridge.events.on('group' + config.groupid, function(group) { scope.receivedUpdates(group) }); }
-		if(!config.groupid && config.universalevents && config.universalevents == true) { bridge.events.on('group', function(group) { scope.receivedUpdates(group) }); }
-
-		//
-		// RECEIVED UPDATES
-		this.receivedUpdates = function(group)
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("group", config.groupid, function(info)
 		{
-			var hueGroup = new HueGroupMessage(group, config, lastState);
-			var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
+			let currentState = bridge.get("group", info.id, { colornames: config.colornamer ? true : false });
 
-			// HAS FUTURE STATE?
-			if(futureState != null && group.anyOn)
+			// RESSOURCE FOUND?
+			if(currentState !== false)
 			{
-				scope.applyCommands(futureState, null, null);
+				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
+				if(config.groupid)
+				{
+					// APPLY FUTURE STATE COMMANDS
+					if(Object.values(scope.futurePatchState).length > 0)
+					{
+						scope.applyCommands({}, null, null);
+					}
+
+					if(currentState.payload.on === true)
+					{
+						scope.status({fill: "yellow", shape: "dot", text: "hue-group.node.turned-on"});
+					}
+					else
+					{
+						scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
+					}
+				}
+
+				// SEND MESSAGE
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				{
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
+
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+				}
 			}
-
-			if(universalMode == false)
-			{
-				if(group.allOn)
-				{
-					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
-				}
-				else if(group.anyOn)
-				{
-					scope.status({fill: "yellow", shape: "ring", text: RED._("hue-group.node.some-on") + brightnessNotice});
-				}
-				else if(group.on)
-				{
-					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + brightnessNotice});
-				}
-				else
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
-				}
-			}
-
-			// SEND MESSAGE
-			if(!config.skipevents) { scope.send(hueGroup.msg); }
-
-			// SAVE LAST STATE
-			lastState = group;
-		}
-
-		//
-		// TURN ON / OFF GROUP
-		this.on('input', function(msg, send, done)
-		{
-			// Node-RED < 1.0
-			send = send || function() { scope.send.apply(scope,arguments); }
-			scope.applyCommands(msg, send, done);
 		});
 
 		//
-		// APPLY COMMANDS
-		this.applyCommands = function(msg, send = null, done = null)
-		{
-			var context = this.context();
-			var tempGroupID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.groupid;
+		// CONTROL GROUP
+		this.on('input', function(msg, send, done) { scope.applyCommands(msg, send, done); });
 
-			// CHECK IF GROUP ID IS SET
-			if(tempGroupID == null)
+		//
+		// APPLY COMMANDS (API v1 because CLIP/v2 does not yet support all features)
+		this.applyCommands = async function(msg, send = null, done = null)
+		{
+			// SET SEND
+			send = send || function() { scope.send.apply(scope,arguments); }
+
+			// SAVE LAST COMMAND
+			scope.lastCommand = msg;
+
+			// CREATE PATCH
+			let patchObject = {};
+
+			// DEFINE SENSOR ID & CURRENT STATE
+			const tempGroupID = (msg.topic != null) ? msg.topic : config.groupid;
+			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
+
+			// CHECK IF LIGHT ID IS SET
+			if(!tempGroupID)
 			{
 				scope.error(RED._("hue-group.node.error-no-id"));
 				return false;
 			}
 
-			// GET CURRENT STATE
-			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			// GET FUTURE STATE
+			if(Object.values(scope.futurePatchState).length > 0)
 			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
-					return scope.sendGroupStatus(group, send, done);
+				patchObject = Object.assign({}, scope.futurePatchState);
+				scope.futurePatchState = {};
+			}
+
+			// GET CURRENT STATE
+			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )
+			{
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
+
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
+				return true;
+			}
+
+			// COLORLOOP EFFECT
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0)
+			{
+				patchObject = {
+					"on": true,
+					"effect": "colorloop",
+					"bri": msg.payload.brightness ? Math.round((254/100)*msg.payload.brightness) : 254
+				};
+
+				bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+				.then(function(status) {
+					// RESET COLORLOOP ANIMATION AFTER X SECONDS
+					setTimeout(function()
+					{
+						bridge.patch("group", currentState.info.idV1 + "/action", { "effect": "none" }, 1)
+						.then(function() { if(done) { done(); }});
+					}, parseInt(msg.payload.colorloop) * 1000);
+				})
+				.catch(function(errors) {
+					scope.error(errors);
+					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
 				});
 
-				return true;
+				return false;
 			}
 
 			// ALERT EFFECT
 			if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
-					context.set('groupPreviousState', [group.on ? true : false, group.brightness, group.xy ? group.xy : false]);
+				// SAVE PREVIOUS STATE
+				scope.context().set('groupPreviousState', currentState);
 
-					// SET ALERT COLOR
-					if(group.xy)
+				// TURN ON LIGHT
+				if(currentState.payload.on === false)
+				{
+					patchObject["on"] = true;
+				}
+
+				// SET BRIGHTNESS
+				if(!msg.payload.brightness && currentState.payload.brightness != 100)
+				{
+					patchObject["bri"] = 254;
+				}
+				else if(msg.payload.brightness)
+				{
+					patchObject["bri"] = Math.round((254/100)*msg.payload.brightness);
+				}
+
+				// SET TRANSITION
+				patchObject["transitiontime"] = 0;
+
+				// CAN CHANGE COLOR?
+				let XYAlertColor = {};
+
+				if(typeof msg.payload.rgb != 'undefined')
+				{
+					XYAlertColor = colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2] );
+				}
+				else if(typeof msg.payload.hex != 'undefined')
+				{
+					let rgbFromHex = colorUtils.hexRgb((msg.payload.hex).toString());
+					XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
+				}
+				else if(typeof msg.payload.color != 'undefined')
+				{
+					if(new RegExp("random|any|whatever").test(msg.payload.color))
 					{
-						if(typeof msg.payload.rgb != 'undefined')
+						const randomColor = colorUtils.randomHexColor();
+						let rgbFromHex = colorUtils.hexRgb(rgbFromHex);
+						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
+					}
+					else
+					{
+						var colorHex = colorUtils.colornames(msg.payload.color);
+						if(colorHex)
 						{
-							group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
-						}
-						else if(typeof msg.payload.hex != 'undefined')
-						{
-							var rgbResult = hexRGB((msg.payload.hex).toString());
-							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-						}
-						else if(typeof msg.payload.color != 'undefined')
-						{
-							if(new RegExp("random|any|whatever").test(msg.payload.color))
-							{
-								var randomColor = randomHexColor();
-								var rgbResult = hexRGB(randomColor);
-								group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-							}
-							else
-							{
-								var colorHex = colornames(msg.payload.color);
-								if(colorHex)
-								{
-									var rgbResult = hexRGB(colorHex);
-									group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-								}
-							}
-						}
-						else
-						{
-							group.xy = rgb.convertRGBtoXY([255,0,0], false);
+							let rgbFromHex = colorUtils.hexRgb(colorHex);
+							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
 						}
 					}
+				}
+				else
+				{
+					XYAlertColor = colorUtils.rgbToXy(255, 0, 0 );
+				}
 
-					// ACTIVATE
-					group.on = true;
-					group.brightness = 254;
-					group.transitionTime = 0;
-					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					// ACTIVATE ALERT
-					group.alert = 'lselect';
-					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					if(!config.groupid) { scope.sendGroupStatus(group, send, done); }
-					return group;
-				})
-				.then(group => {
-					// TURN OFF ALERT
-					var groupPreviousState = context.get('groupPreviousState');
-					var alertSeconds = parseInt(msg.payload.alert);
+				patchObject["xy"] = [XYAlertColor.x, XYAlertColor.y];
 
-					setTimeout(function() {
-						group.on = groupPreviousState[0];
-						group.alert = 'none';
-						group.brightness = groupPreviousState[1];
-						group.transitionTime = 2;
+				// SET ALERT EFFECT
+				patchObject["alert"] = "lselect";
 
-						if(groupPreviousState[2] != false)
+				// 1. TURN ON THE LIGHT BULB
+				bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+				.then(function(status) {
+					setTimeout(function()
+					{
+						const tempPreviousState = scope.context().get('groupPreviousState');
+						var tempPreviousStatePatch = {};
+
+						tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+						if(tempPreviousState.payload.xyColor)
 						{
-							group.xy = groupPreviousState[2];
+							tempPreviousStatePatch.xy = [tempPreviousState.payload.xyColor.x, tempPreviousState.payload.xyColor.y];
+						}
+						else if(tempPreviousState.payload.colorTemp)
+						{
+							tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
 						}
 
-						bridge.client.groups.save(group);
-					}, alertSeconds * 1000);
+						bridge.patch("group", currentState.info.idV1 + "/action", tempPreviousStatePatch, 1)
+						.then(function(status)
+						{
+							return bridge.patch("group", currentState.info.idV1 + "/action", { on: false }, 1);
+						})
+						.then(function(status) {
+							if(done) { done(); }
+							if(tempPreviousState.payload.on === true)
+							{
+								bridge.patch("group", currentState.info.idV1, { on: true }, 1);
+							}
+						});
+					}, parseInt(msg.payload.alert) * 1000);
 				})
-				.catch(error => {
-					scope.error(error, msg);
+				.catch(function(errors) {
+					scope.error(errors);
 					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
 					if(done) { done(error); }
 				});
@@ -212,342 +276,262 @@ module.exports = function(RED)
 			// ANIMATION STARTED?
 			else if(typeof msg.animation != 'undefined' && msg.animation.status == true && msg.animation.restore == true)
 			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
-					context.set('groupPreviousState', [group.on ? true : false, group.brightness, group.xy ? group.xy : false]);
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
-					if(done) { done(error); }
-				});
+				// SAVE PREVIOUS STATE
+				scope.context().set('groupPreviousState', currentState);
 			}
 			// ANIMATION STOPPED AND RESTORE ACTIVE?
 			else if(typeof msg.animation != 'undefined' && msg.animation.status == false && msg.animation.restore == true)
 			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(group => {
-					var groupPreviousState = context.get('groupPreviousState');
+				const tempPreviousState = scope.context().get('groupPreviousState');
+				var tempPreviousStatePatch = {};
 
-					group.on = groupPreviousState[0];
-					group.alert = 'none';
-					group.brightness = groupPreviousState[1];
-					group.transitionTime = 2;
+				tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+				if(tempPreviousState.payload.xyColor)
+				{
+					tempPreviousStatePatch.xy = [tempPreviousState.payload.xyColor.x, tempPreviousState.payload.xyColor.y];
+				}
+				else if(tempPreviousState.payload.colorTemp)
+				{
+					tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
+				}
 
-					if(groupPreviousState[2] != false)
+				bridge.patch("light", currentState.info.lightIds[l], tempPreviousStatePatch).
+				then(function(status)
+				{
+					if(tempPreviousState.payload.on === false)
 					{
-						group.xy = groupPreviousState[2];
+						bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
 					}
-
-					bridge.client.groups.save(group);
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
-					if(done) { done(error); }
+					else
+					{
+						bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
+						.then(function(status) {
+							return bridge.patch("light", currentState.info.lightIds[l], { on: { on: true } })
+						});
+					}
 				});
 			}
-			// EXTENDED TURN ON / OFF GROUP
+			// EXTENDED COMMANDS
 			else
 			{
-				bridge.client.groups.getById(tempGroupID)
-				.then(async (group) =>
+				// SET LIGHT STATE SIMPLE MODE
+				if(msg.payload === true||msg.payload === false)
 				{
-					// IS GROUP ON?
-					var isCurrentlyOn = group.on;
-
-					// SET GROUP STATE SIMPLE MODE
-					if(msg.payload === true||msg.payload === false)
+					if(msg.payload !== currentState.payload.on)
 					{
-						var command = msg.payload;
-						msg.payload = {
-							on: command
-						};
+						patchObject["on"] = msg.payload;
 					}
+				}
 
-					// HAS FUTURE STATE? -> MERGE INPUT
-					if(futureState != null)
+				// SET LIGHT STATE
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined' && (msg.payload.on === true || msg.payload.on === false))
+				{
+					if(msg.payload.on !== currentState.payload.on)
 					{
-						// MERGE
-						msg = merge.deep(futureState, msg);
-
-						// RESET
-						futureState = null;
+						patchObject["on"] = msg.payload.on;
 					}
+				}
 
-                    // SET GROUP STATE
-                    if (typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined')
-                    {
-                        group.on = msg.payload.on;
-                    }
+				// TOGGLE ON / OFF
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
+				{
+					patchObject["on"] = !currentState.payload.on;
+				}
 
-                    // TOGGLE ON / OFF
-                    if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
-                    {
-                    	group.on = group.on ? false : true;
-                    }
-
-                    // SET BRIGHTNESS
-                    if (typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
-                    {
-                        if(msg.payload.brightness > 100 || msg.payload.brightness < 0) {
-                            scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
-                            return false;
-                        }
-                        else if (msg.payload.brightness == 0)
-                        {
-                            group.on = false;
-                        }
-                        else {
-                            group.on = true;
-                            group.brightness = Math.round((254 / 100) * parseInt(msg.payload.brightness));
-                        }
-                    }
-                    else if(typeof msg.payload != 'undefined' && typeof msg.payload.brightnessLevel != 'undefined')
-                    {
-                    	if(msg.payload.brightnessLevel > 254 || msg.payload.brightnessLevel < 0)
-                    	{
-                    		scope.error("Invalid brightness setting. Only 0 - 254 allowed");
-                    		return false;
-                    	}
-                    	else if(msg.payload.brightness == 0)
-                    	{
-                    		group.on = false;
-                    	}
-                    	else
-                    	{
-                    		group.on = true;
-                    		group.brightness = parseInt(msg.payload.brightnessLevel);
-                    	}
-                    }
-                    else if (typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
+				// SET BRIGHTNESS
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
+				{
+					// AUTO BRIGHTNESS BASED ON DAY TIME
+					if(new RegExp("auto|automatic").test(msg.payload.brightness))
 					{
-                        if(msg.payload.incrementBrightness > 0 && typeof msg.payload.ignoreOffLights == 'undefined')
-                        {
-                            group.on = true;
-                        }
-                        group.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
+						let ct = colorUtils.colorTemperature();
+						let autoBrightness = ((300-ct)/2)+100;
+						autoBrightness = (autoBrightness > 100) ? 100 : autoBrightness;
+						autoBrightness = (autoBrightness < 20) ? 20 : autoBrightness;
+
+						// SET CALCULATED BRIGHTNESS
+						patchObject["bri"] = Math.round((254/100)*autoBrightness);
 					}
-					else if (typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+					else
 					{
-                        if(msg.payload.decrementBrightness > 0 && typeof msg.payload.ignoreOffLights == 'undefined')
-                        {
-                            group.on = true;
-                        }
-                        group.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.decrementBrightness))*-1;
-					}
-
-					// SET HUMAN READABLE COLOR
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof group.xy != 'undefined')
-					{
-						if(new RegExp("random|any|whatever").test(msg.payload.color))
+						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
 						{
-							var randomColor = randomHexColor();
-							var rgbResult = hexRGB(randomColor);
-							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-						}
-						else
-						{
-							var colorHex = colornames(msg.payload.color);
-							if(colorHex)
-							{
-								var rgbResult = hexRGB(colorHex);
-								group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-							}
-						}
-					}
-
-					// SET RGB COLOR
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && typeof group.xy != 'undefined')
-					{
-						group.xy = rgb.convertRGBtoXY(msg.payload.rgb, false);
-					}
-
-					// SET HEX COLOR
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined' && typeof group.xy != 'undefined')
-					{
-						var rgbResult = hexRGB((msg.payload.hex).toString());
-						group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-					}
-
-					// SET SATURATION
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.saturation != 'undefined' && typeof group.saturation != 'undefined')
-					{
-						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
-						{
-							scope.error(RED._("error-invalid-sat"), msg);
+							scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
 							return false;
 						}
-						else
+						else if(msg.payload.brightness == 0)
 						{
-							group.saturation = Math.round((254/100)*parseInt(msg.payload.saturation));
-						}
-					}
-
-					// SET COLOR TEMPERATURE
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof group.colorTemp != 'undefined')
-					{
-						// DETERMINE IF AUTOMATIC, WARM, COLD, INT
-						if(!isNaN(msg.payload.colorTemp))
-						{
-							let colorTemp = parseInt(msg.payload.colorTemp);
-							if(colorTemp >= 153 && colorTemp <= 500)
-							{
-								group.colorTemp = parseInt(msg.payload.colorTemp);
-							}
-							else
-							{
-								scope.error(RED._("error-invalid-temp"), msg);
-								return false;
-							}
-						}
-						else if(msg.payload.colorTemp == "cold")
-						{
-							group.colorTemp = 153;
-						}
-						else if(msg.payload.colorTemp == "normal")
-						{
-							group.colorTemp = 240;
-						}
-						else if(msg.payload.colorTemp == "warm")
-						{
-							group.colorTemp = 400;
+							patchObject["on"] = false;
 						}
 						else
 						{
-							// AUTOMATIC
-							var hour = (new Date()).getHours();
-							var minute = (new Date()).getMinutes();
-							var time = hour + minute * 0.01667;
-
-							var autoTemperature = Math.floor(3.125 * time ** 2 - 87.5 * time + 812);
-							autoTemperature = (autoTemperature < 153) ? 153 : autoTemperature;
-							autoTemperature = (autoTemperature > 400) ? 400 : autoTemperature;
-
-							// SET TEMPERATURE
-							group.colorTemp = autoTemperature;
+							patchObject["bri"] = Math.round((254/100)*msg.payload.brightness);
 						}
 					}
-                    else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined')
-                    {
-                        group.incrementColorTemp = parseInt(msg.payload.incrementColorTemp, 10) || 0;
-                    }
-
-					// SET TRANSITION TIME
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
-					{
-						group.transitionTime = parseFloat(msg.payload.transitionTime);
-					}
-
-					// SET COLORLOOP EFFECT
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && typeof group.xy != 'undefined')
-					{
-						if(msg.payload.colorloop === true) {
-							group.effect = 'colorloop';
-						}
-						else if(msg.payload.colorloop === false) {
-							group.effect = 'none';
-						}
-						// ENABLE FOR TIME INTERVAL
-						else if(msg.payload.colorloop > 0) {
-							group.effect = 'colorloop';
-
-							// DISABLE AFTER
-							setTimeout(function() {
-								group.effect = 'none';
-								bridge.client.lights.save(light);
-							}, parseFloat(msg.payload.colorloop)*1000);
-						}
-					}
-
-					// SET DOMINANT COLORS FROM IMAGE
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && typeof group.xy != 'undefined')
-					{
-						var colors = await getColors(msg.payload.image);
-						if(colors.length > 0)
-						{
-							var colorsHEX = colors.map(color => color.hex());
-							var rgbResult = hexRGB(colorsHEX[0]);
-							group.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], false);
-						}
-					}
-
-					// SAVE FOR LATER MODE?
-					if(!group.on&&isCurrentlyOn==false)
-					{
-						futureState = msg;
-
-						// IGNORE ON/OFF & TOGGLE
-						if(typeof futureState.payload != 'undefined')
-						{
-							delete futureState.payload.on;
-							delete futureState.payload.toggle;
-						}
-
-						// ANY OTHER COMMANDS?
-						if(typeof futureState.payload != 'undefined' && Object.keys(futureState.payload).length > 0)
-						{
-							return group;
-						}
-					}
-
-					return bridge.client.groups.save(group);
-				})
-				.then(group => {
-					scope.sendGroupStatus(group, send, done);
-					return group;
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
-					if(done) { done(error); }
-				});
-			}
-		}
-
-		//
-		// SEND GROUP STATUS
-		this.sendGroupStatus = function(group, send, done)
-		{
-			var hueGroup = new HueGroupMessage(group, config, (universalMode == false) ? lastState : false);
-			var brightnessNotice = (hueGroup.msg.payload.brightness > -1) ? RED._("hue-group.node.brightness",{percent: hueGroup.msg.payload.brightness}) : "";
-
-			// SEND STATUS
-			if(universalMode == false)
-			{
-				if(group.allOn)
-				{
-					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.all-on") + brightnessNotice});
 				}
-				else if(group.anyOn)
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.brightnessLevel != 'undefined')
 				{
-					scope.status({fill: "yellow", shape: "ring", text: RED._("hue-group.node.some-on") + brightnessNotice});
+					if(msg.payload.brightnessLevel > 254 || msg.payload.brightnessLevel < 0)
+					{
+						scope.error("Invalid brightness setting. Only 0 - 254 allowed");
+						return false;
+					}
+					else if(msg.payload.brightness == 0)
+					{
+						patchObject["on"] = false;
+					}
+					else
+					{
+						patchObject["bri"] = msg.payload.brightnessLevel;
+					}
 				}
-				else if(group.on)
+
+				// SET HUMAN READABLE COLOR OR RANDOM
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined')
 				{
-					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + brightnessNotice});
+					let XYAlertColor = {};
+
+					if(new RegExp("random|any|whatever").test(msg.payload.color))
+					{
+						const randomColor = colorUtils.randomHexColor();
+						let rgbFromHex = colorUtils.hexRgb(randomColor);
+						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
+					}
+					else
+					{
+						var colorHex = colorUtils.colornames(msg.payload.color);
+						if(colorHex)
+						{
+							let rgbFromHex = colorUtils.hexRgb(colorHex);
+							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
+						}
+					}
+
+					patchObject["xy"] = [XYAlertColor.x, XYAlertColor.y];
+				}
+
+				// SET HEX COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined')
+				{
+					let rgbFromHex = colorUtils.hexRgb((msg.payload.hex).toString());
+					let xyColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2])
+
+					patchObject["xy"] = [xyColor.x, xyColor.y];
+				}
+
+				// SET RGB COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && msg.payload.rgb.length === 3)
+				{
+					let xyColor = colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2] )
+					patchObject["xy"] = [xyColor.x, xyColor.y];
+				}
+
+				// SET XY COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.xyColor != 'undefined')
+				{
+					patchObject["xy"] = [msg.payload.xyColor.x, msg.payload.xyColor.y];
+				}
+
+				// SET COLOR TEMPERATURE
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined')
+				{
+					// DETERMINE IF AUTOMATIC, WARM, COLD, INT
+					if(!isNaN(msg.payload.colorTemp))
+					{
+						let colorTemp = parseInt(msg.payload.colorTemp);
+						if(colorTemp >= 153 && colorTemp <= 500)
+						{
+							patchObject["ct"] = colorTemp;
+						}
+						else
+						{
+							scope.error("Invalid color temprature. Only 153 - 500 allowed");
+							return false;
+						}
+					}
+					else if(msg.payload.colorTemp == "cold")
+					{
+						patchObject["ct"] = 153;
+					}
+					else if(msg.payload.colorTemp == "normal")
+					{
+						patchObject["ct"] = 240;
+					}
+					else if(msg.payload.colorTemp == "warm")
+					{
+						patchObject["ct"] = 400;
+					}
+					else if(msg.payload.colorTemp == "hot")
+					{
+						patchObject["ct"] = 500;
+					}
+					else
+					{
+						// SET TEMPERATURE
+						patchObject["ct"] = colorUtils.colorTemperature();
+					}
+				}
+
+				// SET TRANSITION TIME
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
+				{
+					let targetTransitionTime = parseFloat(msg.payload.transitionTime)*1000;
+					targetTransitionTime = (targetTransitionTime > 6000000) ? 6000000 : targetTransitionTime;
+					targetTransitionTime = (targetTransitionTime < 0) ? 0 : targetTransitionTime;
+
+					patchObject["transitiontime"] = targetTransitionTime/100;
+				}
+
+				// SET DOMINANT COLORS FROM IMAGE
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined')
+				{
+					var colors = await colorUtils.getColors(msg.payload.image);
+					if(colors.length > 0)
+					{
+						var colorsHEX = colors.map(color => color.hex());
+						let rgbFromHex = colorUtils.hexRgb(colorsHEX[0]);
+						let xyColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2]);
+
+						patchObject["xy"] = [xyColor.x, xyColor.y];
+					}
+				}
+
+				//
+				// SHOULD PATCH?
+				if(Object.values(patchObject).length > 0)
+				{
+					// IS FOR LATER?
+					if(currentState.payload.on === false)
+					{
+						if(!patchObject["on"])
+						{
+							scope.futurePatchState = merge.deep(scope.futurePatchState, patchObject);
+							return false;
+						}
+					}
+
+					// PATCH!
+					bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+					.then(function() { if(done) { done(); }})
+					.catch(function(errors) { scope.error(errors); });
 				}
 				else
 				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
+
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+					if(done) { done(); }
 				}
 			}
-
-			// SEND MESSAGE
-			if(!config.skipevents && send) { send(hueGroup.msg); }
-			if(done) { done(); }
-
-			// SAVE LAST STATE
-			lastState = group;
 		}
-
-		//
-		// CLOSE NODE / REMOVE EVENT LISTENER
-		this.on('close', function()
-		{
-			bridge.events.removeAllListeners('group' + config.groupid);
-			bridge.events.removeAllListeners('group');
-		});
 	}
 
 	RED.nodes.registerType("hue-group", HueGroup);

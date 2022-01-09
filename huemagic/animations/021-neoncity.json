@@ -1,0 +1,52 @@
+{
+	"info":{
+		"name":"Neon City",
+		"author":"HueMagic"
+	},
+	"specials":{
+		"randomOrder": true
+	},
+	"steps":
+	[
+		{
+			"delay":700,
+			"animation":{
+				"hex":"#fa448c",
+				"brightness":100,
+				"transitionTime":0.5
+			}
+		},
+		{
+			"delay":500,
+			"animation":{
+				"hex":"#fec859",
+				"brightness":100,
+				"transitionTime":0.5
+			}
+		},
+		{
+			"delay":1000,
+			"animation":{
+				"hex":"#0a1045",
+				"brightness":100,
+				"transitionTime":0.5
+			}
+		},
+		{
+			"delay":700,
+			"animation":{
+				"hex":"#43b5a0",
+				"brightness":100,
+				"transitionTime":0.5
+			}
+		},
+		{
+			"delay":1000,
+			"animation":{
+				"hex":"#491d88",
+				"brightness":90,
+				"transitionTime":0.6
+			}
+		}
+	]
+}

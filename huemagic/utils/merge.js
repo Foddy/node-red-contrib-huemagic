@@ -1,8 +1,3 @@
-module.exports =
-{
-    deep: mergeDeep
-};
-
 function mergeDeep(...objects)
 {
     // CLEANUP FROM HTTP NODE
@@ -35,3 +30,6 @@ function mergeDeep(...objects)
         return prev;
     }, {});
 }
+
+// EXPORT
+module.exports.deep = mergeDeep;

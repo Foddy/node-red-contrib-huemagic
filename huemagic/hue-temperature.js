@@ -6,18 +6,11 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueTemperatureMessage } = require('../utils/messages');
-		let moment = require('moment');
-		var universalMode = false;
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
 
-		// SAVE LAST STATE
-		var lastState = false;
-
-		//
-		// MEMORY
-		this.temperature = -1000;
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
 
 		//
 		// CHECK CONFIG
@@ -31,7 +24,6 @@ module.exports = function(RED)
 		// UNIVERSAL MODE?
 		if(!config.sensorid)
 		{
-			universalMode = true;
 			this.status({fill: "grey", shape: "dot", text: "hue-temperature.node.universal"});
 		}
 
@@ -43,73 +35,139 @@ module.exports = function(RED)
 		}
 
 		//
-		// ON UPDATE
-		if(config.sensorid) { bridge.events.on('sensor' + config.sensorid, function(sensor) { scope.receivedUpdates(sensor) }); }
-		if(!config.sensorid && config.universalevents && config.universalevents == true) { bridge.events.on('sensor', function(sensor) { scope.receivedUpdates(sensor) }); }
-
-		//
-		// RECEIVED UPDATES
-		this.receivedUpdates = function(sensor)
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("temperature", config.sensorid, function(info)
 		{
-			if(sensor.config.reachable == false)
-			{
-				// SEND STATUS
-				if(universalMode == false)
-				{
-					scope.status({fill: "red", shape: "ring", text: "hue-temperature.node.not-reachable"});
-				}
-			}
-			else if(scope.temperature != sensor.state.temperature)
-			{
-				// STORE CURRENT TEMPERATURE
-				var hueTemperature = new HueTemperatureMessage(sensor, (universalMode == false) ? lastState : false);
-				scope.temperature = sensor.state.temperature;
+			let currentState = bridge.get("temperature", info.id);
 
-				// SEND STATUS
-				if(universalMode == false)
-				{
-					scope.status({fill: "yellow", shape: "dot", text: hueTemperature.msg.payload.celsius+" °C / "+hueTemperature.msg.payload.fahrenheit+" °F"});
-				}
-
+			// RESSOURCE FOUND?
+			if(currentState !== false)
+			{
 				// SEND MESSAGE
-				if(!config.skipevents) { scope.send(hueTemperature.msg); }
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				{
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
 
-				// SAVE LAST STATE
-				lastState = sensor;
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+				}
+
+				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
+				if(config.sensorid)
+				{
+					if(currentState.payload.reachable == false)
+					{
+						scope.status({fill: "red", shape: "ring", text: "hue-temperature.node.not-reachable"});
+					}
+					else if(currentState.payload.active == false)
+					{
+						scope.status({fill: "red", shape: "ring", text: "hue-temperature.node.deactivated"});
+					}
+					else
+					{
+						var color = "yellow";
+
+						if(currentState.payload.celsius < 21)
+						{
+							color = "blue";
+						}
+						else if(currentState.payload.celsius < 26)
+						{
+							color = "yellow";
+						}
+						else
+						{
+							color = "red";
+						}
+
+						scope.status({fill: color, shape: "dot", text: currentState.payload.celsius+" °C / "+currentState.payload.fahrenheit+" °F"});
+					}
+				}
 			}
-		}
+		});
 
 		//
 		// ON COMMAND
 		this.on('input', function(msg, send, done)
 		{
-			// Node-RED < 1.0
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
 			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
 
-			// DEFINE SENSOR ID
-			var tempSensorID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.sensorid;
+			// SAVE LAST COMMAND
+			scope.lastCommand = msg;
+
+			// CREATE PATCH
+			let patchObject = {};
+
+			// DEFINE SENSOR ID & CURRENT STATE
+			const tempSensorID = (msg.topic != null) ? msg.topic : config.sensorid;
+			let currentState = bridge.get("temperature", tempSensorID);
 
 			// GET CURRENT STATE
-			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )
 			{
-				bridge.client.sensors.getById(tempSensorID)
-				.then(sensor => {
-					var hueTemperature = new HueTemperatureMessage(sensor, (universalMode == false) ? lastState : false);
-					send(hueTemperature.msg);
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
 
-					return true;
-				});
+				// SEND STATE
+				scope.send(currentState);
 
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
 				return true;
 			}
-		});
 
-		//
-		// CLOSE NODE / REMOVE EVENT LISTENER
-		this.on('close', function()
-		{
-			bridge.events.removeAllListeners('sensor' + config.sensorid);
-			bridge.events.removeAllListeners('sensor');
+			// TURN ON / OFF
+			if((msg.payload === true || msg.payload === false) && (msg.payload !== currentState.payload.active))
+			{
+				// PREPARE PATCH
+				patchObject.enabled = msg.payload;
+			}
+
+			//
+			// SHOULD PATCH?
+			if(Object.values(patchObject).length > 0)
+			{
+				// CHANGE NODE UI STATE
+				if(config.sensorid)
+				{
+					scope.status({fill: "grey", shape: "ring", text: "hue-temperature.node.command"});
+				}
+
+				// PATCH!
+				bridge.patch("temperature", tempSensorID, patchObject)
+				.then(function() { if(done) { done(); }})
+				.catch(function(errors) { scope.error(errors);  });
+			}
+			else
+			{
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
+
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
+			}
 		});
 	}
 

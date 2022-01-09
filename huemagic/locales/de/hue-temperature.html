@@ -1,64 +1,67 @@
-<script type="text/x-red" data-help-name="hue-temperature">
-    <p>Hue Temperatur um die aktuelle (Raum-)Temperatur in Celsius und Fahrenheit zu erhalten.</p>
+<script type="text/markdown" data-help-name="hue-temperature">
+Der „Hue Temperatur“-Node kann die aktuelle Umgebungstemperatur von einem geeigneten Sensor auf der Bridge abrufen und mitteilen.
 
-    <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Temperatursensoren zu finden. Geben Sie den Namen des Sensors manuell ein oder behalten Sie den Standardgerätenamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) und bei Temperaturänderungen gesendet werden. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen" ignoriert werden. Wenn Sie diesen Node im Universalmodus betreiben, können Sie optional auch auswählen, ob dieser Node alle Mitteilungen von anderen Nodes desselben Typs empfangen und ausgeben soll.</p>
+### Einrichtung
 
-    <h3>Temperatur-Ereignisse</h3>
-    <p>Die vom Temperatursensor gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
-    <dl class="message-properties">
-        <dt>celsius<span class="property-type">float</span></dt>
-        <dd>Temperatur in Celsius</dd>
+Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Sensoren zu finden. Wenn Sie die ID des Sensors bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Sie können intern entweder einen neuen Namen für den Sensor vergeben oder den vordefinierten Namen des Sensors wählen. Optional können Sie auch alle automatischen Statusmeldungen dieses Nodes deaktivieren, indem Sie die Einstellung „Ignoriere die Mitteilungen des Nodes“ anklicken. Der Node wird anschließend keine Geräteupdates mehr ausgeben. Alternativ können Sie auch auswählen, ob die Initialisierungsnachricht des Nodes beim Start von Node-RED nicht unterdrückt werden soll. Wenn Sie diese Einstellung aktivieren, erhalten Sie nach jedem Deploy eine Statusmeldung des aktuell ausgewählten Sensors.
 
-        <dt>fahrenheit<span class="property-type">float</span></dt>
-        <dd>Temperatur in Fahrenheit</dd>
+Wenn Sie keinen Sensor auswählen und die Node-Konfiguration so anwenden, arbeitet der Node im sogenannten „Universalmodus“. In diesem Modus empfängt der Node alle Statusmitteilungen desselben Typs und gibt diese aus. Sie können aber auch Einstellungen im Universalmodus auf einen bestimmten Sensor anwenden, indem Sie die entsprechende Sensor-ID als String in `msg.topic` zusammen mit Ihren Einstellungen übergeben.
 
-        <dt>deviceValue<span class="property-type">int</span></dt>
-        <dd>Temperaturwert des Sensors (Originalwert)</dd>
+### Status abrufen
 
-        <dt>updated<span class="property-type">string</span></dt>
-        <dd>ISO 8601 Datum der letzten Temperaturänderung</dd>
-    </dl>
+Gibt den aktuellen Status des Sensors aus, sobald ein `msg.payload`-Objekt mit folgendem Inhalt an den Node übergeben wurde. Sie können alternativ auch den Button in der Node-RED-Oberfläche betätigen, ohne vorher eine Nachricht an den Node übergeben zu müssen.
 
-    <h3>Zusätzliche Sensorinformationen</h3>
-    <p>Zusätzliche Informationen zum Gerät werden an das Objekt <b>msg.info</b> gesendet:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerische ID des Sensors, wie auf der Bridge registriert</dd>
+: status (boolean) : Gibt den aktuellen Status des Sensors zurück
 
-        <dt>uniqueId<span class="property-type">string</span></dt>
-        <dd>Eindeutige ID des Sensors (normalerweise Hardware-ID)</dd>
+### Sensor ein- / ausschalten
 
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name des Sensors</dd>
+Der Sensor kann im Bedarfsfall ferngesteuert ein- und ausgeschalten werden. Wenn der Sensor ausgeschaltet wurde, registriert er keine Temperaturänderungen mehr und gibt diese entsprechend auch nicht mehr aus. Übergeben Sie dafür ein Objekt mit folgendem Inhalt:
 
-        <dt>type<span class="property-type">string</span></dt>
-        <dd>Sensor-Typ (z.B. Daylight, CLIPTemperature, ZGPSwitch)</dd>
+: payload (boolean) : `true` schaltet den Sensor ein, `false` schaltet ihn aus
 
-        <dt>softwareVersion<span class="property-type">float</span></dt>
-        <dd>Softwareversion des Sensors</dd>
+### Statusnachrichten des Nodes
 
-        <dt>battery<span class="property-type">int</span></dt>
-        <dd>Aktueller Batteriestand des Sensors in Prozent</dd>
+Sobald der Sensor eine Temperaturänderung registriert hat, wird folgende Statusnachricht vom Node zurückgegeben:
 
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>Das Modellobjekt des Sensors enthält modellspezifische Informationen wie model.id, model.manufacturer, model.name und model.type</dd>
-    </dl>
+#### Statusobjekt unter `msg.payload`
 
-    <h3>Status abfragen</h3>
-    <p>Ruft den Status des Sensors ab, indem folgende Parameter an das <b>msg.payload</b> übergeben werden:</p>
-    <dl class="message-properties">
-        <dt class="optional">status<span class="property-type">any</span></dt>
-        <dd>Gibt den aktuellen Status des Nodes zurück, ohne eine Aktion durchzuführen</dd>
-    </dl>
+: active (boolean) : Gibt an, ob der Sensor ein- oder ausgeschaltet ist
+: reachable (boolean | string) : `true` wenn der Sensor mit der Bridge verbunden ist, `unknown` wenn der Verbindungsstatus abweicht
+: connectionStatus (string) : Der aktuelle Verbindugsstatus mit der Bridge in Form eines Strings. Kann `connected`, `disconnected`, `connectivity_issue` oder `unidirectional_incoming` als Wert beinhalten
+: celsius (float) : Gibt die aktuelle Umgebungstemperatur in °C (Grad Celsius) an
+: fahrenheit (float) : Gibt die aktuelle Umgebungstemperatur in °F (Grad Fahrenheit) an
+: temperatureIs (string) : Beschreibt die aktuelle Temperatur mit den Werten ´very cold´, ´cold´, ´slightly cold´, ´comfortable´, ´slightly warm´, ´warm´, ´hot´ oder ´very hot´
+: deviceValue (float) : Der Originalwert der Temperatur vom Sensor
+: updated (string) : Zeitpunkt der letzten Aktualisierung der Ressource von HueMagic (ISO 8601)
 
-    <h3>Universalmodus (optional)</h3>
-    <p>Definiert die Sensor-ID auf der Hue Bridge manuell, wenn sie nicht in den Node-Eigenschaften konfiguriert ist:</p>
-    <dl class="message-properties">
-        <dt>msg.topic<span class="property-type">int</span></dt>
-        <dd>Manuelle Definition der Sensor-ID</dd>
-    </dl>
+#### Informationen zum Sensor unter `msg.info`
 
-    <h3>Letzte Zustandsinformationen</h3>
-    <p>Dieser Node schickt auch die gesamten letzten Zustandsinformationen (vor dem Update) in das <b>msg.lastState</b>-Objekt. Dieses kann entweder false (Boolean) or die Objekte payload (msg.lastState.payload) und info (msg.lastState.info) beinhalten. Der Rückgabewert "false" wird nur dann gesendet, wenn es keinen letzten Zustand gab oder der Node neu erstellt oder gestartet wurde.</p>
+: id (string) : Gibt die neue ID des Sensors an
+: idV1 (string | boolean) : Gibt die alte ID des Sensors an
+: uniqueId (string) : Die eindeutige ID des Sensors
+: deviceId (string) : Die eindeutige ID des Geräts
+: name (string) : Der aktuell eingestellte Name des Sensors
+: type (string) : Der Typ des Sensors (immer `temperature`)
+: softwareVersion (string) : Die aktuelle Firmware des Sensors
+: battery (float) : Der aktuelle Batteriestand des Sensors
+: batteryState (string) : Der aktuelle Status des Batteriestands. Kann `normal`, `low` oder `critical` als Wert beinhalten
+: model (object) : Beinhaltet die Modellinformationen des Sensors unter `id`, `manufacturer`, `name`, `type` und `certified`
+
+#### Zustandsänderungen unter `msg.updated`
+
+Listet einzelne Parameter in Form eines Objekts auf, die sich im Vergleich zum letzten Zustand des Sensors geändert haben. Wenn keine Änderungen registriert wurden, ist dieses Objekt leer.
+
+#### Letzter Stand des Sensors unter `msg.lastState`
+
+Beinhaltet das komplette Statusobjekt (siehe Ausgabewerte oben) des letzten Zustands vor der zuletzt registrierten Änderung. Wenn der letzte Zustand von HueMagic noch nicht registriert wurde, wird `false` ausgegeben.
+
+#### Letzter Befehl unter `msg.command` (optional)
+
+Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wird der gesamte Befehl der ausgeführt wurde mit ausgegeben. Andernfalls wird dieses Objekt vom Node nicht ausgegeben.
+
+### Beispiele von HueMagic
+
+HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
+
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

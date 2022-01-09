@@ -6,23 +6,18 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let path = require('path');
-		let { HueLightMessage } = require('../utils/messages');
-		var universalMode = false;
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
 
-		// SAVE LAST STATE
-		var lastState = false;
-		var futureState = null;
+		// SAVE FUTURE PATCH
+		this.futurePatchState = {};
+
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
 
 		// HELPER
-		let rgb = require('../utils/rgb');
-		let merge = require('../utils/merge');
-		let hexRGB = require('hex-rgb');
-		let colornames = require("colornames");
-		let getColors = require('get-image-colors');
-		let {randomHexColor} = require('../utils/color');
+		const colorUtils = require('./utils/color');
+		const merge = require('./utils/merge');
 
 		//
 		// CHECK CONFIG
@@ -36,539 +31,710 @@ module.exports = function(RED)
 		// UNIVERSAL MODE?
 		if(!config.lightid)
 		{
-			universalMode = true;
 			this.status({fill: "grey", shape: "dot", text: "hue-light.node.universal"});
 		}
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined' || bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-light.node.init"});
 		}
 
 		//
-		// ON UPDATE
-		if(config.lightid) { bridge.events.on('light' + config.lightid, function(light) { scope.receivedUpdates(light) }); }
-		if(!config.lightid && config.universalevents && config.universalevents == true) { bridge.events.on('light', function(light) { scope.receivedUpdates(light) }); }
-
-		//
-		// RECEIVED UPDATES
-		this.receivedUpdates = function(light)
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("light", config.lightid, function(info)
 		{
-			var hueLight = new HueLightMessage(light, config, (universalMode == false) ? lastState : false);
-			var brightnessPercent = 0;
+			let currentState = bridge.get("light", info.id, { colornames: config.colornamer ? true : false });
 
-			// SEND STATUS
-			if(light.reachable)
+			// RESSOURCE FOUND?
+			if(currentState !== false)
 			{
-				if(light.on)
+				// SEND MESSAGE
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
 				{
-					// HAS FUTURE STATE?
-					if(futureState != null)
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
 					{
-						scope.applyCommands(futureState, null, null);
+						currentState.command = scope.lastCommand;
 					}
 
-					if(universalMode == false)
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+				}
+
+				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
+				if(config.lightid)
+				{
+					if(currentState.payload.reachable === true)
 					{
-						// IS LIGHT?
-						if(light.brightness)
+						if(currentState.payload.on === true)
 						{
-							brightnessPercent = hueLight.msg.payload.brightness;
-							scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent: brightnessPercent}) });
+							// APPLY FUTURE STATE COMMANDS
+							if(Object.values(scope.futurePatchState).length > 0)
+							{
+								scope.applyCommands({}, null, null);
+							}
+
+							if(currentState.payload.brightness !== false)
+							{
+								scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{ percent: currentState.payload.brightness })});
+							}
+							else
+							{
+								scope.status({fill: "yellow", shape: "dot", text: "hue-light.node.turned-on"});
+							}
 						}
-						// IS SMART PLUG
 						else
 						{
-							brightnessPercent = -1;
-							scope.status({fill: "yellow", shape: "dot", text: "hue-light.node.turned-on"});
+							scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
 						}
 					}
-
-				}
-				else
-				{
-					if(universalMode == false)
+					else
 					{
-						scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
+						var offNotReachableStatus = RED._("hue-light.node.turned-off") + " (" + RED._("hue-light.node.not-reachable") + ")";
+						scope.status({fill: "red", shape: "ring", text: offNotReachableStatus});
 					}
 				}
 			}
-			else
-			{
-				if(universalMode == false)
-				{
-					var offNotReachableStatus = RED._("hue-light.node.turned-off") + " (" + RED._("hue-light.node.not-reachable") + ")";
-					scope.status({fill: "red", shape: "ring", text: offNotReachableStatus});
-				}
-			}
-
-			// SEND MESSAGE
-			if(!config.skipevents) { scope.send(hueLight.msg); }
-
-			// SAVE LAST STATE
-			lastState = light;
-		}
-
-		//
-		// TURN ON / OFF LIGHT
-		this.on('input', function(msg, send, done)
-		{
-			// Node-RED < 1.0
-			send = send || function() { scope.send.apply(scope,arguments); }
-			scope.applyCommands(msg, send, done);
 		});
 
 		//
+		// CONTROL LIGHT
+		this.on('input', function(msg, send, done) { scope.applyCommands(msg, send, done); });
+
+		//
 		// APPLY COMMANDS
-		this.applyCommands = function(msg, send = null, done = null)
+		this.applyCommands = async function(msg, send = null, done = null)
 		{
-			var tempLightID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.lightid;
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
+			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
+
+			// SAVE LAST COMMAND
+			scope.lastCommand = msg;
+
+			// CREATE PATCH
+			let patchObject = {};
+
+			// DEFINE SENSOR ID & CURRENT STATE
+			const tempLightID = (msg.topic != null) ? msg.topic : config.lightid;
+			let currentState = bridge.get("light", tempLightID, { colornames: config.colornamer ? true : false });
 
 			// CHECK IF LIGHT ID IS SET
-			if(tempLightID == null)
+			if(!tempLightID)
 			{
 				scope.error(RED._("hue-light.node.error-no-id"));
 				return false;
 			}
 
 			// GET CURRENT STATE
-			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )
 			{
-				bridge.client.lights.getById(tempLightID)
-				.then(light => {
-					return scope.sendLightStatus(light, send, done);
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
+
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
+				return true;
+			}
+
+			// GET FUTURE STATE
+			if(Object.values(scope.futurePatchState).length > 0)
+			{
+				patchObject = Object.assign({}, scope.futurePatchState);
+				scope.futurePatchState = {};
+			}
+
+			// COLORLOOP EFFECT
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0)
+			{
+				patchObject = {
+					"on": true,
+					"effect": "colorloop",
+					"bri": msg.payload.brightness ? Math.round((254/100)*msg.payload.brightness) : currentState.brightnessLevel
+				};
+
+				bridge.patch("light", currentState.info.idV1 + "/state", patchObject, 1)
+				.then(function(status) {
+					// RESET COLORLOOP ANIMATION AFTER X SECONDS
+					setTimeout(function()
+					{
+						bridge.patch("light", currentState.info.idV1 + "/state", { "effect": "none" }, 1);
+						if(done) { done(); }
+					}, parseInt(msg.payload.colorloop) * 1000);
+				})
+				.catch(function(errors) {
+					scope.error(errors);
+					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
 				});
 
-				return true;
+				return false;
 			}
 
 			// ALERT EFFECT
 			if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
-				bridge.client.lights.getById(tempLightID)
-				.then(light => {
-					scope.context().set('lightPreviousState', [light.on ? true : false, light.brightness, light.xy ? light.xy : false]);
+				// SAVE PREVIOUS STATE
+				scope.context().set('lightPreviousState', currentState);
 
-					// SET ALERT COLOR
-					if(light.xy)
+				// TURN ON LIGHT
+				if(currentState.payload.on === false)
+				{
+					patchObject["on"] = { on: true };
+				}
+
+				// SET BRIGHTNESS
+				if(!msg.payload.brightness && currentState.payload.brightness != 100)
+				{
+					patchObject["dimming"] = { brightness: 100 };
+				}
+				else if(msg.payload.brightness)
+				{
+					patchObject["dimming"] = { brightness: parseInt(msg.payload.brightness) };
+				}
+
+				// SET TRANSITION
+				patchObject["dynamics"] = { duration: 0 };
+
+				// CAN CHANGE COLOR?
+				if(currentState.payload.xyColor)
+				{
+					let XYAlertColor = {};
+
+					if(typeof msg.payload.rgb != 'undefined')
 					{
-						if(typeof msg.payload.rgb != 'undefined')
+						XYAlertColor = colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2], currentState.info.model.colorGamut);
+					}
+					else if(typeof msg.payload.hex != 'undefined')
+					{
+						let rgbFromHex = colorUtils.hexRgb((msg.payload.hex).toString());
+						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut);
+					}
+					else if(typeof msg.payload.color != 'undefined')
+					{
+						if(new RegExp("random|any|whatever").test(msg.payload.color))
 						{
-							light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.model.id);
-						}
-						else if(typeof msg.payload.hex != 'undefined')
-						{
-							var rgbResult = hexRGB((msg.payload.hex).toString());
-							light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
-						}
-						else if(typeof msg.payload.color != 'undefined')
-						{
-							if(new RegExp("random|any|whatever").test(msg.payload.color))
-							{
-								var randomColor = randomHexColor();
-								var rgbResult = hexRGB(randomColor);
-								light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
-							}
-							else
-							{
-								var colorHex = colornames(msg.payload.color);
-								if(colorHex)
-								{
-									var rgbResult = hexRGB(colorHex);
-									light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
-								}
-							}
+							const randomColor = colorUtils.randomHexColor();
+							let rgbFromHex = colorUtils.hexRgb(rgbFromHex);
+							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut);
 						}
 						else
 						{
-							light.xy = rgb.convertRGBtoXY([255,0,0], light.model.id);
+							var colorHex = colorUtils.colornames(msg.payload.color);
+							if(colorHex)
+							{
+								let rgbFromHex = colorUtils.hexRgb(colorHex);
+								XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut);
+							}
 						}
-					}
-
-					// ACTIVATE
-					light.on = true;
-					light.brightness = 254;
-					light.transitionTime = 0;
-					return bridge.client.lights.save(light);
-				})
-				.then(light => {
-					if(!config.lightid) { scope.sendLightStatus(light, send, done); }
-					return light;
-				})
-				.then(light => {
-					// ACTIVATE ALERT
-					if(light != false)
-					{
-						light.alert = 'lselect';
-						return bridge.client.lights.save(light);
 					}
 					else
 					{
-						return false;
+						XYAlertColor = colorUtils.rgbToXy(255, 0, 0, currentState.info.model.colorGamut);
 					}
+
+					patchObject["color"] = {
+						xy: XYAlertColor
+					};
+				}
+
+				// CHANGE NODE UI STATE
+				if(config.lightid)
+				{
+					scope.status({fill: "grey", shape: "ring", text: "hue-light.node.command"});
+				}
+
+				// 1. TURN ON THE LIGHT BULB
+				bridge.patch("light", tempLightID, patchObject)
+				.then(function(status) {
+					// 2. APPLY ALERT EFFECT
+					const alertEffect = { alert: { action: "breathe" }};
+					return bridge.patch("light", tempLightID, alertEffect);
 				})
-				.then(light => {
-					// TURN OFF ALERT
-					if(light != false)
+				.then(function(status) {
+					// 3. RESET PREVIOUS STATE (AFTER X SECONDS)
+					setTimeout(function()
 					{
-						var lightPreviousState = scope.context().get('lightPreviousState');
-						var alertSeconds = parseInt(msg.payload.alert);
+						const tempPreviousState = scope.context().get('lightPreviousState');
+						var tempPreviousStatePatch = {};
 
-						setTimeout(function() {
-							light.on = lightPreviousState[0];
-							light.alert = 'none';
-							light.brightness = lightPreviousState[1];
-							light.transitionTime = 2;
+						tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+						if(tempPreviousState.payload.xyColor)
+						{
+							tempPreviousStatePatch.color = { xy: tempPreviousState.payload.xyColor };
+						}
+						else if(tempPreviousState.payload.colorTemp)
+						{
+							tempPreviousStatePatch.color_temperature = { mirek: tempPreviousState.payload.colorTemp };
+						}
 
-							if(lightPreviousState[2] != false)
+						bridge.patch("light", tempLightID, tempPreviousStatePatch).
+						then(function(status)
+						{
+							return bridge.patch("light", tempLightID, { on: { on: false } })
+							.then(function() { if(done) { done(); }});
+						})
+						.then(function(status) {
+							if(tempPreviousState.payload.on === true)
 							{
-								light.xy = lightPreviousState[2];
+								bridge.patch("light", tempLightID, { on: { on: true } })
+								.then(function() { if(done) { done(); }});
 							}
-
-							bridge.client.lights.save(light);
-						}, alertSeconds * 1000);
-					}
+						});
+					}, parseInt(msg.payload.alert) * 1000);
 				})
-				.catch(error => {
-					scope.error(error, msg);
+				.catch(function(errors) {
+					scope.error(errors);
 					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
-					if(done) { done(error); }
 				});
 			}
 			// ANIMATION STARTED?
 			else if(typeof msg.animation != 'undefined' && msg.animation.status == true && msg.animation.restore == true)
 			{
-				bridge.client.lights.getById(tempLightID)
-				.then(light => {
-					scope.context().set('lightPreviousState', [(light.on) ? true : false, light.brightness, light.xy ? light.xy : false]);
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
-					if(done) { done(error); }
-				});
+				// SAVE PREVIOUS STATE
+				scope.context().set('lightPreviousState', currentState);
 			}
 			// ANIMATION STOPPED AND RESTORE ACTIVE?
 			else if(typeof msg.animation != 'undefined' && msg.animation.status == false && msg.animation.restore == true)
 			{
-				bridge.client.lights.getById(tempLightID)
-				.then(light => {
-					var lightPreviousState = scope.context().get('lightPreviousState');
-					light.on = lightPreviousState[0];
-					light.alert = 'none';
-					light.brightness = lightPreviousState[1];
-					light.transitionTime = 2;
+				const tempPreviousState = scope.context().get('lightPreviousState');
+				var tempPreviousStatePatch = {};
 
-					if(lightPreviousState[2] != false)
+				tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+				if(tempPreviousState.payload.xyColor)
+				{
+					tempPreviousStatePatch.color = { xy: tempPreviousState.payload.xyColor };
+				}
+				else if(tempPreviousState.payload.colorTemp)
+				{
+					tempPreviousStatePatch.color_temperature = { mirek: tempPreviousState.payload.colorTemp };
+				}
+
+				bridge.patch("light", tempLightID, tempPreviousStatePatch).
+				then(function(status)
+				{
+					if(tempPreviousState.payload.on === false)
 					{
-						light.xy = lightPreviousState[2];
+						bridge.patch("light", tempLightID, { on: { on: false } })
+						.then(function() { if(done) { done(); }});
 					}
-
-					bridge.client.lights.save(light);
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
-					if(done) { done(error); }
+					else
+					{
+						bridge.patch("light", tempLightID, { on: { on: false } })
+						.then(function(status) {
+							if(done) { done(); }
+							return bridge.patch("light", tempLightID, { on: { on: true } })
+						});
+					}
 				});
 			}
-			// EXTENDED TURN ON / OFF LIGHT
+			// EXTENDED COMMANDS
 			else
 			{
-				bridge.client.lights.getById(tempLightID)
-				.then(async (light) => {
-					// IS LIGHT ON?
-					var isCurrentlyOn = light.on;
+				// SET LIGHT STATE SIMPLE MODE
+				if(msg.payload === true||msg.payload === false)
+				{
+					if(msg.payload !== currentState.payload.on) { patchObject["on"] = { on: msg.payload }; }
+				}
 
-					// SET LIGHT STATE SIMPLE MODE
-					if(msg.payload === true||msg.payload === false)
+				// SET LIGHT STATE
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined' && (msg.payload.on === true || msg.payload.on === false))
+				{
+					if(msg.payload.on !== currentState.payload.on) { patchObject["on"] = { on: msg.payload.on }; }
+				}
+
+				// TOGGLE ON / OFF
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
+				{
+					patchObject["on"] = { on: !currentState.payload.on };
+				}
+
+				// SET BRIGHTNESS
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
+				{
+					// AUTO BRIGHTNESS BASED ON DAY TIME
+					if(new RegExp("auto|automatic").test(msg.payload.brightness))
 					{
-						var command = msg.payload;
-						msg.payload = {
-							on: command
-						};
+						let ct = colorUtils.colorTemperature();
+						let autoBrightness = ((300-ct)/2)+100;
+						autoBrightness = (autoBrightness > 100) ? 100 : autoBrightness;
+						autoBrightness = (autoBrightness < 20) ? 20 : autoBrightness;
+
+						// SET CALCULATED BRIGHTNESS
+						patchObject["dimming"] = { brightness: autoBrightness };
 					}
-
-					// HAS FUTURE STATE? -> MERGE INPUT
-					if(futureState != null)
+					else
 					{
-						// MERGE
-						msg = merge.deep(futureState, msg);
-
-						// RESET
-						futureState = null;
-					}
-
-					// SET LIGHT STATE
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined')
-					{
-						light.on = msg.payload.on;
-					}
-
-					// TOGGLE ON / OFF
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
-					{
-						light.on = light.on ? false : true;
-					}
-
-					// SET BRIGHTNESS
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
-					{
-						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
+						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
 						{
 							scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
 							return false;
 						}
 						else if(msg.payload.brightness == 0)
 						{
-							light.on = false;
+							if(currentState.payload.on !== false) { patchObject["on"] = { on: false }; }
 						}
 						else
 						{
-							light.on = true;
-							light.brightness = Math.round((254/100)*parseInt(msg.payload.brightness));
+							patchObject["dimming"] = { brightness: msg.payload.brightness };
 						}
 					}
-					else if(typeof msg.payload != 'undefined' && typeof msg.payload.brightnessLevel != 'undefined')
+				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.brightnessLevel != 'undefined')
+				{
+					if(msg.payload.brightnessLevel > 254 || msg.payload.brightnessLevel < 0)
 					{
-						if(msg.payload.brightnessLevel > 254 || msg.payload.brightnessLevel < 0)
-						{
-							scope.error("Invalid brightness setting. Only 0 - 254 allowed");
-							return false;
-						}
-						else if(msg.payload.brightness == 0)
-						{
-							light.on = false;
-						}
-						else
-						{
-							light.on = true;
-							light.brightness = parseInt(msg.payload.brightnessLevel);
-						}
+						scope.error("Invalid brightness setting. Only 0 - 254 allowed");
+						return false;
 					}
-					else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
+					else if(msg.payload.brightness == 0)
 					{
-						if (msg.payload.incrementBrightness > 0)
-						{
-							light.on = true;
-						}
-						light.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.incrementBrightness));
+						if(currentState.payload.on !== false) { patchObject["on"] = { on: false }; }
 					}
-					else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+					else
 					{
-						if (msg.payload.decrementBrightness > 0)
-						{
-							light.on = true;
-						}
-						light.incrementBrightness = Math.round((254/100)*parseInt(msg.payload.decrementBrightness))*-1;
+						patchObject["dimming"] = { brightness: Math.round((100/254)*msg.payload.brightnessLevel) };
+					}
+				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
+				{
+					let incrementBy = (isNaN(msg.payload.incrementBrightness)) ? 10 : msg.payload.incrementBrightness;
+					let targetBrightness = Math.round(currentState.payload.brightness + incrementBy);
+					targetBrightness = (targetBrightness > 100) ? 100 : targetBrightness;
+
+					patchObject["dimming"] = { brightness: targetBrightness };
+				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+				{
+					let decrementBy = (isNaN(msg.payload.decrementBrightness)) ? 10 : msg.payload.decrementBrightness;
+					let targetBrightness = Math.round(currentState.payload.brightness - decrementBy);
+					targetBrightness = (targetBrightness < 0) ? 0 : targetBrightness;
+
+					if(targetBrightness < 1)
+					{
+						if(currentState.payload.on !== false) { patchObject["on"] = { on: false }; }
 					}
 
-					// SET HUMAN READABLE COLOR OR RANDOM
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof light.xy != 'undefined')
+					patchObject["dimming"] = { brightness: targetBrightness };
+				}
+
+				// SET HUMAN READABLE COLOR OR RANDOM
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				{
+					let XYAlertColor = {};
+
+					if(new RegExp("random|any|whatever").test(msg.payload.color))
 					{
-						if(new RegExp("random|any|whatever").test(msg.payload.color))
+						const randomColor = colorUtils.randomHexColor();
+						let rgbFromHex = colorUtils.hexRgb(randomColor);
+						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut);
+					}
+					else
+					{
+						var colorHex = colorUtils.colornames(msg.payload.color);
+						if(colorHex)
 						{
-							var randomColor = randomHexColor();
-							var rgbResult = hexRGB(randomColor);
-							light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+							let rgbFromHex = colorUtils.hexRgb(colorHex);
+							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut);
+						}
+					}
+
+					patchObject["color"] = {
+						xy: XYAlertColor
+					};
+				}
+
+				// SET HEX COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				{
+					let rgbFromHex = colorUtils.hexRgb((msg.payload.hex).toString());
+					patchObject["color"] = {
+						xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut)
+					};
+				}
+
+				// SET RGB COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && typeof currentState.payload.xyColor != 'undefined' && msg.payload.rgb.length === 3)
+				{
+					patchObject["color"] = {
+						xy: colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2], currentState.info.model.colorGamut)
+					};
+				}
+
+				// SET XY COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.xyColor != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				{
+					patchObject["color"] = {
+						xy: msg.payload.xyColor
+					};
+				}
+
+				// MIX CURRENT COLOR WITH NEW COLOR
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.mixColor != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				{
+					let RGBColor = [];
+
+					if(typeof msg.payload.mixColor.color != 'undefined')
+					{
+						if(new RegExp("random|any|whatever").test(msg.payload.mixColor.color))
+						{
+							RGBColor = colorUtils.hexRgb(colorUtils.randomHexColor());
 						}
 						else
 						{
-							var colorHex = colornames(msg.payload.color);
+							var colorHex = colorUtils.colornames(msg.payload.mixColor.color);
 							if(colorHex)
 							{
-								var rgbResult = hexRGB(colorHex);
-								light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+								RGBColor = colorUtils.hexRgb(colorHex);
 							}
 						}
 					}
-
-					// SET RGB COLOR
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && typeof light.xy != 'undefined')
+					else if(typeof msg.payload.mixColor.rgb != 'undefined')
 					{
-						light.xy = rgb.convertRGBtoXY(msg.payload.rgb, light.model.id);
+						RGBColor = msg.payload.mixColor.rgb;
+					}
+					else if(typeof msg.payload.mixColor.hex != 'undefined')
+					{
+						RGBColor = colorUtils.hexRgb((msg.payload.mixColor.hex).toString());
+					}
+					else if(typeof msg.payload.mixColor.xyColor != 'undefined')
+					{
+						RGBColor = colorUtils.xyBriToRgb(msg.payload.mixColor.xyColor.x, msg.payload.mixColor.xyColor.y, 100);
 					}
 
-					// SET HEX COLOR
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined' && typeof light.xy != 'undefined')
+					// GET MIXING AMOUNT
+					let mixingAmount = 0.5;
+					if(typeof msg.payload.mixColor.amount != 'undefined' && msg.payload.mixColor.amount > 0 && msg.payload.mixColor.amount <= 100)
 					{
-						var rgbResult = hexRGB((msg.payload.hex).toString());
-						light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
+						mixingAmount = msg.payload.mixColor.amount/100;
 					}
 
-					// SET COLOR TEMPERATURE
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof light.colorTemp != 'undefined')
+					// HAS CURRENT COLOR SETTING?
+					if(currentState.payload.rgb !== false)
 					{
-						// DETERMINE IF AUTOMATIC, WARM, COLD, INT
-						if(!isNaN(msg.payload.colorTemp))
+						let mixedRGBColor = colorUtils.mixColors(currentState.payload.rgb, RGBColor, mixingAmount);
+						patchObject["color"] = {
+							xy: colorUtils.rgbToXy(mixedRGBColor[0], mixedRGBColor[1], mixedRGBColor[2], currentState.info.model.colorGamut)
+						};
+					}
+					else
+					{
+						patchObject["color"] = {
+							xy: colorUtils.rgbToXy(RGBColor[0], RGBColor[1], RGBColor[2], currentState.info.model.colorGamut)
+						};
+					}
+				}
+
+				// SET COLOR TEMPERATURE
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.colorTemp != 'undefined' && typeof currentState.payload.colorTemp != 'undefined')
+				{
+					// DETERMINE IF AUTOMATIC, WARM, COLD, INT
+					if(!isNaN(msg.payload.colorTemp))
+					{
+						let colorTemp = parseInt(msg.payload.colorTemp);
+						if(colorTemp >= 153 && colorTemp <= 500)
 						{
-							let colorTemp = parseInt(msg.payload.colorTemp);
-							if(colorTemp >= 153 && colorTemp <= 500)
-							{
-								light.colorTemp = parseInt(msg.payload.colorTemp);
-							}
-							else
-							{
-								scope.error("Invalid color temprature. Only 153 - 500 allowed");
-								return false;
-							}
-						}
-						else if(msg.payload.colorTemp == "cold")
-						{
-							light.colorTemp = 153;
-						}
-						else if(msg.payload.colorTemp == "normal")
-						{
-							light.colorTemp = 240;
-						}
-						else if(msg.payload.colorTemp == "warm")
-						{
-							light.colorTemp = 400;
+							patchObject["color_temperature"] = { mirek: colorTemp };
 						}
 						else
 						{
-							// AUTOMATIC
-							var hour = (new Date()).getHours();
-							var minute = (new Date()).getMinutes();
-							var time = hour + minute * 0.01667;
-
-							var autoTemperature = Math.floor(3.125 * time ** 2 - 87.5 * time + 812);
-							autoTemperature = (autoTemperature < 153) ? 153 : autoTemperature;
-							autoTemperature = (autoTemperature > 400) ? 400 : autoTemperature;
-
-							// SET TEMPERATURE
-							light.colorTemp = autoTemperature;
-						}
-					}
-                    else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined')
-                    {
-                        light.incrementColorTemp = parseInt(msg.payload.incrementColorTemp, 10) || 0;
-                    }
-
-					// SET SATURATION
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.saturation != 'undefined' && typeof light.saturation != 'undefined')
-					{
-						if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
-						{
-							scope.error("Invalid saturation setting. Only 0 - 254 allowed");
+							scope.error("Invalid color temprature. Only 153 - 500 allowed");
 							return false;
 						}
-						else
-						{
-							light.saturation = Math.round((254/100)*parseInt(msg.payload.saturation));
-						}
 					}
-
-					// SET TRANSITION TIME
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
+					else if(msg.payload.colorTemp == "cold")
 					{
-						light.transitionTime = parseFloat(msg.payload.transitionTime);
+						patchObject["color_temperature"] = { mirek: 153 };
 					}
-
-					// SET COLORLOOP EFFECT
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && typeof light.xy != 'undefined')
+					else if(msg.payload.colorTemp == "normal")
 					{
-						if(msg.payload.colorloop === true) {
-							light.effect = 'colorloop';
-						}
-						else if(msg.payload.colorloop === false) {
-							light.effect = 'none';
-						}
-						// ENABLE FOR TIME INTERVAL
-						else if(msg.payload.colorloop > 0) {
-							light.effect = 'colorloop';
-
-							// DISABLE AFTER
-							setTimeout(function() {
-								light.effect = 'none';
-								bridge.client.lights.save(light);
-							}, parseFloat(msg.payload.colorloop)*1000);
-						}
+						patchObject["color_temperature"] = { mirek: 240 };
 					}
-
-					// SET DOMINANT COLORS FROM IMAGE
-					if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && typeof light.xy != 'undefined')
+					else if(msg.payload.colorTemp == "warm")
 					{
-						var colors = await getColors(msg.payload.image);
-						if(colors.length > 0)
-						{
-							var colorsHEX = colors.map(color => color.hex());
-							var rgbResult = hexRGB(colorsHEX[0]);
-							light.xy = rgb.convertRGBtoXY([rgbResult.red, rgbResult.green, rgbResult.blue], light.model.id);
-						}
+						patchObject["color_temperature"] = { mirek: 400 };
 					}
-
-					// SAVE FOR LATER MODE?
-					if((!light.on||!light.reachable)&&isCurrentlyOn==false)
+					else if(msg.payload.colorTemp == "hot")
 					{
-						// SAVE FUTURE STATE
-						futureState = msg;
-
-						// IGNORE ON/OFF & TOGGLE
-						if(typeof futureState.payload != 'undefined')
-						{
-							delete futureState.payload.on;
-							delete futureState.payload.toggle;
-						}
-
-						// ANY OTHER COMMANDS?
-						if(typeof futureState.payload != 'undefined' && Object.keys(futureState.payload).length > 0)
-						{
-							return light;
-						}
+						patchObject["color_temperature"] = { mirek: 500 };
 					}
-
-					// SAVE STATE
-					return bridge.client.lights.save(light);
-				})
-				.then(light => {
-					scope.sendLightStatus(light, send, done);
-					return light;
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
-					if(done) { done(error); }
-				});
-			}
-		}
-
-		//
-		// SEND LIGHT STATUS
-		this.sendLightStatus = function(light, send, done)
-		{
-			var hueLight = new HueLightMessage(light, config, lastState);
-
-			// SEND STATUS
-			if(universalMode == false)
-			{
-				if(light.on)
+					else
+					{
+						// SET TEMPERATURE
+						patchObject["color_temperature"] = { mirek: colorUtils.colorTemperature() };
+					}
+				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementColorTemp != 'undefined' && typeof currentState.payload.colorTemp != 'undefined')
 				{
-					scope.status({fill: "yellow", shape: "dot", text: RED._("hue-light.node.turned-on-percent",{percent: hueLight.msg.payload.brightness}) });
+					let incrementBy = (isNaN(msg.payload.incrementColorTemp)) ? 50 : msg.payload.incrementColorTemp;
+					let targetColorTemperature = currentState.payload.colorTemp + parseInt(incrementBy);
+					targetColorTemperature = (targetColorTemperature > 500) ? 500 : targetColorTemperature;
+					targetColorTemperature = (targetColorTemperature < 153) ? 153 : targetColorTemperature;
+
+					// SET TEMPERATURE
+					patchObject["color_temperature"] = { mirek: targetColorTemperature };
+				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementColorTemp != 'undefined' && typeof currentState.payload.colorTemp != 'undefined')
+				{
+					let decrementBy = (isNaN(msg.payload.decrementColorTemp)) ? 50 : msg.payload.decrementColorTemp;
+					let targetColorTemperature = currentState.payload.colorTemp - parseInt(decrementBy);
+					targetColorTemperature = (targetColorTemperature > 500) ? 500 : targetColorTemperature;
+					targetColorTemperature = (targetColorTemperature < 153) ? 153 : targetColorTemperature;
+
+					// SET TEMPERATURE
+					patchObject["color_temperature"] = { mirek: targetColorTemperature };
+				}
+
+				// SET TRANSITION TIME
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
+				{
+					let targetTransitionTime = parseFloat(msg.payload.transitionTime)*1000;
+					targetTransitionTime = (targetTransitionTime > 6000000) ? 6000000 : targetTransitionTime;
+					targetTransitionTime = (targetTransitionTime < 0) ? 0 : targetTransitionTime;
+
+					patchObject["dynamics"] = { duration: targetTransitionTime };
+				}
+
+				// SET DOMINANT COLORS FROM IMAGE
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				{
+					var colors = await colorUtils.getColors(msg.payload.image);
+					if(colors.length > 0)
+					{
+						var colorsHEX = colors.map(color => color.hex());
+						let rgbFromHex = colorUtils.hexRgb(colorsHEX[0]);
+						patchObject["color"] = {
+							xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut)
+						};
+					}
+				}
+
+				// SET SATURATION
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.saturation != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				{
+					if(msg.payload.saturation > 100 || msg.payload.saturation < 0)
+					{
+						scope.error("Invalid saturation setting. Only 0 - 100 allowed");
+						return false;
+					}
+					else
+					{
+						let currentColor = patchObject["color"] ? colorUtils.xyBriToRgb(patchObject["color"].xy.x, patchObject["color"].xy.y, 100) : currentState.payload.rgb;
+						let currentColorInHSL = colorUtils.rgbToHsl(currentColor[0], currentColor[1], currentColor[2]);
+						let saturationFactor = (msg.payload.saturation/100);
+
+						// CHANGE SATURATION
+						currentColorInHSL[1] = currentColorInHSL[1]*saturationFactor;
+
+						// CONVERT BACK TO RGB
+						let saturatedRGBColor = colorUtils.hslToRgb(currentColorInHSL[0], currentColorInHSL[1], currentColorInHSL[2]);
+
+						patchObject["color"] = {
+							xy: colorUtils.rgbToXy(saturatedRGBColor[0], saturatedRGBColor[1], saturatedRGBColor[2], currentState.info.model.colorGamut)
+						};
+					}
+				}
+
+				// SET GRADIENT
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.gradient != 'undefined' && typeof currentState.payload.gradient != 'undefined')
+				{
+					let XYColorSet = [];
+
+					if(typeof msg.payload.gradient.hex != 'undefined' && Array.isArray(msg.payload.gradient.hex) == true)
+					{
+						XYColorSet = [];
+
+						for(let oneColor in msg.payload.gradient.hex)
+						{
+							let rgbFromHex = colorUtils.hexRgb(oneColor);
+							XYColorSet.push({
+								color: { xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut) }
+							});
+						}
+					}
+
+					if(typeof msg.payload.gradient.rgb != 'undefined' && Array.isArray(msg.payload.gradient.rgb) == true)
+					{
+						XYColorSet = [];
+
+						for(let oneColor in msg.payload.gradient.rgb)
+						{
+							XYColorSet.push({
+								color: { xy: colorUtils.rgbToXy(oneColor[0], oneColor[1], oneColor[2], currentState.info.model.colorGamut) }
+							});
+						}
+					}
+
+					if(typeof msg.payload.gradient.xyColor != 'undefined' && Array.isArray(msg.payload.gradient.xyColor) == true)
+					{
+						XYColorSet = [];
+
+						for(let oneColor in msg.payload.gradient.xyColor)
+						{
+							XYColorSet.push({
+								color: { xy: oneColor }
+							});
+						}
+					}
+
+					patchObject["gradient"] = { points: XYColorSet };
+				}
+
+				//
+				// SHOULD PATCH?
+				if(Object.values(patchObject).length > 0)
+				{
+					// IS FOR LATER?
+					if(currentState.payload.on === false || currentState.payload.reachable === false)
+					{
+						if(!patchObject["on"] || !patchObject["on"]["on"])
+						{
+							scope.futurePatchState = merge.deep(scope.futurePatchState, patchObject);
+							return false;
+						}
+					}
+
+					// CHANGE NODE UI STATE
+					if(config.lightid)
+					{
+						scope.status({fill: "grey", shape: "ring", text: "hue-light.node.command"});
+					}
+
+					// PATCH!
+					bridge.patch("light", tempLightID, patchObject)
+					.then(function() { if(done) { done(); }})
+					.catch(function(errors) { scope.error(errors);  });
 				}
 				else
 				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-light.node.turned-off"});
+					// JUST SEND CURRENT STATE
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
+
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+
+					if(done) { done(); }
 				}
 			}
-
-			// SEND MESSAGE
-			if(!config.skipevents && send) { send(hueLight.msg); }
-			if(done) { done(); }
-
-			// SAVE LAST STATE
-			lastState = light;
 		}
-
-		//
-		// CLOSE NODE / REMOVE EVENT LISTENER
-		this.on('close', function()
-		{
-			bridge.events.removeAllListeners('light' + config.lightid);
-			bridge.events.removeAllListeners('light');
-		});
 	}
 
 	RED.nodes.registerType("hue-light", HueLight);

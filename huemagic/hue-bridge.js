@@ -6,22 +6,24 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueSwitchMessage, HueTapMessage, HueTemperatureMessage } = require('../utils/messages');
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
 
-		//
-		// PREVENT DEVICE MESSAGES IN FIRST 5 SECONDS
-		this.deviceUpdates = false;
-		setTimeout(function(){ scope.deviceUpdates = true; }, 5000);
+		// IS CONNECTED?
+		this.connected = false;
+
+		// GET BRIDGE INFORMATION INITIALLY
+		this.lastBridgeInformation = null;
+
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
+
+		// NODE UI STATUS TIMEOUT
+		this.timeout = null;
 
 		//
 		// ACTIVE STATE
 		this.nodeActive = true;
-
-		//
-		// BRIDGE INFORMATION
-		this.bridgeInformation = {};
 
 		//
 		// CHECK CONFIG
@@ -33,476 +35,268 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		this.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connecting"});
+		scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connecting"});
+
+		this.setInitialState = function()
+		{
+			scope.status({fill: "green", shape: "dot", text: "hue-bridge.node.connected"});
+		}
+
 
 		//
-		// GET INFORMATION
-		this.getBridgeInformation = function()
+		// GET BRIDGE INFORMATION
+		this.getBridgeInformation = async function(forceReload = false)
 		{
-			bridge.client.bridge.get()
-			.then(bridgeInformation => {
-				var hueBridge = new HueBridgeMessage(bridgeInformation, config);
-				scope.send(hueBridge.msg);
-				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" });
-
-				// SAVE BRIDGE INFORMATION
-				scope.bridgeInformation = hueBridge.msg.payload;
-			})
-			.catch(error => {
-				scope.error(error);
-				if(scope.nodeActive == true)
+			return new Promise(function(resolve, reject)
+			{
+				if(forceReload === true)
 				{
-					setTimeout(function(){ scope.getBridgeInformation(); }, 3000);
+					// REFRESH INFORMATION
+					bridge.getBridgeInformation(true)
+					.then(function(updated)
+					{
+						return scope.getBridgeInformation();
+					})
+					.then(function(bridgeInformation)
+					{
+						resolve(bridgeInformation);
+					});
+				}
+				else if(scope.lastBridgeInformation !== null)
+				{
+					let bridgeInformationCopy = Object.assign({}, scope.lastBridgeInformation);
+					resolve(bridgeInformationCopy);
+				}
+				else
+				{
+					let bridgeInformation = bridge.get("bridge", "bridge", { autoupdate: ((bridge.config.autoupdates && bridge.config.autoupdates == true) || typeof bridge.config.autoupdates == 'undefined') });
+					scope.lastBridgeInformation = Object.assign({}, bridgeInformation);
+
+					resolve(bridgeInformation);
 				}
 			});
 		}
 
 		//
-		// INITIAL START
-		this.getBridgeInformation();
-
-		//
-		// AUTO UPDATES?
-		this.autoUpdateHueBridge = function()
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("bridge", "globalRessourceUpdates", async function(info)
 		{
-			if(config.autoupdates == true)
+			let currentState = bridge.get(info.updatedType, info.id);
+
+			// RESSOURCE FOUND?
+			if(currentState !== false)
 			{
-				bridge.client.softwareUpdate.check()
-				.then(() => {
-					return bridge.client.softwareUpdate.get();
-				})
-				.then(softwareUpdate => {
-					return bridge.client.softwareUpdate.install();
-				})
-				.then(() => {
-					// UPDATING // CHECK STATUS IN 5 MINUTES
-					if(scope.nodeActive == true)
-					{
-						setTimeout(function(){ scope.getBridgeInformation(); }, 60000 * 5);
-					}
-				})
-				.catch(error => {
-					// NO UPDATES AVAILABLE // TRY AGAIN IN 3H
-					if(scope.nodeActive == true)
-					{
-						setTimeout(function(){ scope.autoUpdateHueBridge(); }, 60000 * 180);
-					}
-				});
-			}
-		}
-
-		this.autoUpdateHueBridge();
-
-		//
-		// DEVICE UPDATES
-		if(!config.skipglobalevents)
-		{
-			bridge.events.on('globalDeviceUpdates', function(message)
-			{
-				if(scope.deviceUpdates == false) { return; }
-
-				let type = message.type;
-				let payload = message.payload;
-				var detType = type;
-
-				// CONSTRUCT MESSAGE
-				var message = {};
-				message.updated = {};
-
-				// ADD PAYLOAD
-				if(type == "light")
+				// UPDATE COUNTER
+				if(info.suppressMessage === false)
 				{
-					let hueLight = new HueLightMessage(payload, {colornamer: true});
-					message.updated = hueLight.msg;
+					scope.status({fill: "blue", shape: "dot", text: "hue-bridge.node.connected"});
+
+					if(scope.timeout !== null) { clearTimeout(scope.timeout); }
+					scope.timeout = setTimeout(function() {
+						scope.setInitialState();
+					}, 1000);
 				}
-				else if(type == "group")
-				{
-					let hueGroup = new HueGroupMessage(payload, {colornamer: true});
-					message.updated = hueGroup.msg;
-				}
-				else if(type == "rule")
-				{
-					let hueRules = new HueRulesMessage(payload);
-					message.updated = hueRules.msg;
-				}
-				else if(type == "sensor")
-				{
-					// DETERMINE TYPE
-					if(payload.type == "ZLLPresence")
-					{
-						let hueMotion = new HueMotionMessage(payload);
-						message.updated = hueMotion.msg;
-
-						detType = "motion";
-					}
-					else if(payload.type == "ZLLLightLevel")
-					{
-						let hueBrightness = new HueBrightnessMessage(payload);
-						message.updated = hueBrightness.msg;
-
-						detType = "brightness";
-					}
-					else if(payload.type == "ZLLTemperature")
-					{
-						let hueTemperature = new HueTemperatureMessage(payload);
-						message.updated = hueTemperature.msg;
-
-						detType = "temperature";
-					}
-					else if(payload.type == "ZLLSwitch")
-					{
-						let hueSwitch = new HueSwitchMessage(payload);
-						message.updated = hueSwitch.msg;
-
-						detType = "switch";
-					}
-					else if(payload.type == "ZGPSwitch")
-					{
-						let hueTap = new HueTapMessage(sensor);
-						message.updated = hueTap.msg;
-
-						detType = "tap";
-					}
-				}
-
-				// ADD TYPE
-				message.updated.type = detType;
-
-				// ADD BRIDGE INFORMATION
-				message.info = scope.bridgeInformation;
 
 				// SEND MESSAGE
-				scope.send(message);
-			});
-		}
+				if(!config.skipglobalevents && (config.initevents || info.suppressMessage == false))
+				{
+					scope.getBridgeInformation()
+					.then(function(info)
+					{
+						// ADD DEVICE UPDATE TO RESPONSE
+						info.updated = currentState;
 
-		//
-		// COMMANDS
-		this.on('input', function(msg, send, done)
-		{
-			// Node-RED < 1.0
-			send = send || function() { scope.send.apply(scope,arguments); }
+						// SET LAST COMMAND
+						if(scope.lastCommand !== null)
+						{
+							info.command = scope.lastCommand;
+						}
 
-			var commandSent = false;
+						// SEND MESSAGE
+						scope.send(info);
 
-			// STARTING TOUCHLINK
-			if(typeof msg.payload.touchLink != 'undefined')
-			{
-				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.starting-tl" });
-				bridge.client.bridge.touchlink()
-				.then(() => {
-					scope.status({fill: "blue", shape: "ring", text: "hue-bridge.node.started-tl" });
-					if(done) { done(); }
-					setTimeout(function(){ scope.getBridgeInformation(); }, 30000);
-				})
-				.catch(error => {
-					scope.error(error);
-					if(done) { done(error); }
-					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-				});
-
-				// COMMAND SENT
-				commandSent = true;
+						// RESET LAST COMMAND
+						scope.lastCommand = null;
+					});
+				}
 			}
 
-			// GET DEVICES
-			if(typeof msg.payload.fetch != 'undefined')
+			// CONNECTED?
+			if(scope.connected == false)
 			{
-				if(msg.payload.fetch == "users")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-users" });
-					bridge.client.users.getAll()
-					.then(users => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.users = users;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "lights")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-lights" });
-					bridge.client.lights.getAll()
-					.then(lights => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.lights = lights;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "groups")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-groups" });
-					bridge.client.groups.getAll()
-					.then(groups => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.groups = groups;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "sensors")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-sensors" });
-					bridge.client.sensors.getAll()
-					.then(sensors => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.sensors = sensors;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "scenes")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-scenes" });
-					bridge.client.scenes.getAll()
-					.then(scenes => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.scenes = scenes;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "rules")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-rules" });
-					bridge.client.rules.getAll()
-					.then(rules => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.rules = rules;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "schedules")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-schedules" });
-					bridge.client.schedules.getAll()
-					.then(schedules => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.schedules = schedules;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "resourceLinks")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-rlinks" });
-					bridge.client.resourceLinks.getAll()
-					.then(resourceLinks => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.resourceLinks = resourceLinks;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "timeZones")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-timezones" });
-					bridge.client.timeZones.getAll()
-					.then(timeZones => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.timeZones = timeZones;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "internetServices")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-internet" });
-					bridge.client.internetServices.get()
-					.then(internetServices => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.internetServices = internetServices;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-				else if(msg.payload.fetch == "portal")
-				{
-					scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.f-portal" });
-					bridge.client.portal.get()
-					.then(portal => {
-						setTimeout(function(){ scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.connected" }); }, 2000);
-
-						var message = {};
-						message.portal = portal;
-						message.info = scope.bridgeInformation;
-
-						send(message);
-						if(done) { done(); }
-					})
-					.catch(error => {
-						scope.error(error);
-						if(done) { done(error); }
-						setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-					});
-				}
-
-				commandSent = true;
-			}
-
-			// UPDATING SETTINGS
-			if(typeof msg.payload.settings != 'undefined')
-			{
-				scope.status({fill: "grey", shape: "dot", text: "hue-bridge.node.updating-settings" });
-				bridge.client.bridge.get()
-				.then(bridgeConfig => {
-					if(typeof msg.payload.settings.name != 'undefined')
-					{
-						bridgeConfig.name = msg.payload.settings.name;
-					}
-					if(typeof msg.payload.settings.zigbeeChannel != 'undefined')
-					{
-						bridgeConfig.zigbeeChannel = msg.payload.settings.zigbeeChannel;
-					}
-					if(typeof msg.payload.settings.ipAddress != 'undefined')
-					{
-						bridgeConfig.ipAddress = msg.payload.settings.ipAddress;
-					}
-					if(typeof msg.payload.settings.dhcpEnabled != 'undefined')
-					{
-						bridgeConfig.dhcpEnabled = msg.payload.settings.dhcpEnabled;
-					}
-					if(typeof msg.payload.settings.netmask != 'undefined')
-					{
-						bridgeConfig.netmask = msg.payload.settings.netmask;
-					}
-					if(typeof msg.payload.settings.gateway != 'undefined')
-					{
-						bridgeConfig.gateway = msg.payload.settings.gateway;
-					}
-					if(typeof msg.payload.settings.proxyPort != 'undefined')
-					{
-						bridgeConfig.proxyPort = msg.payload.settings.proxyPort;
-					}
-					if(typeof msg.payload.settings.proxyAddress != 'undefined')
-					{
-						bridgeConfig.proxyAddress = msg.payload.settings.proxyAddress;
-					}
-					if(typeof msg.payload.settings.timeZone != 'undefined')
-					{
-						bridgeConfig.timeZone = msg.payload.settings.timeZone;
-					}
-					return bridge.client.bridge.save(bridgeConfig);
-				})
-				.then(bridgeInformation => {
-					scope.status({fill: "green", shape: "dot", text: "hue-bridge.node.settings-updated" });
-					if(done) { done(); }
-					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-				})
-				.catch(error => {
-					scope.error(error);
-					if(done) { done(error); }
-					setTimeout(function(){ scope.getBridgeInformation(); }, 2000);
-				});
-
-				// COMMAND SENT
-				commandSent = true;
-			}
-
-			// GET INFORMATION // FALLBACK
-			if(commandSent == false)
-			{
-				scope.getBridgeInformation();
+				scope.connected = true;
+				scope.setInitialState();
 			}
 		});
 
 		//
-		// CLOSE NODE
-		this.on('close', function()
+		// ON COMMAND
+		this.on('input', function(msg, send, done)
 		{
-			scope.nodeActive = false;
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
+			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
+
+			// SET LAST COMMAND
+			scope.lastCommand = msg;
+
+			// GET BRIDGE INFORMATION
+			scope.getBridgeInformation()
+			.then(function(bridgeInformation)
+			{
+				// START TOUCHLINK
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.touchLink != 'undefined')
+				{
+					// SET STATUS
+					scope.status({fill: "yellow", shape: "dot", text: "hue-bridge.node.starting-tl" });
+
+					// ENABLE TOUCHLINK
+					bridge.patch("bridge", "/config", { touchlink: true }, 1)
+					.then(function(status)
+					{
+						// SET STATUS
+						scope.status({fill: "blue", shape: "ring", text: "hue-bridge.node.started-tl" });
+						if(done) { done(); }
+
+						// RESET STATUS AFTER 30 SECONDS
+						setTimeout(function()
+						{
+							scope.setInitialState();
+							scope.getBridgeInformation(true);
+						}, 30000);
+					})
+					.catch(function(error)
+					{
+						scope.error(error);
+						if(done) { done(error); }
+					});
+				}
+				// FETCH RESSOURCES
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.fetch != 'undefined')
+				{
+					let fetchTypes = [];
+					if(typeof msg.payload.fetch == 'string') { fetchTypes.push(msg.payload.fetch); }
+					else if(typeof msg.payload.fetch == 'object') { fetchTypes = msg.payload.fetch; }
+					else { return false; }
+
+					scope.status({fill: "blue", shape: "dot", text: "hue-bridge.node.f-ressources" });
+
+					// FETCH
+					bridgeInformation.results = {};
+					fetchTypes.forEach(function(fetch)
+					{
+						bridgeInformation.results[fetch] = bridge.get(fetch);
+					});
+
+					// SEND RESULTS
+					if(scope.lastCommand !== null)
+					{
+						bridgeInformation.command = scope.lastCommand;
+					}
+
+					send(bridgeInformation);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+					if(done) { done(); }
+
+					// RESET STATUS
+					setTimeout(function(){ scope.setInitialState(); }, 2000);
+				}
+				// UPDATE SETTINGS
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.settings != 'undefined')
+				{
+					let patchObject = {};
+
+					if(typeof msg.payload.settings.name != 'undefined')
+					{
+						patchObject.name = msg.payload.settings.name;
+					}
+					if(typeof msg.payload.settings.zigbeeChannel != 'undefined')
+					{
+						patchObject.zigbeechannel = msg.payload.settings.zigbeeChannel;
+					}
+					if(typeof msg.payload.settings.ipAddress != 'undefined')
+					{
+						patchObject.ipaddress = msg.payload.settings.ipAddress;
+					}
+					if(typeof msg.payload.settings.dhcpEnabled != 'undefined')
+					{
+						patchObject.dhcp = msg.payload.settings.dhcpEnabled;
+					}
+					if(typeof msg.payload.settings.netmask != 'undefined')
+					{
+						patchObject.netmask = msg.payload.settings.netmask;
+					}
+					if(typeof msg.payload.settings.gateway != 'undefined')
+					{
+						patchObject.gateway = msg.payload.settings.gateway;
+					}
+					if(typeof msg.payload.settings.proxyPort != 'undefined')
+					{
+						patchObject.proxyport = msg.payload.settings.proxyPort;
+					}
+					if(typeof msg.payload.settings.proxyAddress != 'undefined')
+					{
+						patchObject.proxyaddress = msg.payload.settings.proxyAddress;
+					}
+					if(typeof msg.payload.settings.timeZone != 'undefined')
+					{
+						patchObject.timezone = msg.payload.settings.timeZone;
+					}
+
+					// PATCH BRIDGE!
+					if(Object.values(patchObject).length > 0)
+					{
+						// SET UPDATING STATUS
+						scope.status({fill: "yellow", shape: "dot", text: "hue-bridge.node.updating-settings" });
+
+						// PATCH BRIDGE
+						bridge.patch("bridge", "/config", patchObject, 1)
+						.then(function(patched)
+						{
+							// GET RELOADED BRIDGE INFORMATION
+							return scope.getBridgeInformation(true);
+						})
+						.then(function(bridgeInformation)
+						{
+							scope.status({fill: "blue", shape: "dot", text: "hue-bridge.node.settings-updated" });
+
+							// SET LAST COMMAND
+							if(scope.lastCommand !== null)
+							{
+								bridgeInformation.command = scope.lastCommand;
+							}
+
+							scope.send(bridgeInformation);
+
+							// RESET LAST COMMAND
+							scope.lastCommand = null;
+
+							if(done) { done(); }
+							setTimeout(function(){ scope.setInitialState(); }, 3000);
+						})
+						.catch(function(error) {
+							scope.error(error);
+							if(done) { done(error); }
+						});
+					}
+				}
+				// GIVE BACK CURRENT STATE
+				else
+				{
+					// SEND MESSAGE
+					if(scope.lastCommand !== null)
+					{
+						bridgeInformation.command = scope.lastCommand;
+					}
+
+					scope.send(bridgeInformation);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+				}
+			});
 		});
 	}
 

@@ -1,7 +1,7 @@
 <script type="text/x-red" data-template-name="hue-magic">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-magic.config.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-magic.config.input-name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-magic.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
         <label for="node-input-endless"><i class="fa fa-refresh"></i> <span data-i18n="hue-magic.config.loop"></span></label>
@@ -13,15 +13,15 @@
         <input type="checkbox" id="node-input-restore" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-magic.config.restore-state"></span>
         </label>
     </div>
-    <div class="form-row">
+    <div class="form-row" style="margin-top: 30px">
         <label for="node-input-steps"><i class="fa fa-magic"></i> <span data-i18n="hue-magic.config.animation"></span></label>
     </div>
     <div style="display: none;">
         <div class="form-row">
-            <input type="text" id="node-input-preset" placeholder="...">
+            <input type="text" id="node-input-preset" placeholder="{}">
         </div>
         <div class="form-row">
-            <input type="text" id="node-input-steps" placeholder="...">
+            <input type="text" id="node-input-steps" placeholder="{}">
         </div>
     </div>
     <div class="form-row form-animations">
@@ -145,31 +145,31 @@
         category: 'HueMagic',
         color: '#ff4242',
         defaults: {
-            name: {value:""},
-            endless: {value: true},
-            restore: {value: false},
-            preset: {value: null},
-            steps: {value: null}
+            name: { value:"" },
+            endless: { value: true },
+            restore: { value: false },
+            preset: { value: null },
+            steps: { value: null }
         },
+        align: 'left',
+        icon: "hue-magic.png",
         inputs: 1,
         outputs: 1,
+        label: function() {
+            return this.name || this._("hue-magic.node.title");
+        },
+        paletteLabel: function() {
+            return this._("hue-magic.node.title");
+        },
         inputLabels: function() {
             return this._("hue-magic.node.input");
         },
         outputLabels: function() {
             return this._("hue-magic.node.output");
         },
-        align: 'right',
-        icon: "hue-magic.png",
-        paletteLabel: function() {
-            return this._("hue-magic.node.title");
-        },
-        label: function() {
-            return this.name || this._("hue-magic.node.title");
-        },
         oneditprepare: function()
         {
-            var scope = this;
+            const scope = this;
             this.animations = [];
 
             var preset = $('#node-input-preset').val();
@@ -178,7 +178,6 @@
             $.get('hue/animations?nc=' + Math.random())
             .done( function(data)
             {
-                // LOGIC
                 scope.animations = JSON.parse(data);
                 $.each(scope.animations, function(i, animation)
                 {
@@ -238,9 +237,26 @@
                 // SET STEPS
                 var index = selectedAnimation.attr("data-id");
                 var steps = JSON.stringify(JSON.parse(selectedAnimation.attr("data-steps")));
-
                 $('#node-input-steps').val(steps);
             });
+        },
+        button: {
+            onclick: function()
+            {
+                const node = this;
+                if(node.steps)
+                {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({ __user_inject_props__: "play"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-magic.node.playmsg"), { type: "success", id: "status", timeout: 2000 });
+                        }
+                    });
+                }
+            }
         }
     });
 </script>

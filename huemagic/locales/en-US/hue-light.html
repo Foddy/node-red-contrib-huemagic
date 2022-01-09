@@ -1,145 +1,97 @@
-<script type="text/x-red" data-help-name="hue-light">
-    <p>Hue light node to control the lights and receive light bulb events.</p>
+<script type="text/markdown" data-help-name="hue-light">
+The "Hue Light" node can control lights connected to the bridge and receive their status messages.
 
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available lights. Type in the name of the light manually or keep the default device name. Note that events will only be sent if the light bulb state is changed. If necessary, all status updates of this node can be ignored by activating the "Skip events" option. If you operate this node in universal mode, you can optionally also choose whether this node should receive and output all events from other nodes of the same type.</p>
+### Setup
 
-    <h3>Turn On / Off (simple)</h3>
-    <p>Changes the light on / off state based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt>msg.payload<span class="property-type">boolean</span></dt>
-        <dd>Will turn on or turn off the light with its previous configuration (color and brightness)</dd>
-    </dl>
+Select the pre-configured Hue Bridge and hit the search button to find all the available lights. If you already know the ID of a light, you can also enter it here manually. You can either assign a new name for the light internally or choose the predefined name. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". The node will then no longer issue device updates. Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you activate this setting, you will receive a status message for the currently selected light after each deployment.
 
-    <h3>Turn On / Off (extended)</h3>
-    <p>Changes the light state, effect, color and brightness based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt class="optional">on<span class="property-type">boolean</span></dt>
-        <dd>True to turn on the light bulb, false to turn it off</dd>
+If you activate the setting "Activate color naming", the node will try to describe the currently set light color for each status message. You will then receive an additional parameter with the English description of the currently set color in the output.
 
-        <dt class="optional">brightness<span class="property-type">int</span></dt>
-        <dd>Optionally configurable brightness of the light in percent (0-100)</dd>
+If you do not select a light and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type. You can also apply settings in universal mode to a specific light by transferring the corresponding light ID as a string in `msg.topic` together with your settings.
 
-        <dt class="optional">brightnessLevel<span class="property-type">int</span></dt>
-        <dd>Optionally configurable brightness level of the light (0-254)</dd>
+### Get status
 
-        <dt class="optional">incrementBrightness<span class="property-type">int</span></dt>
-        <dd>Increment brightness by given percentage value</dd>
+Outputs the current status of the light as soon as a `msg.payload` object with the following content has been passed to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
 
-        <dt class="optional">decrementBrightness<span class="property-type">int</span></dt>
-        <dd>Decrement brightness by given percentage value</dd>
+: status (boolean): Returns the current status of the light
 
-        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
-        <dd>Optionally configurable RGB color value of the light bulb. You don't need to pass the RGB value if you already passed a HEX value</dd>
+### Turn light on / off (simple)
 
-        <dt class="optional">hex<span class="property-type">string</span></dt>
-        <dd>Optionally configurable HEX color value of the light bulb. You don't need to pass the HEX value if you already passed a RGB value</dd>
+To quickly switch a light on or off in simple mode, pass an object with the following content to the node:
 
-        <dt class="optional">color<span class="property-type">string</span></dt>
-        <dd>Optionally configurable human readable color name in english like "red" or "random" for a random color</dd>
+: payload (boolean): `true` switches the light on, `false` switches it off
 
-        <dt class="optional">image<span class="property-type">string</span></dt>
-        <dd>Optionally configurable image path (remote or local) to apply the most dominant color to the light</dd>
+### Light commands (extended)
 
-        <dt class="optional">transitionTime<span class="property-type">float</span></dt>
-        <dd>Optionally configurable temporary value which eases transition of an effect (value in seconds, 0 for instant, 5 for five seconds)</dd>
+In addition to simply switching it on and off, there are also many other options available for controlling the light. All nodes in HueMagic can be controlled with additive commands. This means that you can first pass one setting and then another setting in a later command without discarding the previous setting. Transfer the following parameters to a `msg.payload` object to make more extensive settings on the light:
 
-        <dt class="optional">colorloop<span class="property-type">float / boolean</span></dt>
-        <dd>Optionally configurable color loop effect. Float = disables the effect after x seconds / Boolean to turn on / off the effect</dd>
+: on (boolean): `true` switches the light on, `false` switches it off
+: toggle (boolean | any): Toggles between switching on and off, depending on the previous status of the light
+: brightness (int | string): Percentage value of the light brightness (0-100) or a string with the value `auto` to automatically set the brightness based on the current time
+: brightnessLevel (int): Numerical value of the light brightness (0-254)
+: incrementBrightness (int | boolean): Specifies by how many percent the light should be made brighter or `true` to make the light brighter in 10% steps
+: decrementBrightness (int | boolean): Specifies the percentage by which the light should be made darker or `true` to make the light darker in 10% steps
+: color (string): `random` to set a random color or an English color name (e.g. `red`)
+: hex (string): Color value in hexadecimal in the form of a string
+: rgb (array [0,0,0]): Color value in RGB format in the form of an array
+: xyColor (object {x [float], y [float]}): Color value in the XY color format in the form of an object
+: gradient (object {hex […]}): An object with a supported color object (e.g. `hex`,` rgb`, ...) and several colors to set a gradient to supported lights
+: mixColor (object): A color to be mixed with the current light color. Can accept `color`, `hex`, `rgb` or `xyColor` objects and optionally `amount` (int) to indicate the mixing ratio in percent
+: image (string): Path of an image (local or on the web) to set the current color of the light to the average color of the image
+: saturation (int): percentage of the saturation of the current color (beta)
+: colorTemp (int | string): Value between 153 and 500 to set the color temperature of the light or the values `cold`, `normal`, `warm`, `hot` and `auto` - where `auto` is the color temperature based on the current time
+: incrementColorTemp (int | boolean): Value by how much the color temperature should be warmer or `true` to make the color temperature warmer in steps of 50
+: decrementColorTemp (int | boolean): Value by how much the color temperature should be colder or `true` to make the color temperature colder in steps of 50
+: transitionTime (float): Transition time of the current setting in seconds. If `0` is entered, the light changes to the desired setting immediately. If `3` is entered, the light changes to the desired setting with a slight transition in the next 3 seconds
+: colorloop (float): Plays a "colorloop" animation for the selected duration in seconds and then switches back to the original state of the light
+: alert (float): Plays an "alert" animation for the selected duration in seconds and then switches back to the original state of the light
 
-        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Optionally configurable color temperature of the light from 153 to 500 or a string with "cold", "normal", "warm" or "auto"</dd>
+### Status messages from the node
 
-        <dt class="optional">incrementColorTemp<span class="property-type">int</span></dt>
-        <dd>Increment/decrement color temperature by given value</dd>
+As soon as a change in the light settings has been detected (regardless of whether via Node-RED or externally), the following status message is returned by the node:
 
-        <dt class="optional">saturation<span class="property-type">int</span></dt>
-        <dd>Optionally configurable color saturation of the light in percent (from 0 to 100)</dd>
+#### Status object under `msg.payload`
 
-        <dt class="optional">status<span class="property-type">any</span></dt>
-        <dd>Returns the current status message of the node without taking any action</dd>
-    </dl>
+: on (boolean): State of the light, where `true` stands for on and `false` for off
+: brightness (int | boolean): Current brightness in percent or `false`, if the light does not support a brightness setting
+: brightnessLevel (int | boolean): Current brightness from 0-254 or `false`, if the light does not support a brightness setting
+: reachable (boolean | string): `true` if the light is connected to the bridge, `unknown` if the connection status deviates
+: connectionStatus (string): The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value
+: rgb (array [int, int, int] | optional): Current light color in the form of an RGB value, if the light can display colors
+: hex (string | optional): Current light color in the form of a hexadecimal value if the light can display colors
+: xyColor (object {x [float], y [float]} | optional): Current light color in the form of an XY value, if the light can display colors
+: color (string | optional): Current light name in English, if the light can display colors and the corresponding setting of the node has been activated
+: gradient (object | optional): Current gradient setting with all available color units in the form of an array, if the light supports gradient settings, where `colors` outputs the colors, `numColors` the number of set colors in the gradient and `totalColors` the maximum possible Number of colors the resource can support in the gradient
+: colorTemp (int | boolean | optional): Current color temperature of the light, if the light can display color temperatures and a color temperature has been set
+: colorTempName (string | optional): Current color temperature of the light in the form of a descriptive string with the values `cold`,`normal`, `warm` or `hot`, if the light can display color temperatures and a color temperature has been set. Otherwise `unknown` is output
+: updated (string): Time of the last update of the resource by HueMagic (ISO 8601)
 
-    <h3>Toggle On / Off (auto)</h3>
-    <p>Turns the light on or off depending on the current state based on the passed in <b>msg.payload</b> value of:</p>
-    <dl class="message-properties">
-        <dt>toggle<span class="property-type">any</span></dt>
-        <dd>Will turn on or turn off the light with the previous configuration (color and brightness)</dd>
-    </dl>
+#### Information about the light under `msg.info`
 
-    <h3>Alert Effect</h3>
-    <p>Plays an alert effect based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt>alert<span class="property-type">int</span></dt>
-        <dd>Configurable amount of seconds to play the alert effect (max 30). When the alert effect is finished the light bulb will reset to the previous state.</dd>
+: id (string): Indicates the new ID of the light
+: idV1 (string | boolean): Indicates the old ID of the light
+: uniqueId (string): The unique ID of the light
+: deviceId (string): The unique ID of the device
+: name (string): The currently set name of the light
+: type (string): The type of light (always `light`)
+: softwareVersion (string): The current firmware of the light
+: model (object): Contains the model information of the light under `id`, `manufacturer`, `name`, `type`, `certified`, `friendsOfHue`, `colorGamut` and `colorGamutType`
 
-        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
-        <dd>Optionally configurable RGB color value of the alert effect. You don't need to pass the RGB value if you already passed a HEX value</dd>
+#### Status changes under `msg.updated`
 
-        <dt class="optional">hex<span class="property-type">string</span></dt>
-        <dd>Optionally configurable HEX color value of the alert effect. You don't need to pass the HEX value if you already passed a RGB value</dd>
+Lists individual parameters in the form of an object that have changed compared to the last state of the light. If no changes have been registered, this object is empty.
 
-        <dt class="optional">color<span class="property-type">string</span></dt>
-        <dd>Optionally configurable human readable color name in english like "red" or "random" for a random color</dd>
-    </dl>
+#### Last status of the light under `msg.lastState`
 
-    <h3>Light Events</h3>
-    <p>The event message that the light bulb sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>on<span class="property-type">boolean</span></dt>
-        <dd>True for on, false for off</dd>
+Contains the complete status object (see output values above) of the last status before the last change. If the last state of HueMagic has not yet been registered, it will output `false`.
 
-        <dt>brightness<span class="property-type">int</span></dt>
-        <dd>Current brightness of the light bulb in percent</dd>
+#### Last command under `msg.command` (optional)
 
-        <dt>brightnessLevel<span class="property-type">int</span></dt>
-        <dd>Current brightness level of the light bulb (0-254)</dd>
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
 
-        <dt class="optional">rgb<span class="property-type">array[int,int,int]</span></dt>
-        <dd>Current RGB color value of the light bulb (if supported)</dd>
+### Examples from HueMagic
 
-        <dt class="optional">hex<span class="property-type">string</span></dt>
-        <dd>Current HEX color value of the light bulb (if supported)</dd>
+HueMagic provides some sample configurations for this node. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
 
-        <dt class="optional">color<span class="property-type">string</span></dt>
-        <dd>Current color name of the light bulb (if supported)</dd>
-
-        <dt class="optional">colorTemp<span class="property-type">int</span></dt>
-        <dd>Current color temperature of the light (if supported)</dd>
-
-        <dt>updated<span class="property-type">ISO 8601 date string</span></dt>
-        <dd>ISO 8601 date string of the last light state update</dd>
-    </dl>
-
-    <h3>Additional Light Bulb Info</h3>
-    <p>Additional information about the light bulb is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the light as registered on the bridge</dd>
-
-        <dt>uniqueId<span class="property-type">string</span></dt>
-        <dd>Unique Id of the light (typically hardware id)</dd>
-
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name for the light</dd>
-
-        <dt>type<span class="property-type">string</span></dt>
-        <dd>Type of light (e.g. Extended Color Light, Dimmable Light)</dd>
-
-        <dt>softwareVersion<span class="property-type">float</span></dt>
-        <dd>Software version of the light</dd>
-
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>The model object of the light includes model specific information like the model.id, model.manufacturer, model.name, model.type, model.colorGamut and model.friendsOfHue</dd>
-    </dl>
-
-    <h3>Universal Mode (optional)</h3>
-    <p>Defines the light Id on the Hue Bridge manually if not configured in the node properties (deactivates light update events):</p>
-    <dl class="message-properties">
-        <dt>msg.topic<span class="property-type">int</span></dt>
-        <dd>Manual definition of the light bulb Id</dd>
-    </dl>
-
-    <h3>Last State Information</h3>
-    <p>This node also sends the entire last state data (before the update) in the <b>msg.lastState</b> object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.</p>
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

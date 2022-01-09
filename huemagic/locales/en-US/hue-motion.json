@@ -5,8 +5,8 @@
 		{
 			"name": "Name",
 			"input-name": "Sensor name",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"searching": "Searching motion sensors…",
 			"none-found": "No motion sensors found!",
 			"unknown-error": "Something went wrong. Please retry.",
@@ -25,7 +25,9 @@
 			"deactivated": "deactivated",
 			"input": "activate / deactivate / status",
 			"output": "motion detected",
-			"universal": "universal mode"
+			"universal": "universal mode",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

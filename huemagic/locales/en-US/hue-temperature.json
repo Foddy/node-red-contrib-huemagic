@@ -5,8 +5,8 @@
 		{
 			"name": "Name",
 			"sensor": "Sensor",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"input-name": "Sensor name",
 			"searching": "searching temperature sensors…",
 			"none-found": "No temperature sensors found.",
@@ -22,7 +22,10 @@
 			"not-reachable": "not reachable!",
 			"input": "status query",
 			"output": "temperature (changed)",
-			"universal": "universal mode"
+			"universal": "universal mode",
+			"command": "executing command…",
+			"deactivated": "deactivated",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

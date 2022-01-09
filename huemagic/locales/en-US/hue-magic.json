@@ -21,7 +21,9 @@
 			"animating": "animating…",
 			"stopped": "stopped",
 			"input": "run / stop animation",
-			"output": "light or group"
+			"output": "light or group",
+			"command": "executing command…",
+			"playmsg": "Animation started…"
 		}
 	}
 }

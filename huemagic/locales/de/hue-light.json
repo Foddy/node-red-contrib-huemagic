@@ -5,16 +5,14 @@
 		{
 			"name": "Name",
 			"input-name": "Name des Lichts",
-			"skipevents": "Mitteilungen ignorieren",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
 			"searching": "Suche nach Lichtern…",
 			"none-found": "Keine Lichter gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
 			"light": "Licht",
 			"colornamer": "Farbnamen",
-			"colornamer-info": "Aktiviere Farbnamen",
-			"universalevents": "Universelle Mitteilungen",
-			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
+			"colornamer-info": "Aktiviere Farbnamen"
 		},
 		"node":
 		{
@@ -30,7 +28,9 @@
 			"error-input": "Eingabefehler",
 			"error-invalid-temp": "Ungültige Farbtemperatur. Erlaubt sind Werte zwischen 153 - 500.",
 			"input": "Ein- / Ausschalten",
-			"output": "Status"
+			"output": "Status",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…"
 		}
 	}
 }

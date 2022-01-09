@@ -1,60 +1,68 @@
-<script type="text/x-red" data-help-name="hue-magic">
-    <p>Hue Magic Node für Animationen</p>
+<script type="text/markdown" data-help-name="hue-magic">
+Der „Hue Magic“-Node kann komplexe und benutzerdefinierte Animationen auf Lichtern und Gruppen anwenden.
 
-    <h3>Einrichtung</h3>
-    <p>Wählen Sie aus, ob die Animation auf unbestimmte Zeit wiederholt werden soll und / oder ob der vorherige Zustand wiederhergestellt werden soll, nachdem die Animation beendet / gestoppt wurde. Wählen Sie eine der mitgelieferten Animationen aus und verbinden Sie den Knoten mit einer Gruppe oder einem Licht.</p>
+### Einrichtung
 
-    <h3>Starten / Stoppen</h3>
-    <p>Startet oder stoppt eine Animation basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
-    <dl class="message-properties">
-        <dt>true<span class="property-type">boolean</span></dt>
-        <dd>Startet die Animation</dd>
+Vergeben Sie zunächst dem Node einen Namen, um Ihre Animation in der Node-RED-Oberfläche klar einzuordnen. Anschließend haben Sie die Wahl zwischen den Optionen „Wiederholen“ und „Wiederherstellen“. Wählen Sie die Option „Wiederholen“, wenn Sie Ihre Animation auf einem Licht oder einer Gruppe endlos abspielen möchten, bis Sie sie manuell stoppen. Wenn Sie den vorherigen Zustand der Zielressource (Licht / Gruppe) nach Beendigung der Animation wiederherstellen möchten, setzen Sie den Haken auf „Wiederherstellen“. Andernfalls bleibt der letzte Frame der Animation auf der jeweiligen Ressource stehen.
 
-        <dt>false<span class="property-type">boolean</span></dt>
-        <dd>Stoppt die Animation</dd>
-    </dl>
+Weiter unten haben Sie die Wahl aus vorgefertigten Animationen von HueMagic. Klicken Sie Ihre gewünschte Animation an, um Sie einzustellen.
 
-    <h3>Eigene Animationen</h3>
-    <p>Alternativ können Sie eigene Animationen erstellen und anwenden. Dazu erstellen Sie ein Array und übergeben es mit den folgenden Parametern an <b>msg.payload.steps</b>.</p>
-    <dl class="message-properties">
-        <dt>delay<span class="property-type">int</span></dt>
-        <dd>Führe diesen Frame nach der Verzögerung aus (in Millisekunden)</dd>
+### Animation starten / stoppen
 
-        <dt>animation<span class="property-type">object</span></dt>
-        <dd>Fügen Sie hier alle Parameter ein, die animiert werden sollen. Unterstützt alle Werte des Nodes "Hue Licht" und "Hue Gruppe".</dd>
-    </dl>
+Um eine Animation abzuspielen oder zu stoppen, übergeben Sie ein Objekt mit folgenden Inhalt an den Node:
 
-    <h3>Spezielle Kommandos</h3>
-    <p>Manchmal ist es sinnvoll, Animationen ungeordnet abzuspielen. Zum Beispiel, um Feuer realistischer zu imitieren. Dazu erstellen Sie ein Objekt und übergeben es mit den folgenden Parametern an <b>msg.payload.specials</b>.</p>
-    <dl class="message-properties">
-        <dt>randomOrder<span class="property-type">boolean</span></dt>
-        <dd>Führt die Schritte in zufälliger Reihenfolge aus</dd>
-    </dl>
+: payload (boolean) : `true`, startet die Animation, `false`, stoppt die Animation
 
-    <h4>Beispiel (eigene Animation)</h4>
-<code>
-<pre>
-{
-    "animate": true,
-    "steps": [
-        {
-            "delay": 500,
-            "animation": {
-                "hex": "#FF0000",
-                "transitionTime": 1
+### Eigene Animationen
+
+Wenn Sie dem Node eine eigene Animation übergeben, wird die vorausgewählte, vorgefertigte Animation (wenn eingestellt) vorübergehend durch Ihre ersetzt. Eigene HueMagic-Animationen sind eine Folge von Befehlen, die in einem Array zusammengefasst wurden. Jedes Array-Element bildet einen Schritt – wobei ein Schritt auch aus mehreren Frames bestehen kann (Übergangseffekte).
+
+Erstellen Sie ein `Array` mit den jeweiligen Animationsschritten in Form eines Objekts und übergeben Sie es unter `msg.payload.steps` an den HueMagic-Node.
+
+: delay (int) : Anzahl der Millisekunden die gewartet werden soll, bis dieser Schritt ausgeführt wird
+: animation (object) : Das Objekt beinhaltet die Aktion(en), die in diesem Schritt durchgeführt werden sollen. Identische Parameter wie bei den „Hue Licht“- & „Hue Gruppe“-Nodes
+
+### Beispiel einer eigenen Animation
+
+Dieses Beispiel zeigt, wie eine einfache Animation aussehen könnte. Im ersten Schritt wird der Delay von 500 Millisekunden abgewartet. Anschließend wird über eine Zeitspanne von einer Sekunde langsam die Farbe des Lichts auf rot umgestellt. Sobald das Licht vollständig zu rot übergegangen ist, wird der zweite Schritt ausgeführt, der auch einen Delay von 500 Millisekunden hat. Abschließend wechselt die Farbe zu blau.
+
+Wenn Sie eingestellt haben, dass die Animation unendlich abgespielt werden soll, wird dieser Prozess endlos wiederholt, bis Sie die Animation manuell stoppen oder den Node neu deployen.
+
+Übergeben Sie das folgende Objekt in `msg.payload` um die Beispielanimation abzuspielen.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
             }
-        },
-        {
-            "delay": 500,
-            "animation": {
-                "hex": "#0000FF",
-                "transitionTime": 1
-            }
-        }
-    ]
-}</pre>
-</code>
+        ]
+    }
 
-    <h3>Tipps und Hinweise</h3>
-    <p>Verbinden Sie den Hue Magic Node mit nur einem Licht- oder einem gesamten Gruppen-Node, um API-Requests auf der Hue Bridge zu sparen. Die Animationsvorschau kann geringfügig vom tatsächlichen Ergebnis auf einer Lampe / Gruppe abweichen.</p>
+### Spezielle Kommandos
+
+Manchmal macht es Sinn eine Animation ungeordnet abzuspielen – z. B. wenn Feuer realistischer imitiert werden soll. Um die einzelnen Schritte ungeordnet und zufällig abzuspielen, können Sie folgenden Befehl an `msg.payload.specials` übergeben:
+
+: randomOrder (boolean | any) : `true`, aktiviert die zufällige Wiedergabe der einzelnen Animationsschritte
+
+### Tipps und Hinweise
+
+Dieser Node gibt keine Statusnachrichten aus. Bitte verbinden Sie den Ausgangspunkt des Nodes mit einer Gruppe statt einzelnen Lichtern, wenn Sie mehrere Lichter gleichzeitig mit derselben Animation animieren möchten. Die Vorschauen der vorgefertigten Animationen sind eine Simulation und können von der tatsächlichen Animation auf einer Ressource geringfügig (Timing, Farben) abweichen.
+
+### Beispiele von HueMagic
+
+HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
+
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

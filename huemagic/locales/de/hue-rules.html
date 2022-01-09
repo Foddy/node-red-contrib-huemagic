@@ -1,74 +1,69 @@
-<script type="text/x-red" data-help-name="hue-rules">
-    <p>Hue Regel Node zum Empfangen von Regelereignissen oder zum Aktivieren / Deaktivieren von Regeln.</p>
+<script type="text/markdown" data-help-name="hue-rules">
+Der „Hue Regel“-Node kann in der Bridge gespeicherte Regeln aktivieren oder deaktivieren und ihre Einstellung abrufen.
 
-    <h3>Einrichtung</h3>
-    <p>Wählen Sie die vorkonfigurierte Hue Bridge aus und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Regeln auf der Bridge zu finden. Geben Sie den Namen der Regel manuell ein oder behalten Sie den Standardnamen bei. Beachten Sie, dass Ereignisse nur bei der Bereitstellung (einmalig) gesendet werden und wenn die Regel auf der Bridge ausgelöst wird. Bei Bedarf können alle Statusaktualisierungen dieses Nodes durch Aktivieren der Option "Mitteilungen ignorieren" ignoriert werden.</p>
+### Einrichtung
 
-    <h3>Aktivieren / Deaktivieren</h3>
-    <p>Aktiviert oder deaktiviert die Regel basierend auf den übergebenen <b>msg.payload</b>-Werten von:</p>
-    <dl class="message-properties">
-        <dt>true<span class="property-type">boolean</span></dt>
-        <dd>Aktiviert die Regel</dd>
+Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Regeln zu finden. Wenn Sie die ID der Regel bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Alternativ können Sie auch einen neuen Namen vergeben oder den vordefinierten Namen der Regel wählen.
 
-        <dt>false<span class="property-type">boolean</span></dt>
-        <dd>Deaktiviert die Regel</dd>
-    </dl>
+Wenn Sie keine Regel auswählen und die Node-Konfiguration so anwenden, arbeitet der Node im sogenannten „Universalmodus“. In diesem Modus empfängt der Node alle Statusmitteilungen desselben Typs und gibt diese aus. Sie können aber auch Einstellungen im Universalmodus auf eine bestimmte Regel anwenden, indem Sie die entsprechende Regel-ID als String in `msg.topic` zusammen mit Ihren Einstellungen übergeben.
 
-    <h3>Regel-Mitteilungen</h3>
-    <p>Die vom Regel-Node gesendete Ereignismeldung enthält die folgenden Daten im Objekt <b>msg.payload</b>:</p>
-    <dl class="message-properties">
-        <dt>triggered<span class="property-type">string</span></dt>
-        <dd>ISO 8601 Datum der letzten Aktivierung</dd>
-    </dl>
+### Eigenschaften / Einstellungen abrufen
 
-    <h3>Zusätzliche Regelinformationen</h3>
-    <p>Zusätzliche Informationen zu der Regel werden an das Objekt <b>msg.info</b> gesendet:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerische ID der Regel, wie auf der Bridge registriert</dd>
+Gibt die aktuellen Eigenschaften der Regel aus, sobald ein `msg.payload`-Objekt mit folgendem Inhalt an den Node übergeben wurde. Sie können alternativ auch den Button in der Node-RED-Oberfläche betätigen, ohne vorher eine Nachricht an den Node übergeben zu müssen.
 
-        <dt>created<span class="property-type">string</span></dt>
-        <dd>ISO 8601 Datum des Erstellungsdatums der Regel</dd>
+: status (boolean) : Gibt den aktuellen Status der Regel zurück
 
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name der Regel</dd>
+### Regel aktivieren / deaktivieren
 
-        <dt>timesTriggered<span class="property-type">int</span></dt>
-        <dd>Anzahl die angibt wie oft die Regel bereits aktiviert wurde</dd>
+Die Regel kann im Bedarfsfall aktiviert und deaktiviert werden. Wenn die Regel deaktiviert wurde, wird sie in der Bridge nicht mehr ausgeführt, bis Sie sie wieder reaktivieren. Übergeben Sie dafür ein Objekt mit folgendem Inhalt:
 
-        <dt>owner<span class="property-type">string</span></dt>
-        <dd>Nutzer, der die Regel erstellte</dd>
+: payload (boolean) : `true` aktiviert die Regel, `false` deaktiviert sie
 
-        <dt>status<span class="property-type">string</span></dt>
-        <dd>aktiviert oder deaktiviert, Regel ist auslösbar bei aktiviert</dd>
-    </dl>
+### Statusnachrichten des Nodes
 
-    <h3>Regelbedingungen</h3>
-    <p>Ein Array von Objekten, die die Regelbedingungen darstellen, wird an das Array <b>msg.conditions</b> gesendet:</p>
-    <dl class="message-properties">
-        <dt>address<span class="property-type">string</span></dt>
-        <dd>Die Sensorressource / der Statusstandort für die Bedingung</dd>
+Sobald sich der Status (aktiviert / deaktiviert) einer Regel ändert, wird folgende Statusnachricht vom Node zurückgegeben:
 
-        <dt>operator<span class="property-type">string</span></dt>
-        <dd>Der Operator für die Bedingung</dd>
+#### Statusobjekt unter `msg.payload`
 
-        <dt>value<span class="property-type">string</span></dt>
-        <dd>Der Wert, der in Verbindung mit dem Operator verwendet wird</dd>
-    </dl>
+: enabled (boolean) : Gibt an, ob die Regel aktiviert oder deaktiviert ist
+: triggered (string) : Zeitpunkt der letzten Ausführung (ISO 8601)
 
-    <h3>Regelaktionen</h3>
-    <p>Ein Array von Objekten, die die Regelaktionen darstellen, wird an das Array <b>msg.actions</b> gesendet:</p>
-    <dl class="message-properties">
-        <dt>address<span class="property-type">string</span></dt>
-        <dd>Der Ort der umsetzbaren Ressource</dd>
+#### Informationen der Regel unter `msg.info`
 
-        <dt>method<span class="property-type">string</span></dt>
-        <dd>Art der Methode für die Aktion (z.B. GET, PUT)</dd>
+: id (string) : Die eindeutige ID der Regel
+: created (string) : Erstellungsdatum der Regel (ISO 8601)
+: name (string) : Name der Regel auf der Bridge
+: timesTriggered (int) : Anzahl der Ausführungen der Regel auf der Bridge
+: owner (string) : ID des Besitzers / der Besitzerin dieser Regel
+: status (string) : Status der Regel in Form eines Strings
 
-        <dt>body<span class="property-type">object</span></dt>
-        <dd>Das Body / Inhalt der Aktion</dd>
-    </dl>
+#### Regelkonditionen unter `msg.conditions` (array)
 
-    <h3>Letzte Zustandsinformationen</h3>
-    <p>Dieser Node schickt auch die gesamten letzten Zustandsinformationen (vor dem Update) in das <b>msg.lastState</b>-Objekt. Dieses kann entweder false (Boolean) or die Objekte payload (msg.lastState.payload) und info (msg.lastState.info) beinhalten. Der Rückgabewert "false" wird nur dann gesendet, wenn es keinen letzten Zustand gab oder der Node neu erstellt oder gestartet wurde.</p>
+: address (string) : Pfad zu einem Attribut eines Sensors
+: operator (string) : Operator
+: value (string) : Der zu prüfende Wert
+
+#### Regelaktionen unter `msg.actions` (array)
+
+: address (string) : Die Zieladresse der Ressource
+: method (string) : Die Anfragemethode
+: body (object) : Die Aktion, die ausgeführt werden soll
+
+#### Zustandsänderungen unter `msg.updated`
+
+Listet einzelne Parameter in Form eines Objekts auf, die sich im Vergleich zum letzten Zustand der Regel geändert haben. Wenn keine Änderungen registriert wurden, ist dieses Objekt leer.
+
+#### Letzter Stand der Regel unter `msg.lastState`
+
+Beinhaltet das komplette Objekt (siehe Ausgabewerte oben) des letzten Zustands vor der zuletzt registrierten Änderung der Regel. Wenn der letzte Zustand von HueMagic noch nicht registriert wurde, wird `false` ausgegeben.
+
+#### Letzter Befehl unter `msg.command` (optional)
+
+Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wird der gesamte Befehl der ausgeführt wurde mit ausgegeben. Andernfalls wird dieses Objekt vom Node nicht ausgegeben.
+
+### Beispiele von HueMagic
+
+HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
+
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

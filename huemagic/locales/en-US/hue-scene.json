@@ -5,11 +5,12 @@
 		{
 			"name": "Name",
 			"input-name": "Scene name",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"searching": "Searching scenes…",
 			"none-found": "No scenes found!",
 			"unknown-error": "Something went wrong. Please retry.",
+			"scene": "Scene",
 			"group": "Group",
 			"group-none-found": "No groups found!",
 			"group-searching": "Searching groups…",
@@ -23,7 +24,9 @@
 			"recalled-on-group": "scene recalled on group",
 			"no-id": "No scene Id.",
 			"input": "activate scene",
-			"output": "scene information"
+			"output": "Target group(s)",
+			"command": "executing command…",
+			"statusmsg": "Recalling scene…"
 		}
 	}
 }

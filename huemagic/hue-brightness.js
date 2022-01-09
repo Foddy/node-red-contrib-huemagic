@@ -6,13 +6,11 @@ module.exports = function(RED)
 	{
 		RED.nodes.createNode(this, config);
 
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueBrightnessMessage } = require('../utils/messages');
-		var universalMode = false;
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
 
-		// SAVE LAST STATE
-		var lastState = false;
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
 
 		//
 		// CHECK CONFIG
@@ -26,94 +24,146 @@ module.exports = function(RED)
 		// UNIVERSAL MODE?
 		if(!config.sensorid)
 		{
-			universalMode = true;
 			this.status({fill: "grey", shape: "dot", text: "hue-brightness.node.universal"});
 		}
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
+		if(typeof bridge.disableupdates != 'undefined' || bridge.disableupdates == false)
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-brightness.node.init"});
 		}
 
 		//
-		// ON UPDATE
-		if(config.sensorid) { bridge.events.on('sensor' + config.sensorid, function(sensor) { scope.receivedUpdates(sensor) }); }
-		if(!config.sensorid && config.universalevents && config.universalevents == true) { bridge.events.on('sensor', function(sensor) { scope.receivedUpdates(sensor) }); }
-
-		//
-		// RECEIVED UPDATES
-		this.receivedUpdates = function(sensor)
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("light_level", config.sensorid, function(info)
 		{
-			if(sensor.config.reachable == false)
+			let currentState = bridge.get("light_level", info.id);
+
+			// RESSOURCE FOUND?
+			if(currentState !== false)
 			{
-				if(universalMode == false)
+				// SEND MESSAGE
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
 				{
-					scope.status({fill: "red", shape: "ring", text: "hue-brightness.node.not-reachable"});
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
+
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
+				}
+
+				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
+				if(config.sensorid)
+				{
+					if(currentState.payload.reachable == false)
+					{
+						scope.status({fill: "red", shape: "ring", text: "hue-brightness.node.not-reachable"});
+					}
+					else if(currentState.payload.active == true)
+					{
+						if(currentState.payload.dark)
+						{
+							var statusMessage = RED._("hue-brightness.node.lux-dark", { lux: currentState.payload.lux });
+							scope.status({fill: "blue", shape: "dot", text: statusMessage });
+						}
+						else if(currentState.payload.daylight)
+						{
+							var statusMessage = RED._("hue-brightness.node.lux-daylight", { lux: currentState.payload.lux });
+							scope.status({fill: "yellow", shape: "dot", text: statusMessage });
+						}
+						else
+						{
+							var statusMessage = RED._("hue-brightness.node.lux", { lux: currentState.payload.lux });
+							scope.status({fill: "grey", shape: "dot", text: statusMessage });
+						}
+					}
+					else if(currentState.payload.active == false)
+					{
+						scope.status({fill: "red", shape: "ring", text: "hue-brightness.node.deactivated"});
+					}
 				}
 			}
-			else
-			{
-				var hueBrightness = new HueBrightnessMessage(sensor, (universalMode == false) ? lastState : false);
-				var realLUX = hueBrightness.msg.payload.lux;
-				if(!config.skipevents) { scope.send(hueBrightness.msg); }
-
-				// SAVE LAST STATE
-				lastState = sensor;
-
-				if(universalMode == false)
-				{
-					if(sensor.state.dark)
-					{
-						var statusMessage = RED._("hue-brightness.node.lux-dark",{lux: realLUX});
-						scope.status({fill: "blue", shape: "dot", text: statusMessage });
-					}
-					else if(sensor.state.daylight)
-					{
-						var statusMessage = RED._("hue-brightness.node.lux-daylight",{lux: realLUX});
-						scope.status({fill: "yellow", shape: "dot", text: statusMessage });
-					}
-					else
-					{
-						var statusMessage = RED._("hue-brightness.node.lux",{lux: realLUX});
-						scope.status({fill: "grey", shape: "dot", text: statusMessage });
-					}
-				}
-			}
-		}
+		});
 
 		//
 		// ON COMMAND
 		this.on('input', function(msg, send, done)
 		{
-			// Node-RED < 1.0
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
 			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
 
-			// DEFINE SENSOR ID
-			var tempSensorID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.sensorid;
+			// SET LAST COMMAND
+			scope.lastCommand = msg;
+
+			// CREATE PATCH
+			let patchObject = {};
+
+			// DEFINE SENSOR ID & CURRENT STATE
+			const tempSensorID = (msg.topic != null) ? msg.topic : config.sensorid;
+			let currentState = bridge.get("light_level", tempSensorID);
 
 			// GET CURRENT STATE
-			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
+			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )
 			{
-				bridge.client.sensors.getById(tempSensorID)
-				.then(sensor => {
-					var hueBrightness = new HueBrightnessMessage(sensor, lastState);
-					send(hueBrightness.msg);
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
 
-					return true;
-				});
+				// SEND STATE
+				scope.send(currentState);
 
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
 				return true;
 			}
-		});
 
-		//
-		// CLOSE NODE / REMOVE EVENT LISTENER
-		this.on('close', function()
-		{
-			bridge.events.removeAllListeners('sensor' + config.sensorid);
-			bridge.events.removeAllListeners('sensor');
+			// TURN ON / OFF
+			if((msg.payload === true || msg.payload === false) && (msg.payload !== currentState.payload.active))
+			{
+				// PREPARE PATCH
+				patchObject.enabled = msg.payload;
+			}
+
+			//
+			// SHOULD PATCH?
+			if(Object.values(patchObject).length > 0)
+			{
+				// CHANGE NODE UI STATE
+				if(config.sensorid)
+				{
+					scope.status({fill: "grey", shape: "ring", text: "hue-brightness.node.command"});
+				}
+
+				// PATCH!
+				bridge.patch("light_level", tempSensorID, patchObject)
+				.then(function() { if(done) { done(); }})
+				.catch(function(errors) { scope.error(errors); });
+			}
+			else
+			{
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
+
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+			}
 		});
 	}
 

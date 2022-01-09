@@ -1,67 +1,67 @@
-<script type="text/x-red" data-help-name="hue-brightness">
-    <p>Hue brightness node to receive current light level in Lux and daylight / darkness.</p>
+<script type="text/markdown" data-help-name="hue-brightness">
+The "Hue Brightness" node can read the current light level from a suitable sensor on the bridge.
 
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available Lux sensors. Type in the name of the sensor manually or keep the default device name. Note that events will only be sent on deploy (once) and if the light level changes. If necessary, all status updates of this node can be ignored by activating the "Skip events" option. If you operate this node in universal mode, you can optionally also choose whether this node should receive and output all events from other nodes of the same type.</p>
+### Setup
 
-    <h3>Light Level Events</h3>
-    <p>The event message that the light sensor sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>lux<span class="property-type">int</span></dt>
-        <dd>Real lux value</dd>
+Select the pre-configured Hue Bridge and click the search button to find all the available sensors. If you already know the ID of the sensor, you can also enter it here manually. You can either assign a new name for the sensor internally or choose the predefined name of the sensor. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". The node will then no longer issue device updates. Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you activate this setting, you will receive a status message for the currently selected sensor after each deployment.
 
-        <dt>lightLevel<span class="property-type">int</span></dt>
-        <dd>Light level</dd>
+If you do not select a sensor and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type. You can also apply settings in universal mode to a specific sensor by transferring the corresponding sensor ID as a string in `msg.topic` together with your settings.
 
-        <dt>dark<span class="property-type">boolean</span></dt>
-        <dd>True if it's dark</dd>
+### Get status
 
-        <dt>daylight<span class="property-type">boolean</span></dt>
-        <dd>True if daylight recognized</dd>
+Outputs the current status of the sensor as soon as a `msg.payload` object with the following content has been transferred to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
 
-        <dt>updated<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the last light level update</dd>
-    </dl>
+: status (boolean): Returns the current status of the sensor
 
-    <h3>Additional Sensor Info</h3>
-    <p>Additional information about the sensor is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the sensor as registered on the bridge</dd>
+### Turn the sensor on / off
 
-        <dt>uniqueId<span class="property-type">string</span></dt>
-        <dd>Unique Id of the sensor (typically hardware id)</dd>
+If necessary, the sensor can be turned on and off remotely. If the sensor has been turned off, it no longer registers any changes in light level and accordingly no longer outputs them. To do this, pass an object with the following content:
 
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name for the sensor</dd>
+: payload (boolean): `true` switches the sensor on, `false` switches it off
 
-        <dt>type<span class="property-type">string</span></dt>
-        <dd>Sensor type (e.g. Daylight, CLIPTemperature, ZGPSwitch)</dd>
+### Status messages from the node
 
-        <dt>softwareVersion<span class="property-type">float</span></dt>
-        <dd>Software version of the sensor</dd>
+As soon as the sensor has detected a change in the light level, the following status message is returned:
 
-        <dt>battery<span class="property-type">int</span></dt>
-        <dd>Current battery level of the sensor in percent</dd>
+#### Status object under `msg.payload`
 
-        <dt>model<span class="property-type">object</span></dt>
-        <dd>The model object of the sensor includes model specific information like the model.id, model.manufacturer, model.name and model.type</dd>
-    </dl>
+: active (boolean): Indicates whether the sensor is turned on or off
+: reachable (boolean | string): `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates
+: connectionStatus (string): The current connection status with the bridge in the form of a string. Can contain `connected`,` disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value
+: lux (int): Indicates the real LUX value of the light level
+: lightLevel (int): Indicates the light intensity of the sensor
+: dark (boolean): `true`, if darkness was registered
+: daylight (boolean): `true`, if daylight was registered
+: updated (string): Time of the last update of the resource by HueMagic (ISO 8601)
 
-    <h3>Check status</h3>
-    <p>Retrieves the status of the sensor by passing the following parameters to the <b>msg.payload</b>:</p>
-    <dl class="message-properties">
-        <dt class="optional">status<span class="property-type">any</span></dt>
-        <dd>Returns the current status of the node without taking any action</dd>
-    </dl>
+#### Information about the sensor under `msg.info`
 
-    <h3>Universal Mode (optional)</h3>
-    <p>Defines the sensor Id on the Hue Bridge manually if not configured in the node properties:</p>
-    <dl class="message-properties">
-        <dt>msg.topic<span class="property-type">int</span></dt>
-        <dd>Manual definition of the sensor Id</dd>
-    </dl>
+: id (string): Indicates the new ID of the sensor
+: idV1 (string | boolean): Indicates the old ID of the sensor
+: uniqueId (string): The unique ID of the sensor
+: deviceId (string): The unique ID of the device
+: name (string): The currently set name of the sensor
+: type (string): The type of the sensor (always `light_level`)
+: softwareVersion (string): The current firmware of the sensor
+: battery (float): The current battery level of the sensor
+: batteryState (string): The current status of the battery level. Can contain `normal`, `low` or `critical` as a value
+: model (object): Contains the model information of the sensor under `id`, `manufacturer`, `name`, `type` and `certified`
 
-    <h3>Last State Information</h3>
-    <p>This node also sends the entire last state data (before the update) in the <b>msg.lastState</b> object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.</p>
+#### Status changes under `msg.updated`
+
+Lists individual parameters in the form of an object that have changed compared to the last state of the sensor. If no changes have been registered, this object is empty.
+
+#### Last status of the sensor under `msg.lastState`
+
+Contains the complete status object (see output values above) of the last status before the last registered change. If the last state of HueMagic has not yet been registered, it will output `false`.
+
+#### Last command under `msg.command` (optional)
+
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+
+### Examples from HueMagic
+
+HueMagic provides some sample configurations for this node. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
+
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

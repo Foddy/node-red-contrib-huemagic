@@ -1,38 +1,22 @@
 <script type="text/x-red" data-template-name="hue-scene">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-scene.config.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-scene.config.input-name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-scene.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
-        <input type="text" id="node-input-bridge">
+        <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
-        <label for="node-input-sceneid"><i class="fa fa-eye"></i> Scene</label>
-        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
-            <div style="position: absolute; left: 0px; right: 40px;">
-                <input type="text" id="node-input-sceneid" placeholder="1" style="width: 100%"/>
+        <label for="node-input-sceneid"><i class="fa fa-eye"></i> <span data-i18n="hue-scene.config.scene"></span></label>
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <div id="input-scene-select-toggle" style="flex-grow: 1;">
+                <input type="text" id="node-input-sceneid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%"/>
             </div>
-            <a id="node-config-input-scan-scenes" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
+            <button id="node-config-input-scan-scenes" type="button" class="red-ui-button" style="margin-left: 10px;">
                 <i class="fa fa-search"></i>
-            </a>
+            </button>
         </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-groupid"><i class="fa fa-lightbulb-o"></i> <span data-i18n="hue-scene.config.group"></span></label>
-        <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
-            <div style="position: absolute; left: 0px; right: 40px;">
-                <input type="text" id="node-input-groupid" placeholder="1" style="width: 100%"/>
-            </div>
-            <a id="node-config-input-scan-groups" class="editor-button" style="position: absolute; right: 0px; top: 0px;">
-                <i class="fa fa-search"></i>
-            </a>
-        </div>
-    </div>
-    <div class="form-row">
-        <label for="node-input-skipevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-scene.config.skipevents"></span></label>
-        <input type="checkbox" id="node-input-skipevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-scene.config.skipevents-node"></span>
-        </label>
     </div>
 </script>
 
@@ -41,149 +25,146 @@
         category: 'HueMagic',
         color: '#ff823a',
         defaults: {
-            name: {value:""},
-            bridge: {type: "hue-bridge", required: true},
-            sceneid: {value: null},
-            groupid: {value:"", required: false, validate: function(id) {
-                if(id.length < 1) { return true; }
-                else if(!isNaN(id)) { return true; }
-                else { return false; }
-            }},
-            skipevents: {value: false}
+            name: { value:"" },
+            bridge: { type: "hue-bridge", required: true },
+            sceneid: { value: null }
         },
+        align: 'left',
+        icon: "hue-scene.png",
         inputs: 1,
         outputs: 1,
+        label: function() {
+            return this.name || this._("hue-scene.node.title");
+        },
+        paletteLabel: function() {
+            return this._("hue-scene.node.title");
+        },
         inputLabels: function() {
             return this._("hue-scene.node.input");
         },
         outputLabels: function() {
             return this._("hue-scene.node.output");
         },
-        align: 'right',
-        icon: "hue-scene.png",
-        paletteLabel: function() {
-            return this._("hue-scene.node.title");
-        },
-        label: function() {
-            return this.name || this._("hue-scene.node.title");
-        },
         oneditprepare: function()
         {
-            var scope = this;
+            const scope = this;
+            let sceneOptions = [];
 
             function manualSceneID()
             {
+                // GET CURRENT SELECTED VALUE
                 var current = $('#node-input-sceneid').val();
-                $('#node-input-sceneid').replaceWith('<input type="text" id="node-input-sceneid" style="width: 100%"/>');
-                $('#node-input-sceneid').val(current);
-            }
 
-            function manualGroupID()
-            {
-                var current = $('#node-input-groupid').val();
-                $('#node-input-groupid').replaceWith('<input type="text" id="node-input-groupid" style="width: 100%"/>');
-                $('#node-input-groupid').val(current);
+                // REMOVE SELECT FIELD
+                $('#input-scene-select-toggle').empty();
+
+                // CREATE NEW INPUT FIELD
+                $('#input-scene-select-toggle').append('<input type="text" id="node-input-sceneid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%" value="'+current+'" />');
+
+                // CHANGE BUTTON ICON
+                var button = $("#node-config-input-scan-scenes");
+                var buttonIcon = button.find("i");
+                buttonIcon.removeClass("fa-pencil");
+                buttonIcon.addClass("fa-search");
             }
 
             function searchAndSelectScenes()
             {
+                // GET CURRENT BRIDGE CONFIGURATION
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                if(!bridgeConfig) { return false; }
+
+                // GET CURRENT SELECTED VALUE
                 var current = $('#node-input-sceneid').val();
-                $('#node-input-sceneid').replaceWith('<select id="node-input-sceneid" style="width: 100%"></select>');
-                $('#node-input-sceneid').append('<option selected="selected" value="null">'+scope._("hue-scene.config.searching")+'</option>');
 
-                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('hue/scenes', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
-                .done(function(data) {
-                    var scenes = JSON.parse(data);
+                // TRIGGER SEARCHING NOTIFICATION
+                var notification = RED.notify(scope._("hue-rules.config.searching"), { type: "compact", modal: true, fixed: true });
 
-                    if(scenes.length <= 0)
+                // GET THE SCENES
+                $.get('hue/ressources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "scene" })
+                .done( function(data) {
+                    var allRessources = JSON.parse(data);
+                    if(allRessources.length <= 0)
                     {
-                        RED.notify(scope._("hue-scene.config.none-found"), "error");
+                        notification.close();
+                        RED.notify(scope._("hue-scene.config.none-found"), { type: "error" });
+                        return false;
                     }
 
-                    // RESET OPTIONS
-                    $('#node-input-sceneid').empty();
-
-                    // SET MOTION SENSORS AS OPTIONS
-                    scenes.forEach(function(scene)
+                    // SET OPTIONS
+                    allRessources.forEach(function(ressource)
                     {
-                        $('#node-input-sceneid').append('<option value="' + scene.id + '">' + scene.name + '</option>');
+                        sceneOptions[ressource.id] = { value: ressource.id, label: ressource.name + " ("+ressource.group+")" };
                     });
 
                     // SELECT CURRENT VALUE
-                    $('#node-input-sceneid').val(current);
+                    $("#node-input-sceneid").typedInput({
+                        types: [
+                            {
+                                value: current,
+                                options: Object.values(sceneOptions)
+                            }
+                        ]
+                    });
+
+                    // CHANGE BUTTON ICON
+                    var button = $("#node-config-input-scan-scenes");
+                    var buttonIcon = button.find("i");
+                    buttonIcon.removeClass("fa-search");
+                    buttonIcon.addClass("fa-pencil");
+
+                    // CLOSE SEARCH NOTIFICATION
+                    notification.close();
                 })
                 .fail(function()
                 {
+                    notification.close();
                     RED.notify(scope._("hue-scene.config.unknown-error"), "error");
                 });
             }
 
-            function searchAndSelectGroupID()
+            // CHANGED SCENE ID? -> REPLACE NAME (IF POSSIBLE)
+            $(document).on('change', '#node-input-sceneid', function(e)
             {
-                var current = $('#node-input-groupid').val();
-                $('#node-input-groupid').replaceWith('<select id="node-input-groupid" style="width: 100%"></select>');
-                $('#node-input-groupid').append('<option selected="selected" value="null">'+scope._("hue-scene.config.group-searching")+'</option>');
+                let currentSelectedOptionID = $(e.currentTarget).val();
+                let currentSelectedOptionValue = (currentSelectedOptionID.length > 0 && sceneOptions[currentSelectedOptionID]) ? sceneOptions[currentSelectedOptionID].label : false;
 
-                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
-                $.get('hue/groups', {bridge: bridgeConfig.bridge, key: bridgeConfig.key})
-                .done(function(data) {
-                    var groups = JSON.parse(data);
-
-                    if(groups.length <= 0)
-                    {
-                        RED.notify(scope._("hue-scene.config.group-none-found"), "error");
-                    }
-
-                    // RESET OPTIONS
-                    $('#node-input-groupid').empty();
-
-                    // SET GROUPS AS OPTIONS
-                    $('#node-input-groupid').append('<option value="0">'+scope._("hue-scene.config.groups-all")+'</option>');
-                    groups.forEach(function(group)
-                    {
-                        $('#node-input-groupid').append('<option value="' + group.id + '">' + group.name + '</option>');
-                    });
-
-                    // SELECT CURRENT VALUE
-                    $('#node-input-groupid').val(current);
-                })
-                .fail(function()
+                if(currentSelectedOptionValue !== false)
                 {
-                    RED.notify(scope._("hue-scene.config.unknown-error"), "error");
-                });
-            }
-
-
-            $(document).on('change', '#node-input-sceneid', function()
-            {
-                var sceneName = $('#node-input-sceneid option:selected').text();
-                if(sceneName.length > 0)
-                {
-                    $('#node-input-name').val(sceneName);
+                    $('#node-input-name').val(currentSelectedOptionValue.split(" (")[0]);
                 }
             });
 
-            // SCAN
+            // TOGGLE SELECT/INPUT FIELD
             $('#node-config-input-scan-scenes').click(function()
             {
-                if($('#node-input-sceneid').prop("tagName") === "INPUT")
+                if($('#input-scene-select-toggle').find(".red-ui-typedInput-container").length > 0)
                 {
-                    searchAndSelectScenes();
-                } else {
                     manualSceneID();
                 }
-            });
-
-            $('#node-config-input-scan-groups').click(function()
-            {
-                if($('#node-input-groupid').prop("tagName") === "INPUT")
+                else
                 {
-                    searchAndSelectGroupID();
-                } else {
-                    manualGroupID();
+                    searchAndSelectScenes();
                 }
             });
+        },
+        button: {
+            onclick: function()
+            {
+                const node = this;
+                if(node.bridge)
+                {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({ __user_inject_props__: "status"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-scene.node.statusmsg"), { type: "success", id: "status", timeout: 2000 });
+                        }
+                    });
+                }
+            }
         }
     });
 </script>

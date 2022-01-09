@@ -1,32 +1,28 @@
 {
-	"hue-button":
+	"hue-buttons":
 	{
 		"config":
 		{
 			"name": "Name",
 			"input-name": "Name des Buttons",
-			"skipevents": "Mitteilungen ignorieren",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
 			"searching": "Suche nach Hue Buttons…",
 			"none-found": "Kein Hue Button gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"button": "Button",
-			"universalevents": "Universelle Mitteilungen",
-			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
+			"button": "Button"
 		},
 		"node":
 		{
-			"title": "Hue Button",
+			"title": "Hue Buttons",
 			"not-configured": "nicht konfiguriert",
 			"waiting": "warte…",
 			"button-on": "An",
-			"action-pressed": "gedrückt",
-			"action-holded": "gehalten",
-			"action-shortreleased": "kurz gedrückt",
-			"action-longreleased": "lange gedruckt",
 			"input": "Statusabfrage",
 			"output": "gedrückte Taste",
-			"universal": "Universalmodus"
+			"universal": "Universalmodus",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…"
 		}
 	}
 }

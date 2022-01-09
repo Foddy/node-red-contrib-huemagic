@@ -5,14 +5,12 @@
 		{
 			"name": "Name",
 			"input-name": "Name des Sensors",
-			"skipevents": "Mitteilungen ignorieren",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
 			"searching": "Suche nach Bewegungssensoren…",
 			"none-found": "Keine Bewegungssensoren gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"sensor": "Sensor",
-			"universalevents": "Universelle Mitteilungen",
-			"universalevents-node": "Empfängt alle Mitteilungen anderer Nodes desselben Typs (nur im Universalmodus)"
+			"sensor": "Sensor"
 		},
 		"node":
 		{
@@ -25,7 +23,9 @@
 			"deactivated": "deaktiviert",
 			"input": "aktivieren / deaktivieren / Statusabfrage",
 			"output": "erkannte Bewegung",
-			"universal": "Universalmodus"
+			"universal": "Universalmodus",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…"
 		}
 	}
 }

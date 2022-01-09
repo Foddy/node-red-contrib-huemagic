@@ -5,13 +5,12 @@ module.exports = function(RED)
 	function HueMotion(config)
 	{
 		RED.nodes.createNode(this, config);
-		var scope = this;
-		let bridge = RED.nodes.getNode(config.bridge);
-		let { HueMotionMessage } = require('../utils/messages');
-		var universalMode = false;
 
-		// SAVE LAST STATE
-		var lastState = false;
+		const scope = this;
+		const bridge = RED.nodes.getNode(config.bridge);
+
+		// SAVE LAST COMMAND
+		this.lastCommand = null;
 
 		//
 		// CHECK CONFIG
@@ -25,7 +24,6 @@ module.exports = function(RED)
 		// UNIVERSAL MODE?
 		if(!config.sensorid)
 		{
-			universalMode = true;
 			this.status({fill: "grey", shape: "dot", text: "hue-motion.node.universal"});
 		}
 
@@ -37,131 +35,131 @@ module.exports = function(RED)
 		}
 
 		//
-		// ON UPDATE
-		if(config.sensorid) { bridge.events.on('sensor' + config.sensorid, function(sensor) { scope.receivedUpdates(sensor) }); }
-		if(!config.sensorid && config.universalevents && config.universalevents == true) { bridge.events.on('sensor', function(sensor) { scope.receivedUpdates(sensor) }); }
-
-		//
-		// RECEIVED UPDATES
-		this.receivedUpdates = function(sensor)
+		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
+		bridge.subscribe("motion", config.sensorid, function(info)
 		{
-			if(sensor.config.reachable == false)
-			{
-				// SEND STATUS
-				if(universalMode == false)
-				{
-					scope.status({fill: "red", shape: "ring", text: "hue-motion.node.not-reachable"});
-				}
-			}
-			else if(sensor.config.on == true)
-			{
-				// SEND STATUS
-				if(universalMode == false)
-				{
-					if(sensor.state.presence)
-					{
-						scope.status({fill: "green", shape: "dot", text: "hue-motion.node.motion"});
-					}
-					else
-					{
-						scope.status({fill: "grey", shape: "dot", text: "hue-motion.node.activated"});
-					}
-				}
+			let currentState = bridge.get("motion", info.id);
 
+			// RESSOURCE FOUND?
+			if(currentState !== false)
+			{
 				// SEND MESSAGE
-				var hueMotion = new HueMotionMessage(sensor, true, (universalMode == false) ? lastState : false);
-				if(!config.skipevents) { scope.send(hueMotion.msg); }
-
-				// SAVE LAST STATE
-				lastState = sensor;
-			}
-			else if(sensor.config.on == false)
-			{
-				// SEND STATUS
-				if(universalMode == false)
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
 				{
-					scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
+					// SET LAST COMMAND
+					if(scope.lastCommand !== null)
+					{
+						currentState.command = scope.lastCommand;
+					}
+
+					// SEND STATE
+					scope.send(currentState);
+
+					// RESET LAST COMMAND
+					scope.lastCommand = null;
 				}
 
-				// SEND MESSAGE
-				var hueMotion = new HueMotionMessage(sensor, false, (universalMode == false) ? lastState : false);
-				if(!config.skipevents) { scope.send(hueMotion.msg); }
-
-				// SAVE LAST STATE
-				lastState = sensor;
-			}
-		}
-
-		//
-		// DISABLE / ENABLE SENSOR
-		this.on('input', function(msg, send, done)
-		{
-			// Node-RED < 1.0
-			send = send || function() { scope.send.apply(scope,arguments); }
-
-			// DEFINE SENSOR ID
-			var tempSensorID = (msg.topic != null && isNaN(msg.topic) == false && msg.topic.length > 0) ? parseInt(msg.topic) : config.sensorid;
-
-			// GET CURRENT STATE
-			if(typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined')
-			{
-				bridge.client.sensors.getById(tempSensorID)
-				.then(sensor => {
-					var hueMotion = new HueMotionMessage(sensor, (sensor.config.on) ? true : false, (universalMode == false) ? lastState : false);
-
-					// SAVE LAST STATE
-					lastState = sensor;
-
-					return send(hueMotion.msg);
-				});
-
-				return true;
-			}
-
-			// CONTROL
-			if(msg.payload == true || msg.payload == false)
-			{
-				bridge.client.sensors.getById(tempSensorID)
-				.then(sensor => {
-					sensor.config.on = msg.payload;
-					return bridge.client.sensors.save(sensor);
-				})
-				.then(sensor => {
-					var hueMotion = new HueMotionMessage(sensor, msg.payload, lastState);
-
-					// SEND STATUS
-					if(universalMode == false)
+				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
+				if(config.sensorid)
+				{
+					if(currentState.payload.reachable == false)
 					{
-						if(msg.payload == false)
+						scope.status({fill: "red", shape: "ring", text: "hue-motion.node.not-reachable"});
+					}
+					else if(currentState.payload.active == true)
+					{
+						if(currentState.payload.motion)
 						{
-							scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
+							scope.status({fill: "green", shape: "dot", text: "hue-motion.node.motion"});
 						}
 						else
 						{
-							scope.status({fill: "green", shape: "dot", text: "hue-motion.node.activated"});
+							scope.status({fill: "grey", shape: "dot", text: "hue-motion.node.activated"});
 						}
 					}
-
-					// SEND MESSAGE
-					if(!config.skipevents) { send(hueMotion.msg); }
-					if(done) { done(); }
-
-					// SAVE LAST STATE
-					lastState = sensor;
-				})
-				.catch(error => {
-					scope.error(error, msg);
-					if(done) { done(error); }
-				});
+					else if(currentState.payload.active == false)
+					{
+						scope.status({fill: "red", shape: "ring", text: "hue-motion.node.deactivated"});
+					}
+				}
 			}
 		});
 
-
 		//
-		// CLOSE NODE / REMOVE EVENT LISTENER
-		this.on('close', function()
+		// CONTROL SENSOR
+		this.on('input', function(msg, send, done)
 		{
-			bridge.events.removeAllListeners('sensor' + config.sensorid);
+			// REDEFINE SEND AND DONE IF NOT AVAILABLE
+			send = send || function() { scope.send.apply(scope,arguments); }
+			done = done || function() { scope.done.apply(scope,arguments); }
+
+			// SAVE LAST COMMAND
+			scope.lastCommand = msg;
+
+			// CREATE PATCH
+			let patchObject = {};
+
+			// DEFINE SENSOR ID & CURRENT STATE
+			const tempSensorID = (msg.topic != null) ? msg.topic : config.sensorid;
+			let currentState = bridge.get("motion", tempSensorID);
+
+			// GET CURRENT STATE
+			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )
+			{
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
+
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
+				return true;
+			}
+
+			// TURN ON / OFF
+			if((msg.payload === true || msg.payload === false) && (msg.payload !== currentState.payload.active))
+			{
+				// PREPARE PATCH
+				patchObject.enabled = msg.payload;
+			}
+
+			//
+			// SHOULD PATCH?
+			if(Object.values(patchObject).length > 0)
+			{
+				// CHANGE NODE UI STATE
+				if(config.sensorid)
+				{
+					scope.status({fill: "grey", shape: "ring", text: "hue-motion.node.command"});
+				}
+
+				// PATCH!
+				bridge.patch("motion", tempSensorID, patchObject)
+				.then(function() { if(done) { done(); }})
+				.catch(function(errors) { scope.error(errors);  });
+			}
+			else
+			{
+				// SET LAST COMMAND
+				if(scope.lastCommand !== null)
+				{
+					currentState.command = scope.lastCommand;
+				}
+
+				// SEND STATE
+				scope.send(currentState);
+
+				// RESET LAST COMMAND
+				scope.lastCommand = null;
+
+				if(done) { done(); }
+			}
 		});
 	}
 

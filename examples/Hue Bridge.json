@@ -11,42 +11,26 @@
         "type": "inject",
         "z": "bf04a073.be4428",
         "name": "TouchLink",
-        "topic": "",
-        "payload": "{\"touchLink\":true}",
-        "payloadType": "json",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 200,
-        "y": 60,
+        "topic": "",
+        "payload": "{\"touchLink\":true}",
+        "payloadType": "json",
+        "x": 120,
+        "y": 260,
         "wires": [
             [
                 "ea4668e7.fac4f"
             ]
         ],
         "icon": "font-awesome/fa-hand-o-right"
-    },
-    {
-        "id": "b9a63d91.47a5e8",
-        "type": "inject",
-        "z": "bf04a073.be4428",
-        "name": "Fetch users",
-        "topic": "",
-        "payload": "{\"fetch\":\"users\"}",
-        "payloadType": "json",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 190,
-        "y": 120,
-        "wires": [
-            [
-                "ea4668e7.fac4f"
-            ]
-        ],
-        "icon": "font-awesome/fa-user-circle-o"
     },
     {
         "id": "effb4d48.e09bb8",
@@ -57,10 +41,12 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "x": 630,
-        "y": 120,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 160,
         "wires": [],
         "icon": "font-awesome/fa-info-circle"
     },
@@ -68,10 +54,11 @@
         "id": "ea4668e7.fac4f",
         "type": "hue-bridge-node",
         "z": "bf04a073.be4428",
-        "name": "",
         "autoupdates": true,
-        "x": 410,
-        "y": 120,
+        "skipglobalevents": false,
+        "initevents": false,
+        "x": 550,
+        "y": 160,
         "wires": [
             [
                 "effb4d48.e09bb8"
@@ -83,20 +70,187 @@
         "type": "inject",
         "z": "bf04a073.be4428",
         "name": "Change bridge name",
-        "topic": "",
-        "payload": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
-        "payloadType": "json",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "str"
+            }
+        ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+        "payloadType": "json",
         "x": 160,
-        "y": 180,
+        "y": 360,
         "wires": [
             [
                 "ea4668e7.fac4f"
             ]
         ],
         "icon": "font-awesome/fa-toggle-on"
+    },
+    {
+        "id": "808fb3ba34d8d872",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Change the bridge settings",
+        "info": "",
+        "x": 130,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "6a2d7cbb05fc38a8",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Press bridge button remotely",
+        "info": "",
+        "x": 140,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a1d6fdeca2c9c014",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Fetch specific bridge ressources",
+        "info": "",
+        "x": 150,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "5829dc7c634e6674",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Fetch all lights",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"light\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-light.svg"
+    },
+    {
+        "id": "09d15741c0c484b7",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Fetch all motion sensors",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"motion\"}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-motion.svg"
+    },
+    {
+        "id": "fec4a7abbeecac4b",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Fetch all motion sensors & lights",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":[\"motion\", \"light\"]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 540,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-clone"
+    },
+    {
+        "id": "35bf62bc11c94830",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "FIRST STEPS (double click me)",
+        "info": "Click on the \"Hue Bridge\" node and select your bridge. If you have not yet set up a bridge, you will be asked to set one up before you can finish configuring the node.\n\nAs soon as the node is connected to your bridge and you have deployed the changes in Node-RED, the status of the node should change to \"connected\". The node can then receive and execute your commands. The \"Hue Bridge\" node also automatically outputs a message each time as soon as the status of a certain resource on the bridge has been updated. You can get the updated status and all of its information in the \"updated\" property of the output message.\n\nYou can also query the current status of the node in the Node-RED interface at any time by clicking on the button of the node next to the icon.\n\nIf you would like to receive further information on this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "150fa3da0eea6bce",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Get the current status",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "474d44e13140d4a8",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
     }
 ]

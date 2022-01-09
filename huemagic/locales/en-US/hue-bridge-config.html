@@ -1,18 +1,23 @@
-<script type="text/x-red" data-help-name="hue-bridge">
-	<p>Philips Hue Bridge configuration with the following parameters:</p>
+<script type="text/markdown" data-help-name="hue-bridge">
+Connects to a Philips Hue bridge.
 
-	<h3>Name</h3>
-    <p>Type in the name of the Hue Bridge manually or keep the default device name</p>
+### Name
 
-    <h3>Bridge IP & Port</h3>
-    <p>Type in the Hue Bridge IP address manually or press the button to retrieve all locally available bridges (static IP configuration on the Hue Bridge recommended). Optionally, you can define an alternate port to the bridge instead of the default port (80) by appending it with a colon</p>
+You can either assign an alternative, internal name for the bridge or keep the default name.
 
-    <h3>API Key</h3>
-    <p>Type in the Hue Bridge authorization key manually or press the button to retrieve key from bridge</p>
+### Bridge IP & Port
 
-    <h3>Poll interval</h3>
-    <p>Interval that is used to poll active nodes for changes (min 500ms / recommended between 1000ms and 5000ms)</p>
+Enter the Hue Bridge IP address manually or press the button to call up all locally available bridges (static IP configuration on the Hue Bridge recommended). You can also optionally define an alternative port for the bridge by adding a colon to the IP address.
 
-    <h3>Disable events</h3>
-    <p>If this setting is activated, the current status of Light, Group & Rule nodes will not be polled from the bridge. Hue Motion and Tap sensors are unaffected by this setting.</p>
+### API key
+
+Enter the Hue Bridge API key manually or press the button to create a new key. If you want to create a new key, you have to press the physical button of the bridge within the time window of 20 seconds to complete the process.
+
+### Automatic firmware updates
+
+HueMagic periodically checks for available Philips Hue firmware updates and automatically installs them when they are available. You can deactivate this behavior by clicking the corresponding checkbox.
+
+### Deactivate notifications
+
+If you activate this setting, all nodes behind this bridge will no longer receive automatic status messages.
 </script>

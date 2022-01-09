@@ -5,8 +5,8 @@
 		{
 			"name": "Name",
 			"input-name": "Group name",
-			"skipevents": "Skip events",
 			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
 			"searching": "Searching groups…",
 			"none-found": "No groups found!",
 			"unknown-error": "Something went wrong. Please retry.",
@@ -33,7 +33,9 @@
 			"error-invalid-sat": "Invalid saturation setting. Only 0 - 254 allowed.",
 			"error-invalid-temp": "Invalid color temprature. Only 153 - 500 allowed.",
 			"input": "turn on / off",
-			"output": "status"
+			"output": "status",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…"
 		}
 	}
 }

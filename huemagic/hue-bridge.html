@@ -1,22 +1,23 @@
 <script type="text/x-red" data-template-name="hue-bridge-node">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-bridge.config.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-bridge.config.input-name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-bridge.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
         <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
-        <input type="text" id="node-input-bridge">
+        <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row" style="margin-top: 30px">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipglobalevents" style="flex: 15px;">
+            <span data-i18n="hue-bridge.config.skipglobalevents-info" style="width: 100%; margin-left: 10px;"></span>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-autoupdates"><i class="fa fa-refresh"></i> <span data-i18n="hue-bridge.config.autoupdates"></span></label>
-        <label for="node-input-autoupdates" style="width:70%">
-            <input type="checkbox" id="node-input-autoupdates" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-bridge.config.autoupdates-info"></span>
-        </label>
-    </div>
-    <div class="form-row">
-        <label for="node-input-skipglobalevents"><i class="fa fa-sign-out"></i> <span data-i18n="hue-bridge.config.skipglobalevents"></span></label>
-        <input type="checkbox" id="node-input-skipglobalevents" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="hue-bridge.config.skipglobalevents-info"></span>
-        </label>
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
+            <span data-i18n="hue-bridge.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        </div>
     </div>
 </script>
 
@@ -25,26 +26,45 @@
         category: 'HueMagic',
         color: '#b7b7b7',
         defaults: {
-            name: {value:""},
-            bridge: {type: "hue-bridge", required: true},
-            autoupdates: {value: true},
-            skipglobalevents: {value: false}
+            name: { value:"" },
+            bridge: { type: "hue-bridge", required: true },
+            autoupdates: { value: true },
+            skipglobalevents: { value: false },
+            initevents: { value: false }
         },
+        align: 'left',
+        icon: "hue-bridge.png",
         inputs: 1,
         outputs: 1,
+        label: function() {
+            return this.name || this._("hue-bridge.node.title");
+        },
+        paletteLabel: function() {
+            return this._("hue-bridge.node.title");
+        },
         inputLabels: function() {
             return this._("hue-bridge.node.input");
         },
         outputLabels: function() {
             return this._("hue-bridge.node.output");
         },
-        align: 'right',
-        icon: "hue-bridge.png",
-        paletteLabel: function() {
-            return this._("hue-bridge.node.title");
-        },
-        label: function() {
-            return this.name || this._("hue-bridge.node.title");
+        button: {
+            onclick: function()
+            {
+                const node = this;
+                if(node.bridge)
+                {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({ __user_inject_props__: "status"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-bridge.node.statusmsg"), { type: "success", id: "status", timeout: 2000 });
+                        }
+                    });
+                }
+            }
         }
     });
 </script>

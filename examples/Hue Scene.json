@@ -1,61 +1,178 @@
 [
     {
-        "id": "e3a959fd.39da6",
+        "id": "16cd74edb3f2c03d",
         "type": "tab",
         "label": "Hue Scene (example)",
         "disabled": false,
         "info": "Example use of the Hue Scene node"
     },
     {
-        "id": "a1e00b08.a8bf38",
+        "id": "ef6d38e72af773f7",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "FIRST STEPS (double click me)",
+        "info": "Click on the \"Hue Scene\" nodes and select both your bridge and a scene from the list. If you have not yet set up a bridge, you will be asked to set one up before you can finish configuring the node.\n\nAs soon as the node is connected to your bridge and you have deployed the changes in Node-RED, the node can receive and execute your commands. The \"Hue Scene\" node can optionally also be connected to one or more groups in order to execute a scene on a specific group.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "9212dea7c3727082",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activate predefined scene on predefined group",
+        "info": "",
+        "x": 200,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a42551dfa1115aa2",
         "type": "inject",
-        "z": "e3a959fd.39da6",
+        "z": "16cd74edb3f2c03d",
         "name": "Activate",
-        "topic": "",
-        "payload": "true",
-        "payloadType": "bool",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "x": 160,
-        "y": 60,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 120,
+        "y": 160,
         "wires": [
             [
-                "b6988edd.8d6e3"
+                "928cb8d82cdf8977"
             ]
         ],
-        "icon": "font-awesome/fa-power-off"
+        "icon": "font-awesome/fa-circle"
     },
     {
-        "id": "d481c97b.56f63",
-        "type": "debug",
-        "z": "e3a959fd.39da6",
-        "name": "Information",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "x": 550,
-        "y": 60,
-        "wires": [],
-        "icon": "font-awesome/fa-info-circle"
-    },
-    {
-        "id": "b6988edd.8d6e3",
+        "id": "928cb8d82cdf8977",
         "type": "hue-scene",
-        "z": "e3a959fd.39da6",
-        "name": "",
-        "sceneid": "",
-        "skipevents": false,
-        "x": 350,
-        "y": 60,
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f1b9a5cd1ebfe07",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activate predefined scene on specific groups",
+        "info": "",
+        "x": 190,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "fe2561642d86c7a2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activate on wired group",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 160,
+        "y": 260,
         "wires": [
             [
-                "d481c97b.56f63"
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "fd51b418323a798b",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 260,
+        "wires": [
+            [
+                "d73af7394dd870e1"
             ]
         ]
+    },
+    {
+        "id": "d73af7394dd870e1",
+        "type": "hue-group",
+        "z": "16cd74edb3f2c03d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 770,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "91046bac5ac2b796",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activate on wired group + custom group",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":\"{ENTER_ADDITIONAL_GROUP_ID_HERE}\"}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 300,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "8afa0a3ca466788a",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activate on wired group + custom groups",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":[\"{ENTER_GROUP_ID_NO1_HERE}\",\"{ENTER_GROUP_ID_NO2_HERE}\"]}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 340,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
     }
 ]

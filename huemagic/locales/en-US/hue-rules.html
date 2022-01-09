@@ -1,74 +1,69 @@
-<script type="text/x-red" data-help-name="hue-rules">
-    <p>Hue rule node to receive rule events or to enable / disable rules.</p>
+<script type="text/markdown" data-help-name="hue-rules">
+The "Hue Rule" node can activate or deactivate rules saved in the bridge and call up their settings.
 
-    <h3>Setup</h3>
-    <p>Select the preconfigured Hue Bridge and hit the search button to find all available rules on the bridge. Type in the name of the rule manually or keep the default name. Note that events will only be sent on deploy (once) and if the rule is triggered on the bridge. If necessary, all status updates of this node can be ignored by activating the "Skip events" option.</p>
+### Setup
 
-    <h3>Enable / Disable</h3>
-    <p>Activates or deactivates the rule based on the passed in <b>msg.payload</b> values of:</p>
-    <dl class="message-properties">
-        <dt>true<span class="property-type">boolean</span></dt>
-        <dd>Enables the rule</dd>
+Select the pre-configured Hue Bridge and hit the search button to find all the available rules. If you already know the ID of the rule, you can also enter it here manually. Alternatively, you can also assign a new name or choose the predefined name of the rule.
 
-        <dt>false<span class="property-type">boolean</span></dt>
-        <dd>Disables the rule</dd>
-    </dl>
+If you do not select a rule and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type. You can also apply settings in universal mode to a specific rule by transferring the corresponding rule ID as a string in `msg.topic` together with your settings.
 
-    <h3>Trigger events</h3>
-    <p>The event message that the rule node sends contains the following data in the <b>msg.payload</b> object:</p>
-    <dl class="message-properties">
-        <dt>triggered<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the last time rule was triggered</dd>
-    </dl>
+### Get properties / settings
 
-    <h3>Additional Rule Info</h3>
-    <p>Additional information about the rule is going to be sent to the <b>msg.info</b> object:</p>
-    <dl class="message-properties">
-        <dt>id<span class="property-type">int</span></dt>
-        <dd>Numerical id of the rule as registered on the bridge</dd>
+Outputs the current properties of the rule as soon as a `msg.payload` object with the following content has been passed to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
 
-        <dt>created<span class="property-type">string</span></dt>
-        <dd>ISO 8601 date string of the creation date of the rule</dd>
+: status (boolean): Returns the current status of the rule
 
-        <dt>name<span class="property-type">string</span></dt>
-        <dd>Name of the rule</dd>
+### Activate / deactivate rule
 
-        <dt>timesTriggered<span class="property-type">int</span></dt>
-        <dd>Number of times rule was triggered</dd>
+The rule can be activated and deactivated if necessary. If the rule has been deactivated, it will no longer run in the bridge until you reactivate it. To do this, pass an object with the following content:
 
-        <dt>owner<span class="property-type">string</span></dt>
-        <dd>User who created the rule</dd>
+: payload (boolean): `true` activates the rule, `false` deactivates it
 
-        <dt>status<span class="property-type">string</span></dt>
-        <dd>enabled or disabled, rule is triggerable on enabled</dd>
-    </dl>
+### Status messages from the node
 
-    <h3>Rule Conditions</h3>
-    <p>An array of objects representing the rule conditions is going to be sent to the <b>msg.conditions</b> array:</p>
-    <dl class="message-properties">
-        <dt>address<span class="property-type">string</span></dt>
-        <dd>The sensor resource/state location for the condition</dd>
+As soon as the status (activated / deactivated) of a rule changes, the following status message is returned by the node:
 
-        <dt>operator<span class="property-type">string</span></dt>
-        <dd>The operator for the condition</dd>
+#### Status object under `msg.payload`
 
-        <dt>value<span class="property-type">string</span></dt>
-        <dd>The value used in conjunction with operator</dd>
-    </dl>
+: enabled (boolean): Indicates whether the rule is activated or deactivated
+: triggered (string): Time of the last execution (ISO 8601)
 
-    <h3>Rule Actions</h3>
-    <p>An array of objects representing the rule actions is going to be sent to the <b>msg.actions</b> array:</p>
-    <dl class="message-properties">
-        <dt>address<span class="property-type">string</span></dt>
-        <dd>The actionable resource location</dd>
+#### Information about the rule under `msg.info`
 
-        <dt>method<span class="property-type">string</span></dt>
-        <dd>Type of method for the action (e.g. GET, PUT)</dd>
+: id (string): The unique ID of the rule
+: created (string): Date of creation of the rule (ISO 8601)
+: name (string): Name of the rule on the bridge
+: timesTriggered (int): Number of times the rule was executed on the bridge
+: owner (string): ID of the owner of this rule
+: status (string): Status of the rule in the form of a string
 
-        <dt>body<span class="property-type">object</span></dt>
-        <dd>The body of the action</dd>
-    </dl>
+#### Rule conditions under `msg.conditions` (array)
 
-    <h3>Last State Information</h3>
-    <p>This node also sends the entire last state data (before the update) in the <b>msg.lastState</b> object. It can either contain false (boolean) or the objects payload (msg.lastState.payload) and info (msg.lastState.info). The return value "false" is only sent if there was no last state, e.g. when the node was newly created or restarted.</p>
+: address (string): Path to an attribute of a sensor
+: operator (string): operator
+: value (string): The value to be checked
+
+#### Rule actions under `msg.actions` (array)
+
+: address (string): The destination address of the resource
+: method (string): The query method
+: body (object): The action to be taken
+
+#### Status changes under `msg.updated`
+
+Lists individual parameters in the form of an object that have changed compared to the last state of the rule. If no changes have been registered, this object is empty.
+
+#### Last status of the rule under `msg.lastState`
+
+Contains the complete object (see output values above) of the last status before the last registered change of the rule. If the last state of HueMagic has not yet been registered, it will output `false`.
+
+#### Last command under `msg.command` (optional)
+
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+
+### Examples from HueMagic
+
+HueMagic provides some sample configurations for this node. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
+
+![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
 </script>

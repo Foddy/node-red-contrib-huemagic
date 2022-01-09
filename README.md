@@ -83,7 +83,7 @@ With the "fetch" command you can output a list of specific devices that are curr
 
 |Property|Description|
 |--|--|
-| fetch (string | array [string, ...]) | Can accept `light`, `group`, `button`, `motion`, `temperature`, `light_level` or `rule` as value(s) |
+| fetch (string / array [string, ...]) | Can accept `light`, `group`, `button`, `motion`, `temperature`, `light_level` or `rule` as value(s) |
 
 ### Change Hue Bridge settings
 
@@ -98,7 +98,7 @@ You can use the following command to change specific settings on the bridge. Ple
 | netmask (string) | Changes the network mask in the network settings |
 | gateway (string) | Specifies the gateway in the network settings |
 | proxyAddress (string) | Sets a proxy address in the network settings |
-| proxyPort (string | int) | Specifies the port of the proxy in the network settings |
+| proxyPort (string / int) | Specifies the port of the proxy in the network settings |
 | timeZone (string) | Changes the currently set time zone on the bridge |
 
 ### Status messages from the node
@@ -112,9 +112,9 @@ The status reports of the "Hue Bridge" node are dynamic. Although they follow a 
 | id (string) | Unique ID of the Hue Bridge |
 | name (string) | Currently set name |
 | factoryNew (boolean) | Indicator whether the bridge is brand new |
-| replacesBridgeId (string | boolean) | Outputs the old bridge ID (if a migration was carried out) or outputs `false` |
+| replacesBridgeId (string / boolean) | Outputs the old bridge ID (if a migration was carried out) or outputs `false` |
 | dataStoreVersion (string) | Version of the data store |
-| starterKitId (string | boolean) | Name of the starter kit created in the factory or `false` |
+| starterKitId (string / boolean) | Name of the starter kit created in the factory or `false` |
 | softwareVersion (string) | Software version of the bridge |
 | apiVersion (string) | API version of the bridge |
 | zigbeeChannel (int) | Currently used ZigBee channel |
@@ -123,7 +123,7 @@ The status reports of the "Hue Bridge" node are dynamic. Although they follow a 
 | dhcpEnabled (boolean) | Indicates whether DHCP is enabled |
 | netmask (string) | Netmask of the bridge |
 | gateway (string) | Gateway of the bridge |
-| proxyAddress (string | false) | Currently used proxy address or `false` |
+| proxyAddress (string / boolean) | Currently used proxy address or `false` |
 | proxyPort (string) | Currently used proxy port |
 | utcTime (string) | UTC time on the bridge |
 | timeZone (string) | Currently set time zone on the bridge |
@@ -220,7 +220,7 @@ Sometimes it makes sense to play an animation in a disorderly manner - e.g. if f
 
 |Property|Description|
 |--|--|
-| randomOrder (boolean | any) | `true`, activates the random playback of the individual animation steps |
+| randomOrder (boolean / any) | `true`, activates the random playback of the individual animation steps |
 
 ### Tips and hints
 
@@ -262,11 +262,11 @@ In addition to simply switching it on and off, there are also many other options
 |Property|Description|
 |--|--|
 | on (boolean) | `true` switches the light on, `false` switches it off |
-| toggle (boolean | any) | Toggles between switching on and off, depending on the previous status of the light |
-| brightness (int | string) | Percentage value of the light brightness (0-100) or a string with the value `auto` to automatically set the brightness based on the current time |
+| toggle (boolean / any) | Toggles between switching on and off, depending on the previous status of the light |
+| brightness (int / string) | Percentage value of the light brightness (0-100) or a string with the value `auto` to automatically set the brightness based on the current time |
 | brightnessLevel (int) | Numerical value of the light brightness (0-254) |
-| incrementBrightness (int | boolean) | Specifies by how many percent the light should be made brighter or `true` to make the light brighter in 10% steps |
-| decrementBrightness (int | boolean) | Specifies the percentage by which the light should be made darker or `true` to make the light darker in 10% steps |
+| incrementBrightness (int / boolean) | Specifies by how many percent the light should be made brighter or `true` to make the light brighter in 10% steps |
+| decrementBrightness (int / boolean) | Specifies the percentage by which the light should be made darker or `true` to make the light darker in 10% steps |
 | color (string) | `random` to set a random color or an English color name (e.g. `red`) |
 | hex (string) | Color value in hexadecimal in the form of a string |
 | rgb (array [0,0,0]) | Color value in RGB format in the form of an array |
@@ -275,9 +275,9 @@ In addition to simply switching it on and off, there are also many other options
 | mixColor (object) | A color to be mixed with the current light color. Can accept `color`, `hex`, `rgb` or `xyColor` objects and optionally `amount` (int) to indicate the mixing ratio in percent |
 | image (string) | Path of an image (local or on the web) to set the current color of the light to the average color of the image |
 | saturation (int) | percentage of the saturation of the current color (beta) |
-| colorTemp (int | string) | Value between 153 and 500 to set the color temperature of the light or the values `cold`, `normal`, `warm`, `hot` and `auto` - where `auto` is the color temperature based on the current time |
-| incrementColorTemp (int | boolean) | Value by how much the color temperature should be warmer or `true` to make the color temperature warmer in steps of 50 |
-| decrementColorTemp (int | boolean) | Value by how much the color temperature should be colder or `true` to make the color temperature colder in steps of 50 |
+| colorTemp (int / string) | Value between 153 and 500 to set the color temperature of the light or the values `cold`, `normal`, `warm`, `hot` and `auto` - where `auto` is the color temperature based on the current time |
+| incrementColorTemp (int / boolean) | Value by how much the color temperature should be warmer or `true` to make the color temperature warmer in steps of 50 |
+| decrementColorTemp (int / boolean) | Value by how much the color temperature should be colder or `true` to make the color temperature colder in steps of 50 |
 | transitionTime (float) | Transition time of the current setting in seconds. If `0` is entered, the light changes to the desired setting immediately. If `3` is entered, the light changes to the desired setting with a slight transition in the next 3 seconds |
 | colorloop (float) | Plays a "colorloop" animation for the selected duration in seconds and then switches back to the original state of the light |
 | alert (float) | Plays an "alert" animation for the selected duration in seconds and then switches back to the original state of the light |
@@ -291,17 +291,17 @@ As soon as a change in the light settings has been detected (regardless of wheth
 |Property|Description|
 |--|--|
 | on (boolean) | State of the light, where `true` stands for on and `false` for off |
-| brightness (int | boolean) | Current brightness in percent or `false`, if the light does not support a brightness setting |
-| brightnessLevel (int | boolean) | Current brightness from 0-254 or `false`, if the light does not support a brightness setting |
-| reachable (boolean | string) | `true` if the light is connected to the bridge, `unknown` if the connection status deviates |
+| brightness (int / boolean) | Current brightness in percent or `false`, if the light does not support a brightness setting |
+| brightnessLevel (int / boolean) | Current brightness from 0-254 or `false`, if the light does not support a brightness setting |
+| reachable (boolean / string) | `true` if the light is connected to the bridge, `unknown` if the connection status deviates |
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
 | rgb (array [int, int, int] | optional) | Current light color in the form of an RGB value, if the light can display colors |
-| hex (string | optional) | Current light color in the form of a hexadecimal value if the light can display colors |
+| hex (string / optional) | Current light color in the form of a hexadecimal value if the light can display colors |
 | xyColor (object {x [float], y [float]} | optional) | Current light color in the form of an XY value, if the light can display colors |
-| color (string | optional) | Current light name in English, if the light can display colors and the corresponding setting of the node has been activated |
-| gradient (object | optional) | Current gradient setting with all available color units in the form of an array, if the light supports gradient settings, where `colors` outputs the colors, `numColors` the number of set colors in the gradient and `totalColors` the maximum possible Number of colors the resource can support in the gradient |
-| colorTemp (int | boolean | optional) | Current color temperature of the light, if the light can display color temperatures and a color temperature has been set |
-| colorTempName (string | optional) | Current color temperature of the light in the form of a descriptive string with the values `cold`,`normal`, `warm` or `hot`, if the light can display color temperatures and a color temperature has been set. Otherwise `unknown` is output |
+| color (string / optional) | Current light name in English, if the light can display colors and the corresponding setting of the node has been activated |
+| gradient (object / optional) | Current gradient setting with all available color units in the form of an array, if the light supports gradient settings, where `colors` outputs the colors, `numColors` the number of set colors in the gradient and `totalColors` the maximum possible Number of colors the resource can support in the gradient |
+| colorTemp (int / boolean / optional) | Current color temperature of the light, if the light can display color temperatures and a color temperature has been set |
+| colorTempName (string / optional) | Current color temperature of the light in the form of a descriptive string with the values `cold`,`normal`, `warm` or `hot`, if the light can display color temperatures and a color temperature has been set. Otherwise `unknown` is output |
 | updated (string) | Time of the last update of the resource by HueMagic (ISO 8601) |
 
 #### Information about the light under `msg.info`
@@ -309,7 +309,7 @@ As soon as a change in the light settings has been detected (regardless of wheth
 |Property|Description|
 |--|--|
 | id (string) | Indicates the new ID of the light |
-| idV1 (string | boolean) | Indicates the old ID of the light |
+| idV1 (string / boolean) | Indicates the old ID of the light |
 | uniqueId (string) | The unique ID of the light |
 | deviceId (string) | The unique ID of the device |
 | name (string) | The currently set name of the light |
@@ -363,15 +363,15 @@ In addition to simply switching it on and off, there are also many other options
 |Property|Description|
 |--|--|
 | on (boolean) | `true` switches the entire group on, `false` switches it off (please note the note above) |
-| toggle (boolean | any) | Toggles between switching on and off, depending on the previous status of the group |
-| brightness (int | string) | Percentage value of the light brightness (0-100) or a string with the value `auto` to automatically set the light brightness based on the current time |
+| toggle (boolean / any) | Toggles between switching on and off, depending on the previous status of the group |
+| brightness (int / string) | Percentage value of the light brightness (0-100) or a string with the value `auto` to automatically set the light brightness based on the current time |
 | brightnessLevel (int) | Numerical value of the light brightness (0-254) |
 | color (string) | `random` to set a random color or an English color name (e.g. `red`) |
 | hex (string) | Color value in hexadecimal in the form of a string |
 | rgb (array [0,0,0]) | Color value in RGB format in the form of an array |
 | xyColor (object {x [float], y [float]}) | Color value in the XY color format in the form of an object |
 | image (string) | Path of an image (local or on the web) to set the current color of the group to the average color of the image |
-| colorTemp (int | string) | Value between 153 and 500 to set the color temperature of the group or the values `cold`, `normal`, `warm`, `hot` and `auto` - where `auto` is the color temperature based on the current time |
+| colorTemp (int / string) | Value between 153 and 500 to set the color temperature of the group or the values `cold`, `normal`, `warm`, `hot` and `auto` - where `auto` is the color temperature based on the current time |
 | transitionTime (float) | Transition time of the current setting in seconds. If `0` is passed, the group changes to the desired setting immediately. If you pass it to `3`, the group changes to the desired setting with a slight transition in the next 3 seconds |
 | colorloop (float) | Plays a “colorloop” animation for the selected duration in seconds and then changes back to the group's original state |
 | alert (float) | Plays an "alert" animation for the selected duration in seconds and then switches back to the original status of the group |
@@ -394,7 +394,7 @@ In contrast to the "Hue Light" node, you have much less status information avail
 |Property|Description|
 |--|--|
 | id (string) | Indicates the new ID of the group |
-| idV1 (string | boolean) | Indicates the old ID of the group |
+| idV1 (string / boolean) | Indicates the old ID of the group |
 | name (string) | The currently set name of the group |
 | type (string) | The type of the group (always `group`) |
 
@@ -441,7 +441,7 @@ Connect the output of this node to one or more groups to apply a scene to specif
 
 |Property|Description|
 |--|--|
-| group (string | array [string,…]) | ID of the group or an array with the IDs of several groups in order to limit the scene to these groups |
+| group (string / array [string,…]) | ID of the group or an array with the IDs of several groups in order to limit the scene to these groups |
 
 ### More information about the Node
 
@@ -474,10 +474,10 @@ As soon as a key has been pressed, the following status message is returned by t
 
 |Property|Description|
 |--|--|
-| reachable (boolean | string) | `true` if the switch/button is connected to the bridge, `unknown` if the connection status deviates |
+| reachable (boolean / string) | `true` if the switch/button is connected to the bridge, `unknown` if the connection status deviates |
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
-| button (int | boolean) | Numeric ID of the key that was last pressed or `false` if no key was pressed |
-| action (string | boolean) | `false` if no key was pressed or `initial_press`, `repeat` , `short_release`, `long_release` or `double_short_release` in the form of a string |
+| button (int / boolean) | Numeric ID of the key that was last pressed or `false` if no key was pressed |
+| action (string / boolean) | `false` if no key was pressed or `initial_press`, `repeat` , `short_release`, `long_release` or `double_short_release` in the form of a string |
 | updated (string) | Time of the last update of the resource by HueMagic (ISO 8601) |
 
 #### Information about the switch/button under `msg.info`
@@ -485,7 +485,7 @@ As soon as a key has been pressed, the following status message is returned by t
 |Property|Description|
 |--|--|
 | id (string) | Indicates the new ID of the switch/button |
-| idV1 (string | boolean) | Indicates the old ID of the switch/button |
+| idV1 (string / boolean) | Indicates the old ID of the switch/button |
 | uniqueId (string) | The unique ID of the switch/button |
 | deviceId (string) | The unique ID of the device |
 | name (string) | The currently set name of the switch/button |
@@ -543,7 +543,7 @@ As soon as the sensor has registered a movement, the following status message is
 |Property|Description|
 |--|--|
 | active (boolean) | Indicates whether the sensor is switched on or off |
-| reachable (boolean | string) | `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates |
+| reachable (boolean / string) | `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates |
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
 | motion (boolean) | Indicates whether a motion has been registered |
 | updated (string) | Time of the last update of the resource by HueMagic (ISO 8601) |
@@ -553,7 +553,7 @@ As soon as the sensor has registered a movement, the following status message is
 |Property|Description|
 |--|--|
 | id (string) | Indicates the new ID of the sensor |
-| idV1 (string | boolean) | Indicates the old ID of the sensor |
+| idV1 (string / boolean) | Indicates the old ID of the sensor |
 | uniqueId (string) | The unique ID of the sensor |
 | deviceId (string) | The unique ID of the device |
 | name (string) | The currently set name of the sensor |
@@ -611,7 +611,7 @@ As soon as the sensor has registered a temperature change, the following status 
 |Property|Description|
 |--|--|
 | active (boolean) | Indicates whether the sensor is switched on or off |
-| reachable (boolean | string) | `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates |
+| reachable (boolean / string) | `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates |
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
 | celsius (float) | Indicates the current ambient temperature in °C (degrees Celsius) |
 | fahrenheit (float) | Indicates the current ambient temperature in °F (degrees Fahrenheit) |
@@ -624,7 +624,7 @@ As soon as the sensor has registered a temperature change, the following status 
 |Property|Description|
 |--|--|
 | id (string) | Indicates the new ID of the sensor |
-| idV1 (string | boolean) | Indicates the old ID of the sensor |
+| idV1 (string / boolean) | Indicates the old ID of the sensor |
 | uniqueId (string) | The unique ID of the sensor |
 | deviceId (string) | The unique ID of the device |
 | name (string) | The currently set name of the sensor |
@@ -682,7 +682,7 @@ As soon as the sensor has detected a change in the light level, the following st
 |Property|Description|
 |--|--|
 | active (boolean) | Indicates whether the sensor is turned on or off |
-| reachable (boolean | string) | `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates |
+| reachable (boolean / string) | `true` if the sensor is connected to the bridge, `unknown` if the connection status deviates |
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`,` disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
 | lux (int) | Indicates the real LUX value of the light level |
 | lightLevel (int) | Indicates the light intensity of the sensor |
@@ -695,7 +695,7 @@ As soon as the sensor has detected a change in the light level, the following st
 |Property|Description|
 |--|--|
 | id (string) | Indicates the new ID of the sensor |
-| idV1 (string | boolean) | Indicates the old ID of the sensor |
+| idV1 (string / boolean) | Indicates the old ID of the sensor |
 | uniqueId (string) | The unique ID of the sensor |
 | deviceId (string) | The unique ID of the device |
 | name (string) | The currently set name of the sensor |

@@ -22,11 +22,11 @@ Create an `array` with the respective animation steps in the form of an object a
 : delay (int): Number of milliseconds to wait until this step is carried out
 : animation (object): The object contains the action(s) to be carried out in this step. Identical parameters as for the "Hue Light" & "Hue Group" nodes
 
-### Example of your own animation
+### Example of a custom animation
 
 This example shows what a simple animation could look like. In the first step, the delay of 500 milliseconds is waited for. The color of the light is then slowly changed to red over a period of one second. As soon as the light has completely changed to red, the second step is carried out, which also has a delay of 500 milliseconds. Finally the color changes to blue.
 
-If you have set the animation to play indefinitely, this process is repeated indefinitely until you manually stop the animation or redeploy the node.
+If you have set the animation to loop, this process is repeated indefinitely until you manually stop the animation or redeploy the node.
 
 Pass the following object in `msg.payload` to play the example animation.
 

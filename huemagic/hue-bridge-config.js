@@ -10,7 +10,7 @@ module.exports = function(RED)
 	const axios = require('axios');
 	const https = require('https');
 
-	// READABLE RESSOURCE MESSAGES
+	// READABLE RESOURCE MESSAGES
 	const { HueBridgeMessage,
 			HueLightMessage,
 			HueGroupMessage,
@@ -28,10 +28,13 @@ module.exports = function(RED)
 		// STATES
 		this.nodeActive = true;
 		this.config = config;
-		this.ressources = {};
-		this.ressourcesInGroups = {};
+		this.resources = {};
+		this.resourcesInGroups = {};
 		this.lastStates = {};
 		this.events = new events.EventEmitter();
+
+		// RESOURCE ID PATTERN
+		this.validResourceID = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
 
 		// CREATE NODE
 		RED.nodes.createNode(scope, config);
@@ -43,20 +46,20 @@ module.exports = function(RED)
 			API.init({ ip: config.bridge, key: config.key })
 			.then(function(bridge) {
 				scope.log("Connected to bridge");
-				return scope.getAllRessources();
+				return scope.getAllResources();
 			})
-			.then(function(allRessources)
+			.then(function(allResources)
 			{
-				scope.log("Process ressources…");
-				return API.processRessources(allRessources);
+				scope.log("Process resources…");
+				return API.processResources(allResources);
 			})
-			.then(function(allRessources)
+			.then(function(allResources)
 			{
-				// SAVE CURRENT RESSOURCES
-				scope.ressources = allRessources;
+				// SAVE CURRENT RESOURCES
+				scope.resources = allResources;
 
 				// EMIT INITIAL STATES -> NODES
-				scope.log("Initial emit of ressource states…");
+				scope.log("Initial emit of resource states…");
 				return scope.emitInitialStates();
 			})
 			.then(function(emitted)
@@ -77,22 +80,22 @@ module.exports = function(RED)
 		}
 
 		// FETCH BRIDGE INFORMATION
-		this.getBridgeInformation = function(replaceRessources = false)
+		this.getBridgeInformation = function(replaceResources = false)
 		{
 			return new Promise(function(resolve, reject)
 			{
-				API.request({ ressource: "/config", version: 1 })
+				API.request({ resource: "/config", version: 1 })
 				.then(function(bridgeInformation)
 				{
-					// PREPARE TO MATCH V2 RESSOURCES
+					// PREPARE TO MATCH V2 RESOURCES
 					bridgeInformation.id = "bridge";
 					bridgeInformation.id_v1 = "/config";
 					bridgeInformation.updated = dayjs().format();
 
-					// ALSO REPLACE CURRENT RESSOURCE?
-					if(replaceRessources === true)
+					// ALSO REPLACE CURRENT RESOURCE?
+					if(replaceResources === true)
 					{
-						scope.ressources[bridgeInformation.id] = bridgeInformation;
+						scope.resources[bridgeInformation.id] = bridgeInformation;
 					}
 
 					// GIVE BACK
@@ -105,30 +108,30 @@ module.exports = function(RED)
 			});
 		}
 
-		// GET ALL RESSOURCES + RULES
-		this.getAllRessources = function()
+		// GET ALL RESOURCES + RULES
+		this.getAllResources = function()
 		{
 			return new Promise(function(resolve, reject)
 			{
-				var allRessources = [];
+				var allResources = [];
 
 				// GET BRIDGE INFORMATION
 				scope.getBridgeInformation()
 				.then(function(bridgeInformation)
 				{
-					// PUSH TO RESSOURCES
-					allRessources.push(bridgeInformation);
+					// PUSH TO RESOURCES
+					allResources.push(bridgeInformation);
 
-					// CONTINUE WITH ALL RESSOURCES
-					return API.request({ ressource: "all" });
+					// CONTINUE WITH ALL RESOURCES
+					return API.request({ resource: "all" });
 				})
-				.then(function(v2Ressources)
+				.then(function(v2Resources)
 				{
-					// MERGE RESSOURCES
-					allRessources = allRessources.concat(v2Ressources);
+					// MERGE RESOURCES
+					allResources = allResources.concat(v2Resources);
 
 					// GET RULES (LEGACY API)
-					return API.request({ ressource: "/rules", version: 1 });
+					return API.request({ resource: "/rules", version: 1 });
 				})
 				.then(function(rules)
 				{
@@ -146,17 +149,17 @@ module.exports = function(RED)
 						rule["type"] = "rule";
 
 						// PUSH RULES
-						allRessources.push(rule);
+						allResources.push(rule);
 					}
 
-					resolve(allRessources);
+					resolve(allResources);
 				})
 				.catch(function(error) { reject(error); });
 			});
 		}
 
 		// EMIT INITIAL STATES -> NODES
-		this.emitInitialStates = function(ressources = false)
+		this.emitInitialStates = function(resources = false)
 		{
 			return new Promise(function(resolve, reject)
 			{
@@ -164,9 +167,9 @@ module.exports = function(RED)
 				setTimeout(function()
 				{
 					// PUSH ALL STATES
-					for (const [id, ressource] of Object.entries(scope.ressources))
+					for (const [id, resource] of Object.entries(scope.resources))
 					{
-						scope.pushUpdatedState(ressource, ressource.type, true);
+						scope.pushUpdatedState(resource, resource.type, true);
 					}
 
 					resolve(true);
@@ -194,65 +197,65 @@ module.exports = function(RED)
 			{
 				const currentDateTime = dayjs().format();
 
-				for(let ressource of updates)
+				for(let resource of updates)
 				{
-					let id = ressource.id;
-					let type = ressource.type;
+					let id = resource.id;
+					let type = resource.type;
 
 					let previousState = false;
 
 					// HAS OWNER?
-					if(ressource["owner"])
+					if(resource["owner"])
 					{
-						let targetId = ressource["owner"]["rid"];
+						let targetId = resource["owner"]["rid"];
 
-						if(scope.ressources[targetId])
+						if(scope.resources[targetId])
 						{
 							// GET PREVIOUS STATE
-							previousState = scope.ressources[targetId]["services"][type][id];
+							previousState = scope.resources[targetId]["services"][type][id];
 
 							// IS BUTTON? -> REMOVE PREVIOUS STATES
 							if(type === "button")
 							{
-								for (const [oneButtonID, oneButton] of Object.entries(scope.ressources[targetId]["services"]["button"]))
+								for (const [oneButtonID, oneButton] of Object.entries(scope.resources[targetId]["services"]["button"]))
 								{
-									delete scope.ressources[targetId]["services"]["button"][oneButtonID]["button"];
+									delete scope.resources[targetId]["services"]["button"][oneButtonID]["button"];
 								}
 							}
 						}
 					}
-					else if(scope.ressources[id])
+					else if(scope.resources[id])
 					{
 						// GET PREVIOUS STATE
-						previousState = scope.ressources[id];
+						previousState = scope.resources[id];
 					}
 
 					// NO PREVIOUS STATE?
 					if(!previousState) { return false; }
 
 					// CHECK DIFFERENCES
-					const mergedState = merge.deep(previousState, ressource);
-					const updatedRessources = diff(previousState, mergedState);
+					const mergedState = merge.deep(previousState, resource);
+					const updatedResources = diff(previousState, mergedState);
 
-					if(Object.values(updatedRessources).length > 0)
+					if(Object.values(updatedResources).length > 0)
 					{
-						if(ressource["owner"])
+						if(resource["owner"])
 						{
-							let targetId = ressource["owner"]["rid"];
+							let targetId = resource["owner"]["rid"];
 
-							scope.ressources[targetId]["services"][type][id] = mergedState;
-							scope.ressources[targetId]["updated"] = currentDateTime;
+							scope.resources[targetId]["services"][type][id] = mergedState;
+							scope.resources[targetId]["updated"] = currentDateTime;
 
 							// PUSH STATE
-							scope.pushUpdatedState(scope.ressources[targetId], ressource.type);
+							scope.pushUpdatedState(scope.resources[targetId], resource.type);
 						}
 						else
 						{
-							scope.ressources[id] = mergedState;
-							scope.ressources[id]["updated"] = currentDateTime;
+							scope.resources[id] = mergedState;
+							scope.resources[id]["updated"] = currentDateTime;
 
 							// PUSH STATE
-							scope.pushUpdatedState(scope.ressources[id], ressource.type);
+							scope.pushUpdatedState(scope.resources[id], resource.type);
 						}
 					}
 				}
@@ -260,42 +263,42 @@ module.exports = function(RED)
 		}
 
 		// PUSH UPDATED STATE
-		this.pushUpdatedState = function(ressource, updatedType, suppressMessage = false)
+		this.pushUpdatedState = function(resource, updatedType, suppressMessage = false)
 		{
-			const msg = { id: ressource.id, type: ressource.type, updatedType: updatedType, services: ressource["services"] ? Object.keys(ressource["services"]) : [], suppressMessage: suppressMessage };
-			this.events.emit(ressource.id, msg);
-			this.events.emit("globalRessourceUpdates", msg);
+			const msg = { id: resource.id, type: resource.type, updatedType: updatedType, services: resource["services"] ? Object.keys(resource["services"]) : [], suppressMessage: suppressMessage };
+			this.events.emit(resource.id, msg);
+			this.events.emit("globalResourceUpdates", msg);
 
-			// RESSOURCE CONTAINS SERVICES? -> SERVICE IN GROUP? -> EMIT CHANGES TO GROUPS ALSO
-			if(this.ressources["_groupsOf"][ressource.id])
+			// RESOURCE CONTAINS SERVICES? -> SERVICE IN GROUP? -> EMIT CHANGES TO GROUPS ALSO
+			if(this.resources["_groupsOf"][resource.id])
 			{
-				for (var g = this.ressources["_groupsOf"][ressource.id].length - 1; g >= 0; g--)
+				for (var g = this.resources["_groupsOf"][resource.id].length - 1; g >= 0; g--)
 				{
-					const groupID = this.ressources["_groupsOf"][ressource.id][g];
+					const groupID = this.resources["_groupsOf"][resource.id][g];
 					const groupMessage = { id: groupID, type: "group", updatedType: updatedType, services: [], suppressMessage: suppressMessage };
 
 					this.events.emit(groupID, groupMessage);
-					this.events.emit("globalRessourceUpdates", groupMessage);
+					this.events.emit("globalResourceUpdates", groupMessage);
 				}
 			}
 		}
 
-		// GET RESSOURCE (FROM NODES)
+		// GET RESOURCE (FROM NODES)
 		this.get = function(type, id = false, options = {})
 		{
-			// GET SPECIFIC RESSOURCE
+			// GET SPECIFIC RESOURCE
 			if(id)
 			{
-				// RESSOURCE EXISTS? -> PROCEED
-				if(scope.ressources[id])
+				// RESOURCE EXISTS? -> PROCEED
+				if(scope.resources[id])
 				{
 					// RESOLVE LINKS
-					const targetRessource = scope.ressources[id];
-					const lastState = scope.lastStates[type+targetRessource.id] ? Object.assign({}, scope.lastStates[type+targetRessource.id]) : false;
+					const targetResource = scope.resources[id];
+					const lastState = scope.lastStates[type+targetResource.id] ? Object.assign({}, scope.lastStates[type+targetResource.id]) : false;
 
 					if(type == "bridge")
 					{
-						const message = new HueBridgeMessage(targetRessource, options);
+						const message = new HueBridgeMessage(targetResource, options);
 
 						// GET CURRENT STATE MESSAGE
 						let currentState = message.msg;
@@ -303,11 +306,11 @@ module.exports = function(RED)
 					}
 					else if(type == "light")
 					{
-						const message = new HueLightMessage(targetRessource, options);
+						const message = new HueLightMessage(targetResource, options);
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -316,11 +319,11 @@ module.exports = function(RED)
 					else if(type == "group")
 					{
 						// GET MESSAGE
-						const message = new HueGroupMessage(targetRessource, { ressources: scope.ressources, ...options});
+						const message = new HueGroupMessage(targetResource, { resources: scope.resources, ...options});
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -328,11 +331,11 @@ module.exports = function(RED)
 					}
 					else if(type == "button")
 					{
-						const message = new HueButtonsMessage(targetRessource, options);
+						const message = new HueButtonsMessage(targetResource, options);
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -340,11 +343,11 @@ module.exports = function(RED)
 					}
 					else if(type == "motion")
 					{
-						const message = new HueMotionMessage(targetRessource, options);
+						const message = new HueMotionMessage(targetResource, options);
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -352,11 +355,11 @@ module.exports = function(RED)
 					}
 					else if(type == "temperature")
 					{
-						const message = new HueTemperatureMessage(targetRessource, options);
+						const message = new HueTemperatureMessage(targetResource, options);
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -364,11 +367,11 @@ module.exports = function(RED)
 					}
 					else if(type == "light_level")
 					{
-						const message = new HueBrightnessMessage(targetRessource, options);
+						const message = new HueBrightnessMessage(targetResource, options);
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -376,11 +379,11 @@ module.exports = function(RED)
 					}
 					else if(type == "rule")
 					{
-						const message = new HueRulesMessage(targetRessource, options);
+						const message = new HueRulesMessage(targetResource, options);
 
 						// GET & SAVE LAST STATE AND DIFFERENCES
 						let currentState = message.msg;
-						scope.lastStates[type+targetRessource.id] = Object.assign({}, currentState);
+						scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
 						currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 						currentState.lastState = lastState;
 
@@ -398,46 +401,46 @@ module.exports = function(RED)
 			}
 			else
 			{
-				// FILTER RESSOURCES BY TYPE
-				let allFilteredRessources = {};
+				// FILTER RESOURCES BY TYPE
+				let allFilteredResources = {};
 
-				for (const [rootID, ressource] of Object.entries(scope.ressources))
+				for (const [rootID, resource] of Object.entries(scope.resources))
 				{
-					const isGroup = (ressource["type"] == "room" || ressource["type"] == "zone" || ressource["type"] == "bridge_home");
+					const isGroup = (resource["type"] == "room" || resource["type"] == "zone" || resource["type"] == "bridge_home");
 
 					// NORMAL DEVICES
-					if(!isGroup && ressource["services"] && ressource["services"][type])
+					if(!isGroup && resource["services"] && resource["services"][type])
 					{
-						for (const [serviceID, targetDevice] of Object.entries(ressource["services"][type]))
+						for (const [serviceID, targetDevice] of Object.entries(resource["services"][type]))
 						{
-							allFilteredRessources[rootID] = scope.get(type, rootID);
+							allFilteredResources[rootID] = scope.get(type, rootID);
 						}
 					}
-					// GROUPED RESSOURCES
+					// GROUPED RESOURCES
 					else if(isGroup && type === "group")
 					{
-						allFilteredRessources[rootID] = scope.get(type, rootID);
+						allFilteredResources[rootID] = scope.get(type, rootID);
 					}
 				}
 
-				return Object.values(allFilteredRessources);
+				return Object.values(allFilteredResources);
 			}
 		}
 
-		// PATCH RESSOURCE (FROM NODES)
+		// PATCH RESOURCE (FROM NODES)
 		this.patch = function(type, id, patch, version = 2)
 		{
 			return new Promise(function(resolve, reject)
 			{
 				// GET SERVICE ID
-				if(version !== 1 && scope.ressources[id] && scope.ressources[id]["services"] && scope.ressources[id]["services"][type])
+				if(version !== 1 && scope.resources[id] && scope.resources[id]["services"] && scope.resources[id]["services"][type])
 				{
-					const targetRessource = Object.values(scope.ressources[id]["services"][type])[0];
-					id = targetRessource.id;
+					const targetResource = Object.values(scope.resources[id]["services"][type])[0];
+					id = targetResource.id;
 				}
 
 				// ACTION!
-				API.request({ method: "PUT", ressource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
+				API.request({ method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
 				.then(function(response) {
 					resolve(response);
 				})
@@ -452,7 +455,7 @@ module.exports = function(RED)
 		{
 			return new Promise(function(resolve, reject)
 			{
-				API.request({ ressource: "/rules/" + id, version: 1 })
+				API.request({ resource: "/rules/" + id, version: 1 })
 				.then(function(rule)
 				{
 					// "RENAME" OWNER
@@ -469,8 +472,8 @@ module.exports = function(RED)
 					// UPDATED TIME
 					rule["updated"] = dayjs().format();
 
-					// ADD BACK TO RESSOURCES
-					scope.ressources[rule["id"]] = rule;
+					// ADD BACK TO RESOURCES
+					scope.resources[rule["id"]] = rule;
 
 					// PUSH UPDATED STATE
 					scope.pushUpdatedState(rule, "rule");
@@ -505,7 +508,7 @@ module.exports = function(RED)
 			if(!id)
 			{
 				// UNIVERSAL MODE
-				this.events.on("globalRessourceUpdates", function(info)
+				this.events.on("globalResourceUpdates", function(info)
 				{
 					if(type === "bridge")
 					{
@@ -523,7 +526,7 @@ module.exports = function(RED)
 			}
 			else
 			{
-				// SPECIFIC RESSOURCE MODE
+				// SPECIFIC RESOURCE MODE
 				this.events.on(id, function(info)
 				{
 					if(type === "bridge" || messageWhitelist[type].includes(info.updatedType))
@@ -542,7 +545,7 @@ module.exports = function(RED)
 				scope.log("Checking for Hue Bridge firmware updates…");
 				API.request({
 					method: "PUT",
-					ressource: "/config",
+					resource: "/config",
 					version: 1,
 					data: {
 						swupdate2: {
@@ -678,8 +681,8 @@ module.exports = function(RED)
 	});
 
 	//
-	// DISCOVER RESSOURCES
-	RED.httpAdmin.get('/hue/ressources', function(req, res, next)
+	// DISCOVER RESOURCES
+	RED.httpAdmin.get('/hue/resources', function(req, res, next)
 	{
 		const targetType = req.query.type;
 
@@ -688,7 +691,7 @@ module.exports = function(RED)
 		{
 			API.init({ ip: req.query.bridge, key: req.query.key })
 			.then(function(bridge) {
-				return API.request({ ressource: "/rules", version: 1 });
+				return API.request({ resource: "/rules", version: 1 });
 			})
 			.then(function(rules)
 			{
@@ -714,58 +717,58 @@ module.exports = function(RED)
 				res.status(500).send(JSON.stringify(error));
 			});
 		}
-		// GET ALL OTHER RESSOURCES
+		// GET ALL OTHER RESOURCES
 		else
 		{
 			API.init({ ip: req.query.bridge, key: req.query.key })
 			.then(function(bridge) {
-				return API.request({ ressource: "all" });
+				return API.request({ resource: "all" });
 			})
-			.then(function(allRessources)
+			.then(function(allResources)
 			{
-				return API.processRessources(allRessources);
+				return API.processResources(allResources);
 			})
-			.then(function(processedRessources)
+			.then(function(processedResources)
 			{
 				let targetDevices = {};
 
-				for (const [id, ressource] of Object.entries(processedRessources))
+				for (const [id, resource] of Object.entries(processedResources))
 				{
-					const isGroup = (ressource["type"] == "room" || ressource["type"] == "zone" || ressource["type"] == "bridge_home");
+					const isGroup = (resource["type"] == "room" || resource["type"] == "zone" || resource["type"] == "bridge_home");
 
 					// NORMAL DEVICES
-					if(!isGroup && ressource["services"] && ressource["services"][targetType])
+					if(!isGroup && resource["services"] && resource["services"][targetType])
 					{
-						for (const [deviceID, targetDevice] of Object.entries(ressource["services"][targetType]))
+						for (const [deviceID, targetDevice] of Object.entries(resource["services"][targetType]))
 						{
 							var oneDevice = {};
 							oneDevice.id = id;
-							oneDevice.name = ressource.metadata ? ressource.metadata.name : false;
-							oneDevice.model = ressource.product_data ? ressource.product_data.product_name : false;
+							oneDevice.name = resource.metadata ? resource.metadata.name : false;
+							oneDevice.model = resource.product_data ? resource.product_data.product_name : false;
 
 							targetDevices[id] = oneDevice;
 						}
 					}
-					// GROUPED (LIGHT) RESSOURCES
+					// GROUPED (LIGHT) RESOURCES
 					else if(isGroup && targetType === "group")
 					{
-						if(ressource["services"] && ressource["services"]["grouped_light"])
+						if(resource["services"] && resource["services"]["grouped_light"])
 						{
 							var oneDevice = {};
 							oneDevice.id = id;
-							oneDevice.name = ressource.metadata ? ressource.metadata.name : false;
-							oneDevice.model = ressource["type"];
+							oneDevice.name = resource.metadata ? resource.metadata.name : false;
+							oneDevice.model = resource["type"];
 
 							targetDevices[id] = oneDevice;
 						}
 					}
 					// SCENES
-					else if(targetType === "scene" && ressource["type"] == "scene")
+					else if(targetType === "scene" && resource["type"] == "scene")
 					{
 						var oneDevice = {};
 						oneDevice.id = id;
-						oneDevice.name = ressource.metadata ? ressource.metadata.name : false;
-						oneDevice.group = processedRessources[ressource["group"]["rid"]].metadata.name;
+						oneDevice.name = resource.metadata ? resource.metadata.name : false;
+						oneDevice.group = processedResources[resource["group"]["rid"]].metadata.name;
 
 						targetDevices[id] = oneDevice;
 					}

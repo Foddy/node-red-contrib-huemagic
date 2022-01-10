@@ -91,8 +91,8 @@
 				// GET THE SENSORS
 				$.get('hue/bridges')
 				.done( function(data) {
-				    var allRessources = JSON.parse(data);
-				    if(allRessources.length <= 0)
+				    var allResources = JSON.parse(data);
+				    if(allResources.length <= 0)
 				    {
 				        notification.close();
 				        RED.notify(scope._("hue-bridge-config.config.none-found"), { type: "error" });
@@ -100,9 +100,9 @@
 				    }
 
 				    // SET OPTIONS
-				    allRessources.forEach(function(ressource)
+				    allResources.forEach(function(resource)
 				    {
-				        options[ressource.ip] = { value: ressource.ip, label: ressource.ip };
+				        options[resource.ip] = { value: resource.ip, label: resource.ip };
 				    });
 
 				    // SELECT CURRENT VALUE

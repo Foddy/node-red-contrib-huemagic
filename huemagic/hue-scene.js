@@ -60,7 +60,7 @@ module.exports = function(RED)
 			// RECALL ON GROUP? -> USE API v1
 			if(copyOfTargetGroups.length > 0)
 			{
-				let targetSceneID = bridge.ressources[sceneDef].id_v1.replace("/scenes/", "");
+				let targetSceneID = bridge.resources[sceneDef].id_v1.replace("/scenes/", "");
 
 				// SEND STATUS
 				scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled-on-group"})

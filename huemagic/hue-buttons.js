@@ -43,7 +43,7 @@ module.exports = function(RED)
 		{
 			let currentState = bridge.get("button", info.id);
 
-			// RESSOURCE FOUND?
+			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// SEND MESSAGE
@@ -102,9 +102,9 @@ module.exports = function(RED)
 							scope.status({fill: "grey", shape: "dot", text: "hue-buttons.node.waiting"});
 
 							// REMOVE OLD BUTTON STATES
-							for (const [oneButtonID, oneButton] of Object.entries(bridge.ressources[config.sensorid]["services"]["button"]))
+							for (const [oneButtonID, oneButton] of Object.entries(bridge.resources[config.sensorid]["services"]["button"]))
 							{
-								delete bridge.ressources[config.sensorid]["services"]["button"][oneButtonID]["button"];
+								delete bridge.resources[config.sensorid]["services"]["button"][oneButtonID]["button"];
 							}
 						}, 3000);
 					}
@@ -121,10 +121,16 @@ module.exports = function(RED)
 			done = done || function() { scope.done.apply(scope,arguments); }
 
 			// SAVE LAST COMMAND
-			scope.lastCommand = msg;
+			scope.lastCommand = RED.util.cloneMessage(msg);
 
 			// DEFINE SENSOR ID
-			const tempSensorID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.sensorid;
+			const tempSensorID = (!config.sensorid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.sensorid;
+			if(!tempSensorID)
+			{
+				scope.error("Please submit a valid button ID.");
+				return false;
+			}
+
 			let currentState = bridge.get("button", tempSensorID);
 
 			// GET CURRENT STATE

@@ -40,7 +40,7 @@ module.exports = function(RED)
 		{
 			let currentState = bridge.get("rule", info.id);
 
-			// RESSOURCE FOUND?
+			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
@@ -84,13 +84,19 @@ module.exports = function(RED)
 			done = done || function() { scope.done.apply(scope,arguments); }
 
 			// SAVE LAST COMMAND
-			scope.lastCommand = msg;
+			scope.lastCommand = RED.util.cloneMessage(msg);
 
 			// CREATE PATCH
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempRuleID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.ruleid;
+			const tempRuleID = (!config.ruleid && typeof msg.topic != 'undefined' && isNaN(msg.topic) == false) ? msg.topic : config.ruleid;
+			if(!tempRuleID)
+			{
+				scope.error("Please submit a valid rule ID.");
+				return false;
+			}
+
 			let currentState = bridge.get("rule", "rule_" + tempRuleID);
 
 			// CONTROL RULE
@@ -100,7 +106,7 @@ module.exports = function(RED)
 				patchObject["status"] = (msg.payload == true) ? 'enabled' : 'disabled';
 
 				// PATCH!
-				bridge.patch("rules", "/rules/"+config.ruleid, patchObject, 1)
+				bridge.patch("rules", "/rules/"+tempRuleID, patchObject, 1)
 				.then(function(response) { bridge.refetchRule(tempRuleID); })
 				.catch(function(errors) { scope.error(errors);  });
 

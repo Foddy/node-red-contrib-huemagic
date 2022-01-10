@@ -47,7 +47,7 @@ module.exports = function(RED)
 		{
 			let currentState = bridge.get("light", info.id, { colornames: config.colornamer ? true : false });
 
-			// RESSOURCE FOUND?
+			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// SEND MESSAGE
@@ -115,13 +115,13 @@ module.exports = function(RED)
 			done = done || function() { scope.done.apply(scope,arguments); }
 
 			// SAVE LAST COMMAND
-			scope.lastCommand = msg;
+			scope.lastCommand = RED.util.cloneMessage(msg);
 
 			// CREATE PATCH
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempLightID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.lightid;
+			const tempLightID = (!config.lightid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.lightid;
 			let currentState = bridge.get("light", tempLightID, { colornames: config.colornamer ? true : false });
 
 			// CHECK IF LIGHT ID IS SET

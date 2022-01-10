@@ -55,7 +55,7 @@ function API()
 
 	//
 	// MAKE A REQUEST
-	this.request = function({ method = 'GET', ressource = null, data = null, version = 2 })
+	this.request = function({ method = 'GET', resource = null, data = null, version = 2 })
 	{
 		const scope = this;
 		return new Promise(function(resolve, reject)
@@ -71,17 +71,17 @@ function API()
 				"httpsAgent": new https.Agent({ rejectUnauthorized: false }), // Node is somehow not able to parse the official Philips Hue PEM
 			};
 
-			// HAS RESSOURCE? -> APPEND
-			if(ressource !== null)
+			// HAS RESOURCE? -> APPEND
+			if(resource !== null)
 			{
 				if(version === 2)
 				{
-					ressource = (ressource !== "all") ? "/"+ressource : "";
-					request['url'] += "/clip/v2/resource" + ressource;
+					resource = (resource !== "all") ? "/"+resource : "";
+					request['url'] += "/clip/v2/resource" + resource;
 				}
 				else if(version === 1)
 				{
-					request['url'] += "/api/" + scope.accessKey + ressource;
+					request['url'] += "/api/" + scope.accessKey + resource;
 				}
 			}
 
@@ -182,41 +182,41 @@ function API()
 	}
 
 	//
-	// GET FULL/ROOT RESSOURCE
-	this.fullRessource = function(ressource, allRessources = {})
+	// GET FULL/ROOT RESOURCE
+	this.fullResource = function(resource, allResources = {})
 	{
 		const scope = this;
-		var fullRessource = Object.assign({}, ressource);
+		var fullResource = Object.assign({}, resource);
 
-		if(ressource["owner"])
+		if(resource["owner"])
 		{
-			fullRessource = scope.fullRessource(allRessources[fullRessource["owner"]["rid"]], allRessources);
+			fullResource = scope.fullResource(allResources[fullResource["owner"]["rid"]], allResources);
 		}
-		else if(ressource["type"] === "device" || ressource["type"] === "room" || ressource["type"] === "zone" || ressource["type"] === "bridge_home")
+		else if(resource["type"] === "device" || resource["type"] === "room" || resource["type"] === "zone" || resource["type"] === "bridge_home")
 		{
 			// RESOLVE SERVICES
 			var allServices = {};
 
-			for (var i = ressource["services"].length - 1; i >= 0; i--)
+			for (var i = resource["services"].length - 1; i >= 0; i--)
 			{
-				const targetService = ressource["services"][i];
+				const targetService = resource["services"][i];
 				const targetType = targetService["rtype"];
 				const targetID = targetService["rid"];
 
 				if(!allServices[targetType]) { allServices[targetType] = {}; }
-				allServices[targetType][targetID] = Object.assign({}, allRessources[targetID]);
+				allServices[targetType][targetID] = Object.assign({}, allResources[targetID]);
 			}
 
 			// REPLACE SERVICES
-			fullRessource["services"] = allServices;
+			fullResource["services"] = allServices;
 		}
 
-		return fullRessource;
+		return fullResource;
 	}
 
 	//
-	// PROCESS RESSOURCES
-	this.processRessources = function(ressources)
+	// PROCESS RESOURCES
+	this.processResources = function(resources)
 	{
 		const scope = this;
 
@@ -226,62 +226,62 @@ function API()
 		// ACTION!
 		return new Promise(function(resolve, reject)
 		{
-			let ressourceList = {};
-			let processedRessources = {
+			let resourceList = {};
+			let processedResources = {
 				_groupsOf: {}
 			};
 
-			// CREATE ID BASED OBJECT OF ALL RESSOURCES
-			ressources.forEach(function(ressource, index)
+			// CREATE ID BASED OBJECT OF ALL RESOURCES
+			resources.forEach(function(resource, index)
 			{
 				// IS BUTTON? -> REMOVE PREVIOUS STATE
-				if(ressource.type === "button")
+				if(resource.type === "button")
 				{
-					delete ressource["button"];
+					delete resource["button"];
 				}
 
-				ressourceList[ressource.id] = ressource;
+				resourceList[resource.id] = resource;
 			});
 
-			// GET FULL RESSOURCES OF EACH OBJECT
-			ressources.forEach(function(ressource, index)
+			// GET FULL RESOURCES OF EACH OBJECT
+			resources.forEach(function(resource, index)
 			{
-				// GET FULL RESSOURCE
-				let fullRessource = scope.fullRessource(ressource, ressourceList);
+				// GET FULL RESOURCE
+				let fullResource = scope.fullResource(resource, resourceList);
 
 				// ADD CURRENT DATE/TIME
-				fullRessource["updated"] = currentDateTime;
+				fullResource["updated"] = currentDateTime;
 
-				// ALL ALL TYPES BEHIND RESSOURCE
-				fullRessource["types"] = [ fullRessource["type"] ];
+				// ALL ALL TYPES BEHIND RESOURCE
+				fullResource["types"] = [ fullResource["type"] ];
 
-				// RESSOURCE HAS SERVICES?
-				if(fullRessource["services"])
+				// RESOURCE HAS SERVICES?
+				if(fullResource["services"])
 				{
-					let additionalServiceTypes = Object.keys(fullRessource["services"]);
+					let additionalServiceTypes = Object.keys(fullResource["services"]);
 
 					// SET ADDITIONAL TYPES BEHIND RECCOURCE
-					fullRessource["types"] = fullRessource["types"].concat(additionalServiceTypes);
+					fullResource["types"] = fullResource["types"].concat(additionalServiceTypes);
 				}
 
 				// RESOURCE HAS GROUPED SERVICES?
-				if(fullRessource["grouped_services"])
+				if(fullResource["grouped_services"])
 				{
-					for (var g = fullRessource["grouped_services"].length - 1; g >= 0; g--)
+					for (var g = fullResource["grouped_services"].length - 1; g >= 0; g--)
 					{
-						const groupedService = fullRessource["grouped_services"][g];
+						const groupedService = fullResource["grouped_services"][g];
 						const groupedServiceID = groupedService["rid"];
 
-						if(!processedRessources["_groupsOf"][groupedServiceID]) { processedRessources["_groupsOf"][groupedServiceID] = []; }
-						processedRessources["_groupsOf"][groupedServiceID].push(fullRessource.id);
+						if(!processedResources["_groupsOf"][groupedServiceID]) { processedResources["_groupsOf"][groupedServiceID] = []; }
+						processedResources["_groupsOf"][groupedServiceID].push(fullResource.id);
 					}
 				}
 
-				// GIVE FULL RESSOURCE BACK TO COLLECTION
-				processedRessources[fullRessource.id] = fullRessource;
+				// GIVE FULL RESOURCE BACK TO COLLECTION
+				processedResources[fullResource.id] = fullResource;
 			});
 
-			resolve(processedRessources);
+			resolve(processedResources);
 		});
 	}
 }

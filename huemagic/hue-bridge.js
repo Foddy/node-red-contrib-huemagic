@@ -79,11 +79,11 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("bridge", "globalRessourceUpdates", async function(info)
+		bridge.subscribe("bridge", "globalResourceUpdates", async function(info)
 		{
 			let currentState = bridge.get(info.updatedType, info.id);
 
-			// RESSOURCE FOUND?
+			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// UPDATE COUNTER
@@ -138,7 +138,7 @@ module.exports = function(RED)
 			done = done || function() { scope.done.apply(scope,arguments); }
 
 			// SET LAST COMMAND
-			scope.lastCommand = msg;
+			scope.lastCommand = RED.util.cloneMessage(msg);
 
 			// GET BRIDGE INFORMATION
 			scope.getBridgeInformation()
@@ -171,7 +171,7 @@ module.exports = function(RED)
 						if(done) { done(error); }
 					});
 				}
-				// FETCH RESSOURCES
+				// FETCH RESOURCES
 				else if(typeof msg.payload != 'undefined' && typeof msg.payload.fetch != 'undefined')
 				{
 					let fetchTypes = [];
@@ -179,7 +179,7 @@ module.exports = function(RED)
 					else if(typeof msg.payload.fetch == 'object') { fetchTypes = msg.payload.fetch; }
 					else { return false; }
 
-					scope.status({fill: "blue", shape: "dot", text: "hue-bridge.node.f-ressources" });
+					scope.status({fill: "blue", shape: "dot", text: "hue-bridge.node.f-resources" });
 
 					// FETCH
 					bridgeInformation.results = {};

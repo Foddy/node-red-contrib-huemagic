@@ -5,44 +5,44 @@ const colorUtils = require("./color");
 // HUE BRIDGE
 class HueBridgeMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
 		this.message = {};
 		this.message.payload = {};
-		this.message.payload.id = ressource.bridgeid;
-		this.message.payload.name = ressource.name;
-		this.message.payload.factoryNew = ressource.factorynew;
-		this.message.payload.replacesBridgeId = ressource.replacesbridgeid ? ressource.replacesbridgeid : false;
-		this.message.payload.dataStoreVersion = ressource.datastoreversion;
-		this.message.payload.starterKitId = ressource.starterkitid.length > 0 ? ressource.starterkitid : false;
-		this.message.payload.softwareVersion = ressource.swversion;
-		this.message.payload.apiVersion = ressource.apiversion;
-		this.message.payload.zigbeeChannel = ressource.zigbeechannel;
-		this.message.payload.macAddress = ressource.mac;
-		this.message.payload.ipAddress = ressource.ipaddress;
-		this.message.payload.dhcpEnabled = ressource.dhcp;
-		this.message.payload.netmask = ressource.netmask;
-		this.message.payload.gateway = ressource.gateway;
-		this.message.payload.proxyAddress = ressource.proxyaddress == "none" ? false : ressource.proxyaddress;
-		this.message.payload.proxyPort = ressource.proxyport;
-		this.message.payload.utcTime = ressource.UTC;
-		this.message.payload.timeZone = ressource.timezone;
-		this.message.payload.localTime = ressource.localtime;
-		this.message.payload.portalServicesEnabled = ressource.portalservices;
-		this.message.payload.portalConnected = ressource.portalconnection;
-		this.message.payload.linkButtonEnabled = ressource.linkbutton;
-		this.message.payload.touchlinkEnabled = (ressource["touchlink"] && ressource["touchlink"] == true) ? true : false;
+		this.message.payload.id = resource.bridgeid;
+		this.message.payload.name = resource.name;
+		this.message.payload.factoryNew = resource.factorynew;
+		this.message.payload.replacesBridgeId = resource.replacesbridgeid ? resource.replacesbridgeid : false;
+		this.message.payload.dataStoreVersion = resource.datastoreversion;
+		this.message.payload.starterKitId = resource.starterkitid.length > 0 ? resource.starterkitid : false;
+		this.message.payload.softwareVersion = resource.swversion;
+		this.message.payload.apiVersion = resource.apiversion;
+		this.message.payload.zigbeeChannel = resource.zigbeechannel;
+		this.message.payload.macAddress = resource.mac;
+		this.message.payload.ipAddress = resource.ipaddress;
+		this.message.payload.dhcpEnabled = resource.dhcp;
+		this.message.payload.netmask = resource.netmask;
+		this.message.payload.gateway = resource.gateway;
+		this.message.payload.proxyAddress = resource.proxyaddress == "none" ? false : resource.proxyaddress;
+		this.message.payload.proxyPort = resource.proxyport;
+		this.message.payload.utcTime = resource.UTC;
+		this.message.payload.timeZone = resource.timezone;
+		this.message.payload.localTime = resource.localtime;
+		this.message.payload.portalServicesEnabled = resource.portalservices;
+		this.message.payload.portalConnected = resource.portalconnection;
+		this.message.payload.linkButtonEnabled = resource.linkbutton;
+		this.message.payload.touchlinkEnabled = (resource["touchlink"] && resource["touchlink"] == true) ? true : false;
 		this.message.payload.autoUpdatesEnabled = options["autoupdate"] ? options["autoupdate"] : false;
 		this.message.payload.users = []; // NEW!
-		this.message.payload.updated = ressource.updated; // NEW!
+		this.message.payload.updated = resource.updated; // NEW!
 
 		this.message.payload.model = {};
-		this.message.payload.model.id = ressource.modelid;
+		this.message.payload.model.id = resource.modelid;
 		this.message.payload.model.manufacturer = "Philips";
 		this.message.payload.model.name = "Hue v2";
 
 		// GET USERS
-		for (const [userID, user] of Object.entries(ressource["whitelist"]))
+		for (const [userID, user] of Object.entries(resource["whitelist"]))
 		{
 			this.message.payload.users.push({
 				user: userID,
@@ -64,10 +64,10 @@ class HueBridgeMessage
 // HUE BRIGHTNESS
 class HueBrightnessMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
-		const service = Object.values(ressource["services"]["light_level"])[0];
-		const connectivity = ressource.services.zigbee_connectivity ? Object.values(ressource.services.zigbee_connectivity)[0] : ((ressource.services.zgp_connectivity) ? Object.values(ressource.services.zgp_connectivity)[0] : false);
+		const service = Object.values(resource["services"]["light_level"])[0];
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
 
 		var realLUX = service.light.light_level - 1;
 		realLUX = realLUX / 10000;
@@ -82,25 +82,25 @@ class HueBrightnessMessage
 		this.message.payload.lightLevel = service.light.light_level;
 		this.message.payload.dark = (realLUX < 200);
 		this.message.payload.daylight = (realLUX > 200);
-		this.message.payload.updated = ressource.updated;
+		this.message.payload.updated = resource.updated;
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = ressource.id_v1 ? ressource.id_v1 : false; // NEW
-		this.message.info.uniqueId = ressource.id + "-" + service.id;
-		this.message.info.deviceId = ressource.id; // NEW!
-		this.message.info.name = ressource.metadata.name;
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.uniqueId = resource.id + "-" + service.id;
+		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "light_level";
-		this.message.info.softwareVersion = ressource.product_data.software_version;
-		this.message.info.battery = Object.values(ressource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(ressource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.softwareVersion = resource.product_data.software_version;
+		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state; // NEW!
 
 		this.message.info.model = {};
-		this.message.info.model.id = ressource.product_data.model_id;
-		this.message.info.model.manufacturer = ressource.product_data.manufacturer_name;
-		this.message.info.model.name = ressource.product_data.product_name;
-		this.message.info.model.type = ressource.product_data.product_archetype;
-		this.message.info.model.certified = ressource.product_data.certified; // NEW
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified; // NEW
 	}
 
 	get msg()
@@ -114,20 +114,20 @@ class HueBrightnessMessage
 // HUE GROUP
 class HueGroupMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
-		let service = Object.values(ressource["services"]["grouped_light"])[0];
-		service = options.ressources[service.id];
+		let service = Object.values(resource["services"]["grouped_light"])[0];
+		service = options.resources[service.id];
 
 		this.message = {};
 		this.message.payload = {};
 		this.message.payload.on = service.on.on;
-		this.message.payload.updated = ressource.updated;
+		this.message.payload.updated = resource.updated;
 
 		this.message.info = {};
-		this.message.info.id = ressource.id;
-		this.message.info.idV1 = ressource.id_v1 ? ressource.id_v1 : false; // NEW
-		this.message.info.name = ressource.metadata ? ressource.metadata.name : "all";
+		this.message.info.id = resource.id;
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.name = resource.metadata ? resource.metadata.name : "all";
 		this.message.info.type = "group";
 	}
 
@@ -142,10 +142,10 @@ class HueGroupMessage
 // HUE LIGHT
 class HueLightMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
-		const service = Object.values(ressource["services"]["light"])[0];
-		const connectivity = ressource.services.zigbee_connectivity ? Object.values(ressource.services.zigbee_connectivity)[0] : ((ressource.services.zgp_connectivity) ? Object.values(ressource.services.zgp_connectivity)[0] : false);
+		const service = Object.values(resource["services"]["light"])[0];
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
 
 		this.message = {};
 		this.message.payload = {};
@@ -154,23 +154,23 @@ class HueLightMessage
 		this.message.payload.brightnessLevel = service.dimming ? Math.round((254/100)*this.message.payload.brightness) : false;
 		this.message.payload.reachable = connectivity ? (connectivity.status === "connected") : "unknown";
 		this.message.payload.connectionStatus = connectivity ? connectivity.status : "unknown"; // NEW!
-		this.message.payload.updated = ressource.updated;
+		this.message.payload.updated = resource.updated;
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = ressource.id_v1 ? ressource.id_v1 : false; // NEW
-		this.message.info.uniqueId = ressource.id + "-" + service.id;
-		this.message.info.deviceId = ressource.id; // NEW!
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.uniqueId = resource.id + "-" + service.id;
+		this.message.info.deviceId = resource.id; // NEW!
 		this.message.info.name = service.metadata.name;
 		this.message.info.type = "light";
-		this.message.info.softwareVersion = ressource.product_data.software_version;
+		this.message.info.softwareVersion = resource.product_data.software_version;
 
 		this.message.info.model = {};
-		this.message.info.model.id = ressource.product_data.model_id;
-		this.message.info.model.manufacturer = ressource.product_data.manufacturer_name;
-		this.message.info.model.name = ressource.product_data.product_name;
-		this.message.info.model.type = ressource.product_data.product_archetype;
-		this.message.info.model.certified = ressource.product_data.certified; // NEW
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified; // NEW
 		this.message.info.model.friendsOfHue = true;
 
 		// HAS COLOR CAPABILITIES?
@@ -237,10 +237,10 @@ class HueLightMessage
 // HUE MOTION
 class HueMotionMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
-		const service = Object.values(ressource["services"]["motion"])[0];
-		const connectivity = ressource.services.zigbee_connectivity ? Object.values(ressource.services.zigbee_connectivity)[0] : ((ressource.services.zgp_connectivity) ? Object.values(ressource.services.zgp_connectivity)[0] : false);
+		const service = Object.values(resource["services"]["motion"])[0];
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
 
 		this.message = {};
 		this.message.payload = {
@@ -248,26 +248,26 @@ class HueMotionMessage
 			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
 			connectionStatus: connectivity ? connectivity.status : "unknown", // NEW!
 			motion: (service.motion.motion && service.motion.motion_valid),
-			updated: ressource.updated
+			updated: resource.updated
 		};
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = ressource.id_v1 ? ressource.id_v1 : false; // NEW
-		this.message.info.uniqueId = ressource.id + "-" + service.id;
-		this.message.info.deviceId = ressource.id; // NEW!
-		this.message.info.name = ressource.metadata.name;
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.uniqueId = resource.id + "-" + service.id;
+		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "motion";
-		this.message.info.softwareVersion = ressource.product_data.software_version;
-		this.message.info.battery = Object.values(ressource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(ressource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.softwareVersion = resource.product_data.software_version;
+		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state; // NEW!
 
 		this.message.info.model = {};
-		this.message.info.model.id = ressource.product_data.model_id;
-		this.message.info.model.manufacturer = ressource.product_data.manufacturer_name;
-		this.message.info.model.name = ressource.product_data.product_name;
-		this.message.info.model.type = ressource.product_data.product_archetype;
-		this.message.info.model.certified = ressource.product_data.certified; // NEW
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified; // NEW
 	}
 
 	get msg()
@@ -281,23 +281,23 @@ class HueMotionMessage
 // HUE RULES
 class HueRulesMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
 		this.message = {};
 		this.message.payload = {};
-		this.message.payload.enabled = (ressource["status"] == "enabled"); // NEW!
-		this.message.payload.triggered = (ressource["lasttriggered"] != null) ? dayjs(ressource["lasttriggered"]).format() : false;
+		this.message.payload.enabled = (resource["status"] == "enabled"); // NEW!
+		this.message.payload.triggered = (resource["lasttriggered"] != null) ? dayjs(resource["lasttriggered"]).format() : false;
 
 		this.message.info = {};
-		this.message.info.id = ressource["id"];
-		this.message.info.created = dayjs(ressource["created"]).format();
-		this.message.info.name = ressource["name"];
-		this.message.info.timesTriggered = ressource["timestriggered"];
-		this.message.info.owner = ressource["_owner"];
-		this.message.info.status = ressource["status"];
+		this.message.info.id = resource["id"];
+		this.message.info.created = dayjs(resource["created"]).format();
+		this.message.info.name = resource["name"];
+		this.message.info.timesTriggered = resource["timestriggered"];
+		this.message.info.owner = resource["_owner"];
+		this.message.info.status = resource["status"];
 
-		this.message.conditions = ressource["conditions"];
-		this.message.actions = ressource["actions"];
+		this.message.conditions = resource["conditions"];
+		this.message.actions = resource["actions"];
 	}
 
 	get msg()
@@ -311,13 +311,13 @@ class HueRulesMessage
 // HUE BUTTONS
 class HueButtonsMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
-		const connectivity = ressource.services.zigbee_connectivity ? Object.values(ressource.services.zigbee_connectivity)[0] : ((ressource.services.zgp_connectivity) ? Object.values(ressource.services.zgp_connectivity)[0] : false);
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
 
 		// FIND PRESSED BUTTON
 		var pressedButton = false;
-		const allButtons = Object.values(ressource.services.button);
+		const allButtons = Object.values(resource.services.button);
 
 		for (var i = allButtons.length - 1; i >= 0; i--)
 		{
@@ -334,26 +334,26 @@ class HueButtonsMessage
 			connectionStatus: connectivity ? connectivity.status : "unknown", // NEW!
 			button: pressedButton ? pressedButton.metadata.control_id : false, // NEW
 			action: pressedButton ? pressedButton.button.last_event : false, // NEW
-			updated: ressource.updated
+			updated: resource.updated
 		};
 
 		this.message.info = {};
-		this.message.info.id = pressedButton ? pressedButton.id : ressource.id;
-		this.message.info.idV1 = ressource.id_v1 ? ressource.id_v1 : false; // NEW
-		this.message.info.uniqueId = ressource.id + "-" + (pressedButton ? pressedButton.id : "");
-		this.message.info.deviceId = ressource.id; // NEW!
-		this.message.info.name = ressource.metadata.name;
+		this.message.info.id = pressedButton ? pressedButton.id : resource.id;
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.uniqueId = resource.id + "-" + (pressedButton ? pressedButton.id : "");
+		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "button";
-		this.message.info.softwareVersion = ressource.product_data.software_version;
-		this.message.info.battery = ressource.services.device_power ? Object.values(ressource.services.device_power)[0].power_state.battery_level : false;
-		this.message.info.batteryState = ressource.services.device_power ? Object.values(ressource.services.device_power)[0].power_state.battery_state : false; // NEW!
+		this.message.info.softwareVersion = resource.product_data.software_version;
+		this.message.info.battery = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_level : false;
+		this.message.info.batteryState = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_state : false; // NEW!
 
 		this.message.info.model = {};
-		this.message.info.model.id = ressource.product_data.model_id;
-		this.message.info.model.manufacturer = ressource.product_data.manufacturer_name;
-		this.message.info.model.name = ressource.product_data.product_name;
-		this.message.info.model.type = ressource.product_data.product_archetype;
-		this.message.info.model.certified = ressource.product_data.certified; // NEW
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified; // NEW
 	}
 
 	get msg()
@@ -367,10 +367,10 @@ class HueButtonsMessage
 // HUE TEMPERATURE
 class HueTemperatureMessage
 {
-	constructor(ressource, options = {})
+	constructor(resource, options = {})
 	{
-		const service = Object.values(ressource["services"]["temperature"])[0];
-		const connectivity = ressource.services.zigbee_connectivity ? Object.values(ressource.services.zigbee_connectivity)[0] : ((ressource.services.zgp_connectivity) ? Object.values(ressource.services.zgp_connectivity)[0] : false);
+		const service = Object.values(resource["services"]["temperature"])[0];
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
 
 		var deviceValue = service.temperature.temperature;
 		var celsius = Math.round(deviceValue * 100) / 100;
@@ -413,26 +413,26 @@ class HueTemperatureMessage
 			fahrenheit: fahrenheit,
 			temperatureIs: temperatureMessage,
 			deviceValue: deviceValue,
-			updated: ressource.updated
+			updated: resource.updated
 		};
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = ressource.id_v1 ? ressource.id_v1 : false; // NEW
-		this.message.info.uniqueId = ressource.id + "-" + service.id;
-		this.message.info.deviceId = ressource.id; // NEW!
-		this.message.info.name = ressource.metadata.name;
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.uniqueId = resource.id + "-" + service.id;
+		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "temperature";
-		this.message.info.softwareVersion = ressource.product_data.software_version;
-		this.message.info.battery = Object.values(ressource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(ressource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.softwareVersion = resource.product_data.software_version;
+		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state; // NEW!
 
 		this.message.info.model = {};
-		this.message.info.model.id = ressource.product_data.model_id;
-		this.message.info.model.manufacturer = ressource.product_data.manufacturer_name;
-		this.message.info.model.name = ressource.product_data.product_name;
-		this.message.info.model.type = ressource.product_data.product_archetype;
-		this.message.info.model.certified = ressource.product_data.certified; // NEW
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified; // NEW
 	}
 
 	get msg()

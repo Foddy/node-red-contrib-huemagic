@@ -50,7 +50,7 @@ module.exports = function(RED)
 		{
 			let currentState = bridge.get("group", info.id, { colornames: config.colornamer ? true : false });
 
-			// RESSOURCE FOUND?
+			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
@@ -102,13 +102,13 @@ module.exports = function(RED)
 			send = send || function() { scope.send.apply(scope,arguments); }
 
 			// SAVE LAST COMMAND
-			scope.lastCommand = msg;
+			scope.lastCommand = RED.util.cloneMessage(msg);
 
 			// CREATE PATCH
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempGroupID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.groupid;
+			const tempGroupID = (!config.groupid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.groupid;
 			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
 
 			// CHECK IF LIGHT ID IS SET

@@ -186,11 +186,11 @@ Create an `array` with the respective animation steps in the form of an object a
 
 If you have created your own animation that you would like to share with others, add it at `/huemagic/animations/XXX-youranimationname.json` and create a pull request. Take a look at [this directory](https://github.com/Foddy/node-red-contrib-huemagic/tree/master/huemagic/animations) for structure help.
 
-### Example of your own animation
+### Example of a custom animation
 
 This example shows what a simple animation could look like. In the first step, the delay of 500 milliseconds is waited for. The color of the light is then slowly changed to red over a period of one second. As soon as the light has completely changed to red, the second step is carried out, which also has a delay of 500 milliseconds. Finally the color changes to blue.
 
-If you have set the animation to play indefinitely, this process is repeated indefinitely until you manually stop the animation or redeploy the node.
+If you have set the animation to loop, this process is repeated indefinitely until you manually stop the animation or redeploy the node.
 
 Pass the following object in `msg.payload` to play the example animation.
 
@@ -454,7 +454,7 @@ The "Hue Buttons" node receives switching events from input devices connected to
 
 ### Node-RED Setup Instructions
 
-Select the pre-configured Hue Bridge and hit the search button to find all the available switches/buttons. If you already know the ID of the switch, you can also enter it here manually. You can either assign a new name for the switch internally or keep the predefined name of the device. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". The node will then no longer output any switching events. Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you activate this setting, you will receive a status message for the currently selected switch after each deployment.
+Select the pre-configured Hue Bridge and hit the search button to find all the available switches/buttons. If you already know the ID of the switches/buttons, you can also enter it here manually. You can either assign a new name for the switches/buttons internally or keep the predefined name of the device. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". The node will then no longer output any switching events. Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you activate this setting, you will receive a status message for the currently selected switches/buttons after each deployment.
 
 If you do not select a switch/button and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type.
 
@@ -615,7 +615,7 @@ As soon as the sensor has registered a temperature change, the following status 
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
 | celsius (float) | Indicates the current ambient temperature in °C (degrees Celsius) |
 | fahrenheit (float) | Indicates the current ambient temperature in °F (degrees Fahrenheit) |
-| temperatureIs (string) | Describes the current temperature with the values ´very cold´, ´cold´, ´slightly cold´, ´comfortable´, ´slightly warm´, ´warm´, ´hot´ or ´very hot´ |
+| temperatureIs (string) | Describes the current temperature with the values `very cold`, `cold`, `slightly cold`, `comfortable`, `slightly warm`, `warm`, `hot` or `very hot` |
 | deviceValue (float) | The original value of the temperature from the sensor |
 | updated (string) | Time of the last update of the resource by HueMagic (ISO 8601) |
 
@@ -796,7 +796,7 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.0.2 (latest)
+### v4.0.3 (latest)
 
 > **Attention!** HueMagic v4+ has been almost completely rewritten under the hood and requires at least the (square-shaped) Philips Hue Bridge firmware 1948086000+ from November 1st, 2021 ([Upgrade instructions](https://www.lighting.philips.com/content/B2C/en_US/microsites/meethue/marketing-catalog/huewireless_ca/support/security-advisory/general/where-and-how-can-i-update-my-hue-system-with-the-latest-software.html)) and Node-RED v1+ ([Upgrade instructions](https://nodered.org/docs/getting-started/local#upgrading-node-red)). If you are upgrading from a previous HueMagic version to the v4, you will have to reconfigure (not completely rebuild) all nodes by clicking them and selecting the appropriate device from the list. This also applies to nodes / functions that are operated in universal mode, as the numeric identifiers of the latest Philips Hue API version have been replaced in UUIDs. The nodes "Hue Switch", "Hue Button" & "Hue Tap" have been replaced in v4 by the universal and uniform node "Hue Buttons", which works with all button / switch devices that are connected to the Hue Bridge (please note here also the new API in the documentation). The request and return objects of the individual nodes are largely compatible with older HueMagic versions - with the exception of the nodes "Hue Bridge", "Hue Buttons", "Hue Scene" & "Hue Group". These need to be adjusted in the v4. Make sure that you meet the minimum technical requirements and have a quiet minute for the migration before upgrading to the v4.
 

@@ -95,10 +95,10 @@
                 var notification = RED.notify(scope._("hue-rules.config.searching"), { type: "compact", modal: true, fixed: true });
 
                 // GET THE SENSORS
-                $.get('hue/ressources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "rule" })
+                $.get('hue/resources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "rule" })
                 .done( function(data) {
-                    var allRessources = JSON.parse(data);
-                    if(allRessources.length <= 0)
+                    var allResources = JSON.parse(data);
+                    if(allResources.length <= 0)
                     {
                         notification.close();
                         RED.notify(scope._("hue-rules.config.none-found"), { type: "error" });
@@ -106,9 +106,9 @@
                     }
 
                     // SET OPTIONS
-                    allRessources.forEach(function(ressource)
+                    allResources.forEach(function(resource)
                     {
-                        options[ressource.id] = { value: ressource.id, label: ressource.name };
+                        options[resource.id] = { value: resource.id, label: resource.name };
                     });
 
                     // SELECT CURRENT VALUE

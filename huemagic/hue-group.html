@@ -95,10 +95,10 @@
                 var notification = RED.notify(scope._("hue-group.config.searching"), { type: "compact", modal: true, fixed: true });
 
                 // GET THE GROUPS
-                $.get('hue/ressources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "group" })
+                $.get('hue/resources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "group" })
                 .done( function(data) {
-                    var allRessources = JSON.parse(data);
-                    if(allRessources.length <= 0)
+                    var allResources = JSON.parse(data);
+                    if(allResources.length <= 0)
                     {
                         notification.close();
                         RED.notify(scope._("hue-group.config.none-found"), { type: "error" });
@@ -106,25 +106,25 @@
                     }
 
                     // SET GROUPS AS OPTIONS
-                    allRessources.forEach(function(ressource)
+                    allResources.forEach(function(resource)
                     {
-                        if(!ressource.name) // ALL SPECIAL
+                        if(!resource.name) // ALL SPECIAL
                         {
-                            options[ressource.id] = { value: ressource.id, label: "● "+scope._("hue-group.config.all") };
+                            options[resource.id] = { value: resource.id, label: "● "+scope._("hue-group.config.all") };
                         }
                     });
 
-                    allRessources.forEach(function(ressource)
+                    allResources.forEach(function(resource)
                     {
-                        if(ressource.name) // REGULAR GROUPS
+                        if(resource.name) // REGULAR GROUPS
                         {
-                            if(ressource.model)
+                            if(resource.model)
                             {
-                                options[ressource.id] = { value: ressource.id, label: ressource.name + " ("+ressource.model+")" };
+                                options[resource.id] = { value: resource.id, label: resource.name + " ("+resource.model+")" };
                             }
                             else
                             {
-                                options[ressource.id] = { value: ressource.id, label: ressource.name };
+                                options[resource.id] = { value: resource.id, label: resource.name };
                             }
                         }
                     });

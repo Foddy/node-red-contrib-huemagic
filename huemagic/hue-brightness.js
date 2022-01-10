@@ -40,7 +40,7 @@ module.exports = function(RED)
 		{
 			let currentState = bridge.get("light_level", info.id);
 
-			// RESSOURCE FOUND?
+			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// SEND MESSAGE
@@ -100,13 +100,19 @@ module.exports = function(RED)
 			done = done || function() { scope.done.apply(scope,arguments); }
 
 			// SET LAST COMMAND
-			scope.lastCommand = msg;
+			scope.lastCommand = RED.util.cloneMessage(msg);
 
 			// CREATE PATCH
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempSensorID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.sensorid;
+			const tempSensorID = (!config.sensorid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.sensorid;
+			if(!tempSensorID)
+			{
+				scope.error("Please submit a valid sensor ID.");
+				return false;
+			}
+
 			let currentState = bridge.get("light_level", tempSensorID);
 
 			// GET CURRENT STATE
@@ -129,10 +135,10 @@ module.exports = function(RED)
 			}
 
 			// TURN ON / OFF
-			if((msg.payload === true || msg.payload === false) && (msg.payload !== currentState.payload.active))
+			if((msg.payload === true || msg.payload === false) && (msg.payload != currentState.payload.active))
 			{
 				// PREPARE PATCH
-				patchObject.enabled = msg.payload;
+				patchObject["enabled"] = (msg.payload == true);
 			}
 
 			//

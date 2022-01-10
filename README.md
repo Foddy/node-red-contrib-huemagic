@@ -532,7 +532,7 @@ If necessary, the sensor can be turned on and off remotely. If the sensor has be
 
 |Property|Description|
 |--|--|
-| payload (boolean) | `true` turns the sensor on,` false` turns it off |
+| payload (boolean) | `true` turns the sensor on, `false` turns it off |
 
 ### Status messages from the node
 

@@ -124,7 +124,7 @@ module.exports = function(RED)
 			scope.lastCommand = msg;
 
 			// DEFINE SENSOR ID
-			const tempSensorID = (msg.topic != null) ? msg.topic : config.sensorid;
+			const tempSensorID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.sensorid;
 			let currentState = bridge.get("button", tempSensorID);
 
 			// GET CURRENT STATE

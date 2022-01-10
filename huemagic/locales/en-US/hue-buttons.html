@@ -34,8 +34,8 @@ As soon as a key has been pressed, the following status message is returned by t
 : name (string): The currently set name of the switch/button
 : type (string): The type of the switch/button (always `button`)
 : softwareVersion (string): The current firmware of the switch/button
-: battery (float): The current battery level of the switch/button
-: batteryState (string): The current status of the battery level. Can contain `normal`, `low` or `critical` as a value
+: battery (float | boolean): The current battery level of the switch/button, `false`, if there is no battery
+: batteryState (string | boolean): The current status of the battery level. Can contain `normal`, `low` or `critical` as a value, `false`, if there is no battery
 : model (object): Contains the model information of the switch/button under `id` , `manufacturer`, `name`, `type` and `certified`
 
 #### Status changes under `msg.updated`

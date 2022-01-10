@@ -108,7 +108,7 @@ module.exports = function(RED)
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempGroupID = (msg.topic != null) ? msg.topic : config.groupid;
+			const tempGroupID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.groupid;
 			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
 
 			// CHECK IF LIGHT ID IS SET

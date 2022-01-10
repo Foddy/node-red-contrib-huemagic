@@ -34,8 +34,8 @@ Sobald eine Taste gedrückt wurde, wird folgende Statusnachricht vom Node zurüc
 : name (string) : Der aktuell eingestellte Name des Schalters
 : type (string) : Der Typ des Schalters (immer `button`)
 : softwareVersion (string) : Die aktuelle Firmware des Schalters
-: battery (float) : Der aktuelle Batteriestand des Schalters
-: batteryState (string) : Der aktuelle Status des Batteriestands. Kann `normal`, `low` oder `critical` als Wert beinhalten
+: battery (float | boolean) : Der aktuelle Batteriestand des Schalters, `false`, wenn keine Batterie vorhanden
+: batteryState (string | boolean) : Der aktuelle Status des Batteriestands. Kann `normal`, `low` oder `critical` als Wert beinhalten, `false`, wenn keine Batterie vorhanden
 : model (object) : Beinhaltet die Modellinformationen des Schalters unter `id`, `manufacturer`, `name`, `type` und `certified`
 
 #### Zustandsänderungen unter `msg.updated`

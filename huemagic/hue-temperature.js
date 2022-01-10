@@ -108,7 +108,7 @@ module.exports = function(RED)
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempSensorID = (msg.topic != null) ? msg.topic : config.sensorid;
+			const tempSensorID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.sensorid;
 			let currentState = bridge.get("temperature", tempSensorID);
 
 			// GET CURRENT STATE

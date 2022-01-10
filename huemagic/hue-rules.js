@@ -90,7 +90,7 @@ module.exports = function(RED)
 			let patchObject = {};
 
 			// DEFINE SENSOR ID & CURRENT STATE
-			const tempRuleID = (msg.topic != null) ? msg.topic : config.ruleid;
+			const tempRuleID = (typeof msg.topic != 'undefined' && msg.topic.length > 0) ? msg.topic : config.ruleid;
 			let currentState = bridge.get("rule", "rule_" + tempRuleID);
 
 			// CONTROL RULE

@@ -143,7 +143,7 @@ If the "fetch" command has been used on the node, the bridge outputs the corresp
 
 #### Global status messages under `msg.updated` (optional)
 
-Unless deactivated, the node issues an updated status message for each resource on the bridge. The status message under * msg.updated * follows the pattern of the respective resource and varies depending on the type of device that was last updated.
+Unless deactivated, the node outputs an updated status message for each resource on the bridge. The status message under * msg.updated * follows the pattern of the respective resource and varies depending on the type of device that was last updated.
 
 #### Last command under `msg.command` (optional)
 
@@ -295,9 +295,9 @@ As soon as a change in the light settings has been detected (regardless of wheth
 | brightnessLevel (int / boolean) | Current brightness from 0-254 or `false`, if the light does not support a brightness setting |
 | reachable (boolean / string) | `true` if the light is connected to the bridge, `unknown` if the connection status deviates |
 | connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
-| rgb (array [int, int, int] | optional) | Current light color in the form of an RGB value, if the light can display colors |
+| rgb (array [int, int, int] / optional) | Current light color in the form of an RGB value, if the light can display colors |
 | hex (string / optional) | Current light color in the form of a hexadecimal value if the light can display colors |
-| xyColor (object {x [float], y [float]} | optional) | Current light color in the form of an XY value, if the light can display colors |
+| xyColor (object {x [float], y [float]} / optional) | Current light color in the form of an XY value, if the light can display colors |
 | color (string / optional) | Current light name in English, if the light can display colors and the corresponding setting of the node has been activated |
 | gradient (object / optional) | Current gradient setting with all available color units in the form of an array, if the light supports gradient settings, where `colors` outputs the colors, `numColors` the number of set colors in the gradient and `totalColors` the maximum possible Number of colors the resource can support in the gradient |
 | colorTemp (int / boolean / optional) | Current color temperature of the light, if the light can display color temperatures and a color temperature has been set |
@@ -491,8 +491,8 @@ As soon as a key has been pressed, the following status message is returned by t
 | name (string) | The currently set name of the switch/button |
 | type (string) | The type of the switch/button (always `button`) |
 | softwareVersion (string) | The current firmware of the switch/button |
-| battery (float) | The current battery level of the switch/button |
-| batteryState (string) | The current status of the battery level. Can contain `normal`, `low` or `critical` as a value |
+| battery (float / boolean) | The current battery level of the switch/button, `false`, when there is no battery |
+| batteryState (string / boolean) | The current status of the battery level. Can contain `normal`, `low` or `critical` as a value, `false`, when there is no battery |
 | model (object) | Contains the model information of the switch/button under `id` , `manufacturer`, `name`, `type` and `certified` |
 
 #### Status changes under `msg.updated`
@@ -796,9 +796,9 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.0.1 (latest)
+### v4.0.2 (latest)
 
-> **Attention!** HueMagic v4 + has been almost completely rewritten under the hood and requires at least the (square-shaped) Philips Hue Bridge firmware 1948086000+ from November 1st, 2021 ([Upgrade instructions](https://www.lighting.philips.com/content/B2C/en_US/microsites/meethue/marketing-catalog/huewireless_ca/support/security-advisory/general/where-and-how-can-i-update-my-hue-system-with-the-latest-software.html)) and Node-RED v1 + ([Upgrade instructions](https://nodered.org/docs/getting-started/local#upgrading-node-red)). If you are upgrading from a previous HueMagic version to the v4, you will have to reconfigure (not completely rebuild) all nodes by clicking them and selecting the appropriate device from the list. This also applies to nodes / functions that are operated in universal mode, as the numeric identifiers of the latest Philips Hue API version have been replaced in UUIDs. The nodes "Hue Switch", "Hue Button" & "Hue Tap" have been replaced in v4 by the universal and uniform node "Hue Buttons", which works with all button / switch devices that are connected to the Hue Bridge (please note here also the new API in the documentation). The request and return objects of the individual nodes are largely compatible with older HueMagic versions - with the exception of the nodes "Hue Bridge", "Hue Buttons", "Hue Scene" & "Hue Group". These need to be adjusted in the v4. Make sure that you meet the minimum technical requirements and have a quiet minute for the migration before upgrading to the v4.
+> **Attention!** HueMagic v4 + has been almost completely rewritten under the hood and requires at least the (square-shaped) Philips Hue Bridge firmware 1948086000+ from November 1st, 2021 ([Upgrade instructions](https://www.lighting.philips.com/content/B2C/en_US/microsites/meethue/marketing-catalog/huewireless_ca/support/security-advisory/general/where-and-how-can-i-update-my-hue-system-with-the-latest-software.html)) and Node-RED v1+ ([Upgrade instructions](https://nodered.org/docs/getting-started/local#upgrading-node-red)). If you are upgrading from a previous HueMagic version to the v4, you will have to reconfigure (not completely rebuild) all nodes by clicking them and selecting the appropriate device from the list. This also applies to nodes / functions that are operated in universal mode, as the numeric identifiers of the latest Philips Hue API version have been replaced in UUIDs. The nodes "Hue Switch", "Hue Button" & "Hue Tap" have been replaced in v4 by the universal and uniform node "Hue Buttons", which works with all button / switch devices that are connected to the Hue Bridge (please note here also the new API in the documentation). The request and return objects of the individual nodes are largely compatible with older HueMagic versions - with the exception of the nodes "Hue Bridge", "Hue Buttons", "Hue Scene" & "Hue Group". These need to be adjusted in the v4. Make sure that you meet the minimum technical requirements and have a quiet minute for the migration before upgrading to the v4.
 
 * HueMagic speaks now directly with the bridge without any submodules *(huejay dependency removed)*
 * Migrated to the newest CLIP/v2 API version from the Philips Hue bridge
@@ -809,9 +809,9 @@ If the status of the node has changed via a certain command, the entire command 
 * New universal node "Hue Buttons" replaces the following nodes: "Hue Switch", "Hue Button", "Hue Tap"
 * New "updated" object for all nodes, which only contains the properties that have been updated since the last state
 * New configuration option to suppress first message after node initialization (for all nodes)
-* New gradient color setting for compatible light sources (in "Hue Light node)
+* New gradient color setting for compatible light sources (in "Hue Light" node)
 * New inject button for almost all nodes, which triggers the current status of a node
-* New "universal mode" support for "Hue Rule" nodes
+* New "universal mode" support for the "Hue Rule" node
 * New SVG-version of each node icon for higher quality rendering in the Node-RED UI
 * New and full featured examples for each node right inside Node-RED
 * New color mix feature in "Hue Light" nodes with the ability to mix the current light color with another

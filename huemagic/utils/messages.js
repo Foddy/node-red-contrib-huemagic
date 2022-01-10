@@ -345,8 +345,8 @@ class HueButtonsMessage
 		this.message.info.name = ressource.metadata.name;
 		this.message.info.type = "button";
 		this.message.info.softwareVersion = ressource.product_data.software_version;
-		this.message.info.battery = Object.values(ressource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(ressource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.battery = ressource.services.device_power ? Object.values(ressource.services.device_power)[0].power_state.battery_level : false;
+		this.message.info.batteryState = ressource.services.device_power ? Object.values(ressource.services.device_power)[0].power_state.battery_state : false; // NEW!
 
 		this.message.info.model = {};
 		this.message.info.model.id = ressource.product_data.model_id;

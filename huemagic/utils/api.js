@@ -5,68 +5,62 @@ const EventSource = require('eventsource');
 
 function API()
 {
-	// STORAGE
-	this.bridge = null;
-	this.ipAddress = null;
-	this.accessKey = null;
-	this.events = null;
+	// EVENTS
+	this.events = {};
 
 	//
 	// INITIALIZE
-	this.init = function({ ip, key = 'default' })
+	this.init = function({ config = null })
 	{
 		const scope = this;
-
-		// FORCE RELOAD?
-		const forceReload = (this.ipAddress != ip.toString().trim());
-
-		// STORE ACCESS INFORMATION
-		this.ipAddress = ip.toString().trim();
-		this.accessKey = key.toString().trim();
 
 		// GET BRIDGE
 		return new Promise(function(resolve, reject)
 		{
-			if(scope.bridge !== null && forceReload === false)
+			if(!config)
 			{
-				resolve(scope.bridge);
+				reject("Bridge is not configured!");
+				return false;
 			}
-			else
+
+			// GET BRIDGE INFORMATION
+			axios({
+				"method": "GET",
+				"url": "https://" + config.bridge + "/api/config",
+				"headers": { "Content-Type": "application/json; charset=utf-8" },
+				"httpsAgent": new https.Agent({ rejectUnauthorized: false }),
+			})
+			.then(function(response)
 			{
-				// GET BRIDGE INFORMATION
-				axios({
-					"method": "GET",
-					"url": "https://" + ip + "/api/config",
-					"headers": { "Content-Type": "application/json; charset=utf-8" },
-					"httpsAgent": new https.Agent({ rejectUnauthorized: false }),
-				})
-				.then(function(response)
-				{
-					scope.bridge = response.data;
-					resolve(scope.bridge);
-				})
-				.catch(function(error)
-				{
-					reject(error);
-				});
-			}
+				resolve(response.data);
+			})
+			.catch(function(error)
+			{
+				reject(error);
+			});
 		});
 	}
 
 	//
 	// MAKE A REQUEST
-	this.request = function({ method = 'GET', resource = null, data = null, version = 2 })
+	this.request = function({ config = null, method = 'GET', resource = null, data = null, version = 2 })
 	{
 		const scope = this;
 		return new Promise(function(resolve, reject)
 		{
+			if(!config)
+			{
+				reject("Bridge is not configured!");
+				return false;
+			}
+
 			// BUILD REQUEST OBJECT
 			var request = {
 				"method": method,
-				"url": "https://" + scope.ipAddress,
+				"url": "https://" + config.bridge,
 				"headers": {
 					"Content-Type": "application/json; charset=utf-8",
-					"hue-application-key": scope.accessKey
+					"hue-application-key": config.key
 				},
 				"httpsAgent": new https.Agent({ rejectUnauthorized: false }), // Node is somehow not able to parse the official Philips Hue PEM
 			};
@@ -81,7 +75,7 @@ function API()
 				}
 				else if(version === 1)
 				{
-					request['url'] += "/api/" + scope.accessKey + resource;
+					request['url'] += "/api/" + config.key + resource;
 				}
 			}
 
@@ -119,23 +113,23 @@ function API()
 
 	//
 	// SUBSCRIBE TO BRIDGE EVENTS
-	this.subscribe = function(callback)
+	this.subscribe = function(config, callback)
 	{
 		const scope = this;
 		return new Promise(function(resolve, reject)
 		{
-			if(scope.events === null)
+			if(!scope.events[config.id])
 			{
-				var sseURL = "https://" + scope.ipAddress + "/eventstream/clip/v2";
+				var sseURL = "https://" + config.bridge + "/eventstream/clip/v2";
 
 				// INITIALIZE EVENT SOURCE
-				scope.events = new EventSource(sseURL, {
-					headers: { 'hue-application-key': scope.accessKey },
+				scope.events[config.id] = new EventSource(sseURL, {
+					headers: { 'hue-application-key': config.key },
 					https: { rejectUnauthorized: false },
 				});
 
 				// PIPE MESSAGE TO TARGET FUNCTION
-				scope.events.onmessage = function(event)
+				scope.events[config.id].onmessage = function(event)
 				{
 					if(event && event.type === 'message' && event.data)
 					{
@@ -152,33 +146,33 @@ function API()
 				};
 
 				// CONNECTED?
-				scope.events.onopen = function()
+				scope.events[config.id].onopen = function()
 				{
 					resolve(true);
 				}
 
 				// ERROR? -> RETRY?
-				scope.events.onerror = function(error)
+				scope.events[config.id].onerror = function(error)
 				{
 					console.log("HueMagic:", "Connection to bridge lost. Trying to reconnect again in 30 seconds…", err);
-					setTimeout(function(){ scope.subscribe(callback); }, 30000);
+					setTimeout(function(){ scope.subscribe(config, callback); }, 30000);
 					resolve(true);
 				}
 			}
 			else
 			{
-				scope.unsubscribe();
-				scope.subscribe(callback);
+				scope.unsubscribe(config);
+				scope.subscribe(config, callback);
 			}
 		});
 	}
 
 	//
 	// UNSUBSCRIBE
-	this.unsubscribe = function()
+	this.unsubscribe = function(config)
 	{
-		if(this.events !== null) { this.events.close(); }
-		this.events = null;
+		if(this.events[config.id] !== null) { this.events[config.id].close(); }
+		this.events[config.id] = null;
 	}
 
 	//

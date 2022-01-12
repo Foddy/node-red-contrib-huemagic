@@ -36,21 +36,24 @@ module.exports = function(RED)
 		// RESOURCE ID PATTERN
 		this.validResourceID = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
 
+		// FIRMWARE UPDATE TIMEOUT
+		this.firmwareUpdateTimeout = null;
+
 		// CREATE NODE
 		RED.nodes.createNode(scope, config);
 
 		// INITIALIZE
 		this.start = function()
 		{
-			scope.log("Initializing the bridge…");
-			API.init({ ip: config.bridge, key: config.key })
+			scope.log("Initializing the bridge ("+config.bridge+")…");
+			API.init({ config: config })
 			.then(function(bridge) {
 				scope.log("Connected to bridge");
 				return scope.getAllResources();
 			})
 			.then(function(allResources)
 			{
-				scope.log("Process resources…");
+				scope.log("Processing bridge resources…");
 				return API.processResources(allResources);
 			})
 			.then(function(allResources)
@@ -84,7 +87,7 @@ module.exports = function(RED)
 		{
 			return new Promise(function(resolve, reject)
 			{
-				API.request({ resource: "/config", version: 1 })
+				API.request({ config: config, resource: "/config", version: 1 })
 				.then(function(bridgeInformation)
 				{
 					// PREPARE TO MATCH V2 RESOURCES
@@ -123,7 +126,7 @@ module.exports = function(RED)
 					allResources.push(bridgeInformation);
 
 					// CONTINUE WITH ALL RESOURCES
-					return API.request({ resource: "all" });
+					return API.request({ config: config, resource: "all" });
 				})
 				.then(function(v2Resources)
 				{
@@ -131,7 +134,7 @@ module.exports = function(RED)
 					allResources = allResources.concat(v2Resources);
 
 					// GET RULES (LEGACY API)
-					return API.request({ resource: "/rules", version: 1 });
+					return API.request({ config: config, resource: "/rules", version: 1 });
 				})
 				.then(function(rules)
 				{
@@ -193,7 +196,7 @@ module.exports = function(RED)
 		this.refreshStatesSSE = function()
 		{
 			scope.log("Subscribing to bridge events…");
-			API.subscribe(function(updates)
+			API.subscribe(config, function(updates)
 			{
 				const currentDateTime = dayjs().format();
 
@@ -266,8 +269,8 @@ module.exports = function(RED)
 		this.pushUpdatedState = function(resource, updatedType, suppressMessage = false)
 		{
 			const msg = { id: resource.id, type: resource.type, updatedType: updatedType, services: resource["services"] ? Object.keys(resource["services"]) : [], suppressMessage: suppressMessage };
-			this.events.emit(resource.id, msg);
-			this.events.emit("globalResourceUpdates", msg);
+			this.events.emit(config.id + "_" + resource.id, msg);
+			this.events.emit(config.id + "_" + "globalResourceUpdates", msg);
 
 			// RESOURCE CONTAINS SERVICES? -> SERVICE IN GROUP? -> EMIT CHANGES TO GROUPS ALSO
 			if(this.resources["_groupsOf"][resource.id])
@@ -277,8 +280,8 @@ module.exports = function(RED)
 					const groupID = this.resources["_groupsOf"][resource.id][g];
 					const groupMessage = { id: groupID, type: "group", updatedType: updatedType, services: [], suppressMessage: suppressMessage };
 
-					this.events.emit(groupID, groupMessage);
-					this.events.emit("globalResourceUpdates", groupMessage);
+					this.events.emit(config.id + "_" + groupID, groupMessage);
+					this.events.emit(config.id + "_" + "globalResourceUpdates", groupMessage);
 				}
 			}
 		}
@@ -440,7 +443,7 @@ module.exports = function(RED)
 				}
 
 				// ACTION!
-				API.request({ method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
+				API.request({ config: config, method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
 				.then(function(response) {
 					resolve(response);
 				})
@@ -455,7 +458,7 @@ module.exports = function(RED)
 		{
 			return new Promise(function(resolve, reject)
 			{
-				API.request({ resource: "/rules/" + id, version: 1 })
+				API.request({ config: config, resource: "/rules/" + id, version: 1 })
 				.then(function(rule)
 				{
 					// "RENAME" OWNER
@@ -508,7 +511,7 @@ module.exports = function(RED)
 			if(!id)
 			{
 				// UNIVERSAL MODE
-				this.events.on("globalResourceUpdates", function(info)
+				this.events.on(config.id + "_" + "globalResourceUpdates", function(info)
 				{
 					if(type === "bridge")
 					{
@@ -527,7 +530,7 @@ module.exports = function(RED)
 			else
 			{
 				// SPECIFIC RESOURCE MODE
-				this.events.on(id, function(info)
+				this.events.on(config.id + "_" + id, function(info)
 				{
 					if(type === "bridge" || messageWhitelist[type].includes(info.updatedType))
 					{
@@ -542,8 +545,11 @@ module.exports = function(RED)
 		{
 			if((config.autoupdates && config.autoupdates == true) || typeof config.autoupdates == 'undefined')
 			{
+				if(scope.firmwareUpdateTimeout !== null) { clearTimeout(scope.firmwareUpdateTimeout); };
+
 				scope.log("Checking for Hue Bridge firmware updates…");
 				API.request({
+					config: config,
 					method: "PUT",
 					resource: "/config",
 					version: 1,
@@ -558,7 +564,7 @@ module.exports = function(RED)
 				{
 					if(scope.nodeActive == true)
 					{
-						setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 5);
+						scope.firmwareUpdateTimeout = setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 180);
 					}
 				})
 				.catch(function(error)
@@ -566,7 +572,7 @@ module.exports = function(RED)
 					// NO UPDATES AVAILABLE // TRY AGAIN IN 3H
 					if(scope.nodeActive == true)
 					{
-						setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 180);
+						scope.firmwareUpdateTimeout = setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 180);
 					}
 				});
 			}
@@ -584,10 +590,13 @@ module.exports = function(RED)
 
 			// UNSUBSCRIBE FROM BRIDGE EVENTS
 			scope.log("Unsubscribing from bridge events…");
-			API.unsubscribe();
+			API.unsubscribe(config);
 
 			// UNSUBSCRIBE FROM "READY" EVENTS
 			scope.events.removeAllListeners();
+
+			// REMOVE FIRMWARE UPDATE TIMEOUT
+			if(scope.firmwareUpdateTimeout !== null) { clearTimeout(scope.firmwareUpdateTimeout); }
 		});
 	}
 
@@ -631,7 +640,7 @@ module.exports = function(RED)
 	    }
 	    else
 	    {
-			API.init({ ip: req.query.ip })
+			API.init({ config: { bridge: req.query.ip, key: "huemagic" } })
 			.then(function(bridge) {
 				res.end(bridge.name);
 			})
@@ -659,7 +668,7 @@ module.exports = function(RED)
 					"Content-Type": "application/json; charset=utf-8"
 				},
 				"data": {
-					"devicetype": "huemagic_" + Math.floor((Math.random() * 100) + 1)
+					"devicetype": "HueMagic for Node-RED (" + Math.floor((Math.random() * 100) + 1) + ")"
 				}
 			})
 			.then(function(response)
@@ -689,10 +698,7 @@ module.exports = function(RED)
 		// GET ALL RULES
 		if(targetType == "rule")
 		{
-			API.init({ ip: req.query.bridge, key: req.query.key })
-			.then(function(bridge) {
-				return API.request({ resource: "/rules", version: 1 });
-			})
+			API.request({ config: { bridge: req.query.bridge, key: req.query.key }, resource: "/rules", version: 1 })
 			.then(function(rules)
 			{
 				let targetRules = {};
@@ -720,10 +726,7 @@ module.exports = function(RED)
 		// GET ALL OTHER RESOURCES
 		else
 		{
-			API.init({ ip: req.query.bridge, key: req.query.key })
-			.then(function(bridge) {
-				return API.request({ resource: "all" });
-			})
+			API.request({ config: { bridge: req.query.bridge, key: req.query.key }, resource: "all" })
 			.then(function(allResources)
 			{
 				return API.processResources(allResources);

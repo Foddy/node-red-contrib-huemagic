@@ -114,6 +114,11 @@ module.exports = function(RED)
 			}
 
 			let currentState = bridge.get("light_level", tempSensorID);
+			if(!currentState)
+			{
+				scope.error("The sensor in not yet available. Please wait for the bridge to connect before sending any command.");
+				return false;
+			}
 
 			// GET CURRENT STATE
 			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )

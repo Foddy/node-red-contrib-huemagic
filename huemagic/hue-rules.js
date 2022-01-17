@@ -98,6 +98,11 @@ module.exports = function(RED)
 			}
 
 			let currentState = bridge.get("rule", "rule_" + tempRuleID);
+			if(!currentState)
+			{
+				scope.error("The rule in not yet available. Please wait for the bridge to connect before sending any command.");
+				return false;
+			}
 
 			// CONTROL RULE
 			if(msg.payload === true || msg.payload === false)

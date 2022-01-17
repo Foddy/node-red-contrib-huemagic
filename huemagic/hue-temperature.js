@@ -39,6 +39,11 @@ module.exports = function(RED)
 		bridge.subscribe("temperature", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("temperature", info.id);
+			if(!currentState)
+			{
+				scope.error("The sensor in not yet available. Please wait for the bridge to connect before sending any command.");
+				return false;
+			}
 
 			// RESOURCE FOUND?
 			if(currentState !== false)

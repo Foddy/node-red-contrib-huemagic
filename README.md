@@ -395,6 +395,7 @@ In contrast to the "Hue Light" node, you have much less status information avail
 | id (string) | Indicates the new ID of the group |
 | idV1 (string / boolean) | Indicates the old ID of the group |
 | name (string) | The currently set name of the group |
+| resources (object) | Contains all devices/resources behind the group
 | type (string) | The type of the group (always `group`) |
 
 #### Status changes under `msg.updated`
@@ -795,7 +796,12 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.0.4 (latest)
+### v4.0.5 (latest)
+
+* The "Hue Group" node now contains the "resources" information with all linked resources behind the group/zone
+* Fixed an issue that caused Node-RED to restart if a command was sent before a node was initialized
+
+### v4.0.4
 
 * Fixed an issue with the bridge config node checking for updates too frequently ([#246](https://github.com/Foddy/node-red-contrib-huemagic/issues/246#issuecomment-1009376442))
 * Fixed an issue with multiple bridges configured

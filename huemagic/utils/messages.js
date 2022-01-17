@@ -119,6 +119,13 @@ class HueGroupMessage
 		let service = Object.values(resource["services"]["grouped_light"])[0];
 		service = options.resources[service.id];
 
+		// GET ALL RESOURCES
+		let allResourcesInsideGroup = {};
+		for (const [type, resources] of Object.entries(resource["services"]))
+		{
+			allResourcesInsideGroup[type] = Object.keys(resource["services"][type]);
+		}
+
 		this.message = {};
 		this.message.payload = {};
 		this.message.payload.on = service.on.on;
@@ -128,6 +135,7 @@ class HueGroupMessage
 		this.message.info.id = resource.id;
 		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
 		this.message.info.name = resource.metadata ? resource.metadata.name : "all";
+		this.message.info.resources = allResourcesInsideGroup; // NEW
 		this.message.info.type = "group";
 	}
 

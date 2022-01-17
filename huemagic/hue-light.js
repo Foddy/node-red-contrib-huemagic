@@ -123,6 +123,11 @@ module.exports = function(RED)
 			// DEFINE SENSOR ID & CURRENT STATE
 			const tempLightID = (!config.lightid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.lightid;
 			let currentState = bridge.get("light", tempLightID, { colornames: config.colornamer ? true : false });
+			if(!currentState)
+			{
+				scope.error("The light in not yet available. Please wait for the bridge to connect before sending any command.");
+				return false;
+			}
 
 			// CHECK IF LIGHT ID IS SET
 			if(!tempLightID)

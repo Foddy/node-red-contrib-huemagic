@@ -42,6 +42,11 @@ module.exports = function(RED)
 		bridge.subscribe("button", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("button", info.id);
+			if(!currentState)
+			{
+				scope.error("The button/switch in not yet available. Please wait for the bridge to connect before sending any command.");
+				return false;
+			}
 
 			// RESOURCE FOUND?
 			if(currentState !== false)

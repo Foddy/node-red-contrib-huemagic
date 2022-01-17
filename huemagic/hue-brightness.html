@@ -110,7 +110,8 @@
                 // GET THE SENSORS
                 $.get('hue/resources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "motion" })
                 .done( function(data) {
-                    var allResources = sortResourcesBy("name", JSON.parse(data));
+                    var allResources = JSON.parse(data);
+                    allResources = sortResourcesBy('name', allResources);
                     if(allResources.length <= 0)
                     {
                         notification.close();

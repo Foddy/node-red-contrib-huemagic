@@ -81,6 +81,19 @@
                 buttonIcon.removeClass("fa-pencil");
                 buttonIcon.addClass("fa-search");
             }
+            
+            function sortResourcesBy(prop, resources)
+            {
+                return resources.sort((a, b) => {
+                    if ( a[prop] < b[prop] ){
+                        return -1;
+                    }
+                    if ( a[prop] > b[prop] ){
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
 
             function searchAndSelect()
             {
@@ -97,7 +110,7 @@
                 // GET THE SENSORS
                 $.get('hue/resources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "motion" })
                 .done( function(data) {
-                    var allResources = JSON.parse(data);
+                    var allResources = sortResourcesBy("name", JSON.parse(data));
                     if(allResources.length <= 0)
                     {
                         notification.close();

@@ -13,6 +13,14 @@ Enter the Hue Bridge IP address manually or press the button to call up all loca
 
 Enter the Hue Bridge API key manually or press the button to create a new key. If you want to create a new key, you have to press the physical button of the bridge within the time window of 20 seconds to complete the process.
 
+### Worker
+
+The "Worker" value determines the number of parallel commands that HueMagic is allowed to send to the bridge at the same time. According to the official documentation of the Philips Hue bridge, no more than 10 commands should be sent per second, otherwise there is a risk that the bridge will not be able to process the requests as quickly and will throw errors.
+
+If more commands are sent at the same time than the value set here, HueMagic will execute the commands in sequence as soon as throughput is possible again.
+
+Set this to a value below 10 (e.g. 4 to 7) if you also send commands to the bridge outside of HueMagic in order to comply with the Philips Hue recommended throughput of commands/second.
+
 ### Automatic firmware updates
 
 HueMagic periodically checks for available Philips Hue firmware updates and automatically installs them when they are available. You can deactivate this behavior by clicking the corresponding checkbox.

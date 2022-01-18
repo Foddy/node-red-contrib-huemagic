@@ -142,7 +142,7 @@ If the "fetch" command has been used on the node, the bridge outputs the corresp
 
 #### Global status messages under `msg.updated` (optional)
 
-Unless deactivated, the node outputs an updated status message for each resource on the bridge. The status message under * msg.updated * follows the pattern of the respective resource and varies depending on the type of device that was last updated.
+Unless deactivated, the node outputs an updated status message for each resource on the bridge. The status message under `msg.updated` follows the pattern of the respective resource and varies depending on the type of device that was last updated.
 
 #### Last command under `msg.command` (optional)
 
@@ -172,7 +172,7 @@ To play or stop an animation, pass an object with the following content to the n
 |--|--|
 | payload (boolean) | `true`, starts the animation, `false`, stops the animation |
 
-### Own animations
+### Custom animations
 
 If you pass your own animation to the node, the preselected, pre-defined animation (if set) will be temporarily replaced by yours. Own HueMagic animations are a sequence of commands that have been combined in an array. Each array element forms a step - whereby a step can also consist of several frames (transition effects).
 
@@ -273,7 +273,7 @@ In addition to simply switching it on and off, there are also many other options
 | gradient (object {hex […]}) | An object with a supported color object (e.g. `hex`,` rgb`, ...) and several colors to set a gradient to supported lights |
 | mixColor (object) | A color to be mixed with the current light color. Can accept `color`, `hex`, `rgb` or `xyColor` objects and optionally `amount` (int) to indicate the mixing ratio in percent |
 | image (string) | Path of an image (local or on the web) to set the current color of the light to the average color of the image |
-| saturation (int) | percentage of the saturation of the current color (beta) |
+| saturation (int) | Percentage of the saturation of the current color (beta) |
 | colorTemp (int / string) | Value between 153 and 500 to set the color temperature of the light or the values `cold`, `normal`, `warm`, `hot` and `auto` - where `auto` is the color temperature based on the current time |
 | incrementColorTemp (int / boolean) | Value by how much the color temperature should be warmer or `true` to make the color temperature warmer in steps of 50 |
 | decrementColorTemp (int / boolean) | Value by how much the color temperature should be colder or `true` to make the color temperature colder in steps of 50 |
@@ -796,7 +796,14 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.0.5 (latest)
+### v4.1.0 (latest)
+
+* New queue worker throttles the number of parallel requests to the bridge to avoid 503 API limit errors (can be configured in the Bridge configuration)
+* Resources are now alphabetically sorted in the node´s configuration inetrface ([#282](https://github.com/Foddy/node-red-contrib-huemagic/pull/282)) (thx)
+* "Hue Bridghtness" node was optimized to output more accurate "dark" and "dayLight" values
+* Several optimizations in the documentation of some nodes
+
+### v4.0.5
 
 * The "Hue Group" node now contains the "resources" information with all linked resources behind the group/zone
 * Fixed an issue that caused Node-RED to restart if a command was sent before a node was initialized

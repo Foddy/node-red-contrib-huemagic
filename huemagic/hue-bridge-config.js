@@ -9,6 +9,7 @@ module.exports = function(RED)
 	const diff = require("deep-object-diff").diff;
 	const axios = require('axios');
 	const https = require('https');
+	const fastq = require('fastq');
 
 	// READABLE RESOURCE MESSAGES
 	const { HueBridgeMessage,
@@ -32,6 +33,7 @@ module.exports = function(RED)
 		this.resourcesInGroups = {};
 		this.lastStates = {};
 		this.events = new events.EventEmitter();
+		this.patchQueue = null;
 
 		// RESOURCE ID PATTERN
 		this.validResourceID = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
@@ -435,23 +437,40 @@ module.exports = function(RED)
 		{
 			return new Promise(function(resolve, reject)
 			{
-				// GET SERVICE ID
-				if(version !== 1 && scope.resources[id] && scope.resources[id]["services"] && scope.resources[id]["services"][type])
+				if(!scope.patchQueue) { return false; }
+				scope.patchQueue.push({ type: type, id: id, patch: patch, version: version }, function (error, response)
 				{
-					const targetResource = Object.values(scope.resources[id]["services"][type])[0];
-					id = targetResource.id;
-				}
-
-				// ACTION!
-				API.request({ config: config, method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
-				.then(function(response) {
-					resolve(response);
-				})
-				.catch(function(error) {
-					reject(error);
+					if(error)
+					{
+						reject(error);
+					}
+					else
+					{
+						resolve(response);
+					}
 				});
 			});
 		}
+
+		// PATCH RESOURCE (WORKER) / 7 PROCESSES IN PARALLEL
+		this.patchQueue = fastq(function({ type, id, patch, version }, callback)
+		{
+			// GET SERVICE ID
+			if(version !== 1 && scope.resources[id] && scope.resources[id]["services"] && scope.resources[id]["services"][type])
+			{
+				const targetResource = Object.values(scope.resources[id]["services"][type])[0];
+				id = targetResource.id;
+			}
+
+			// ACTION!
+			API.request({ config: config, method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
+			.then(function(response) {
+				callback(null, response);
+			})
+			.catch(function(error) {
+				callback(error, null);
+			});
+		}, config.worker ? parseInt(config.worker) : 10);
 
 		// RE-FETCH RULE (RECEIVES NO UPDATES VIA SSE)
 		this.refetchRule = function(id)
@@ -546,8 +565,6 @@ module.exports = function(RED)
 			if((config.autoupdates && config.autoupdates == true) || typeof config.autoupdates == 'undefined')
 			{
 				if(scope.firmwareUpdateTimeout !== null) { clearTimeout(scope.firmwareUpdateTimeout); };
-
-				scope.log("Checking for Hue Bridge firmware updates…");
 				API.request({
 					config: config,
 					method: "PUT",
@@ -564,15 +581,15 @@ module.exports = function(RED)
 				{
 					if(scope.nodeActive == true)
 					{
-						scope.firmwareUpdateTimeout = setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 180);
+						scope.firmwareUpdateTimeout = setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 720);
 					}
 				})
 				.catch(function(error)
 				{
-					// NO UPDATES AVAILABLE // TRY AGAIN IN 3H
+					// NO UPDATES AVAILABLE // TRY AGAIN IN 12H
 					if(scope.nodeActive == true)
 					{
-						scope.firmwareUpdateTimeout = setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 180);
+						scope.firmwareUpdateTimeout = setTimeout(function(){ scope.autoUpdateFirmware(); }, 60000 * 720);
 					}
 				});
 			}
@@ -597,6 +614,9 @@ module.exports = function(RED)
 
 			// REMOVE FIRMWARE UPDATE TIMEOUT
 			if(scope.firmwareUpdateTimeout !== null) { clearTimeout(scope.firmwareUpdateTimeout); }
+
+			// KILL QUEUE
+			scope.patchQueue.kill();
 		});
 	}
 

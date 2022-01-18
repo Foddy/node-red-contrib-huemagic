@@ -39,11 +39,6 @@ module.exports = function(RED)
 		bridge.subscribe("temperature", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("temperature", info.id);
-			if(!currentState)
-			{
-				scope.error("The sensor in not yet available. Please wait for the bridge to connect before sending any command.");
-				return false;
-			}
 
 			// RESOURCE FOUND?
 			if(currentState !== false)
@@ -121,6 +116,11 @@ module.exports = function(RED)
 			}
 
 			let currentState = bridge.get("temperature", tempSensorID);
+			if(!currentState)
+			{
+				scope.error("The sensor in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
+				return false;
+			}
 
 			// GET CURRENT STATE
 			if( (typeof msg.payload != 'undefined' && typeof msg.payload.status != 'undefined') || (typeof msg.__user_inject_props__ != 'undefined' && msg.__user_inject_props__ == "status") )

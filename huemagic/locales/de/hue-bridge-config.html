@@ -13,6 +13,14 @@ Geben Sie die Hue Bridge-IP-Adresse manuell ein oder drücken Sie den Button, um
 
 Geben Sie den Hue Bridge API-Schlüssel manuell ein oder drücken Sie den Button, um einen neuen Schlüssel zu erstellen. Wenn Sie einen neuen Schlüssel erstellen möchten, müssen Sie innerhalb des Zeitfensters von 20 Sekunden den physischen Button der Bridge betätigen, um den Prozess abzuschließen.
 
+### Worker
+
+Der "Worker"-Wert bestimmt die Anzahl der parallelen Befehle, die HueMagic an die Bridge gleichzeitig schicken darf. Laut offizieller Dokumentation der Philips Hue Bridge, sollten nicht mehr als 10 Befehle pro Sekunde abgeschickt werden, da sonst die Gefahr besteht, dass die Bridge die Anfragen nicht so schnell verarbeiten kann und Fehler auswirft.
+
+Wenn mehr Befehle gleichzeitig abgeschickt werden als der hier gesetzte Wert, wird HueMagic die Befehle nacheinander ausführen, sobald der Durchsatz wieder möglich ist.
+
+Setzen Sie hier einen Wert unter 10 (z. B. 4 bis 7), wenn Sie auch außerhalb von HueMagic Befehle an die Bridge senden, um den von Philips Hue empfohlenen Durchsatz an Befehlen / Sekunde einzuhalten.
+
 ### Automatische Firmware-Updates
 
 HueMagic prüft periodisch nach verfügbaren Philips Hue Firmware Updates und installiert sie automatisch, wenn sie verfügbar sind. Sie können dieses Verhalten deaktivieren, indem Sie die entsprechende Checkbox anklicken.

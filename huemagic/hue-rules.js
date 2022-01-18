@@ -100,7 +100,7 @@ module.exports = function(RED)
 			let currentState = bridge.get("rule", "rule_" + tempRuleID);
 			if(!currentState)
 			{
-				scope.error("The rule in not yet available. Please wait for the bridge to connect before sending any command.");
+				scope.error("The rule in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
 				return false;
 			}
 

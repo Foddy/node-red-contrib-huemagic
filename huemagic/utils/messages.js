@@ -80,8 +80,8 @@ class HueBrightnessMessage
 		this.message.payload.connectionStatus = connectivity ? connectivity.status : "unknown"; // NEW!
 		this.message.payload.lux = realLUX;
 		this.message.payload.lightLevel = service.light.light_level;
-		this.message.payload.dark = (realLUX < 200);
-		this.message.payload.daylight = (realLUX > 200);
+		this.message.payload.dark = (realLUX < 90);
+		this.message.payload.daylight = (realLUX >= 90);
 		this.message.payload.updated = resource.updated;
 
 		this.message.info = {};

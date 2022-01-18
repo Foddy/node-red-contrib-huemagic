@@ -25,6 +25,10 @@
             </button>
         </div>
 	</div>
+	<div class="form-row">
+		<label for="node-config-input-worker"><i class="fa fa-cogs"></i> <span>Worker</span></label>
+		<input type="text" id="node-config-input-worker" placeholder="10" style="width: calc(100% - 105px)">
+	</div>
 	<div class="form-row" style="margin-top: 30px">
         <div style="display: inline-flex; width: calc(100% - 105px)">
             <input type="checkbox" id="node-input-autoupdates" style="flex: 15px;">
@@ -47,6 +51,9 @@
 			name: { value:"Hue Bridge", required: true },
 			bridge: { value:"", required: true },
 			key: { value:"", required: true },
+			worker: { value: 10, required: true, validate:function(v) {
+				return (!isNaN(v) && v > 0)
+			}},
 			autoupdates: { value: true },
 			disableupdates: { value: false }
 		},

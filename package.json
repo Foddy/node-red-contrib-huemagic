@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-huemagic",
-  "version": "4.0.5",
+  "version": "4.1.0",
   "description": "Philips Hue node to control bridges, lights, groups, scenes, rules, taps, switches, buttons, motion sensors, temperature sensors and Lux sensors using Node-RED.",
   "author": "foddy",
   "homepage": "https://github.com/Foddy/node-red-contrib-huemagic",
@@ -52,6 +52,7 @@
     "dayjs": "^1.10.7",
     "deep-object-diff": "^1.1.0",
     "eventsource": "^1.1.0",
+    "fastq": "^1.13.0",
     "get-image-colors": "^4.0.0"
   }
 }

@@ -112,7 +112,7 @@ module.exports = function(RED)
 			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
 			if(!currentState)
 			{
-				scope.error("The group in not yet available. Please wait for the bridge to connect before sending any command.");
+				scope.error("The group in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
 				return false;
 			}
 

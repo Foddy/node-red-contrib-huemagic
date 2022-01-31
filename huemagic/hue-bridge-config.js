@@ -303,11 +303,16 @@ module.exports = function(RED)
 
 					if(type == "bridge")
 					{
-						const message = new HueBridgeMessage(targetResource, options);
+						try {
+							const message = new HueBridgeMessage(targetResource, options);
 
-						// GET CURRENT STATE MESSAGE
-						let currentState = message.msg;
-						return currentState;
+							// GET CURRENT STATE MESSAGE
+							let currentState = message.msg;
+							return currentState;	
+						} catch (error) {
+							return false;
+						}
+						
 					}
 					else if(type == "light")
 					{

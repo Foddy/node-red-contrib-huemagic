@@ -34,6 +34,7 @@ module.exports = function(RED)
 		this.lastStates = {};
 		this.events = new events.EventEmitter();
 		this.patchQueue = null;
+		this.timerWatchDog = null; // 31/01/2022 Supergiovane: watchdog for the connection with the bridge
 
 		// RESOURCE ID PATTERN
 		this.validResourceID = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
@@ -44,9 +45,35 @@ module.exports = function(RED)
 		// CREATE NODE
 		RED.nodes.createNode(scope, config);
 
+		this.startWatchdog = function() {
+				// 31/01/2022 Supergiovane: Check wether the bridge is connected.
+				if (this.timerWatchDog !== null) clearTimeout(this.timerWatchDog);
+				this.timerWatchDog = setTimeout(() => {
+				try {
+					API.request({ config: config, resource: "/config", version: 1 })
+					.then(function(bridgeInformation)
+					{
+						// The bridge is still connected
+						scope.startWatchdog();
+					})
+					.catch(function(error)
+					{
+						// Error connecting to the bridge
+						scope.log("Error requesting info from the bridge. Reconnect in some secs. " + error.message);
+						scope.start();
+					});		
+				} catch (error) {
+					scope.log("Lost connection with the bridge. Reconnect in some secs. " + error.message);
+					scope.start();
+				}
+				
+			}, 10000);
+		}
 		// INITIALIZE
 		this.start = function()
 		{
+			this.startWatchdog(); // 31/01/2022 Supergiovane: starts the watchdog.
+
 			scope.log("Initializing the bridge ("+config.bridge+")…");
 			API.init({ config: config })
 			.then(function(bridge) {
@@ -631,7 +658,7 @@ module.exports = function(RED)
 		//
 		// START THE MAGIC
 		this.start();
-
+		
 		//
 		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()

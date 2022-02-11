@@ -230,7 +230,7 @@ class HueLightMessage
 					this.message.payload.gradient.colors.push(oneColorPack);
 				}
 	
-				this.message.payload.gradient.numColors = service["gradient"]["points"] ? service["gradient"]["points"].length : 0;
+				this.message.payload.gradient.numColors = service["gradient"]["points"].length;
 				this.message.payload.gradient.totalColors = service["gradient"]["points_capable"];
 			}
 		}

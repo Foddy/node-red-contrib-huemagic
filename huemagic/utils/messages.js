@@ -14,7 +14,7 @@ class HueBridgeMessage
 		this.message.payload.factoryNew = resource.factorynew;
 		this.message.payload.replacesBridgeId = resource.replacesbridgeid ? resource.replacesbridgeid : false;
 		this.message.payload.dataStoreVersion = resource.datastoreversion;
-		this.message.payload.starterKitId = resource.starterkitid.length > 0 ? resource.starterkitid : false;
+		this.message.payload.starterKitId = resource.starterkitid && resource.starterkitid.length > 0 ? resource.starterkitid : false;
 		this.message.payload.softwareVersion = resource.swversion;
 		this.message.payload.apiVersion = resource.apiversion;
 		this.message.payload.zigbeeChannel = resource.zigbeechannel;
@@ -42,14 +42,16 @@ class HueBridgeMessage
 		this.message.payload.model.name = "Hue v2";
 
 		// GET USERS
-		for (const [userID, user] of Object.entries(resource["whitelist"]))
-		{
-			this.message.payload.users.push({
-				user: userID,
-				name: user["name"],
-				created: user["create date"],
-				lastAccess: user["last use date"]
-			});
+		if (resource["whitelist"]) {
+			for (const [userID, user] of Object.entries(resource["whitelist"]))
+			{
+				this.message.payload.users.push({
+					user: userID,
+					name: user["name"],
+					created: user["create date"],
+					lastAccess: user["last use date"]
+				});
+			}
 		}
 	}
 

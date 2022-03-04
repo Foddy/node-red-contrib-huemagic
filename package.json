@@ -51,7 +51,7 @@
     "colornames": "^1.1.1",
     "dayjs": "^1.10.7",
     "deep-object-diff": "^1.1.0",
-    "eventsource": "^1.1.0",
+    "eventsource": "^2.0.0",
     "fastq": "^1.13.0",
     "get-image-colors": "^4.0.0"
   }

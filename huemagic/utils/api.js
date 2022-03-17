@@ -152,7 +152,7 @@ function API()
 				}
 
 				// ERROR? -> RETRY?
-				scope.events[config.id].onerror = function(error)
+				scope.events[config.id].onerror = function(err)
 				{
 					console.log("HueMagic:", "Connection to bridge lost. Trying to reconnect again in 30 seconds…", err);
 					setTimeout(function(){ scope.subscribe(config, callback); }, 30000);

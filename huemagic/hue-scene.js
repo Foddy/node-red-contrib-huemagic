@@ -87,7 +87,7 @@ module.exports = function(RED)
 			else
 			{
 				// RECALL SCENE
-				patchObject["recall"] = { status: "active" };
+				patchObject["recall"] = { action: "active" };
 
 				// CHANGE NODE UI STATE
 				scope.status({fill: "grey", shape: "ring", text: "hue-scene.node.command"});

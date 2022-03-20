@@ -8,6 +8,7 @@ module.exports = function(RED)
 
 		const scope = this;
 		const bridge = RED.nodes.getNode(config.bridge);
+		const async = require('async');
 
 		// SAVE LAST COMMAND
 		this.lastCommand = null;
@@ -116,7 +117,7 @@ module.exports = function(RED)
 			let currentState = bridge.get("light_level", tempSensorID);
 			if(!currentState)
 			{
-				scope.error("The sensor in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
+				scope.error("The sensor in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
 				return false;
 			}
 
@@ -157,9 +158,30 @@ module.exports = function(RED)
 				}
 
 				// PATCH!
-				bridge.patch("light_level", tempSensorID, patchObject)
-				.then(function() { if(done) { done(); }})
-				.catch(function(errors) { scope.error(errors); });
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
+				{
+					bridge.patch("light_level", tempSensorID, patchObject)
+					.then(function() { callback(null, true); })
+					.catch(function(errors) { callback(errors, null); });
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
+					}
+					else if(done)
+					{
+						done();
+					}
+				});
 			}
 			else
 			{

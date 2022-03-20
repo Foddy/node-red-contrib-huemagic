@@ -90,14 +90,7 @@ function API()
 			{
 				if(version === 2)
 				{
-					if(response.data.errors.length > 0)
-					{
-						reject(response.data.errors);
-					}
-					else
-					{
-						resolve(response.data.data);
-					}
+					resolve(response.data.data);
 				}
 				else if(version === 1)
 				{
@@ -106,7 +99,7 @@ function API()
 			})
 			.catch(function(error)
 			{
-				reject(error);
+				reject({ status: error.response.status, errors: error.response.data.errors ? error.response.data.errors : error.response.data});
 			});
 		});
 	}

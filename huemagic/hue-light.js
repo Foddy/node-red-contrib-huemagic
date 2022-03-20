@@ -8,6 +8,7 @@ module.exports = function(RED)
 
 		const scope = this;
 		const bridge = RED.nodes.getNode(config.bridge);
+		const async = require('async');
 
 		// SAVE FUTURE PATCH
 		this.futurePatchState = {};
@@ -125,7 +126,7 @@ module.exports = function(RED)
 			let currentState = bridge.get("light", tempLightID, { colornames: config.colornamer ? true : false });
 			if(!currentState)
 			{
-				scope.error("The light in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
+				scope.error("The light in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
 				return false;
 			}
 
@@ -171,18 +172,43 @@ module.exports = function(RED)
 					"bri": msg.payload.brightness ? Math.round((254/100)*msg.payload.brightness) : currentState.brightnessLevel
 				};
 
-				bridge.patch("light", currentState.info.idV1 + "/state", patchObject, 1)
-				.then(function(status) {
-					// RESET COLORLOOP ANIMATION AFTER X SECONDS
-					setTimeout(function()
+				// PATCH!
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
+				{
+					bridge.patch("light", currentState.info.idV1 + "/state", patchObject, 1)
+					.then(function(status)
 					{
-						bridge.patch("light", currentState.info.idV1 + "/state", { "effect": "none" }, 1);
-						if(done) { done(); }
-					}, parseInt(msg.payload.colorloop) * 1000);
-				})
-				.catch(function(errors) {
-					scope.error(errors);
-					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+						// RESET COLORLOOP ANIMATION AFTER X SECONDS
+						setTimeout(function()
+						{
+							bridge.patch("light", currentState.info.idV1 + "/state", { "effect": "none" }, 1);
+						}, parseInt(msg.payload.colorloop) * 1000);
+
+						callback(null, true);
+					})
+					.catch(function(errors)
+					{
+						callback(errors, null);
+					});
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
+						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+					}
+					else if(done)
+					{
+						done();
+					}
 				});
 
 				return false;
@@ -261,48 +287,72 @@ module.exports = function(RED)
 					scope.status({fill: "grey", shape: "ring", text: "hue-light.node.command"});
 				}
 
-				// 1. TURN ON THE LIGHT BULB
-				bridge.patch("light", tempLightID, patchObject)
-				.then(function(status) {
-					// 2. APPLY ALERT EFFECT
-					const alertEffect = { alert: { action: "breathe" }};
-					return bridge.patch("light", tempLightID, alertEffect);
-				})
-				.then(function(status) {
-					// 3. RESET PREVIOUS STATE (AFTER X SECONDS)
-					setTimeout(function()
-					{
-						const tempPreviousState = scope.context().get('lightPreviousState');
-						var tempPreviousStatePatch = {};
 
-						tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
-						if(tempPreviousState.payload.xyColor)
+				// APPLY THE EFFECT
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
+				{
+					// 1. TURN ON THE LIGHT BULB
+					bridge.patch("light", tempLightID, patchObject)
+					.then(function(status) {
+						// 2. APPLY ALERT EFFECT
+						const alertEffect = { alert: { action: "breathe" }};
+						return bridge.patch("light", tempLightID, alertEffect);
+					})
+					.then(function(status) {
+						// 3. RESET PREVIOUS STATE (AFTER X SECONDS)
+						setTimeout(function()
 						{
-							tempPreviousStatePatch.color = { xy: tempPreviousState.payload.xyColor };
-						}
-						else if(tempPreviousState.payload.colorTemp)
-						{
-							tempPreviousStatePatch.color_temperature = { mirek: tempPreviousState.payload.colorTemp };
-						}
+							const tempPreviousState = scope.context().get('lightPreviousState');
+							var tempPreviousStatePatch = {};
 
-						bridge.patch("light", tempLightID, tempPreviousStatePatch).
-						then(function(status)
-						{
-							return bridge.patch("light", tempLightID, { on: { on: false } })
-							.then(function() { if(done) { done(); }});
-						})
-						.then(function(status) {
-							if(tempPreviousState.payload.on === true)
+							tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+							if(tempPreviousState.payload.xyColor)
 							{
-								bridge.patch("light", tempLightID, { on: { on: true } })
-								.then(function() { if(done) { done(); }});
+								tempPreviousStatePatch.color = { xy: tempPreviousState.payload.xyColor };
 							}
-						});
-					}, parseInt(msg.payload.alert) * 1000);
-				})
-				.catch(function(errors) {
-					scope.error(errors);
-					scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+							else if(tempPreviousState.payload.colorTemp)
+							{
+								tempPreviousStatePatch.color_temperature = { mirek: tempPreviousState.payload.colorTemp };
+							}
+
+							bridge.patch("light", tempLightID, tempPreviousStatePatch).
+							then(function(status)
+							{
+								return bridge.patch("light", tempLightID, { on: { on: false } })
+								.then(function() { if(done) { done(); }});
+							})
+							.then(function(status) {
+								if(tempPreviousState.payload.on === true)
+								{
+									bridge.patch("light", tempLightID, { on: { on: true } })
+									.then(function() { if(done) { done(); }});
+								}
+							});
+						}, parseInt(msg.payload.alert) * 1000);
+						callback(null, true);
+					})
+					.catch(function(errors) {
+						callback(errors, null);
+					});
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
+						scope.status({fill: "red", shape: "ring", text: "hue-light.node.error-input"});
+					}
+					else if(done)
+					{
+						done();
+					}
 				});
 			}
 			// ANIMATION STARTED?
@@ -327,21 +377,44 @@ module.exports = function(RED)
 					tempPreviousStatePatch.color_temperature = { mirek: tempPreviousState.payload.colorTemp };
 				}
 
-				bridge.patch("light", tempLightID, tempPreviousStatePatch).
-				then(function(status)
+				// PATCH!
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
 				{
-					if(tempPreviousState.payload.on === false)
+					bridge.patch("light", tempLightID, tempPreviousStatePatch)
+					.then(function(status)
 					{
-						bridge.patch("light", tempLightID, { on: { on: false } })
-						.then(function() { if(done) { done(); }});
+						if(tempPreviousState.payload.on === false)
+						{
+							bridge.patch("light", tempLightID, { on: { on: false } })
+							.then(function() { callback(null, true); });
+						}
+						else
+						{
+							bridge.patch("light", tempLightID, { on: { on: false } })
+							.then(function(status) {
+								callback(null, true);
+								return bridge.patch("light", tempLightID, { on: { on: true } });
+							});
+						}
+					})
+					.catch(function(errors) { callback(errors, null); });
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
 					}
-					else
+					else if(done)
 					{
-						bridge.patch("light", tempLightID, { on: { on: false } })
-						.then(function(status) {
-							if(done) { done(); }
-							return bridge.patch("light", tempLightID, { on: { on: true } })
-						});
+						done();
 					}
 				});
 			}
@@ -613,16 +686,42 @@ module.exports = function(RED)
 				}
 
 				// SET DOMINANT COLORS FROM IMAGE
-				if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && typeof currentState.payload.xyColor != 'undefined')
+				if(typeof msg.payload != 'undefined' && typeof msg.payload.image != 'undefined' && (typeof currentState.payload.xyColor != 'undefined' || typeof currentState.payload.gradient != 'undefined'))
 				{
-					var colors = await colorUtils.getColors(msg.payload.image);
+					let colors = await colorUtils.getColors(msg.payload.image);
 					if(colors.length > 0)
 					{
-						var colorsHEX = colors.map(color => color.hex());
-						let rgbFromHex = colorUtils.hexRgb(colorsHEX[0]);
-						patchObject["color"] = {
-							xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut)
-						};
+						let colorsHEX = colors.map(color => color.hex());
+
+						// SET MULTIPLE COLORS ON SUPPORTED LIGHTS
+						if(typeof currentState.payload.gradient != 'undefined')
+						{
+							let XYColorSet = [];
+
+							for (var i = 0; i < currentState.payload.gradient.totalColors; i++)
+							{
+								if(typeof colorsHEX[i] != 'undefined')
+								{
+									let rgbFromHex = colorUtils.hexRgb(colorsHEX[i]);
+									XYColorSet.push({
+										color: { xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut) }
+									});
+								}
+							}
+
+							if(XYColorSet.length > 0)
+							{
+								patchObject["gradient"] = { points: XYColorSet };
+							}
+						}
+						// SET SINGLE COLOR
+						else
+						{
+							let rgbFromHex = colorUtils.hexRgb(colorsHEX[0]);
+							patchObject["color"] = {
+								xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut)
+							};
+						}
 					}
 				}
 
@@ -718,9 +817,30 @@ module.exports = function(RED)
 					}
 
 					// PATCH!
-					bridge.patch("light", tempLightID, patchObject)
-					.then(function() { if(done) { done(); }})
-					.catch(function(errors) { scope.error(errors);  });
+					async.retry({
+						times: 3,
+						errorFilter: function(err) {
+						    return (err.status == 503);
+						},
+						interval: function(retryCount) { return retryCount*2000; }
+					},
+					function(callback, results)
+					{
+						bridge.patch("light", tempLightID, patchObject)
+						.then(function() { callback(null, true); })
+						.catch(function(errors) { callback(errors, null); });
+					},
+					function(errors, success)
+					{
+						if(errors)
+						{
+							scope.error(errors);
+						}
+						else if(done)
+						{
+							done();
+						}
+					});
 				}
 				else
 				{

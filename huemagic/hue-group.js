@@ -8,6 +8,7 @@ module.exports = function(RED)
 
 		const scope = this;
 		const bridge = RED.nodes.getNode(config.bridge);
+		const async = require('async');
 
 		// EXPORT CONFIG
 		this.exportedConfig = config;
@@ -112,7 +113,7 @@ module.exports = function(RED)
 			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
 			if(!currentState)
 			{
-				scope.error("The group in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
+				scope.error("The group in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
 				return false;
 			}
 
@@ -158,18 +159,41 @@ module.exports = function(RED)
 					"bri": msg.payload.brightness ? Math.round((254/100)*msg.payload.brightness) : 254
 				};
 
-				bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
-				.then(function(status) {
-					// RESET COLORLOOP ANIMATION AFTER X SECONDS
-					setTimeout(function()
+				// PATCH!
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
+				{
+					bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+					.then(function(status) {
+						// RESET COLORLOOP ANIMATION AFTER X SECONDS
+						setTimeout(function()
+						{
+							bridge.patch("group", currentState.info.idV1 + "/action", { "effect": "none" }, 1)
+							.then(function() { if(done) { done(); }});
+						}, parseInt(msg.payload.colorloop) * 1000);
+						callback(null, true);
+					})
+					.catch(function(errors) {
+						callback(errors, null);
+					});
+				},
+				function(errors, success)
+				{
+					if(errors)
 					{
-						bridge.patch("group", currentState.info.idV1 + "/action", { "effect": "none" }, 1)
-						.then(function() { if(done) { done(); }});
-					}, parseInt(msg.payload.colorloop) * 1000);
-				})
-				.catch(function(errors) {
-					scope.error(errors);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+						scope.error(errors);
+						scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					}
+					else if(done)
+					{
+						done();
+					}
 				});
 
 				return false;
@@ -240,42 +264,65 @@ module.exports = function(RED)
 				// SET ALERT EFFECT
 				patchObject["alert"] = "lselect";
 
-				// 1. TURN ON THE LIGHT BULB
-				bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
-				.then(function(status) {
-					setTimeout(function()
+				// PATCH!
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
+				{
+					// 1. TURN ON THE LIGHT BULB
+					bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+					.then(function(status)
 					{
-						const tempPreviousState = scope.context().get('groupPreviousState');
-						var tempPreviousStatePatch = {};
+						setTimeout(function()
+						{
+							const tempPreviousState = scope.context().get('groupPreviousState');
+							var tempPreviousStatePatch = {};
 
-						tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
-						if(tempPreviousState.payload.xyColor)
-						{
-							tempPreviousStatePatch.xy = [tempPreviousState.payload.xyColor.x, tempPreviousState.payload.xyColor.y];
-						}
-						else if(tempPreviousState.payload.colorTemp)
-						{
-							tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
-						}
-
-						bridge.patch("group", currentState.info.idV1 + "/action", tempPreviousStatePatch, 1)
-						.then(function(status)
-						{
-							return bridge.patch("group", currentState.info.idV1 + "/action", { on: false }, 1);
-						})
-						.then(function(status) {
-							if(done) { done(); }
-							if(tempPreviousState.payload.on === true)
+							tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+							if(tempPreviousState.payload.xyColor)
 							{
-								bridge.patch("group", currentState.info.idV1, { on: true }, 1);
+								tempPreviousStatePatch.xy = [tempPreviousState.payload.xyColor.x, tempPreviousState.payload.xyColor.y];
 							}
-						});
-					}, parseInt(msg.payload.alert) * 1000);
-				})
-				.catch(function(errors) {
-					scope.error(errors);
-					scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
-					if(done) { done(error); }
+							else if(tempPreviousState.payload.colorTemp)
+							{
+								tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
+							}
+
+							bridge.patch("group", currentState.info.idV1 + "/action", tempPreviousStatePatch, 1)
+							.then(function(status)
+							{
+								return bridge.patch("group", currentState.info.idV1 + "/action", { on: false }, 1);
+							})
+							.then(function(status) {
+								if(tempPreviousState.payload.on === true)
+								{
+									bridge.patch("group", currentState.info.idV1, { on: true }, 1);
+								}
+							});
+						}, parseInt(msg.payload.alert) * 1000);
+
+						callback(null, true);
+					})
+					.catch(function(errors) {
+						callback(errors, null);
+					});
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
+						scope.status({fill: "red", shape: "ring", text: "hue-group.node.error-input"});
+					}
+					else if(done)
+					{
+						done();
+					}
 				});
 			}
 			// ANIMATION STARTED?
@@ -300,19 +347,44 @@ module.exports = function(RED)
 					tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
 				}
 
-				bridge.patch("light", currentState.info.lightIds[l], tempPreviousStatePatch).
-				then(function(status)
+				// PATCH!
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
 				{
-					if(tempPreviousState.payload.on === false)
+					bridge.patch("light", currentState.info.lightIds[l], tempPreviousStatePatch).
+					then(function(status)
 					{
-						bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
+						if(tempPreviousState.payload.on === false)
+						{
+							bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
+							.then(function() { callback(null, true); });
+						}
+						else
+						{
+							bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
+							.then(function(status) {
+								callback(null, true);
+								return bridge.patch("light", currentState.info.lightIds[l], { on: { on: true } });
+							});
+						}
+					})
+					.catch(function(errors) { callback(errors, null); });
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
 					}
-					else
+					else if(done)
 					{
-						bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
-						.then(function(status) {
-							return bridge.patch("light", currentState.info.lightIds[l], { on: { on: true } })
-						});
+						done();
 					}
 				});
 			}
@@ -516,9 +588,30 @@ module.exports = function(RED)
 					}
 
 					// PATCH!
-					bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
-					.then(function() { if(done) { done(); }})
-					.catch(function(errors) { scope.error(errors); });
+					async.retry({
+						times: 3,
+						errorFilter: function(err) {
+							return (err.status == 503);
+						},
+						interval: function(retryCount) { return retryCount*2000; }
+					},
+					function(callback, results)
+					{
+						bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+						.then(function() { callback(null, true); })
+						.catch(function(errors) { callback(errors, null); });
+					},
+					function(errors, success)
+					{
+						if(errors)
+						{
+							scope.error(errors);
+						}
+						else if(done)
+						{
+							done();
+						}
+					});
 				}
 				else
 				{

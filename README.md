@@ -796,11 +796,21 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.1.0 (latest)
+### v4.2.0 (latest)
+
+* Commands are now re-executed up to three times if they fail due to a bridge timeout
+* The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources
+* Better handling of broken connections to the bridge ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
+* Fixed an error with the "Hue Scenes" node on newer bridge firmwares ([#335](https://github.com/Foddy/node-red-contrib-huemagic/issues/335)) ([#339](https://github.com/Foddy/node-red-contrib-huemagic/pull/339)) (thx)
+* Fixed an error with uncaught exception on newer bridge firmwares ([#302](https://github.com/Foddy/node-red-contrib-huemagic/issues/302)) ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
+* Updated dependencies to the latest versions
+* Fixed some typos here and there
+
+### v4.1.0
 
 * New queue worker throttles the number of parallel requests to the bridge to avoid 503 API limit errors (can be configured in the Bridge configuration)
-* Resources are now alphabetically sorted in the node´s configuration inetrface ([#282](https://github.com/Foddy/node-red-contrib-huemagic/pull/282)) (thx)
-* "Hue Bridghtness" node was optimized to output more accurate "dark" and "dayLight" values
+* Resources are now alphabetically sorted in the node´s configuration interface ([#282](https://github.com/Foddy/node-red-contrib-huemagic/pull/282)) (thx)
+* "Hue Brightness" node was optimized to output more accurate "dark" and "dayLight" values
 * Several optimizations in the documentation of some nodes
 
 ### v4.0.5

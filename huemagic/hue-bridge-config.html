@@ -51,8 +51,8 @@
 			name: { value:"Hue Bridge", required: true },
 			bridge: { value:"", required: true },
 			key: { value:"", required: true },
-			worker: { value: 10, required: true, validate:function(v) {
-				return (!isNaN(v) && v > 0)
+			worker: { value: 10, required: true, validate: function(v) {
+				return (!isNaN(v) && v > 0);
 			}},
 			autoupdates: { value: true },
 			disableupdates: { value: false }

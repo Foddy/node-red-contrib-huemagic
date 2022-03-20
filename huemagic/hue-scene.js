@@ -8,6 +8,7 @@ module.exports = function(RED)
 
 		const scope = this;
 		const bridge = RED.nodes.getNode(config.bridge);
+		const async = require('async');
 
 		// GET TARGET WIRED GROUPS
 		this.targetGroups = {};
@@ -72,9 +73,32 @@ module.exports = function(RED)
 
 					if(targetGroup)
 					{
-						bridge.patch("group", targetGroup.info.idV1 + "/action", { "scene": targetSceneID }, 1)
-						.catch(function(errors) {
-							scope.error(errors);
+						// PATCH!
+						async.retry({
+							times: 3,
+							errorFilter: function(err) {
+								return (err.status == 503);
+							},
+							interval: function(retryCount) { return retryCount*2000; }
+						},
+						function(callback, results)
+						{
+							bridge.patch("group", targetGroup.info.idV1 + "/action", { "scene": targetSceneID }, 1)
+							.then(function() { callback(null, true); })
+							.catch(function(errors) {
+								callback(errors, null);
+							});
+						},
+						function(errors, success)
+						{
+							if(errors)
+							{
+								scope.error(errors);
+							}
+							else if(done)
+							{
+								done();
+							}
 						});
 					}
 				}
@@ -93,18 +117,40 @@ module.exports = function(RED)
 				scope.status({fill: "grey", shape: "ring", text: "hue-scene.node.command"});
 
 				// PATCH!
-				bridge.patch("scene", sceneDef, patchObject)
-				.then(function()
+				async.retry({
+					times: 3,
+					errorFilter: function(err) {
+						return (err.status == 503);
+					},
+					interval: function(retryCount) { return retryCount*2000; }
+				},
+				function(callback, results)
 				{
-					scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});
-					if(done) { done(); }
+					bridge.patch("scene", sceneDef, patchObject)
+					.then(function()
+					{
+						scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});
 
-					// RESET STATUS AFTER 1 SECOND
-					setTimeout(function() {
-						scope.status({});
-					}, 1000);
-				})
-				.catch(function(errors) { scope.error(errors);  });
+						// RESET STATUS AFTER 1 SECOND
+						setTimeout(function() {
+							scope.status({});
+						}, 1000);
+
+						callback(null, true);
+					})
+					.catch(function(errors) { callback(errors, null); });
+				},
+				function(errors, success)
+				{
+					if(errors)
+					{
+						scope.error(errors);
+					}
+					else if(done)
+					{
+						done();
+					}
+				});
 			}
 		});
 	}

@@ -33,8 +33,8 @@ class HueBridgeMessage
 		this.message.payload.linkButtonEnabled = resource.linkbutton;
 		this.message.payload.touchlinkEnabled = (resource["touchlink"] && resource["touchlink"] == true) ? true : false;
 		this.message.payload.autoUpdatesEnabled = options["autoupdate"] ? options["autoupdate"] : false;
-		this.message.payload.users = []; // NEW!
-		this.message.payload.updated = resource.updated; // NEW!
+		this.message.payload.users = [];
+		this.message.payload.updated = resource.updated;
 
 		this.message.payload.model = {};
 		this.message.payload.model.id = resource.modelid;
@@ -77,9 +77,9 @@ class HueBrightnessMessage
 
 		this.message = {};
 		this.message.payload = {};
-		this.message.payload.active = service.enabled; // NEW!
-		this.message.payload.reachable = connectivity ? (connectivity.status === "connected") : "unknown"; // NEW!
-		this.message.payload.connectionStatus = connectivity ? connectivity.status : "unknown"; // NEW!
+		this.message.payload.active = service.enabled;
+		this.message.payload.reachable = connectivity ? (connectivity.status === "connected") : "unknown";
+		this.message.payload.connectionStatus = connectivity ? connectivity.status : "unknown";
 		this.message.payload.lux = realLUX;
 		this.message.payload.lightLevel = service.light.light_level;
 		this.message.payload.dark = (realLUX < 90);
@@ -88,21 +88,21 @@ class HueBrightnessMessage
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
 		this.message.info.uniqueId = resource.id + "-" + service.id;
-		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.deviceId = resource.id;
 		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "light_level";
 		this.message.info.softwareVersion = resource.product_data.software_version;
 		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state;
 
 		this.message.info.model = {};
 		this.message.info.model.id = resource.product_data.model_id;
 		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
 		this.message.info.model.name = resource.product_data.product_name;
 		this.message.info.model.type = resource.product_data.product_archetype;
-		this.message.info.model.certified = resource.product_data.certified; // NEW
+		this.message.info.model.certified = resource.product_data.certified;
 	}
 
 	get msg()
@@ -135,9 +135,9 @@ class HueGroupMessage
 
 		this.message.info = {};
 		this.message.info.id = resource.id;
-		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
 		this.message.info.name = resource.metadata ? resource.metadata.name : "all";
-		this.message.info.resources = allResourcesInsideGroup; // NEW
+		this.message.info.resources = allResourcesInsideGroup;
 		this.message.info.type = "group";
 	}
 
@@ -163,14 +163,14 @@ class HueLightMessage
 		this.message.payload.brightness = service.dimming ? service.dimming.brightness : false;
 		this.message.payload.brightnessLevel = service.dimming ? Math.round((254/100)*this.message.payload.brightness) : false;
 		this.message.payload.reachable = connectivity ? (connectivity.status === "connected") : "unknown";
-		this.message.payload.connectionStatus = connectivity ? connectivity.status : "unknown"; // NEW!
+		this.message.payload.connectionStatus = connectivity ? connectivity.status : "unknown";
 		this.message.payload.updated = resource.updated;
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
 		this.message.info.uniqueId = resource.id + "-" + service.id;
-		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.deviceId = resource.id;
 		this.message.info.name = service.metadata.name;
 		this.message.info.type = "light";
 		this.message.info.softwareVersion = resource.product_data.software_version;
@@ -180,7 +180,7 @@ class HueLightMessage
 		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
 		this.message.info.model.name = resource.product_data.product_name;
 		this.message.info.model.type = resource.product_data.product_archetype;
-		this.message.info.model.certified = resource.product_data.certified; // NEW
+		this.message.info.model.certified = resource.product_data.certified;
 		this.message.info.model.friendsOfHue = true;
 
 		// HAS COLOR CAPABILITIES?
@@ -189,7 +189,7 @@ class HueLightMessage
 			let RGB = colorUtils.xyBriToRgb(service.color.xy.x, service.color.xy.y, (service.dimming ? service.dimming.brightness : 100));
 			this.message.payload.rgb = [RGB.r, RGB.g, RGB.b];
 			this.message.payload.hex = colorUtils.rgbHex(RGB.r, RGB.g, RGB.b);
-			this.message.payload.xyColor = service.color.xy; // NEW!
+			this.message.payload.xyColor = service.color.xy;
 
 			if(options.colornames == true)
 			{
@@ -197,8 +197,8 @@ class HueLightMessage
 				this.message.payload.color = cNamesArray.basic[0]["name"];
 			}
 
-			this.message.info.model.colorGamut = service.color.gamut; // NEW
-			this.message.info.model.colorGamutType = service.color.gamut_type; // NEW
+			this.message.info.model.colorGamut = service.color.gamut;
+			this.message.info.model.colorGamutType = service.color.gamut_type;
 		}
 
 		// HAS COLOR TEMPERATURE CAPABILITIES?
@@ -207,14 +207,14 @@ class HueLightMessage
 			this.message.payload.colorTemp = service.color_temperature.mirek ? service.color_temperature.mirek : false;
 
 			if(!this.message.payload.colorTemp) { this.message.payload.colorTempName = "unknown"; }
-			else if(this.message.payload.colorTemp < 200) { this.message.payload.colorTempName = "cold"; } // NEW!
+			else if(this.message.payload.colorTemp < 200) { this.message.payload.colorTempName = "cold"; }
 			else if(this.message.payload.colorTemp < 350) { this.message.payload.colorTempName = "normal"; }
 			else if(this.message.payload.colorTemp < 410) { this.message.payload.colorTempName = "warm"; }
 			else { this.message.payload.colorTempName = "hot"; }
 		}
 
 		// HAS GRADIENT COLOR CAPABILITIES?
-		if(service["gradient"]) // NEW!
+		if(service["gradient"])
 		{
 			this.message.payload.gradient = {};
 			this.message.payload.gradient.colors = [];
@@ -256,28 +256,28 @@ class HueMotionMessage
 		this.message.payload = {
 			active: service.enabled,
 			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
-			connectionStatus: connectivity ? connectivity.status : "unknown", // NEW!
+			connectionStatus: connectivity ? connectivity.status : "unknown",
 			motion: (service.motion.motion && service.motion.motion_valid),
 			updated: resource.updated
 		};
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
 		this.message.info.uniqueId = resource.id + "-" + service.id;
-		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.deviceId = resource.id;
 		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "motion";
 		this.message.info.softwareVersion = resource.product_data.software_version;
 		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state;
 
 		this.message.info.model = {};
 		this.message.info.model.id = resource.product_data.model_id;
 		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
 		this.message.info.model.name = resource.product_data.product_name;
 		this.message.info.model.type = resource.product_data.product_archetype;
-		this.message.info.model.certified = resource.product_data.certified; // NEW
+		this.message.info.model.certified = resource.product_data.certified;
 	}
 
 	get msg()
@@ -295,7 +295,7 @@ class HueRulesMessage
 	{
 		this.message = {};
 		this.message.payload = {};
-		this.message.payload.enabled = (resource["status"] == "enabled"); // NEW!
+		this.message.payload.enabled = (resource["status"] == "enabled");
 		this.message.payload.triggered = (resource["lasttriggered"] != null) ? dayjs(resource["lasttriggered"]).format() : false;
 
 		this.message.info = {};
@@ -340,30 +340,30 @@ class HueButtonsMessage
 
 		this.message = {};
 		this.message.payload = {
-			reachable: connectivity ? (connectivity.status === "connected") : "unknown", // NEW!
-			connectionStatus: connectivity ? connectivity.status : "unknown", // NEW!
-			button: pressedButton ? pressedButton.metadata.control_id : false, // NEW
-			action: pressedButton ? pressedButton.button.last_event : false, // NEW
+			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
+			connectionStatus: connectivity ? connectivity.status : "unknown",
+			button: pressedButton ? pressedButton.metadata.control_id : false,
+			action: pressedButton ? pressedButton.button.last_event : false,
 			updated: resource.updated
 		};
 
 		this.message.info = {};
 		this.message.info.id = pressedButton ? pressedButton.id : resource.id;
-		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
 		this.message.info.uniqueId = resource.id + "-" + (pressedButton ? pressedButton.id : "");
-		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.deviceId = resource.id;
 		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "button";
 		this.message.info.softwareVersion = resource.product_data.software_version;
 		this.message.info.battery = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_level : false;
-		this.message.info.batteryState = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_state : false; // NEW!
+		this.message.info.batteryState = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_state : false;
 
 		this.message.info.model = {};
 		this.message.info.model.id = resource.product_data.model_id;
 		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
 		this.message.info.model.name = resource.product_data.product_name;
 		this.message.info.model.type = resource.product_data.product_archetype;
-		this.message.info.model.certified = resource.product_data.certified; // NEW
+		this.message.info.model.certified = resource.product_data.certified;
 	}
 
 	get msg()
@@ -416,9 +416,9 @@ class HueTemperatureMessage
 
 		this.message = {};
 		this.message.payload = {
-			active: service.enabled, // NEW!
-			reachable: connectivity ? (connectivity.status === "connected") : "unknown", // NEW!
-			connectionStatus: connectivity ? connectivity.status : "unknown", // NEW!
+			active: service.enabled,
+			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
+			connectionStatus: connectivity ? connectivity.status : "unknown",
 			celsius: celsius,
 			fahrenheit: fahrenheit,
 			temperatureIs: temperatureMessage,
@@ -428,21 +428,21 @@ class HueTemperatureMessage
 
 		this.message.info = {};
 		this.message.info.id = service.id;
-		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false; // NEW
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
 		this.message.info.uniqueId = resource.id + "-" + service.id;
-		this.message.info.deviceId = resource.id; // NEW!
+		this.message.info.deviceId = resource.id;
 		this.message.info.name = resource.metadata.name;
 		this.message.info.type = "temperature";
 		this.message.info.softwareVersion = resource.product_data.software_version;
 		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
-		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state; // NEW!
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state;
 
 		this.message.info.model = {};
 		this.message.info.model.id = resource.product_data.model_id;
 		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
 		this.message.info.model.name = resource.product_data.product_name;
 		this.message.info.model.type = resource.product_data.product_archetype;
-		this.message.info.model.certified = resource.product_data.certified; // NEW
+		this.message.info.model.certified = resource.product_data.certified;
 	}
 
 	get msg()

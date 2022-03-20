@@ -134,7 +134,7 @@ module.exports = function(RED)
 			let currentState = bridge.get("button", tempSensorID);
 			if(!currentState)
 			{
-				scope.error("The button/switch in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid..");
+				scope.error("The button/switch in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
 				return false;
 			}
 

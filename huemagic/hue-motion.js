@@ -162,7 +162,7 @@ module.exports = function(RED)
 				function(callback, results)
 				{
 					bridge.patch("motion", tempSensorID, patchObject)
-					.then(function() { if(done) { callback(null, true); })
+					.then(function() { if(done) { callback(null, true); }})
 					.catch(function(errors) { callback(errors, null); });
 				},
 				function(errors, success)

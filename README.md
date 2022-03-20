@@ -802,7 +802,7 @@ If the status of the node has changed via a certain command, the entire command 
 * The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources
 * Better handling of broken connections to the bridge ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
 * Fixed an error with the "Hue Scenes" node on newer bridge firmwares ([#335](https://github.com/Foddy/node-red-contrib-huemagic/issues/335)) ([#339](https://github.com/Foddy/node-red-contrib-huemagic/pull/339)) (thx)
-* Fixed an error with uncaught exception on newer bridge firmwares ([#302](https://github.com/Foddy/node-red-contrib-huemagic/issues/302)) ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
+* Fixed an uncaught exception on newer bridge firmwares ([#302](https://github.com/Foddy/node-red-contrib-huemagic/issues/302)) ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
 * Updated dependencies to the latest versions
 * Fixed some typos here and there
 

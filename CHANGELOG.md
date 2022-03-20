@@ -2,7 +2,76 @@
 
 # Changelog
 
-### v3.0.0 (latest)
+### v4.2.1 (latest)
+
+* Commands are now re-executed up to three times if they fail due to a bridge timeout
+* The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources
+* Better handling of broken connections to the bridge ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
+* Fixed an error with the "Hue Scenes" node on newer bridge firmwares ([#335](https://github.com/Foddy/node-red-contrib-huemagic/issues/335)) ([#339](https://github.com/Foddy/node-red-contrib-huemagic/pull/339)) (thx)
+* Fixed an uncaught exception on newer bridge firmwares ([#302](https://github.com/Foddy/node-red-contrib-huemagic/issues/302)) ([#309](https://github.com/Foddy/node-red-contrib-huemagic/pull/309)) (thx)
+* Updated dependencies to the latest versions
+* Fixed some typos here and there
+
+### v4.1.0
+
+* New queue worker throttles the number of parallel requests to the bridge to avoid 503 API limit errors (can be configured in the Bridge configuration)
+* Resources are now alphabetically sorted in the node´s configuration interface ([#282](https://github.com/Foddy/node-red-contrib-huemagic/pull/282)) (thx)
+* "Hue Brightness" node was optimized to output more accurate "dark" and "dayLight" values
+* Several optimizations in the documentation of some nodes
+
+### v4.0.5
+
+* The "Hue Group" node now contains the "resources" information with all linked resources behind the group/zone
+* Fixed an issue that caused Node-RED to restart if a command was sent before a node was initialized
+
+### v4.0.4
+
+* Fixed an issue with the bridge config node checking for updates too frequently ([#246](https://github.com/Foddy/node-red-contrib-huemagic/issues/246#issuecomment-1009376442))
+* Fixed an issue with multiple bridges configured
+
+### v4.0.3
+
+> **Attention!** HueMagic v4+ has been almost completely rewritten under the hood and requires at least the (square-shaped) Philips Hue Bridge firmware 1948086000+ from November 1st, 2021 ([Upgrade instructions](https://www.lighting.philips.com/content/B2C/en_US/microsites/meethue/marketing-catalog/huewireless_ca/support/security-advisory/general/where-and-how-can-i-update-my-hue-system-with-the-latest-software.html)) and Node-RED v1+ ([Upgrade instructions](https://nodered.org/docs/getting-started/local#upgrading-node-red)). If you are upgrading from a previous HueMagic version to the v4, you will have to reconfigure (not completely rebuild) all nodes by clicking them and selecting the appropriate device from the list. This also applies to nodes / functions that are operated in universal mode, as the numeric identifiers of the latest Philips Hue API version have been replaced in UUIDs. The nodes "Hue Switch", "Hue Button" & "Hue Tap" have been replaced in v4 by the universal and uniform node "Hue Buttons", which works with all button / switch devices that are connected to the Hue Bridge (please note here also the new API in the documentation). The request and return objects of the individual nodes are largely compatible with older HueMagic versions - with the exception of the nodes "Hue Bridge", "Hue Buttons", "Hue Scene" & "Hue Group". These need to be adjusted in the v4. Make sure that you meet the minimum technical requirements and have a quiet minute for the migration before upgrading to the v4.
+
+* HueMagic speaks now directly with the bridge without any submodules *(huejay dependency removed)*
+* Migrated to the newest CLIP/v2 API version from the Philips Hue bridge
+* Nodes are now updated via push notifications (SSE) from the bridge instead of periodic polling
+* Instant "current status" queries on each node with no loading time
+* "Hue Buttons" node supports all new Philips Hue buttons/switches (e.g. Dimmer Switch v2, Hue Wall Switch…)
+* All nodes provide additional property information in the output (check docs)
+* New universal node "Hue Buttons" replaces the following nodes: "Hue Switch", "Hue Button", "Hue Tap"
+* New "updated" object for all nodes, which only contains the properties that have been updated since the last state
+* New configuration option to suppress first message after node initialization (for all nodes)
+* New gradient color setting for compatible light sources (in "Hue Light" node)
+* New inject button for almost all nodes, which triggers the current status of a node
+* New "universal mode" support for the "Hue Rule" node
+* New SVG-version of each node icon for higher quality rendering in the Node-RED UI
+* New and full featured examples for each node right inside Node-RED
+* New color mix feature in "Hue Light" nodes with the ability to mix the current light color with another
+* New automatic brightness support based on the current time for "Hue Light" & "Hue Group" nodes
+* New "Superhero", "Neon City" & "Christmas" (for next year, sorry) animations in "Hue Magic" node
+* The custom alert effect on "Hue Light" & "Hue Group" nodes can now also be configured in brightness
+* All nodes will now also forward the last command that has been applied ([#249](https://github.com/Foddy/node-red-contrib-huemagic/issues/249))
+* "Hue Temperature" & "Hue Brightness" nodes can now also be activated & deactivated
+* "Hue Light" & "Hue Group" nodes can now also receive XY color settings
+* "Hue Light" & "Hue Group" can now also receive a named color temperature setting
+* "Hue Light" & "Hue Group" nodes can now receive future brightness states in "turned off" mode ([#244](https://github.com/Foddy/node-red-contrib-huemagic/issues/244))
+* Automatic light temperature setting outputs now values from 153 (coldest) to 500 (warmest)
+* Automatic color correction based on the light´s capabilities for more accurate color settings
+* Optimized node editor configuration UI to better match the current Node-RED´s UI
+* The option for "automatic firmware updates" on the bridge moved to the bridge configuration node
+* "Hue Group" node does no longer contain the "msg.info.model" & "msg.info.class" property
+* Fixed timeout connection issues to the bridge
+* Fixed an issue with non stopping custom animations ([#222](https://github.com/Foddy/node-red-contrib-huemagic/issues/222)), ([#224](https://github.com/Foddy/node-red-contrib-huemagic/issues/224)) & ([#226](https://github.com/Foddy/node-red-contrib-huemagic/pull/226)) (thx)
+* Node-RED will no longer crash if there is no active connection to the bridge ([#237](https://github.com/Foddy/node-red-contrib-huemagic/issues/237))
+* Fixed an issue that prevented the light / group from not reporting its own status when queried & node events were deactivated ([#248](https://github.com/Foddy/node-red-contrib-huemagic/issues/248))
+* Fixed an issue with nodes in universal mode ([#245](https://github.com/Foddy/node-red-contrib-huemagic/issues/245))
+* A possible attack target has been fixed ([#217](https://github.com/Foddy/node-red-contrib-huemagic/issues/217))
+* Moved away from "moment.js" to "Day.js" for date/time formatting inside the nodes
+* Updated README and help section on each node
+* Updated dependencies to the latest version
+
+### v3.0.0
 * Hue Motion, Hue Brightness, Hue Tap, Hue Switch & Hue Button nodes can now receive a status request
 * New "Universal Mode" for the Hue Motion, Hue Brightness, Hue Tap, Hue Switch & Hue Button nodes
 * The "colorTemp" property for Hue Light & Hue Group nodes can now also be set to "cold", "normal", "warm" or "auto"

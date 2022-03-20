@@ -796,7 +796,7 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.2.0 (latest)
+### v4.2.1 (latest)
 
 * Commands are now re-executed up to three times if they fail due to a bridge timeout
 * The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources
@@ -877,15 +877,6 @@ If the status of the node has changed via a certain command, the entire command 
 * Updated docs for almost all nodes and README
 * Fixed an error with future states and the HTTP request node ([#200](https://github.com/Foddy/node-red-contrib-huemagic/pull/200))
 * Other optimizations, dependency updates and clean up
-
-### v2.8.6
-* Optimized random color mode for Hue Magic, Hue Light & Hue Group nodes ([#190](https://github.com/Foddy/node-red-contrib-huemagic/pull/190))
-* New Hue Button node ([#191](https://github.com/Foddy/node-red-contrib-huemagic/pull/191))
-* Updated README and Hue Button node docs (+ localized in German)
-
-### v2.8.2
-* Fixed an issue with Hue Light & Hue Group nodes on extended mode ([#179](https://github.com/Foddy/node-red-contrib-huemagic/issues/179))
-* Dependency updates
 
 ### Previous versions
 A complete overview of the updates can be viewed in the [changelog](https://github.com/Foddy/node-red-contrib-huemagic/blob/master/CHANGELOG.md)…

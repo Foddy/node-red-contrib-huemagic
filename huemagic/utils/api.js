@@ -99,7 +99,14 @@ function API()
 			})
 			.catch(function(error)
 			{
-				reject({ status: error.response.status, errors: error.response.data.errors ? error.response.data.errors : error.response.data});
+				if (error.response)
+				{
+					reject({ status: error.response.status, errors: error.response.data.errors ? error.response.data.errors : error.response.data});
+				}
+				else
+				{
+					reject({ status: error.code, errors: error.message});
+				}
 			});
 		});
 	}

@@ -58,5 +58,20 @@
     "eventsource": "^2.0.0",
     "fastq": "^1.13.0",
     "get-image-colors": "^4.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./node_modules/node-red/red.js -s ./.node-red/settings.js -u ./.node-red",
+    "inspect": "node --inspect ./node_modules/node-red/red.js -s ./.node-red/settings.js -u ./.node-red",
+    "develop": "npm install && npm install --only=dev",
+    "prettify": "./node_modules/.bin/prettier --check \"huemagic/**/*.js\"; exit 0",
+    "lint": "./node_modules/.bin/eslint --fix-dry-run \"huemagic/**/*.js\"; exit 0"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "node-red": ">=2.1.0",
+    "prettier": "^2.6.0"
   }
 }

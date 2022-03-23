@@ -7,3 +7,6 @@
 *.icloud
 *.paw
 *.log
+.vscode
+.node-red/*
+!.node-red/settings.js

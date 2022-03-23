@@ -1,8 +1,14 @@
-[![Hue Magic Logo](https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/27e90d22bde68d9c92aed520c0c0c2cb8a22b7fd/huemagicv3x.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
+[![Hue Magic Logo](https://gist.githubusercontent.com/Foddy/9b647b910d03a31cee40f97c3988dd1c/raw/7ee635bd958ad04d7ba53c6c40ec401f879bffc2/huemagic-logo.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
 
 # Changelog
 
-### v4.2.1 (latest)
+### v4.2.2 (latest)
+
+* HueMagic can now be installed again on older Node-RED versions without official support
+* Fixed an issue for Hue Group nodes not getting/updating their current status ([#342](https://github.com/Foddy/node-red-contrib-huemagic/issues/342)) (thx @bmdevx)
+* Fixed an error with non-functioning node configurations
+
+### v4.2.1
 
 * Commands are now re-executed up to three times if they fail due to a bridge timeout
 * The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources

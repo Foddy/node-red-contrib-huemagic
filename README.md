@@ -796,7 +796,13 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.2.1 (latest)
+### v4.2.2 (latest)
+
+* HueMagic can now be installed again on older Node-RED versions without official support
+* Fixed an issue for Hue Group nodes not getting/updating their current status ([#342](https://github.com/Foddy/node-red-contrib-huemagic/issues/342)) (thx @bmdevx)
+* Fixed an error with non-functioning node configurations
+
+### v4.2.1
 
 * Commands are now re-executed up to three times if they fail due to a bridge timeout
 * The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources
@@ -879,7 +885,7 @@ If the status of the node has changed via a certain command, the entire command 
 * Other optimizations, dependency updates and clean up
 
 ### Previous versions
-A complete overview of the updates can be viewed in the [changelog](https://github.com/Foddy/node-red-contrib-huemagic/blob/master/CHANGELOG.md)…
+The full changelog [changelog](https://github.com/Foddy/node-red-contrib-huemagic/blob/master/CHANGELOG.md) can be viewed here…
 
 
 ***
@@ -890,7 +896,7 @@ If you like HueMagic, I appreciate a star or rating on this page! HueMagic is an
 Alternatively, you can support the project if you have an old device that is compatible with the Philips Hue bridge (or a device that is not officially supported by HueMagic) and want to get rid of it. Please contact me at huemagic@foddy.io to get an address where you can send your old device. The following devices could currently be considered: Gradient lights, Tap / Button devices or table / floor lights. These types of devices have not been extensively tested during HueMagic's development.
 
 ***
-<a href="https://www.jetbrains.com/?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/jb.svg" height="50"></a> <a href="https://www.browserstack.com?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/browserstack.svg" height="50"></a>
+<a href="https://www.jetbrains.com/?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/jb.svg" height="50"></a><a href="https://dgtl.one/?from=HueMagic"><img src="https://gist.githubusercontent.com/Foddy/d0964219726def838c0408153b4fbf96/raw/78379ebd1f4751a16960ac904fc5f6a6c8ecad74/dgtlone.svg" height="50"> <a href="https://www.browserstack.com?from=HueMagic"><img src="https://gistcdn.githack.com/Foddy/062045775c28f5993ad646aba80e678c/raw/c84ea4ad31c72dde0883638fc9eaa2b51bba9962/browserstack.svg" height="50"></a>
 
-HueMagic for Node-RED is sponsored by [JetBrains](https://www.jetbrains.com/?from=HueMagic) and [BrowserStack](https://www.browserstack.com?from=HueMagic).<br>
+HueMagic for Node-RED is sponsored by [DGTL.ONE](https://dgtl.one/?from=HueMagic), [JetBrains](https://www.jetbrains.com/?from=HueMagic) and [BrowserStack](https://www.browserstack.com?from=HueMagic).<br>
 *Released under the [Apache License 2.0](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)).*

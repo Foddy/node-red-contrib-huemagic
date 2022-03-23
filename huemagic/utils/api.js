@@ -252,15 +252,16 @@ function API()
 				}
 
 				// RESOURCE HAS GROUPED SERVICES?
-				if(fullResource["grouped_services"])
+				if (fullResource["services"])
 				{
-					for (var g = fullResource["grouped_services"].length - 1; g >= 0; g--)
+					for (serviceType in fullResource["services"])
 					{
-						const groupedService = fullResource["grouped_services"][g];
-						const groupedServiceID = groupedService["rid"];
-
-						if(!processedResources["_groupsOf"][groupedServiceID]) { processedResources["_groupsOf"][groupedServiceID] = []; }
-						processedResources["_groupsOf"][groupedServiceID].push(fullResource.id);
+						const grouped_services = fullResource['services'][serviceType];
+						for (groupedServiceID in grouped_services)
+						{
+							if (!processedResources["_groupsOf"][groupedServiceID]) { processedResources["_groupsOf"][groupedServiceID] = []; }
+							processedResources["_groupsOf"][groupedServiceID].push(fullResource.id);
+						}
 					}
 				}
 

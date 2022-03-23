@@ -796,7 +796,13 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v4.2.1 (latest)
+### v4.2.2 (latest)
+
+* HueMagic can now be installed again on older Node-RED versions without official support
+* Fixed an issue for Hue Group nodes not getting/updating their current status ([#342](https://github.com/Foddy/node-red-contrib-huemagic/issues/342)) (thx @bmdevx)
+* Fixed an error with non-functioning node configurations
+
+### v4.2.1
 
 * Commands are now re-executed up to three times if they fail due to a bridge timeout
 * The "image" option on the "Hue Light" node will now set the corresponding gradient colors on supported resources
@@ -879,7 +885,7 @@ If the status of the node has changed via a certain command, the entire command 
 * Other optimizations, dependency updates and clean up
 
 ### Previous versions
-A complete overview of the updates can be viewed in the [changelog](https://github.com/Foddy/node-red-contrib-huemagic/blob/master/CHANGELOG.md)…
+The full changelog [changelog](https://github.com/Foddy/node-red-contrib-huemagic/blob/master/CHANGELOG.md) can be viewed here…
 
 
 ***

@@ -267,6 +267,12 @@ module.exports = function(RED)
 					// NO PREVIOUS STATE?
 					if(!previousState) { return false; }
 
+					// IS LIGHT? -> REMOVE PREVIOUS GRADIENT COLORS
+					if(type === "light" && resource["gradient"])
+					{
+						delete previousState["gradient"];
+					}
+
 					// CHECK DIFFERENCES
 					const mergedState = merge.deep(previousState, resource);
 					const updatedResources = diff(previousState, mergedState);

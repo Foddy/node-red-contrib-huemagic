@@ -256,6 +256,15 @@ module.exports = function(RED)
 									delete scope.resources[targetId]["services"]["button"][oneButtonID]["button"];
 								}
 							}
+
+							// IS LIGHT? -> REMOVE PREVIOUS GRADIENT COLORS
+							if(type === "light")
+							{
+								for (const [oneLightID, oneLight] of Object.entries(scope.resources[targetId]["services"]["light"]))
+								{
+									delete scope.resources[targetId]["services"]["light"][oneLightID]["gradient"];
+								}
+							}
 						}
 					}
 					else if(scope.resources[id])

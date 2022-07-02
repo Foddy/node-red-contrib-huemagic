@@ -119,6 +119,7 @@ class HueGroupMessage
 	constructor(resource, options = {})
 	{
 		let service = Object.values(resource["services"]["grouped_light"])[0];
+		let onOff = service.on.on;
 		service = options.resources[service.id];
 
 		// GET ALL RESOURCES
@@ -130,7 +131,7 @@ class HueGroupMessage
 
 		this.message = {};
 		this.message.payload = {};
-		this.message.payload.on = service.on.on;
+		this.message.payload.on = onOff;
 		this.message.payload.updated = resource.updated;
 
 		this.message.info = {};

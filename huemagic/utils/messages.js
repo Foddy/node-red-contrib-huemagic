@@ -119,7 +119,7 @@ class HueGroupMessage
 	constructor(resource, options = {})
 	{
 		let service = Object.values(resource["services"]["grouped_light"])[0];
-		service = options.resources[service.id];
+		// service = options.resources[service.id];
 
 		// GET ALL RESOURCES
 		let allResourcesInsideGroup = {};

@@ -99,14 +99,7 @@ function API()
 			})
 			.catch(function(error)
 			{
-				if (error.response)
-				{
-					reject({ status: error.response.status, errors: error.response.data.errors ? error.response.data.errors : error.response.data});
-				}
-				else
-				{
-					reject({ status: error.code, errors: error.message});
-				}
+				reject({ status: error.response.status, errors: error.response.data.errors ? error.response.data.errors : error.response.data});
 			});
 		});
 	}
@@ -182,7 +175,7 @@ function API()
 		const scope = this;
 		var fullResource = Object.assign({}, resource);
 
-		if(resource["owner"])
+		if(resource["owner"] && typeof allResources[fullResource["owner"]["rid"]] !== 'undefined')
 		{
 			fullResource = scope.fullResource(allResources[fullResource["owner"]["rid"]], allResources);
 		}

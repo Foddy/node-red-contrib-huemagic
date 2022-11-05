@@ -119,7 +119,6 @@ class HueGroupMessage
 	constructor(resource, options = {})
 	{
 		let service = Object.values(resource["services"]["grouped_light"])[0];
-		service = options.resources[service.id];
 
 		// GET ALL RESOURCES
 		let allResourcesInsideGroup = {};
@@ -454,4 +453,3 @@ class HueTemperatureMessage
 //
 // EXPORT
 module.exports = { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueButtonsMessage, HueTemperatureMessage }
-

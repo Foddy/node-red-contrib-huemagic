@@ -60,11 +60,23 @@ module.exports = function(RED)
 					})
 					.catch(function(error)
 					{
-						scope.log("Error requesting info from the bridge. Reconnect in some secs. " + error.message);
-						scope.start();
-					});		
+						// scope.log("Error requesting info from the bridge. Reconnect in some secs. " + error.message);
+						// debug
+						if (error.status !== 429) {
+							scope.log("Error requesting info from the bridge. Reconnect in some secs. " + ((typeof(error.message) == 'undefined') ? JSON.stringify(error) : error.message));
+							// end debug
+							scope.start();
+						} else {
+							// Bridge did not respond because it is currently overloaded (=error 429), but it is still alive, so nothing to do / restart, just keep monitoring as normal
+							// scope.log("Bridge responded but was overloaded for now (ERR:429), no reconnection required for now.");
+							scope.startWatchdog();
+						}
+					});
 				} catch (error) {
-					scope.log("Lost connection with the bridge. Reconnect in some secs. " + error.message);
+					// scope.log("Lost connection with the bridge. Reconnect in some secs. " + error.message);
+					// debug
+					scope.log("Lost connection with the bridge. Reconnect in some secs. " + ((typeof(error.message) == 'undefined') ? JSON.stringify(error) : error.message));
+					// end debug
 					scope.start();
 				}
 			}, 10000);
@@ -337,11 +349,11 @@ module.exports = function(RED)
 
 							// GET CURRENT STATE MESSAGE
 							let currentState = message.msg;
-							return currentState;	
+							return currentState;
 						} catch (error) {
 							return false;
 						}
-						
+
 					}
 					else if(type == "light")
 					{
@@ -660,7 +672,7 @@ module.exports = function(RED)
 		//
 		// START THE MAGIC
 		this.start();
-		
+
 		//
 		// CLOSE NODE / REMOVE EVENT LISTENER
 		this.on('close', function()

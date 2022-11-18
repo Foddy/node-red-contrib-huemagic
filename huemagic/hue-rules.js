@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("rule", config.ruleid, function(info)
+		bridge.subscribe(scope, "rule", config.ruleid, function(info)
 		{
 			let currentState = bridge.get("rule", info.id);
 
@@ -153,6 +153,13 @@ module.exports = function(RED)
 
 				if(done) {done();}
 			}
+		});
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
 		});
 	}
 

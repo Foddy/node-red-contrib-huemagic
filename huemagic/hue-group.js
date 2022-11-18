@@ -47,7 +47,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("group", config.groupid, function(info)
+		bridge.subscribe(scope, "group", config.groupid, function(info)
 		{
 			let currentState = bridge.get("group", info.id, { colornames: config.colornamer ? true : false });
 
@@ -629,7 +629,14 @@ module.exports = function(RED)
 					if(done) { done(); }
 				}
 			}
-		}
+		};
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
+		});
 	}
 
 	RED.nodes.registerType("hue-group", HueGroup);

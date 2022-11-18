@@ -30,6 +30,13 @@
             <span data-i18n="hue-buttons.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
         </div>
     </div>
+    <div class="form-row">
+      <i class="fa fa-sign-out"></i> <b><span data-i18n="hue-buttons.config.add-outputs"></span></b>
+    </div>
+    <div class="form-row node-input-rule-container-row" style="width:100%">
+      <input type="hidden" id="node-input-outputs"/>
+      <ol id="node-input-rule-container"></ol>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -41,7 +48,18 @@
             bridge: { type: "hue-bridge", required: true },
             sensorid: { value:"", required: false },
             skipevents: { value: false },
-            initevents: { value: false }
+            initevents: { value: false },
+            rules: { value:[{
+              buttonFrom: 1,
+              buttonTo: 4,
+              onStartPress:false,
+              onEndShortPress:true,
+              onEndLongPress:true,
+              onDuringLongPress:false,
+              minLongPressDuration:1000
+            }],
+          },
+          outputs: {value:1}
         },
         align: 'left',
         icon: "hue-buttons.png",
@@ -56,8 +74,35 @@
         inputLabels: function() {
             return this._("hue-buttons.node.input");
         },
-        outputLabels: function() {
-            return this._("hue-buttons.node.output");
+        outputLabels: function(index) {
+          let rule = this.rules[index-1];
+          let label = '';
+          if (rule) {
+            if (rule.buttonFrom == rule.buttonTo) {
+              label = this._('hue-buttons.config.outputlabel-btn-from' , {'from' : rule.buttonFrom});
+            } else {
+              label = this._('hue-buttons.config.outputlabel-btn-from-to' , {'from' : rule.buttonFrom, 'to' : rule.buttonTo});
+            }
+            let onEvents = [];
+            if (rule.onStartPress) {
+              onEvents.push (' - ' + this._('hue-buttons.config.outputlabel-btn-startpress'));
+            }
+            if (rule.onEndShortPress) {
+              onEvents.push (' - ' + this._('hue-buttons.config.outputlabel-btn-shortpress'));
+            }
+            if (rule.onEndLongPress) {
+              onEvents.push (' - ' + this._('hue-buttons.config.outputlabel-btn-longpress' , {'duration' : (rule.minLongPressDuration/1000).toFixed(1).toString()}) );
+            }
+            if (rule.onDuringLongPress) {
+              onEvents.push (' - ' + this._('hue-buttons.config.outputlabel-btn-longpresswhile') );
+            }
+            if (onEvents.length) {
+              label += ' ' + this._('hue-buttons.config.outputlabel-btn-on') + '\n' + onEvents.join ('\n');
+            }
+          } else {
+            label = this._('hue-buttons.node.output');
+          }
+          return label;
         },
         oneditprepare: function()
         {
@@ -81,7 +126,7 @@
                 buttonIcon.removeClass("fa-pencil");
                 buttonIcon.addClass("fa-search");
             }
-            
+
             function sortResourcesBy(prop, resources)
             {
                 return resources.sort((a, b) => {
@@ -182,7 +227,176 @@
                     searchAndSelect();
                 }
             });
+
+            // ADVANCED ADDITIONAL OUTPUTS
+            // Styles used in button range container
+            $("style").append("#node-input-rule-container .buttonrule-fromtolabel {display:inline-block; width:100px; margin-left: 20px;}");
+            $("style").append("#node-input-rule-container .buttonrule-checkbox {display:inline-block; width:22px; margin-left:0px; vertical-align:baseline;}");
+            $("style").append("#node-input-rule-container .buttonrule-select {width:60px; height: 23px; padding: 2px 2px; margin-left: 25px; margin-right: 35px; text-align: center;}");
+            $("style").append("#node-input-rule-container .buttonrule-checkbox-label {width: auto; margin-bottom: 2px;}");
+            // Output order can be updated to keep linked junctions correctly connected. To do so, a reserved item must contains
+            //    outputs re-directions (if outputs are a,b,c,d, after configuring, new outputs are z,a,c, then 'node-input-outputs'
+            //    must now be {"0":"1", "1":"-1", "2":"2", "3":"-1", "someRandomNo":"0"}.
+            var outputOrderIndexOnOpen = {};
+            function rebuildOutputIndexes (rulesUI) {
+              // Build new outputs : assume all which were defined before are 'deleted' (if not, they will be re-assigned right after)
+              let orderedRulesIndex = {'0':'0'}; // first output is always static, afterwards always index using i+1 therefore
+              Object.entries(outputOrderIndexOnOpen).forEach ((ruleIndex) => {orderedRulesIndex[ruleIndex[1]+1] = -1;});
+              // Parse each rule : if it existed before, build index transfer (Initial ->  To), if new just indicate new index 'usage'
+              rulesUI.each(function(i) {
+                let ruleUI = $(this);
+                let curRowID = ruleUI.find("[id^=node-input-buttonFrom_]").attr('id').split("_").pop(); // row id is appended to each item, so gather it after the '_'
+                if (outputOrderIndexOnOpen.hasOwnProperty(curRowID)) {
+                  // This rule existed on open, build index .initial -> .toCurrent
+                  orderedRulesIndex[outputOrderIndexOnOpen[curRowID]+1] = i+1;
+                } else {
+                  // This is a new rule : just add its final index using its rowID
+                  orderedRulesIndex[curRowID] = i+1;
+                }
+                // Re-number them in UI (output number)
+                ruleUI.find(".node-input-rule-index").html(i+2);
+              });
+              $("#node-input-outputs").val(JSON.stringify(orderedRulesIndex));
+            }
+
+            $("#node-input-rule-container").css('min-height','350px').css('min-width','450px').editableList({
+              addButton: scope._('hue-buttons.config.add-outputs-btn-addnew'),
+              header: $("<div style='background:#EFEFEF; display:grid; grid-template-columns:135px 1fr 90px 30px'>"
+                  +"<div style='margin-left: 30px; display: inline-grid; margin-top: 5px; font-weight:bold'>" + scope._('hue-buttons.config.add-outputs-range') + "</div>"
+                  +"<div style='display: inline-grid; margin-top: 5px; font-weight:bold'>" + scope._('hue-buttons.config.add-outputs-newflow') + "</div>"
+                  +"<div style='display: inline-grid; justify-self: end; margin-top: 5px; font-weight:bold'>" + scope._('hue-buttons.config.add-outputs-nr') + "</div>"
+                  +"</div>"),
+
+              addItem: function (container, i, rules) {
+                let uniqueRowID = Math.floor((0x99999-0x10000)*Math.random()).toString()
+                if (!rules.hasOwnProperty('rule')) {
+                  rules.rule = {};
+                } else {
+                  // Rule existed before (=on load, keep its initial index)
+                  outputOrderIndexOnOpen[uniqueRowID] = i;
+                }
+                var rule = rules.rule;
+
+                // When object is new, apply default values
+                if (!rule.hasOwnProperty('buttonFrom')) {
+                  rule.buttonFrom = '1';
+                }
+                if (!rule.hasOwnProperty('buttonTo')) {
+                  rule.buttonTo = '4';
+                }
+                if (!rule.hasOwnProperty('onEndShortPress')) {
+                  rule.onEndShortPress = true;
+                }
+                if (!rule.hasOwnProperty('onEndLongPress')) {
+                  rule.onEndLongPress = true;
+                }
+                if (!rule.hasOwnProperty('minLongPressDuration')) {
+                  rule.minLongPressDuration = 1000;
+                }
+                // ROW 1 : 'From label' & checkbox 'Start press'
+                let row1 = $('<div/>').appendTo(container);
+                row1.append('<span class="buttonrule-fromtolabel">' + scope._('hue-buttons.config.add-outputs-btn-from') + '</span>');
+                let field_onStartPress = $('<input/>',{id:"node-input-onStartPress_" + uniqueRowID,type:"checkbox", class:"buttonrule-checkbox"}).appendTo(row1);
+                row1.append('<label class="buttonrule-checkbox-label" for="node-input-onStartPress_' + uniqueRowID + '">' + scope._('hue-buttons.config.add-outputs-startpress') + '</label>');
+                // ROW1 : output info (rightest part)
+                let finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row1);
+                finalspan.append('<i class="fa fa-sign-out"></i><span class="node-input-rule-index">'+(i+2)+'</span>');
+                // ROW 2 : 'From list' & checkbox 'End short press'
+                let row2 = $('<div/>').appendTo(container);
+                let field_buttonFrom = $('<select/>',{id:"node-input-buttonFrom_" + uniqueRowID, class:"buttonrule-select"}).appendTo(row2);
+                let field_onEndShortPress = $('<input/>',{id:"node-input-onEndShortPress_" + uniqueRowID, type:"checkbox", class:"buttonrule-checkbox"}).appendTo(row2);
+                row2.append('<label class="buttonrule-checkbox-label" for="node-input-onEndShortPress_' + uniqueRowID + '">' + scope._('hue-buttons.config.add-outputs-shortpress') + '</label>');
+                // ROW 3 : 'To label' & checkbox 'End long press after [xx] seconds'
+                let row3 = $('<div/>').appendTo(container);
+                row3.append('<span class="buttonrule-fromtolabel">' + scope._('hue-buttons.config.add-outputs-btn-to') + '</span>');
+                let field_onEndLongPress = $('<input/>',{id:"node-input-onEndLongPress_" + uniqueRowID, type:"checkbox", class:"buttonrule-checkbox"}).appendTo(row3);
+                row3.append('<label class="buttonrule-checkbox-label" for="node-input-onEndLongPress_' + uniqueRowID + '" style="width:unset";>' + scope._('hue-buttons.config.add-outputs-longpress') + '&nbsp</label>');
+                let field_minLongPressDuration = $('<input/>',{id:"node-input-minLongPressDuration_" + uniqueRowID, type:"text",style:"height:23px; width:55px; padding: 2px 2px;"}).appendTo(row3);
+                row3.append('<label class="buttonrule-checkbox-label" for="node-input-minLongPressDuration_' + uniqueRowID + '">&nbsp ms</label>');
+                // ROW 4 : 'To list' & checkbox 'During long press'
+                let row4 = $('<div/>').appendTo(container);
+                let field_buttonTo = $('<select/>',{id:"node-input-buttonTo_" + uniqueRowID, class:"buttonrule-select"}).appendTo(row4);
+                let field_onDuringLongPress = $('<input/>',{id:"node-input-onDuringLongPress_" + uniqueRowID, type:"checkbox", class:"buttonrule-checkbox"}).appendTo(row4);
+                row4.append('<label class="buttonrule-checkbox-label" for="node-input-onDuringLongPress_' + uniqueRowID + '">' + scope._('hue-buttons.config.add-outputs-longpresswhile') + '</label>');
+
+                // Build all 0-10 choices to both fields inputs
+                for (let i = 1; i <= 10; i++) {
+                  field_buttonFrom.append($("<option></option>").val(i.toString()).text(i.toString()));
+                  field_buttonTo.append($("<option></option>").val(i.toString()).text(i.toString()));
+                }
+
+                // Events : When From & To selector is changed, ensure range remains OK
+                field_buttonFrom.on ("change", function() {
+                  if (parseInt(field_buttonFrom.val()) > parseInt(field_buttonTo.val())) {
+                    field_buttonTo.val(field_buttonFrom.val());
+                  }
+                });
+                field_buttonTo.on ("change", function() {
+                  if (parseInt(field_buttonFrom.val()) > parseInt(field_buttonTo.val())) {
+                    field_buttonFrom.val(field_buttonTo.val());
+                  }
+                });
+
+                // Copy memory info back on fields
+                field_buttonFrom.val (rule.buttonFrom.toString());
+                field_buttonTo.val (rule.buttonTo.toString());
+                field_minLongPressDuration.val (rule.minLongPressDuration.toString());
+                // Checkboxes
+                field_onStartPress.prop ('checked', rule.onStartPress);
+                field_onEndShortPress.prop ('checked', rule.onEndShortPress);
+                field_onEndLongPress.prop ('checked', rule.onEndLongPress);
+                field_onDuringLongPress.prop ('checked', rule.onDuringLongPress);
+                // Update outputs (number of outputs and how the changed since onLoad)
+                rebuildOutputIndexes ($("#node-input-rule-container").editableList('items'));
+              },
+              removeItem: function (rule) {
+                // Update outputs (number of outputs and how the changed since onLoad)
+                rebuildOutputIndexes ($("#node-input-rule-container").editableList('items'));
+              },
+              sortItems: function (rules) {
+                // Update outputs (number of outputs and how the changed since onLoad)
+                rebuildOutputIndexes (rules);
+              },
+              sortable: true,
+              removable: true
+            });
+
+            // Add all previously saved rules back to UI List
+            for (let i = 0 ; i < this.rules.length ; i++) {
+              $("#node-input-rule-container").editableList('addItem',{rule:this.rules[i], i:i});
+            }
+          },
+
+        oneditresize: function(size) {
+            let rows = $("#dialog-form>div:not(.node-input-rule-container-row)");
+            let height = size.height;
+            for (let i = 0 ; i<rows.length ; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            let editorRow = $("#dialog-form>div.node-input-rule-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height += 40;
+            $("#node-input-rule-container").editableList('height',height);
         },
+
+        oneditsave: function() {
+          let rules = $("#node-input-rule-container").editableList('items');
+          let node = this;
+          node.rules = [];
+          rules.each (function (i) {
+            let rule = $(this);
+            let savedRule = {};
+            savedRule.buttonFrom = parseInt(rule.find("[id^=node-input-buttonFrom_]").val());
+            savedRule.buttonTo = parseInt(rule.find("[id^=node-input-buttonTo_]").val());
+            savedRule.onStartPress = rule.find("[id^=node-input-onStartPress_]").prop("checked");
+            savedRule.onEndShortPress = rule.find("[id^=node-input-onEndShortPress_]").prop("checked");
+            savedRule.onEndLongPress = rule.find("[id^=node-input-onEndLongPress_]").prop("checked");
+            savedRule.onDuringLongPress = rule.find("[id^=node-input-onDuringLongPress_]").prop("checked");
+            savedRule.minLongPressDuration = parseInt(rule.find("[id^=node-input-minLongPressDuration_]").val());
+            node.rules.push (savedRule);
+          });
+        },
+
         button: {
             enabled: function() {
                 return (this.sensorid && this.sensorid.length > 1)

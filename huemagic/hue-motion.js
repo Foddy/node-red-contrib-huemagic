@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("motion", config.sensorid, function(info)
+		bridge.subscribe(scope, "motion", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("motion", info.id);
 
@@ -193,6 +193,13 @@ module.exports = function(RED)
 
 				if(done) { done(); }
 			}
+		});
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
 		});
 	}
 

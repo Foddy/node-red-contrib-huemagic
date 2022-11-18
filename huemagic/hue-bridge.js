@@ -79,7 +79,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("bridge", "globalResourceUpdates", async function(info)
+		bridge.subscribe(scope, "bridge", "globalResourceUpdates", async function(info)
 		{
 			let currentState = bridge.get(info.updatedType, info.id);
 
@@ -297,6 +297,13 @@ module.exports = function(RED)
 					scope.lastCommand = null;
 				}
 			});
+		});
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
 		});
 	}
 

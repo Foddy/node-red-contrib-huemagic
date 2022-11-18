@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("temperature", config.sensorid, function(info)
+		bridge.subscribe(scope, "temperature", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("temperature", info.id);
 
@@ -201,6 +201,13 @@ module.exports = function(RED)
 
 				if(done) { done(); }
 			}
+		});
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
 		});
 	}
 

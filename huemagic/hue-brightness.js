@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("light_level", config.sensorid, function(info)
+		bridge.subscribe(scope, "light_level", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("light_level", info.id);
 
@@ -197,6 +197,13 @@ module.exports = function(RED)
 				// RESET LAST COMMAND
 				scope.lastCommand = null;
 			}
+		});
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
 		});
 	}
 

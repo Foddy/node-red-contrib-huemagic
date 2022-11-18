@@ -44,7 +44,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("light", config.lightid, function(info)
+		bridge.subscribe(scope, "light", config.lightid, function(info)
 		{
 			let currentState = bridge.get("light", info.id, { colornames: config.colornamer ? true : false });
 
@@ -859,7 +859,14 @@ module.exports = function(RED)
 					if(done) { done(); }
 				}
 			}
-		}
+		};
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
+		});
 	}
 
 	RED.nodes.registerType("hue-light", HueLight);

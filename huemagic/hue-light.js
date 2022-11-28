@@ -760,7 +760,7 @@ module.exports = function(RED)
 					{
 						XYColorSet = [];
 
-						for(let oneColor in msg.payload.gradient.hex)
+						for(let oneColor of msg.payload.gradient.hex)
 						{
 							let rgbFromHex = colorUtils.hexRgb(oneColor);
 							XYColorSet.push({
@@ -773,7 +773,7 @@ module.exports = function(RED)
 					{
 						XYColorSet = [];
 
-						for(let oneColor in msg.payload.gradient.rgb)
+						for(let oneColor of msg.payload.gradient.rgb)
 						{
 							XYColorSet.push({
 								color: { xy: colorUtils.rgbToXy(oneColor[0], oneColor[1], oneColor[2], currentState.info.model.colorGamut) }
@@ -785,7 +785,7 @@ module.exports = function(RED)
 					{
 						XYColorSet = [];
 
-						for(let oneColor in msg.payload.gradient.xyColor)
+						for(let oneColor of msg.payload.gradient.xyColor)
 						{
 							XYColorSet.push({
 								color: { xy: oneColor }

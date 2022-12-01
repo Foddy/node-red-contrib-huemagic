@@ -218,7 +218,7 @@ class HueLightMessage
 			this.message.payload.gradient = {};
 			this.message.payload.gradient.colors = [];
 
-			for(let gradientColor in service["gradient"]["points"])
+			for(let gradientColor of service["gradient"]["points"])
 			{
 				let gradientColorRGB = colorUtils.xyBriToRgb(gradientColor.color.xy.x, gradientColor.color.xy.y, (gradientColor.dimming ? service.dimming.brightness : 100));
 

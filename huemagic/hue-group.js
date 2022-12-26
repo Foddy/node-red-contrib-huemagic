@@ -462,6 +462,18 @@ module.exports = function(RED)
 						patchObject["bri"] = msg.payload.brightnessLevel;
 					}
 				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
+				{
+					let incrementBy = (isNaN(msg.payload.incrementBrightness)) ? 10 : msg.payload.incrementBrightness;
+
+					if ((incrementBy > 100) || (incrementBy < -100))
+					{
+						scope.error("Invalid incrementBrightness setting. Only -100% to 100% allowed");
+						return false;
+					}
+
+					patchObject["bri_inc"] = Math.round((254/100)*incrementBy);
+				}
 
 				// SET HUMAN READABLE COLOR OR RANDOM
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined')

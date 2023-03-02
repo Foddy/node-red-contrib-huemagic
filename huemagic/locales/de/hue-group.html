@@ -27,7 +27,8 @@ Neben dem einfachen Ein- und Ausschalten, stehen Ihnen auch viele weitere Option
 : toggle (boolean | any) : Wechselt zwischen Ein- und Ausschalten, je nachdem, wie der vorherige Zustand der Gruppe war
 : brightness (int | string) : Prozentualer Wert der Lichthelligkeit (0-100) oder ein String mit dem Wert `auto`, um die Lichthelligkeit automatisch auf Basis der aktuellen Uhrzeit einzustellen
 : brightnessLevel (int) : Nummerischer Wert der Lichthelligkeit (0-254)
-: incrementBrightness (int): Prozentualer Wert einer relativen Helligkeitsänderung (-100% bis +100%). Default ist +10%.
+: incrementBrightness (int): Prozentualer Wert einer relativen Helligkeitsänderung (-100% bis +100%). Positive werte erhöhen die Helligkeit. Default ist +10%.
+: decrementBrightness (int): Prozentualer Wert einer relativen Helligkeitsänderung (-100% bis +100%). Positive werte reduzieren die Helligkeit. Default ist +10%.
 : color (string) : `random`, um eine zufällige Farbe einzustellen oder einen englischen Farbnamen (z. B. `red`)
 : hex (string) : Farbwert in Hexadezimal in Form eines Strings
 : rgb (array[0,0,0]) : Farbwert im RGB-Format in Form eines Arrays

@@ -474,6 +474,18 @@ module.exports = function(RED)
 
 					patchObject["bri_inc"] = Math.round((254/100)*incrementBy);
 				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+				{
+					let decrementBy = (isNaN(msg.payload.decrementBrightness)) ? 10 : msg.payload.decrementBrightness;
+
+					if ((decrementBy > 100) || (decrementBy < -100))
+					{
+						scope.error("Invalid decrementBrightness setting. Only -100% to 100% allowed");
+						return false;
+					}
+
+					patchObject["bri_inc"] = Math.round((-254/100)*decrementBy);
+				}
 
 				// SET HUMAN READABLE COLOR OR RANDOM
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined')

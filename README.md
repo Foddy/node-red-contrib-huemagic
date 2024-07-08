@@ -516,7 +516,7 @@ The "Hue motion" node can register and report movements from a suitable sensor o
 ## Hue Contact
 The "Hue contact" node can register and report contact actions from a suitable sensor on the bridge.
 
-![Hue Contact Example](https://github.com/benuzal/node-red-contrib-huemagic/blob/master/images/hue-contact-example.PNG)
+![Hue Contact Example](https://github.com/benuzal/node-red-contrib-huemagic/blob/new-feature/images/hue-contact-example.PNG)
 
 
 ### Node-RED Setup Instructions

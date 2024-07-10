@@ -297,6 +297,8 @@ class HueContactMessage
 
 		this.message = {};
 		this.message.payload = {
+			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
+			connectionStatus: connectivity ? connectivity.status : "unknown",
 			contact: service.contact_report.state,
 			changed: service.contact_report.changed,
 			updated: resource.updated

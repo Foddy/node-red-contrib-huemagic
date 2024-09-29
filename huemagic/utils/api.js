@@ -62,6 +62,7 @@ function API()
 					"Content-Type": "application/json; charset=utf-8",
 					"hue-application-key": config.key
 				},
+				"timeout": 3000,
 				"httpsAgent": new https.Agent({ rejectUnauthorized: false }), // Node is somehow not able to parse the official Philips Hue PEM
 			};
 

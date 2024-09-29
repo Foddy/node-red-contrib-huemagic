@@ -30,7 +30,7 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' || bridge.disableupdates == false)
+		if(bridge.disableupdates == false || typeof bridge.disableupdates != 'undefined')
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-rules.node.init"});
 		}

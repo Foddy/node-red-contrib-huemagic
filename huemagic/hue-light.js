@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' || bridge.disableupdates == false)
+		if(bridge.disableupdates == false || typeof bridge.disableupdates != 'undefined')
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-light.node.init"});
 		}
@@ -258,7 +258,7 @@ module.exports = function(RED)
 						if(new RegExp("random|any|whatever").test(msg.payload.color))
 						{
 							const randomColor = colorUtils.randomHexColor();
-							let rgbFromHex = colorUtils.hexRgb(rgbFromHex);
+							let rgbFromHex = colorUtils.hexRgb(randomColor);
 							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2], currentState.info.model.colorGamut);
 						}
 						else
@@ -521,7 +521,7 @@ module.exports = function(RED)
 					}
 					else
 					{
-						var colorHex = colorUtils.colornames(msg.payload.color);
+						let colorHex = colorUtils.colornames(msg.payload.color);
 						if(colorHex)
 						{
 							let rgbFromHex = colorUtils.hexRgb(colorHex);
@@ -572,7 +572,7 @@ module.exports = function(RED)
 						}
 						else
 						{
-							var colorHex = colorUtils.colornames(msg.payload.mixColor.color);
+							let colorHex = colorUtils.colornames(msg.payload.mixColor.color);
 							if(colorHex)
 							{
 								RGBColor = colorUtils.hexRgb(colorHex);
@@ -760,7 +760,7 @@ module.exports = function(RED)
 					{
 						XYColorSet = [];
 
-						for(let oneColor in msg.payload.gradient.hex)
+						for(let oneColor of msg.payload.gradient.hex)
 						{
 							let rgbFromHex = colorUtils.hexRgb(oneColor);
 							XYColorSet.push({
@@ -773,7 +773,7 @@ module.exports = function(RED)
 					{
 						XYColorSet = [];
 
-						for(let oneColor in msg.payload.gradient.rgb)
+						for(let oneColor of msg.payload.gradient.rgb)
 						{
 							XYColorSet.push({
 								color: { xy: colorUtils.rgbToXy(oneColor[0], oneColor[1], oneColor[2], currentState.info.model.colorGamut) }
@@ -785,7 +785,7 @@ module.exports = function(RED)
 					{
 						XYColorSet = [];
 
-						for(let oneColor in msg.payload.gradient.xyColor)
+						for(let oneColor of msg.payload.gradient.xyColor)
 						{
 							XYColorSet.push({
 								color: { xy: oneColor }

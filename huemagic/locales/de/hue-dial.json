@@ -1,0 +1,27 @@
+{
+    "hue-dial":
+    {
+      "config":
+      {
+        "name": "Name",
+        "input-name": "Name des Dial",
+        "skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+        "sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+        "searching": "Suche nach Dials…",
+        "none-found": "Keine Dials gefunden!",
+        "unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+        "dial": "Dial"
+      },
+      "node":
+      {
+        "title": "Hue Dial",
+        "not-configured": "nicht konfiguriert",
+        "waiting": "warte…",
+        "rotation": "Rotation erkannt",
+        "input": "aktivieren / deaktivieren / Statusabfrage",
+        "universal": "Universalmodus",
+        "command": "führt Befehl aus…",
+        "statusmsg": "Status erfolgreich abgefragt…"
+      }
+    }
+  }

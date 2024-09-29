@@ -30,7 +30,7 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined' || bridge.disableupdates == false)
+		if(bridge.disableupdates == false || typeof bridge.disableupdates != 'undefined')
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-brightness.node.init"});
 		}
@@ -70,12 +70,12 @@ module.exports = function(RED)
 					{
 						if(currentState.payload.dark)
 						{
-							var statusMessage = RED._("hue-brightness.node.lux-dark", { lux: currentState.payload.lux });
+							let statusMessage = RED._("hue-brightness.node.lux-dark", { lux: currentState.payload.lux });
 							scope.status({fill: "blue", shape: "dot", text: statusMessage });
 						}
 						else if(currentState.payload.daylight)
 						{
-							var statusMessage = RED._("hue-brightness.node.lux-daylight", { lux: currentState.payload.lux });
+							let statusMessage = RED._("hue-brightness.node.lux-daylight", { lux: currentState.payload.lux });
 							scope.status({fill: "yellow", shape: "dot", text: statusMessage });
 						}
 						else

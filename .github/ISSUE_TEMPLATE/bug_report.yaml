@@ -1,0 +1,96 @@
+name: Bug report
+description: Create a report to help us improve
+title: '[Bug]: '
+labels: bug
+assignees:
+  - mauricedominic
+body:
+  - type: markdown
+    attributes:
+      value:
+        Please fill in as much information as you are able, everything helps to diagnose bugs.
+  - type: input
+    id: Node-Red-Contrib-HueMagic-Fork-ID
+    attributes:
+      label: Node-Red-Contrib-Huemagic-Fork Version
+      description: Find the version number in Palette Manager
+      placeholder: eg. 4.2.6
+    validations:
+      required: true
+  - type: input
+    id: NodeVersion
+    attributes:
+      label: Node JS Version
+      description: Run `node -v` in terminal
+      placeholder: eg. 14.17.1
+    validations:
+      required: true
+  - type: input
+    id: NPMVersion
+    attributes:
+      label: NPM Version
+      description: Run `npm -v` in terminal
+      placeholder: eg. 8.19.2
+    validations:
+      required: true
+  - type: input
+    id: NodeRedVersion
+    attributes:
+      label: Node-Red Version
+      description: Find in the top-right menu in Node-RED flows setup
+      placeholder: eg. 3.0.2
+    validations:
+      required: true
+  - type: input
+    id: OS
+    attributes:
+      label: Operating System 
+      description: Docker version, Ubuntu version, Home Assistant version + add-on version if applicable etc.
+      placeholder: eg. Docker 20.10.19
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: "Please describe observed behavior and expected behavior:"
+      placeholder: Tell us what you see!
+      value: "A bug happened! Please describe the problem, drag screenshots in here if they are helpful to your story."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce?
+      description: Steps to reproduce the behavior, including the Flow to reproduce (if applicable).
+      placeholder: Reproduce!
+      value: "Steps to reproduce the behavior:
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior:"
+      description: What should happen?
+      placeholder: expected
+      value: Describe expected behavior here, with relevant screenshots if they would help.
+    validations:
+      required: false
+  - type: textarea
+    id: other
+    attributes:
+      label: Additional comments?
+      placeholder: expected
+      value: Additional comments here, if any.
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell

@@ -218,18 +218,20 @@ class HueLightMessage
 			this.message.payload.gradient = {};
 			this.message.payload.gradient.colors = [];
 
-			for(let gradientColor in service["gradient"]["points"])
-			{
-				let gradientColorRGB = colorUtils.xyBriToRgb(gradientColor.color.xy.x, gradientColor.color.xy.y, (gradientColor.dimming ? service.dimming.brightness : 100));
+			if (service["gradient"]["points"])
+				{
+					for(let gradientColor of service["gradient"]["points"])
+					{
+						let gradientColorRGB = colorUtils.xyBriToRgb(gradientColor.color.xy.x, gradientColor.color.xy.y, (gradientColor.dimming ? service.dimming.brightness : 100));
 
-				let oneColorPack = {};
-				oneColorPack.rgb = [gradientColorRGB.r, gradientColorRGB.g, gradientColorRGB.b];
-				oneColorPack.hex = colorUtils.rgbHex(gradientColorRGB.r, gradientColorRGB.g, gradientColorRGB.b);
-				oneColorPack.xyColor = gradientColor.color.xy.x;
+						let oneColorPack = {};
+						oneColorPack.rgb = [gradientColorRGB.r, gradientColorRGB.g, gradientColorRGB.b];
+						oneColorPack.hex = colorUtils.rgbHex(gradientColorRGB.r, gradientColorRGB.g, gradientColorRGB.b);
+						oneColorPack.xyColor = gradientColor.color.xy.x;
 
-				this.message.payload.gradient.colors.push(oneColorPack);
-			}
-
+						this.message.payload.gradient.colors.push(oneColorPack);
+					}
+				}
 			this.message.payload.gradient.numColors = service["gradient"]["points"] ? service["gradient"]["points"].length : 0;
 			this.message.payload.gradient.totalColors = service["gradient"]["points_capable"];
 		}
@@ -449,7 +451,48 @@ class HueTemperatureMessage
 		return this.message;
 	}
 }
+//
+// HUE BUTTONS
+class HueDialMessage {
+	constructor(resource, options = {}) {
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
+		let relativeRotaryId = Object.keys(resource.services.relative_rotary)[0];
+		let rotaryReport = resource.services.relative_rotary[relativeRotaryId].relative_rotary.rotary_report;
+
+		this.message = {};
+		this.message.payload = {
+			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
+			connectionStatus: connectivity ? connectivity.status : "unknown",
+			action: rotaryReport.action,
+			rotation: rotaryReport.rotation,
+			updated: resource.updated
+		};
+
+		this.message.info = {};
+		this.message.info.id = relativeRotaryId ? relativeRotaryId : resource.id
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
+		this.message.info.uniqueId = resource.id + "-" + (relativeRotaryId ? relativeRotaryId : "");
+		this.message.info.deviceId = resource.id;
+		this.message.info.name = resource.metadata.name;
+		this.message.info.type = "dial";
+		this.message.info.softwareVersion = resource.product_data.software_version;
+		this.message.info.battery = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_level : false;
+		this.message.info.batteryState = resource.services.device_power ? Object.values(resource.services.device_power)[0].power_state.battery_state : false;
+
+		this.message.info.model = {};
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified;
+	}
+
+	get msg()
+	{
+		return this.message;
+	}
+}
 
 //
 // EXPORT
-module.exports = { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueButtonsMessage, HueTemperatureMessage }
+module.exports = { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueButtonsMessage, HueTemperatureMessage, HueDialMessage }

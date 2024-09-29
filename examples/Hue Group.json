@@ -77,7 +77,7 @@
         "z": "1a2adcb38abf1fae",
         "skipevents": false,
         "initevents": false,
-        "x": 590,
+        "x": 580,
         "y": 160,
         "wires": [
             [
@@ -154,7 +154,7 @@
         "name": "Play effects on the group",
         "info": "",
         "x": 130,
-        "y": 580,
+        "y": 660,
         "wires": []
     },
     {
@@ -175,7 +175,7 @@
         "payload": "{\"on\":true,\"alert\":3,\"color\":\"red\"}",
         "payloadType": "json",
         "x": 160,
-        "y": 620,
+        "y": 700,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -201,7 +201,7 @@
         "payload": "{\"colorloop\":5,\"brightness\":100}",
         "payloadType": "json",
         "x": 200,
-        "y": 660,
+        "y": 740,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -216,7 +216,7 @@
         "name": "Change color of lights",
         "info": "",
         "x": 120,
-        "y": 720,
+        "y": 800,
         "wires": []
     },
     {
@@ -237,7 +237,7 @@
         "payload": "{\"color\":\"red\"}",
         "payloadType": "json",
         "x": 150,
-        "y": 760,
+        "y": 840,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -263,7 +263,7 @@
         "payload": "{\"hex\":\"#00FF00\"}",
         "payloadType": "json",
         "x": 150,
-        "y": 800,
+        "y": 880,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -289,7 +289,7 @@
         "payload": "{\"rgb\":[0,0,255]}",
         "payloadType": "json",
         "x": 150,
-        "y": 840,
+        "y": 920,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -304,7 +304,7 @@
         "name": "Change color temperature of lights",
         "info": "",
         "x": 160,
-        "y": 1020,
+        "y": 1100,
         "wires": []
     },
     {
@@ -325,7 +325,7 @@
         "payload": "{\"colorTemp\":\"cold\",\"brightness\":100}",
         "payloadType": "json",
         "x": 160,
-        "y": 1100,
+        "y": 1180,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -351,7 +351,7 @@
         "payload": "{\"colorTemp\":\"normal\",\"brightness\":100}",
         "payloadType": "json",
         "x": 170,
-        "y": 1140,
+        "y": 1220,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -377,7 +377,7 @@
         "payload": "{\"colorTemp\":\"warm\",\"brightness\":100}",
         "payloadType": "json",
         "x": 170,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -403,7 +403,7 @@
         "payload": "{\"colorTemp\":\"hot\",\"brightness\":100}",
         "payloadType": "json",
         "x": 160,
-        "y": 1220,
+        "y": 1300,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -429,7 +429,7 @@
         "payload": "{\"colorTemp\":240,\"brightness\":100}",
         "payloadType": "json",
         "x": 200,
-        "y": 1260,
+        "y": 1340,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -455,7 +455,7 @@
         "payload": "{\"colorTemp\":\"auto\",\"brightness\":100}",
         "payloadType": "json",
         "x": 200,
-        "y": 1060,
+        "y": 1140,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -516,7 +516,7 @@
         "topic": "",
         "payload": "{\"brightness\":25}",
         "payloadType": "json",
-        "x": 130,
+        "x": 120,
         "y": 440,
         "wires": [
             [
@@ -569,7 +569,7 @@
         "payload": "{\"color\":\"random\"}",
         "payloadType": "json",
         "x": 130,
-        "y": 960,
+        "y": 1040,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -595,7 +595,7 @@
         "payload": "{\"xyColor\":{\"x\":0.7401,\"y\":0.2718}}",
         "payloadType": "json",
         "x": 180,
-        "y": 880,
+        "y": 960,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -621,7 +621,7 @@
         "payload": "{\"image\":\"https://user-images.githubusercontent.com/5302050/148616400-b7e7b35d-c779-4b6d-baff-c91ac2980d8f.jpg\"}",
         "payloadType": "json",
         "x": 180,
-        "y": 920,
+        "y": 1000,
         "wires": [
             [
                 "c4eb78aea62ca9ef"
@@ -654,5 +654,57 @@
             ]
         ],
         "icon": "node-red-contrib-huemagic/hue-magic.svg"
+    },
+    {
+        "id": "6c1efd820ba49f70",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Increase with steps of 10%",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"incrementBrightness\":10}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 560,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "0a916ab5589641b5",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Decrease with steps of 10%",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":10}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 600,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-moon-o"
     }
 ]

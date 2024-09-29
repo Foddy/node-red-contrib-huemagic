@@ -2,7 +2,42 @@
 
 # Changelog
 
-### v4.2.2 (latest)
+### v4.2.8 (latest)
+
+* Fixed an issue with Dial Node not working ([#11](https://github.com/mauricedominic/node-red-contrib-huemagic/issues/11))
+
+### v4.2.7
+
+* Merged pull requests #368 (enhanced), #369, #371, gradient color fixes from @schnyderyx
+* Merged pull request #5, decrementBrightness support added for groups from @fjulian79 and updated Hue Group flow example accordingly
+* Merged pull request #9, Terminal migration description added to Readme from @bond2k 
+* Merged pull request #10, added Support for Hue Tap dial switch from @rainbow-six3
+* Fixed an issue with Randomcolor handling on the hue light node
+* Various minor code improvements
+* Updated package dependencies
+
+### v4.2.6
+
+* Fork contrib migration instructions added to README
+* Merged pull request #417, #1, incrementBrightness support added for groups, solving issue #380 from @fjulian79 and updated Hue Group flow example accordingly
+* Updated package dependencies
+
+### v4.2.5
+
+* Merged pull request #412, New button outputs & unload nodes from @FredBlo
+
+### v4.2.4
+
+* Merged pull request #409, Commands dropped / bridge overloaded (Err=429) from @FredBlo
+* Updated package dependencies
+
+### v4.2.3
+
+* Forked from Foddy
+* Fixed an issue with Hue nodes not able to fetch hue device from the bridge, (thanks @Travelbacon, @lukystreik)
+* Fixed an issue with the Hue group node generating an error message 'The group in not yet available'
+ 
+### v4.2.2
 
 * HueMagic can now be installed again on older Node-RED versions without official support
 * Fixed an issue for Hue Group nodes not getting/updating their current status ([#342](https://github.com/Foddy/node-red-contrib-huemagic/issues/342)) (thx @bmdevx)

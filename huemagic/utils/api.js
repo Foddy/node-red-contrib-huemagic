@@ -62,6 +62,7 @@ function API()
 					"Content-Type": "application/json; charset=utf-8",
 					"hue-application-key": config.key
 				},
+				"timeout": 3000,
 				"httpsAgent": new https.Agent({ rejectUnauthorized: false }), // Node is somehow not able to parse the official Philips Hue PEM
 			};
 
@@ -254,17 +255,17 @@ function API()
 				{
 					let additionalServiceTypes = Object.keys(fullResource["services"]);
 
-					// SET ADDITIONAL TYPES BEHIND RECCOURCE
+					// SET ADDITIONAL TYPES BEHIND RESOURCE
 					fullResource["types"] = fullResource["types"].concat(additionalServiceTypes);
 				}
 
 				// RESOURCE HAS GROUPED SERVICES?
 				if (fullResource["services"])
 				{
-					for (serviceType in fullResource["services"])
+					for (let serviceType in fullResource["services"])
 					{
 						const grouped_services = fullResource['services'][serviceType];
-						for (groupedServiceID in grouped_services)
+						for (let groupedServiceID in grouped_services)
 						{
 							if (!processedResources["_groupsOf"][groupedServiceID]) { processedResources["_groupsOf"][groupedServiceID] = []; }
 							processedResources["_groupsOf"][groupedServiceID].push(fullResource.id);

@@ -1,0 +1,56 @@
+<script type="text/markdown" data-help-name="hue-dial">
+    ## Hue Dial
+    The "Hue Dial" node receives rotation events from input devices(like Hue tap dial switch) connected to the bridge. Note: For buttons actions use Hue Buttons
+    
+    ### Node-RED Setup Instructions
+    
+    Select the pre-configured Hue Bridge and hit the search button to find all the available dial switches. If you already know the ID of the dial switch, you can also enter it here manually. You can either assign a new name for the dial switch internally or keep the predefined name of the device.
+    
+    ### Get status
+    
+    Outputs the current status of the dial switch as soon as a `msg.payload` object with the following content has been passed to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
+    
+    : status (boolean): Returns the current status of the switch/button
+    
+    ### Status messages from the node
+    
+    As soon as a rotation has been performed, the following status message is returned by the node:
+    
+    #### Status object under `msg.payload`
+    
+    : reachable (boolean / string) : `true` if the dial switch is connected to the bridge, `unknown` if the connection status deviates
+    : connectionStatus (string) : The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value
+    : action (string) : `start` on start of rotation or `repeat` when the rotation is continued in the form of a string
+    : rotation (object) : Object with the information of `direction`, `steps` and `duration`
+    : rotation.direction (string) : `counter_clock_wise` or `clock_wise` in the form of a string
+    : rotation.steps (int) : count of steps when dial is rotated in the form of a number.
+    : rotation.duration (int) :
+    : updated (string) : Time of the last update of the resource by HueMagic (ISO 8601)
+    
+    #### Information about the switch/button under `msg.info`
+    
+    : id (string) : Indicates the new ID of the dial switch
+    : idV1 (string / boolean) : Indicates the old ID of the dial switch
+    : uniqueId (string) : The unique ID of the dial switch
+    : deviceId (string) : The unique ID of the device
+    : name (string) : The currently set name of the switch/button
+    : type (string) : The type of the switch/button (always `dial`)
+    : softwareVersion (string) : The current firmware of the switch/button
+    : battery (float / boolean) : The current battery level of the switch/button, `false`, when there is no battery
+    : batteryState (string / boolean) : The current status of the battery level. Can contain `normal`, `low` or `critical` as a value, `false`, when there is no battery
+    : model (object) : Contains the model information of the switch/button under `id` , `manufacturer`, `name`, `type` and `certified`
+    
+    
+    #### Status changes under `msg.updated`
+    
+    Lists individual parameters in the form of an object that have changed compared to the last state of the dial switch. If no changes have been registered, this object is empty.
+    
+    #### Last status of the dial switch under `msg.lastState`
+    
+    Contains the complete status object (see output values above) of the last status before the last registered change. If the last state of HueMagic has not yet been registered, it will output `false`.
+    
+    #### Last command under `msg.command` (optional)
+    
+    If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+    
+    </script>

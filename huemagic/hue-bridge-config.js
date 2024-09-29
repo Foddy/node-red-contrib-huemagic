@@ -1,3 +1,4 @@
+/*jshint esversion: 8, strict: implied, node: true */
 module.exports = function(RED)
 {
 	"use strict";
@@ -19,7 +20,8 @@ module.exports = function(RED)
 			HueTemperatureMessage,
 			HueBrightnessMessage,
 			HueButtonsMessage,
-			HueRulesMessage
+			HueRulesMessage,
+			HueDialMessage
 		} = require('./utils/messages');
 
 	function HueBridge(config)
@@ -60,11 +62,8 @@ module.exports = function(RED)
 					})
 					.catch(function(error)
 					{
-						// scope.log("Error requesting info from the bridge. Reconnect in some secs. " + error.message);
-						// debug
 						if (error.status !== 429) {
 							scope.log("Error requesting info from the bridge. Reconnect in some secs. " + ((typeof(error.message) == 'undefined') ? JSON.stringify(error) : error.message));
-							// end debug
 							scope.start();
 						} else {
 							// Bridge did not respond because it is currently overloaded (=error 429), but it is still alive, so nothing to do / restart, just keep monitoring as normal
@@ -73,10 +72,7 @@ module.exports = function(RED)
 						}
 					});
 				} catch (error) {
-					// scope.log("Lost connection with the bridge. Reconnect in some secs. " + error.message);
-					// debug
 					scope.log("Lost connection with the bridge. Reconnect in some secs. " + ((typeof(error.message) == 'undefined') ? JSON.stringify(error) : error.message));
-					// end debug
 					scope.start();
 				}
 			}, 10000);
@@ -279,6 +275,12 @@ module.exports = function(RED)
 					// NO PREVIOUS STATE?
 					if(!previousState) { return false; }
 
+					// IS LIGHT? -> REMOVE PREVIOUS GRADIENT COLORS
+					if(type === "light" && resource["gradient"])
+					{
+						delete previousState["gradient"];
+					}
+
 					// CHECK DIFFERENCES
 					const mergedState = merge.deep(previousState, resource);
 					const updatedResources = diff(previousState, mergedState);
@@ -468,11 +470,26 @@ module.exports = function(RED)
 							return false;
 						}
 					}
-					else
+					else if (type == "relative_rotary")
 					{
-						return false;
+						try {
+							const message = new HueDialMessage(targetResource, options);
+							// GET & SAVE LAST STATE AND DIFFERENCES
+							let currentState = message.msg;
+							scope.lastStates[type + targetResource.id] = Object.assign({}, currentState);
+							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
+							currentState.lastState = lastState;
+
+							return currentState;
+						} catch (error) {
+							return false;
+						}
 					}
+				else
+				{
+					return false;
 				}
+			}
 				else
 				{
 					return false;
@@ -582,7 +599,10 @@ module.exports = function(RED)
 		}
 
 		// SUBSCRIBE (FROM NODES)
-		this.subscribe = function(type, id = null, callback = null)
+		let nodeSubscriptions = {};
+		let nodeSubscriptionEventName;
+		let nodeSubscriptionFunction;
+		this.subscribe = function(node, type, id = null, callback = null)
 		{
 			// IS RULE?
 			if(type == "rule" && !!id)
@@ -598,13 +618,15 @@ module.exports = function(RED)
 				"light_level": ["light_level", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"button": ["button", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"group": ["group", "light", "grouped_light"],
-				"rule": ["rule"]
+				"rule": ["rule"],
+				"relative_rotary": ["relative_rotary", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"]
 			};
 
 			if(!id)
 			{
 				// UNIVERSAL MODE
-				this.events.on(config.id + "_" + "globalResourceUpdates", function(info)
+				nodeSubscriptionEventName = config.id + "_" + "globalResourceUpdates";
+				nodeSubscriptionFunction = function(info)
 				{
 					if(type === "bridge")
 					{
@@ -618,20 +640,34 @@ module.exports = function(RED)
 					{
 						callback(info);
 					}
-				});
+				};
 			}
 			else
 			{
 				// SPECIFIC RESOURCE MODE
-				this.events.on(config.id + "_" + id, function(info)
+				nodeSubscriptionEventName = config.id + "_" + id;
+				nodeSubscriptionFunction = function(info)
 				{
 					if(type === "bridge" || messageWhitelist[type].includes(info.updatedType))
 					{
 						callback(info);
 					}
-				});
+				};
 			}
-		}
+			// REGISTER EVENT AND KEEP LISTENER REFRENCE FOR LATER POSSIBLE REMOVAL
+			nodeSubscriptions[node.id] = {eventName: nodeSubscriptionEventName, listenerFunction: nodeSubscriptionFunction};
+			scope.events.on(nodeSubscriptionEventName, nodeSubscriptionFunction);
+		};
+
+		// UNSUBSCRIBE (On node unload)
+		this.unsubscribe = function(node)
+		{
+			let nodeSubscription = nodeSubscriptions[node.id];
+			if (nodeSubscription) {
+				scope.events.removeListener (nodeSubscription.eventName, nodeSubscription.listenerFunction);
+			}
+
+		};
 
 		// AUTO UPDATES?
 		this.autoUpdateFirmware = function()
@@ -838,7 +874,7 @@ module.exports = function(RED)
 					{
 						for (const [deviceID, targetDevice] of Object.entries(resource["services"][targetType]))
 						{
-							var oneDevice = {};
+							let oneDevice = {};
 							oneDevice.id = id;
 							oneDevice.name = resource.metadata ? resource.metadata.name : false;
 							oneDevice.model = resource.product_data ? resource.product_data.product_name : false;
@@ -851,7 +887,7 @@ module.exports = function(RED)
 					{
 						if(resource["services"] && resource["services"]["grouped_light"])
 						{
-							var oneDevice = {};
+							let oneDevice = {};
 							oneDevice.id = id;
 							oneDevice.name = resource.metadata ? resource.metadata.name : false;
 							oneDevice.model = resource["type"];
@@ -862,7 +898,7 @@ module.exports = function(RED)
 					// SCENES
 					else if(targetType === "scene" && resource["type"] == "scene")
 					{
-						var oneDevice = {};
+						let oneDevice = {};
 						oneDevice.id = id;
 						oneDevice.name = resource.metadata ? resource.metadata.name : false;
 						oneDevice.group = processedResources[resource["group"]["rid"]].metadata.name;

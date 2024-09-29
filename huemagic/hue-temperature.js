@@ -30,14 +30,14 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
+		if(bridge.disableupdates == false || typeof bridge.disableupdates != 'undefined')
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-temperature.node.init"});
 		}
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("temperature", config.sensorid, function(info)
+		bridge.subscribe(scope, "temperature", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("temperature", info.id);
 
@@ -201,6 +201,13 @@ module.exports = function(RED)
 
 				if(done) { done(); }
 			}
+		});
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
 		});
 	}
 

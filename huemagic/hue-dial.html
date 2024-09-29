@@ -1,0 +1,209 @@
+<script type="text/x-red" data-template-name="hue-dial">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-dial.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-dial.config.input-name" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dialid"><i class="fa fa-dialbulb-o"></i> <span data-i18n="hue-dial.config.dial"></span></label>
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <div id="input-select-toggle" style="flex-grow: 1;">
+                <input type="text" id="node-input-dialid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%"/>
+            </div>
+            <button id="node-config-input-scan-dials" type="button" class="red-ui-button" style="margin-left: 10px;">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+    <div class="form-row" style="margin-top: 30px">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipevents" style="flex: 15px;">
+            <span data-i18n="hue-dial.config.skipevents-node" style="width: 100%; margin-left: 10px;"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: inline-flex; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
+            <span data-i18n="hue-dial.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-dial', {
+        category: 'HueMagic',
+        color: '#03a9f4',
+        defaults: {
+            name: {value: ""},
+            bridge: {type: "hue-bridge", required: true},
+            dialid: {value: "", required: false},
+            skipevents: { value: false },
+            initevents: { value: false },
+        },
+        align: 'left',
+        icon: "hue-dial.png",
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || this._("hue-dial.node.title");
+        },
+        paletteLabel: function () {
+            return this._("hue-dial.node.title");
+        },
+        inputLabels: function () {
+            return this._("hue-dial.node.input");
+        },
+        outputLabels: function () {
+            return this._("hue-dial.node.output");
+        },
+        oneditprepare: function () {
+            const scope = this;
+            let options = [];
+
+            function manualInput() {
+                // GET CURRENT SELECTED VALUE
+                var current = $('#node-input-dialid').val();
+
+                // REMOVE SELECT FIELD
+                $('#input-select-toggle').empty();
+
+                // CREATE NEW INPUT FIELD
+                $('#input-select-toggle').append('<input type="text" id="node-input-dialid" placeholder="00000000-0000-0000-0000-000000000000" style="width: 100%" value="' + current + '" />');
+
+                // CHANGE BUTTON ICON
+                var button = $("#node-config-input-scan-dials");
+                var buttonIcon = button.find("i");
+                buttonIcon.removeClass("fa-pencil");
+                buttonIcon.addClass("fa-search");
+            }
+
+            function sortResourcesBy(prop, resources) {
+                return resources.sort((a, b) => {
+                    if (a[prop] < b[prop]) {
+                        return -1;
+                    }
+                    if (a[prop] > b[prop]) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
+
+            function searchAndSelect() {
+                // GET CURRENT BRIDGE CONFIGURATION
+                var bridgeConfig = RED.nodes.node($('#node-input-bridge option:selected').val());
+                if (!bridgeConfig) {
+                    return false;
+                }
+
+                // GET CURRENT SELECTED VALUE
+                var current = $('#node-input-dialid').val();
+
+                // TRIGGER SEARCHING NOTIFICATION
+                var notification = RED.notify(scope._("hue-dial.config.searching"), {
+                    type: "compact",
+                    modal: true,
+                    fixed: true
+                });
+
+                // GET THE dialS
+                $.get('hue/resources', {bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "button"})
+                    .done(function (data) {
+                        var allResources = JSON.parse(data);
+                        allResources = sortResourcesBy('name', allResources);
+                        if (allResources.length <= 0) {
+                            notification.close();
+                            RED.notify(scope._("hue-dial.config.none-found"), {type: "error"});
+                            return false;
+                        }
+
+                        // SET OPTIONS
+                        allResources.forEach(function (resource) {
+                            if (resource.model) {
+                                if (resource.model == 'Hue tap dial switch') {
+                                    options[resource.id] = {
+                                        value: resource.id,
+                                        label: resource.name + " (" + resource.model + ")"
+                                    };
+                                }
+                            } else {
+                                options[resource.id] = {value: resource.id, label: resource.name};
+                            }
+                        });
+
+                        // SELECT CURRENT VALUE
+                        $("#node-input-dialid").typedInput({
+                            types: [
+                                {
+                                    value: current,
+                                    options: Object.values(options)
+                                }
+                            ]
+                        });
+
+                        // CHANGE BUTTON ICON
+                        var button = $("#node-config-input-scan-dials");
+                        var buttonIcon = button.find("i");
+                        buttonIcon.removeClass("fa-search");
+                        buttonIcon.addClass("fa-pencil");
+
+                        // CLOSE SEARCH NOTIFICATION
+                        notification.close();
+                    })
+                    .fail(function () {
+                        notification.close();
+                        RED.notify(scope._("hue-dial.config.unknown-error"), "error");
+                    });
+            }
+
+            // CHANGED dial ID? -> REPLACE NAME (IF POSSIBLE)
+            $(document).on('change', '#node-input-dialid', function (e) {
+                let currentSelectedOptionID = $(e.currentTarget).val();
+                let currentSelectedOptionValue = (currentSelectedOptionID.length > 0 && options[currentSelectedOptionID]) ? options[currentSelectedOptionID].label : false;
+
+                if (currentSelectedOptionValue !== false) {
+                    $('#node-input-name').val(currentSelectedOptionValue.split(" (")[0]);
+                }
+            });
+
+            // TOGGLE SELECT/INPUT FIELD
+            $('#node-config-input-scan-dials').click(function () {
+                if ($('#input-select-toggle').find(".red-ui-typedInput-container").length > 0) {
+                    manualInput();
+                } else {
+                    searchAndSelect();
+                }
+            });
+        },
+        button: {
+            enabled: function () {
+                return (this.dialid && this.dialid.length > 1)
+            },
+            visible: function () {
+                return (this.dialid && this.dialid.length > 1)
+            },
+            onclick: function () {
+                const node = this;
+                if (node.bridge) {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({__user_inject_props__: "status"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-dial.node.statusmsg"), {
+                                type: "success",
+                                id: "status",
+                                timeout: 2000
+                            });
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>

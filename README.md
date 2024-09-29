@@ -1,12 +1,40 @@
-[![Hue Magic Logo](https://gist.githubusercontent.com/Foddy/9b647b910d03a31cee40f97c3988dd1c/raw/7ee635bd958ad04d7ba53c6c40ec401f879bffc2/huemagic-logo.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
+[![Hue Magic Logo](https://gist.githubusercontent.com/Foddy/9b647b910d03a31cee40f97c3988dd1c/raw/7ee635bd958ad04d7ba53c6c40ec401f879bffc2/huemagic-logo.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic-fork)
 
 # HueMagic - Philips Hue nodes for Node-RED
 
-[![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic.svg?style=flat-square)](https://github.com/foddy/node-red-contrib-huemagic/) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/LICENSE) [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U) [![npm](https://img.shields.io/npm/dt/node-red-contrib-huemagic.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic)
+[![npm](https://img.shields.io/npm/v/node-red-contrib-huemagic-fork.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic-fork/) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg?style=flat-square)](https://raw.githubusercontent.com/mauricedominic/node-red-contrib-huemagic/master/LICENSE) [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LUQ7CWBWQ3Q4U) [![npm](https://img.shields.io/npm/dt/node-red-contrib-huemagic-fork.svg?style=flat-square)](https://www.npmjs.com/package/node-red-contrib-huemagic-fork)
 
 HueMagic provides several input and output nodes for Node-RED and is the most in-depth and easy to use solution to control Philips Hue bridges, lights, groups, scenes, rules, buttons/switches, motion sensors, temperature sensors and light level sensors.
 
+# HueMagic - Fork
+
+As the HueMagic main repository has been less frequently updated, I decided on the creation of a fork that includes community contributions until the maintenance on the main repository has improved. With this fork I have also included a corresponding NPM package for ease of use in Node-RED.
+
+# HueMagic - Fork contrib migration
+
+You can migrate via the UI or via Terminal.
+
+## UI Migration
+In order to make use of this fork without having to re-create all of your existing Node-RED flows, you can take the following steps:
+
+1. Create a backup of all flows that refer to the huemagic nodes
+2. Remove all the huemagic related flows
+3. Remove all the huemagic related configuration nodes
+4. Deploy all changes
+5. Remove the original [node-red-contrib-huemagic](https://www.npmjs.com/package/node-red-contrib-huemagic) package
+6. Install the [node-red-contrib-huemagic-fork](https://www.npmjs.com/package/node-red-contrib-huemagic-fork) package
+7. Restore the backup created in step 1
+8. Deploy all changes
+
+## Terminal Migration
+1. Go into the .node-red directory
+2. execute 'npm remove node-red-contrib-huemagic'
+3. execute 'npm install node-red-contrib-huemagic-fork'
+4. Restart node red
+
+# HueMagic
 ### Features
+
 * Simple and comprehensive control of the Hue Bridge and connected devices
 * Automatic discovery of Philips Hue bridges as well as devices, scenes & groups…
 * Output and input of multiple color code definitions *(HEX, RGB & human readable color names)*
@@ -24,9 +52,10 @@ HueMagic provides several input and output nodes for Node-RED and is the most in
 * Extensively documented in English & German
 
 ### Installation
+
 HueMagic was written for **Node.js 14+** and **Node-RED v2.1+**. It supports the square-shaped Hue Bridge with the **firmware 1948086000+** or higher. You can install HueMagic directly via the [Node-RED Palette Manager](https://nodered.org/docs/user-guide/editor/palette/manager) or manually using [npm / yarn](https://nodered.org/docs/user-guide/runtime/adding-nodes).
 
-`npm install node-red-contrib-huemagic`
+npm install node-red-contrib-huemagic-fork
 
 _Please make sure that you deactivate other Hue-related nodes in Node-RED and meet the minimum requirements of Node.js and the Philips Hue Bridge firmware!_
 
@@ -42,10 +71,11 @@ _Please make sure that you deactivate other Hue-related nodes in Node-RED and me
 - [Hue Temperature](#hue-temperature)
 - [Hue Brightness](#hue-brightness)
 - [Hue Rule](#hue-rule)
+- [Hue Dial](#hue-dial)
 
 ### Examples
 
-HueMagic provides a large selection of full featured sample flows for all nodes. You can find these examples in the [examples folder on GitHub](https://github.com/Foddy/node-red-contrib-huemagic/tree/master/examples) or directly in Node-RED. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
+HueMagic provides a large selection of full featured sample flows for all nodes. You can find these examples in the [examples folder on GitHub](https://github.com/mauricedominic/node-red-contrib-huemagic/tree/master/examples) or directly in Node-RED. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
 
 <a href="https://github.com/Foddy/node-red-contrib-huemagic/tree/master/examples"><img alt="Instructions to import examples in Node-RED" src="https://user-images.githubusercontent.com/5302050/148696808-f730ad36-8d0b-4b5b-99b2-1917831f8916.gif" width="100%"></a>
 
@@ -365,6 +395,8 @@ In addition to simply switching it on and off, there are also many other options
 | toggle (boolean / any) | Toggles between switching on and off, depending on the previous status of the group |
 | brightness (int / string) | Percentage value of the light brightness (0-100) or a string with the value `auto` to automatically set the light brightness based on the current time |
 | brightnessLevel (int) | Numerical value of the light brightness (0-254) |
+| incrementBrightness (int) | Percentage value of a relative brightness change. Positive values will increase brightness. Valid range is from -100 to +100, default is +10 |
+| decrementBrightness (int) | Percentage value of a relative brightness change. Positive values will decrease brightness. Valid range is from -100 to +100, default is +10 |
 | color (string) | `random` to set a random color or an English color name (e.g. `red`) |
 | hex (string) | Color value in hexadecimal in the form of a string |
 | rgb (array [0,0,0]) | Color value in RGB format in the form of an array |
@@ -794,9 +826,107 @@ Contains the complete object (see output values above) of the last status before
 
 If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
 
+## Hue Dial
+The "Hue Dial" node receives rotation events from input devices(like Hue tap dial switch) connected to the bridge. Note: For buttons actions use [Hue Buttons](#hue-buttons)
+
+### Node-RED Setup Instructions
+
+Select the pre-configured Hue Bridge and hit the search button to find all the available dial switches. If you already know the ID of the dial switch, you can also enter it here manually. You can either assign a new name for the dial switch internally or keep the predefined name of the device.
+
+### Get status
+
+Outputs the current status of the dial switch as soon as a `msg.payload` object with the following content has been passed to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
+
+|Property|Description|
+|--|--|
+| status (boolean) | Returns the current status of the switch/button |
+
+### Status messages from the node
+
+As soon as a rotation has been performed, the following status message is returned by the node:
+
+#### Status object under `msg.payload`
+
+|Property|Description|
+|--|--|
+| reachable (boolean / string) | `true` if the dial switch is connected to the bridge, `unknown` if the connection status deviates |
+| connectionStatus (string) | The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value |
+| action (string) | `start` on start of rotation or `repeat` when the rotation is continued in the form of a string |
+| rotation (object) | Object with the information of `direction`, `steps` and `duration` |
+| rotation.direction (string) | `counter_clock_wise` or `clock_wise` in the form of a string |
+| rotation.steps (int) | count of steps when dial is rotated in the form of a number. |
+| rotation.duration (int) ||
+| updated (string) | Time of the last update of the resource by HueMagic (ISO 8601) |
+
+#### Information about the switch/button under `msg.info`
+
+|Property|Description|
+|--|--|
+| id (string) | Indicates the new ID of the dial switch |
+| idV1 (string / boolean) | Indicates the old ID of the dial switch |
+| uniqueId (string) | The unique ID of the dial switch |
+| deviceId (string) | The unique ID of the device |
+| name (string) | The currently set name of the switch/button |
+| type (string) | The type of the switch/button (always `dial`) |
+| softwareVersion (string) | The current firmware of the switch/button |
+| battery (float / boolean) | The current battery level of the switch/button, `false`, when there is no battery |
+| batteryState (string / boolean) | The current status of the battery level. Can contain `normal`, `low` or `critical` as a value, `false`, when there is no battery |
+| model (object) | Contains the model information of the switch/button under `id` , `manufacturer`, `name`, `type` and `certified` |
+
+#### Status changes under `msg.updated`
+
+Lists individual parameters in the form of an object that have changed compared to the last state of the dial switch. If no changes have been registered, this object is empty.
+
+#### Last status of the dial switch under `msg.lastState`
+
+Contains the complete status object (see output values above) of the last status before the last registered change. If the last state of HueMagic has not yet been registered, it will output `false`.
+
+#### Last command under `msg.command` (optional)
+
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+
+
+
 # Changelog
 
-### v4.2.2 (latest)
+### v4.2.8 (latest)
+
+* Fixed an issue with Dial Node not working ([#11](https://github.com/mauricedominic/node-red-contrib-huemagic/issues/11))
+
+### v4.2.7
+
+* Merged pull requests #368 (enhanced), #369, #371, gradient color fixes from @schnyderyx
+* Merged pull request #5, decrementBrightness support added for groups from @fjulian79 and updated Hue Group flow example accordingly
+* Merged pull request #9, Terminal migration description added to Readme from @bond2k 
+* Merged pull request #10, added Support for Hue Tap dial switch from @rainbow-six3
+* Fixed an issue with Randomcolor handling on the hue light node
+* Various minor code improvements
+* Updated package dependencies
+
+### v4.2.6
+
+* Fork contrib migration instructions added to README
+* Merged pull request #417, #1, incrementBrightness support added for groups, solving issue #380 from @fjulian79 and updated Hue Group flow example accordingly
+* Updated package dependencies
+
+### v4.2.5
+
+* Merged pull request #412, New button outputs & unload nodes from @FredBlo
+
+### v4.2.4
+
+* Merged pull request #409, Commands dropped / bridge overloaded (Err=429) from @FredBlo
+* Updated package dependencies
+
+
+### v4.2.3
+
+* Forked from Foddy
+* Fixed an issue with Hue nodes not able to fetch hue device from the bridge, (thanks @Travelbacon, @lukystreik)
+* Fixed an issue with the Hue group node generating an error message 'The group in not yet available'
+
+
+### v4.2.2
 
 * HueMagic can now be installed again on older Node-RED versions without official support
 * Fixed an issue for Hue Group nodes not getting/updating their current status ([#342](https://github.com/Foddy/node-red-contrib-huemagic/issues/342)) (thx @bmdevx)
@@ -885,7 +1015,7 @@ If the status of the node has changed via a certain command, the entire command 
 * Other optimizations, dependency updates and clean up
 
 ### Previous versions
-The full changelog [changelog](https://github.com/Foddy/node-red-contrib-huemagic/blob/master/CHANGELOG.md) can be viewed here…
+The full changelog [changelog](https://github.com/mauricedominic/node-red-contrib-huemagic/blob/master/CHANGELOG.md) can be viewed here…
 
 
 ***

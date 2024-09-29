@@ -40,14 +40,14 @@ module.exports = function(RED)
 
 		//
 		// UPDATE STATE
-		if(typeof bridge.disableupdates != 'undefined'||bridge.disableupdates == false)
+		if(bridge.disableupdates == false || typeof bridge.disableupdates != 'undefined')
 		{
 			this.status({fill: "grey", shape: "dot", text: "hue-group.node.init"});
 		}
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("group", config.groupid, function(info)
+		bridge.subscribe(scope, "group", config.groupid, function(info)
 		{
 			let currentState = bridge.get("group", info.id, { colornames: config.colornamer ? true : false });
 
@@ -117,7 +117,7 @@ module.exports = function(RED)
 				return false;
 			}
 
-			// CHECK IF LIGHT ID IS SET
+			// CHECK IF GROUP ID IS SET
 			if(!tempGroupID)
 			{
 				scope.error(RED._("hue-group.node.error-no-id"));
@@ -241,12 +241,12 @@ module.exports = function(RED)
 					if(new RegExp("random|any|whatever").test(msg.payload.color))
 					{
 						const randomColor = colorUtils.randomHexColor();
-						let rgbFromHex = colorUtils.hexRgb(rgbFromHex);
+						let rgbFromHex = colorUtils.hexRgb(randomColor);
 						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
 					}
 					else
 					{
-						var colorHex = colorUtils.colornames(msg.payload.color);
+						let colorHex = colorUtils.colornames(msg.payload.color);
 						if(colorHex)
 						{
 							let rgbFromHex = colorUtils.hexRgb(colorHex);
@@ -462,7 +462,31 @@ module.exports = function(RED)
 						patchObject["bri"] = msg.payload.brightnessLevel;
 					}
 				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
+				{
+					let incrementBy = (isNaN(msg.payload.incrementBrightness)) ? 10 : msg.payload.incrementBrightness;
 
+					if ((incrementBy > 100) || (incrementBy < -100))
+					{
+						scope.error("Invalid incrementBrightness setting. Only -100% to 100% allowed");
+						return false;
+					}
+
+					patchObject["bri_inc"] = Math.round((254/100)*incrementBy);
+				}
+				else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
+				{
+					let decrementBy = (isNaN(msg.payload.decrementBrightness)) ? 10 : msg.payload.decrementBrightness;
+
+					if ((decrementBy > 100) || (decrementBy < -100))
+					{
+						scope.error("Invalid decrementBrightness setting. Only -100% to 100% allowed");
+						return false;
+					}
+
+					patchObject["bri_inc"] = Math.round((-254/100)*decrementBy);
+				}
+				
 				// SET HUMAN READABLE COLOR OR RANDOM
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined')
 				{
@@ -476,7 +500,7 @@ module.exports = function(RED)
 					}
 					else
 					{
-						var colorHex = colorUtils.colornames(msg.payload.color);
+						let colorHex = colorUtils.colornames(msg.payload.color);
 						if(colorHex)
 						{
 							let rgbFromHex = colorUtils.hexRgb(colorHex);
@@ -629,7 +653,14 @@ module.exports = function(RED)
 					if(done) { done(); }
 				}
 			}
-		}
+		};
+
+		// ON NODE UNLOAD : UNSUBSCRIBE FROM BRIDGE
+		this.on ('close', function (done)
+		{
+			bridge.unsubscribe(scope);
+			done();
+		});
 	}
 
 	RED.nodes.registerType("hue-group", HueGroup);

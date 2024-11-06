@@ -1,0 +1,33 @@
+{
+	"hue-contact":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Sensor name",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"searching": "Searching contact sensors…",
+			"none-found": "No contact sensors found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"sensor": "Sensor",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
+		},
+		"node":
+		{
+			"title": "Hue Contact",
+			"not-configured": "not configured",
+			"not-reachable": "not reachable",
+			"contact": "contact",
+			"no-contact": "no contact",
+			"activated": "activated",
+			"deactivated": "deactivated",
+			"input": "activate / deactivate / status",
+			"output": "contact",
+			"universal": "universal mode",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…"
+		}
+	}
+}

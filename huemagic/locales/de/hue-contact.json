@@ -1,0 +1,31 @@
+{
+	"hue-contact":
+	{
+		"config":
+		{
+			"name": "Name",
+			"input-name": "Name des Sensors",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"searching": "Suche nach Kontaktsensoren…",
+			"none-found": "Keine Kontaktsensoren gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"sensor": "Sensor"
+		},
+		"node":
+		{
+			"title": "Hue Kontaktsensor",
+			"not-configured": "nicht konfiguriert",
+			"not-reachable": "nicht erreichbar",
+			"contact": "Kontakt",
+			"no-contact": "keine Kontakt",
+			"activated": "aktiviert",
+			"deactivated": "deaktiviert",
+			"input": "aktivieren / deaktivieren / Statusabfrage",
+			"output": "erkannte Bewegung",
+			"universal": "Universalmodus",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…"
+		}
+	}
+}

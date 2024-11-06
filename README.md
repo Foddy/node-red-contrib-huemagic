@@ -39,6 +39,7 @@ _Please make sure that you deactivate other Hue-related nodes in Node-RED and me
 - [Hue Scenes](#hue-scene)
 - [Hue Buttons](#hue-buttons)
 - [Hue Motion](#hue-motion)
+- [Hue Contact](#hue-contact)
 - [Hue Temperature](#hue-temperature)
 - [Hue Brightness](#hue-brightness)
 - [Hue Rule](#hue-rule)
@@ -82,7 +83,7 @@ With the "fetch" command you can output a list of specific devices that are curr
 
 |Property|Description|
 |--|--|
-| fetch (string / array [string, ...]) | Can accept `light`, `group`, `button`, `motion`, `temperature`, `light_level` or `rule` as value(s) |
+| fetch (string / array [string, ...]) | Can accept `light`, `group`, `button`, `motion`, `contact`, `temperature`, `light_level` or `rule` as value(s) |
 
 ### Change Hue Bridge settings
 
@@ -511,6 +512,12 @@ If the status of the node has changed via a certain command, the entire command 
 The "Hue motion" node can register and report movements from a suitable sensor on the bridge.
 
 ![Hue Motion Example](https://user-images.githubusercontent.com/5302050/148696510-c6bfcad3-cd4e-4b6a-a73f-29bef1ac6961.png)
+
+## Hue Contact
+The "Hue contact" node can register and report contact actions from a suitable sensor on the bridge.
+
+![Hue Contact Example](https://github.com/benuzal/node-red-contrib-huemagic/blob/new-feature/images/hue-contact-example.PNG)
+
 
 ### Node-RED Setup Instructions
 

@@ -16,6 +16,7 @@ module.exports = function(RED)
 			HueLightMessage,
 			HueGroupMessage,
 			HueMotionMessage,
+			HueContactMessage,
 			HueTemperatureMessage,
 			HueBrightnessMessage,
 			HueButtonsMessage,
@@ -420,6 +421,22 @@ module.exports = function(RED)
 							return false;
 						}
 					}
+					else if(type == "contact")
+					{
+						try {
+							const message = new HueContactMessage(targetResource, options);
+
+							// GET & SAVE LAST STATE AND DIFFERENCES
+							let currentState = message.msg;
+							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
+							currentState.lastState = lastState;
+
+							return currentState;
+						} catch (error) {
+							return false;
+						}
+					}
 					else if(type == "temperature")
 					{
 						try {
@@ -594,6 +611,7 @@ module.exports = function(RED)
 			const messageWhitelist = {
 				"light": ["light", "zigbee_connectivity", "zgp_connectivity", "device"],
 				"motion": ["motion", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
+				"contact": ["contact", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"temperature": ["temperature", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"light_level": ["light_level", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"button": ["button", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],

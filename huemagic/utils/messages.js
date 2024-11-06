@@ -287,6 +287,50 @@ class HueMotionMessage
 
 
 //
+// HUE CONTACT
+class HueContactMessage
+{
+	constructor(resource, options = {})
+	{
+		const service = Object.values(resource["services"]["contact"])[0];
+		const connectivity = resource.services.zigbee_connectivity ? Object.values(resource.services.zigbee_connectivity)[0] : ((resource.services.zgp_connectivity) ? Object.values(resource.services.zgp_connectivity)[0] : false);
+
+		this.message = {};
+		this.message.payload = {
+			reachable: connectivity ? (connectivity.status === "connected") : "unknown",
+			connectionStatus: connectivity ? connectivity.status : "unknown",
+			contact: service.contact_report.state,
+			changed: service.contact_report.changed,
+			updated: resource.updated
+		};
+
+		this.message.info = {};
+		this.message.info.id = service.id;
+		this.message.info.idV1 = resource.id_v1 ? resource.id_v1 : false;
+		this.message.info.uniqueId = resource.id + "-" + service.id;
+		this.message.info.deviceId = resource.id;
+		this.message.info.name = resource.metadata.name;
+		this.message.info.type = "contact";
+		this.message.info.softwareVersion = resource.product_data.software_version;
+		this.message.info.battery = Object.values(resource.services.device_power)[0].power_state.battery_level;
+		this.message.info.batteryState = Object.values(resource.services.device_power)[0].power_state.battery_state;
+
+		this.message.info.model = {};
+		this.message.info.model.id = resource.product_data.model_id;
+		this.message.info.model.manufacturer = resource.product_data.manufacturer_name;
+		this.message.info.model.name = resource.product_data.product_name;
+		this.message.info.model.type = resource.product_data.product_archetype;
+		this.message.info.model.certified = resource.product_data.certified;
+	}
+
+	get msg()
+	{
+		return this.message;
+	}
+}
+
+
+//
 // HUE RULES
 class HueRulesMessage
 {
@@ -452,4 +496,4 @@ class HueTemperatureMessage
 
 //
 // EXPORT
-module.exports = { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueRulesMessage, HueButtonsMessage, HueTemperatureMessage }
+module.exports = { HueBridgeMessage, HueBrightnessMessage, HueGroupMessage, HueLightMessage, HueMotionMessage, HueContactMessage, HueRulesMessage, HueButtonsMessage, HueTemperatureMessage }

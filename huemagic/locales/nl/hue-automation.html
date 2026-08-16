@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-automation">
+De node "Hue Automatisering" kan de automatiseringen die u in de Philips Hue-app hebt gemaakt in- en uitschakelen.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare automatiseringen te vinden. Als u het ID van de automatisering al kent, kunt u het hier ook handmatig invoeren. U kunt de automatisering intern een nieuwe naam geven of de vooraf ingestelde naam gebruiken. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". De node geeft dan geen updates meer uit. U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Als u deze instelling activeert, ontvangt u na elke deploy een statusbericht van de geselecteerde automatisering. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+Als u geen automatisering selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type. U kunt in de universele modus ook instellingen op een specifieke automatisering toepassen door het bijbehorende automatiserings-ID als tekenreeks in `msg.topic` samen met uw instellingen mee te geven.
+
+### Automatisering in-/uitschakelen
+
+Een uitgeschakelde automatisering blijft op de bridge staan en kan op elk moment weer worden ingeschakeld. Geef hiervoor een object met de volgende inhoud mee:
+
+: payload (boolean): `true` schakelt de automatisering in, `false` schakelt haar uit
+: enabled (boolean): Zoals hierboven, als u liever een object meegeeft
+: toggle (boolean | any): Wisselt tussen in- en uitgeschakeld, afhankelijk van de vorige status
+
+### Statusberichten van de node
+
+Zodra de automatisering verandert, geeft de node het volgende statusbericht terug:
+
+#### Statusobject onder `msg.payload`
+
+: enabled (boolean): Geeft aan of de automatisering is ingeschakeld
+: running (boolean): `true` zolang de bridge de automatisering daadwerkelijk uitvoert
+: status (string | boolean): De huidige status. Kan `initializing`, `running`, `disabled` of `errored` als waarde bevatten
+: lastError (string | boolean): De laatste door de bridge gemelde fout of `false`
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+
+#### Informatie over de automatisering onder `msg.info`
+
+: id (string): Geeft het ID van de automatisering aan
+: idV1 (string | boolean): Geeft het oude ID van de automatisering aan
+: name (string | boolean): De naam die u de automatisering in de Philips Hue-app hebt gegeven
+: type (string): Het type van de bron (altijd `automation`)
+: script (string | boolean): Het ID van het gedragsscript achter de automatisering
+
+#### Configuratie onder `msg.configuration`
+
+Bevat de instellingen van de automatisering zoals de Philips Hue-app die heeft opgeslagen. De structuur hangt af van het type automatisering en wordt ongewijzigd doorgegeven.
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de automatisering zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de automatisering onder `msg.lastState`
+
+Bevat het volledige statusobject (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatst geregistreerde wijziging. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-buttons">
+«Hue Düğmeler» düğümü, bridge'e bağlı giriş cihazlarından anahtarlama olaylarını alır.
+
+### Kurulum
+
+Önceden yapılandırılmış Hue Bridge'i seçin ve mevcut tüm anahtarları ve düğmeleri bulmak için arama düğmesine tıklayın. Anahtarın veya düğmenin kimliğini zaten biliyorsanız, buraya elle de girebilirsiniz. Cihaza dahili olarak yeni bir ad verebilir veya önceden tanımlı adı koruyabilirsiniz. İsteğe bağlı olarak «Düğümün mesajlarını yoksay» ayarıyla bu düğümün tüm otomatik durum mesajlarını devre dışı bırakabilirsiniz. Düğüm bundan sonra anahtarlama olayı yayınlamaz. Alternatif olarak, Node-RED başlatılırken düğümün başlatma mesajının bastırılmamasını seçebilirsiniz. Bu ayarı etkinleştirirseniz her dağıtımdan sonra seçili anahtarın veya düğmenin durum mesajını alırsınız. Düğümün siz bir şey gönderene kadar sessiz kalmasını tercih ediyorsanız «Yalnızca bir komuttan sonra bildir» seçeneğini etkinleştirin. Bu durumda uygulamadan veya bir anahtardan gelen değişiklikleri yok sayar ve yalnızca sizin komutlarınıza yanıt verir.
+
+Bir anahtar veya düğme seçmez ve düğüm yapılandırmasını bu şekilde kullanırsanız, düğüm «evrensel mod» adı verilen modda çalışır. Bu modda düğüm aynı türdeki tüm durum mesajlarını alır ve yayınlar.
+
+### Durumu sorgulama
+
+Düğüme aşağıdaki içeriğe sahip bir `msg.payload` nesnesi iletildiğinde anahtarın veya düğmenin güncel durumunu verir. Alternatif olarak, önce düğüme bir mesaj göndermeden Node-RED arayüzündeki düğmeye de basabilirsiniz.
+
+: status (boolean): Anahtarın veya düğmenin güncel durumunu döndürür
+
+### Düğümün durum mesajları
+
+Bir tuşa basıldığı anda düğüm aşağıdaki durum mesajını döndürür:
+
+#### `msg.payload` altındaki durum nesnesi
+
+: reachable (boolean | string): Anahtar veya düğme bridge'e bağlıysa `true`, bağlantı durumu farklıysa `unknown`
+: connectionStatus (string): Bridge ile olan güncel bağlantı durumu (dize olarak). Değer olarak `connected`, `disconnected`, `connectivity_issue` veya `unidirectional_incoming` içerebilir
+: button (int | boolean): Son basılan tuşun sayısal kimliği veya hiçbir tuşa basılmadıysa `false`
+: action (string | boolean): Hiçbir tuşa basılmadıysa `false`, aksi hâlde dize olarak `initial_press`, `repeat`, `short_release`, `long_press`, `long_release` veya `double_short_release`
+: rotation (object | boolean): Cihazda çevirme halkası yoksa veya çevrilmediyse `false`; aksi hâlde `action` (`start` veya `repeat`), `direction` (`clock_wise` veya `counter_clock_wise`), `clockwise` (mantıksal), `steps` (1000 adım tam bir turdur), `degrees` ve milisaniye cinsinden `duration` alanlarını içeren bir nesne
+: updated (string): Kaynağın HueMagic tarafından son güncellenme zamanı (ISO 8601)
+
+#### `msg.info` altındaki anahtar/düğme bilgileri
+
+: id (string): Anahtarın veya düğmenin yeni kimliğini belirtir
+: idV1 (string | boolean): Anahtarın veya düğmenin eski kimliğini belirtir
+: uniqueId (string): Anahtarın veya düğmenin benzersiz kimliği
+: deviceId (string): Cihazın benzersiz kimliği
+: name (string): Anahtarın veya düğmenin geçerli adı
+: type (string): Anahtarın veya düğmenin türü (her zaman `button`)
+: softwareVersion (string): Anahtarın veya düğmenin geçerli ürün yazılımı
+: battery (float | boolean): Anahtarın veya düğmenin geçerli pil düzeyi, pil yoksa `false`
+: batteryState (string | boolean): Pil düzeyinin geçerli durumu. Değer olarak `normal`, `low` veya `critical`, pil yoksa `false` içerebilir
+: model (object): Anahtarın veya düğmenin model bilgilerini `id`, `manufacturer`, `name`, `type` ve `certified` altında içerir
+
+#### `msg.updated` altındaki durum değişiklikleri
+
+Anahtarın veya düğmenin önceki durumuna kıyasla değişen parametreleri bir nesne olarak listeler. Herhangi bir değişiklik kaydedilmediyse bu nesne boştur.
+
+#### `msg.lastState` altındaki son anahtar/düğme durumu
+
+Son kaydedilen değişiklikten önceki durumun eksiksiz durum nesnesini içerir (yukarıdaki çıktı değerlerine bakın). HueMagic önceki durumu henüz kaydetmediyse `false` verilir.
+
+#### `msg.command` altındaki son komut (isteğe bağlı)
+
+Düğümün durumu belirli bir komutla değiştiyse, yürütülen komutun tamamı da çıktı olarak verilir. Aksi hâlde düğüm bu nesneyi çıktı olarak vermez.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

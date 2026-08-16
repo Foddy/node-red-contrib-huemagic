@@ -1,0 +1,46 @@
+{
+	"hue-group": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignorar as mensagens do nó",
+			"sendinitevents-node": "Não suprimir o evento de inicialização",
+			"onlycommands-node": "Comunicar apenas após um comando",
+			"unknown-error": "Algo correu mal. Tente novamente.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universais",
+			"universalevents-node": "Recebe todas as mensagens de outros nós do mesmo tipo (apenas no modo universal)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Ativar a denominação das cores",
+			"input-name": "Nome do grupo",
+			"searching": "A procurar grupos…",
+			"none-found": "Nenhum grupo encontrado!",
+			"group": "Grupo",
+			"all": "Todos os grupos / luzes"
+		},
+		"node": {
+			"not-configured": "não configurado",
+			"init": "a inicializar…",
+			"universal": "modo universal",
+			"command": "a executar comando…",
+			"statusmsg": "Estado consultado com sucesso…",
+			"title": "Hue Grupo",
+			"brightness": " (__percent__ %)",
+			"all-on": "todas as luzes acesas",
+			"all-off": "todas as luzes apagadas",
+			"some-on": "algumas luzes acesas",
+			"turned-on": "ligado",
+			"error-input": "erro de entrada",
+			"error-no-id": "Nenhum ID de grupo indicado.",
+			"error-invalid-sat": "Definição de saturação inválida. Apenas são permitidos valores de 0 a 254.",
+			"error-invalid-temp": "Temperatura de cor inválida. Apenas são permitidos valores de 153 a 500.",
+			"input": "ligar / desligar",
+			"output": "estado",
+			"error-not-available": "O grupo ainda não está disponível. Aguarde até que o HueMagic tenha estabelecido a ligação com o bridge ou verifique se o ID do recurso indicado na configuração é válido.",
+			"error-invalid-brightness": "Definição de brilho inválida. Apenas são permitidos valores de 0 a 100 por cento.",
+			"error-invalid-brightness-level": "Definição de brilho inválida. Apenas são permitidos valores de 0 a 254.",
+			"error-invalid-increment": "Definição incrementBrightness inválida. Apenas são permitidos valores de -100 % a 100 %.",
+			"error-invalid-decrement": "Definição decrementBrightness inválida. Apenas são permitidos valores de -100 % a 100 %.",
+			"error-no-colorloop": "O efeito colorloop não está disponível para este grupo."
+		}
+	}
+}

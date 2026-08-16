@@ -1,0 +1,96 @@
+<script type="text/markdown" data-help-name="hue-bridge-node">
+Le nœud « Hue Bridge » est un nœud universel capable d'émettre tous les réglages du bridge ainsi que les messages de statut des autres nœuds.
+
+### Configuration
+
+Sélectionnez d'abord le Hue Bridge souhaité. En option, vous pouvez désactiver tous les messages de statut automatiques de ce nœud à l'aide du réglage « Ignorer les mises à jour et messages globaux des appareils sur ce nœud ». Le nœud n'émettra alors plus de mises à jour d'appareil.
+
+Vous pouvez également choisir que les messages d'initialisation de tous les nœuds ne soient pas supprimés au démarrage de Node-RED. Si vous activez ce réglage, vous recevrez après chaque déploiement un message de statut de toutes les ressources reliées au bridge.
+
+### Interroger les réglages et le statut
+
+Émet le statut et les réglages actuels du bridge dès que le message suivant est envoyé au nœud. Vous pouvez également appuyer sur le bouton dans l'interface Node-RED sans avoir à transmettre au préalable un message au nœud.
+
+: payload (boolean): Renvoie le statut actuel du bridge
+
+### Lancer un scan TouchLink
+
+Un « scan TouchLink » vous permet de coupler au bridge des appareils neufs ou anciens (p. ex. après une réinitialisation). Pour cela, transmettez l'objet `msg.payload` avec le contenu suivant :
+
+: touchLink (boolean): Couple des appareils anciens ou neufs avec le bridge
+
+### Interroger tous les appareils et ressources
+
+La commande « fetch » vous permet d'obtenir la liste de certains appareils actuellement reliés au bridge. Pour cela, transmettez l'objet `msg.payload` avec le contenu suivant :
+
+: fetch (string | array [string, ...]): Accepte `light`, `group`, `button`, `motion`, `temperature`, `light_level` ou `rule` comme valeur(s)
+
+### Modifier les réglages du Hue Bridge
+
+La commande suivante vous permet de modifier certains réglages du bridge. Transmettez au nœud l'objet `msg.payload.settings` avec les options de réglage suivantes :
+
+> [!WARNING]
+> La modification des réglages réseau nécessite de reconfigurer le bridge dans HueMagic.
+
+: name (string): Modifie le nom du bridge et doit contenir entre 4 et 16 caractères
+: zigbeeChannel (int): Modifie le canal ZigBee actuel (`11`, `15`, `20`, `25` ou `0`)
+: ipAddress (string): Modifie l'adresse IP dans les réglages réseau
+: dhcpEnabled (boolean): `true` active le DHCP dans les réglages réseau, `false` le désactive
+: netmask (string): Modifie le masque de réseau dans les réglages réseau
+: gateway (string): Définit la passerelle dans les réglages réseau
+: proxyAddress (string): Définit une adresse de proxy dans les réglages réseau
+: proxyPort (string | int): Définit le port du proxy dans les réglages réseau
+: timeZone (string): Modifie le fuseau horaire actuellement défini sur le bridge
+
+### Messages de statut du nœud
+
+Les messages de statut du nœud « Hue Bridge » sont dynamiques. Bien qu'ils suivent un certain schéma, leur contenu peut varier selon l'action qui vient d'être exécutée sur le nœud.
+
+#### Objet de statut dans `msg.payload`
+
+: id (string): ID unique du Hue Bridge
+: name (string): Nom actuellement attribué
+: factoryNew (boolean): Indique si le bridge est entièrement neuf
+: replacesBridgeId (string | boolean): Renvoie l'ancien ID du bridge (si une migration a eu lieu) ou `false`
+: dataStoreVersion (string): Version du magasin de données
+: starterKitId (string | boolean): Nom du kit de démarrage créé en usine ou `false`
+: softwareVersion (string): Version logicielle du bridge
+: apiVersion (string): Version de l'API du bridge
+: zigbeeChannel (int): Canal ZigBee actuellement utilisé
+: macAddress (string): Adresse MAC du bridge
+: ipAddress (string): Adresse IP du bridge
+: dhcpEnabled (boolean): Indique si le DHCP est activé
+: netmask (string): Masque de réseau du bridge
+: gateway (string): Passerelle du bridge
+: proxyAddress (string | boolean): Adresse de proxy actuellement utilisée ou `false`
+: proxyPort (string): Port de proxy actuellement utilisé
+: utcTime (string): Heure UTC sur le bridge
+: timeZone (string): Fuseau horaire actuellement défini sur le bridge
+: localTime (string): Fuseau horaire local
+: portalServicesEnabled (boolean): Indique si les services du portail sont activés
+: portalConnected (boolean): Indique si le bridge est connecté au portail
+: linkButtonEnabled (boolean): Indique si le bouton de liaison est activé
+: touchlinkEnabled (boolean): Indique si le TouchLink est activé
+: autoUpdatesEnabled (boolean): Indique si HueMagic recherchera automatiquement les mises à jour
+: users (array [object, ...]): Liste de tous les utilisateurs du bridge (tableau d'objets)
+: updated (string): Heure de la dernière mise à jour de la ressource par HueMagic (ISO 8601)
+: model (object): Contient les informations de modèle du bridge dans `id`, `manufacturer` et `name`
+
+#### Résultats de « fetch » dans `msg.results` (facultatif)
+
+Si la commande « fetch » a été utilisée sur le nœud, le bridge émet les résultats correspondants dans l'objet `msg.results`. Cet objet contient les groupes de ressources interrogés, qui contiennent à leur tour toutes les ressources correspondantes sous forme de tableau.
+
+#### Messages de statut globaux dans `msg.updated` (facultatif)
+
+Sauf désactivation, le nœud émet un message de statut actualisé pour chaque ressource du bridge. Le message de statut dans `msg.updated` suit le schéma de la ressource concernée et varie selon le type d'appareil mis à jour en dernier.
+
+#### Dernière commande dans `msg.command` (facultatif)
+
+Si le statut du nœud a changé suite à une commande particulière, la commande complète qui a été exécutée est également émise. Sinon, cet objet n'est pas émis par le nœud.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

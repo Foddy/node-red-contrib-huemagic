@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Nom",
+			"skipevents-node": "Ignorer les messages du nœud",
+			"sendinitevents-node": "Ne pas supprimer l'événement d'initialisation",
+			"onlycommands-node": "Signaler uniquement après une commande",
+			"unknown-error": "Une erreur est survenue. Veuillez réessayer.",
+			"bridge": "Bridge",
+			"universalevents": "Événements universels",
+			"universalevents-node": "Reçoit tous les messages des autres nœuds du même type (uniquement en mode universel)",
+			"input-name": "Nom du bouton",
+			"searching": "Recherche de Hue Buttons…",
+			"none-found": "Aucun Hue Button trouvé !",
+			"button": "Bouton"
+		},
+		"node": {
+			"not-configured": "non configuré",
+			"universal": "mode universel",
+			"command": "exécution de la commande…",
+			"statusmsg": "Statut interrogé avec succès…",
+			"title": "Hue Boutons",
+			"waiting": "en attente…",
+			"button-on": "On",
+			"action-pressed": "appuyé",
+			"action-holded": "maintenu",
+			"action-shortreleased": "relâché brièvement",
+			"action-longreleased": "relâché après maintien",
+			"action-repeated": "répété",
+			"action-doublepressed": "double appui",
+			"dial-clockwise": "Molette ↻ __degrees__°",
+			"dial-counterclockwise": "Molette ↺ __degrees__°",
+			"button-status": "Bouton n° __button__ (__action__)",
+			"input": "interrogation du statut",
+			"output": "bouton appuyé",
+			"error-no-id": "Veuillez indiquer un ID de interrupteur valide.",
+			"error-not-available": "L'interrupteur n'est pas encore disponible. Veuillez attendre que HueMagic ait établi la connexion avec le bridge ou vérifiez si l'ID de ressource indiqué dans la configuration est valide.",
+			"error-no-switchmode": "Cet appareil n'a pas de mode d'interrupteur configurable.",
+			"error-invalid-switchmode": "Mode d'interrupteur non valide. Cet appareil prend en charge : __modes__"
+		}
+	}
+}

@@ -1,0 +1,256 @@
+[
+    {
+        "id": "bf04a073.be4428",
+        "type": "tab",
+        "label": "Hue Bridge (example)",
+        "disabled": false,
+        "info": "Voorbeeld van het gebruik van de node \"Hue Bridge\""
+    },
+    {
+        "id": "bacc56ae.a92d1",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "TouchLink",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"touchLink\":true}",
+        "payloadType": "json",
+        "x": 120,
+        "y": 260,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-hand-o-right"
+    },
+    {
+        "id": "effb4d48.e09bb8",
+        "type": "debug",
+        "z": "bf04a073.be4428",
+        "name": "Informatie",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "ea4668e7.fac4f",
+        "type": "hue-bridge-node",
+        "z": "bf04a073.be4428",
+        "autoupdates": true,
+        "skipglobalevents": false,
+        "initevents": false,
+        "x": 550,
+        "y": 160,
+        "wires": [
+            [
+                "effb4d48.e09bb8"
+            ]
+        ]
+    },
+    {
+        "id": "15e5be4.550a0c2",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Naam van de bridge wijzigen",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-toggle-on"
+    },
+    {
+        "id": "808fb3ba34d8d872",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Instellingen van de bridge wijzigen",
+        "info": "",
+        "x": 130,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "6a2d7cbb05fc38a8",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Knop van de bridge op afstand indrukken",
+        "info": "",
+        "x": 140,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a1d6fdeca2c9c014",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Bepaalde bronnen van de bridge ophalen",
+        "info": "",
+        "x": 150,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "5829dc7c634e6674",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Alle lampen ophalen",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"light\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-light.svg"
+    },
+    {
+        "id": "09d15741c0c484b7",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Alle bewegingssensoren ophalen",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"motion\"}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-motion.svg"
+    },
+    {
+        "id": "fec4a7abbeecac4b",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Alle bewegingssensoren en lampen ophalen",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":[\"motion\", \"light\"]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 540,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-clone"
+    },
+    {
+        "id": "35bf62bc11c94830",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "EERSTE STAPPEN (dubbelklik hier)",
+        "info": "Klik op de node \"Hue Bridge\" en kies uw bridge. Hebt u nog geen bridge ingesteld, dan wordt u gevraagd er eerst een in te stellen voordat u de configuratie van de node kunt afronden.\n\nZodra de node met uw bridge is verbonden en u de wijzigingen in Node-RED hebt gedeployed, zou de status van de node op \"connected\" moeten springen. Daarna kan de node uw commando's ontvangen en uitvoeren. De node \"Hue Bridge\" geeft daarnaast telkens automatisch een bericht uit zodra de status van een bepaalde bron op de bridge is bijgewerkt. De bijgewerkte status en alle informatie vindt u in de eigenschap \"updated\" van het uitgegeven bericht.\n\nU kunt de huidige status van de node bovendien op elk moment in de Node-RED-interface opvragen door op de knop van de node naast het pictogram te klikken.\n\nWilt u meer informatie over deze node, de mogelijke commando's en uitvoerwaarden, klik er dan één keer op in uw flow en ga naar het boekpictogram van Node-RED (rechtsboven).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "150fa3da0eea6bce",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Huidige status opvragen",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "474d44e13140d4a8",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    }
+]

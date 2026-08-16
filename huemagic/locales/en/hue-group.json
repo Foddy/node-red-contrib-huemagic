@@ -1,0 +1,46 @@
+{
+	"hue-group": {
+		"config": {
+			"name": "Name",
+			"input-name": "Group name",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"onlycommands-node": "Only report after a command",
+			"searching": "Searching groups…",
+			"none-found": "No groups found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"group": "Group",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Activate color naming",
+			"all": "All groups / lights",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Group",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"universal": "universal mode",
+			"brightness": " (__percent__%)",
+			"all-on": "all lights on",
+			"all-off": "all lights off",
+			"some-on": "some lights on",
+			"turned-on": "turned on",
+			"error-input": "input error",
+			"error-no-id": "No group Id specified.",
+			"error-invalid-sat": "Invalid saturation setting. Only 0 - 254 allowed.",
+			"error-invalid-temp": "Invalid color temperature. Only 153 - 500 allowed.",
+			"input": "turn on / off",
+			"output": "status",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…",
+			"error-not-available": "The group is not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.",
+			"error-invalid-brightness": "Invalid brightness setting. Only 0 - 100 percent allowed.",
+			"error-invalid-brightness-level": "Invalid brightness setting. Only 0 - 254 allowed.",
+			"error-invalid-increment": "Invalid incrementBrightness setting. Only -100% to 100% allowed.",
+			"error-invalid-decrement": "Invalid decrementBrightness setting. Only -100% to 100% allowed.",
+			"error-no-colorloop": "The colorloop effect is not available for this group."
+		}
+	}
+}

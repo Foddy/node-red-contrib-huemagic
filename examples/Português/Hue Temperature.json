@@ -1,0 +1,150 @@
+[
+    {
+        "id": "4e9f59149660a0d5",
+        "type": "tab",
+        "label": "Hue Temperature (example)",
+        "disabled": false,
+        "info": "Exemplo de utilização do nó «Hue Temperature»"
+    },
+    {
+        "id": "3a0ce323d25bbb89",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "PRIMEIROS PASSOS (faça duplo clique)",
+        "info": "Clique no nó «Hue Temperatura» e selecione na lista tanto o seu bridge como um sensor. Se ainda não tiver configurado um bridge, ser-lhe-á pedido que configure um antes de poder concluir a configuração do nó.\n\nAssim que o nó estiver ligado ao seu bridge e o sensor e tiver implementado as alterações no Node-RED, o nó pode receber e executar os seus comandos. O nó «Hue Temperatura» emite além disso automaticamente uma mensagem assim que o estado do sensor no bridge é atualizado (alteração de temperatura). Receberá o estado atualizado e toda a sua informação na mensagem emitida.\n\nSe pretender mais informações sobre este nó, os comandos possíveis e os valores de saída, clique nele uma vez no seu fluxo e navegue até ao ícone do livro do Node-RED (canto superior direito).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "0ebb67a61954b5d7",
+        "type": "debug",
+        "z": "4e9f59149660a0d5",
+        "name": "Informação",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "61bd0f6cab995030",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Consultar o estado atual",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "266a95ec791a4434",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Estado",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "64d6a759a6ee3c70",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Ligar / desligar o dispositivo",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ede50c625f3d6870",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Ligar",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e8cf23462e2c1f9a",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Desligar",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "20a19938c9eb011c",
+        "type": "hue-temperature",
+        "z": "4e9f59149660a0d5",
+        "skipevents": false,
+        "initevents": false,
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "0ebb67a61954b5d7"
+            ]
+        ]
+    }
+]

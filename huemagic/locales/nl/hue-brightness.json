@@ -1,0 +1,37 @@
+{
+	"hue-brightness": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"input-name": "Naam van de lichtsensor",
+			"searching": "Sensoren zoeken…",
+			"none-found": "Geen lichtsensoren gevonden!",
+			"sensor": "Sensor",
+			"all": "Alle groepen / lampen",
+			"darkthreshold": "Donker onder"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"deactivated": "gedeactiveerd",
+			"init": "initialiseren…",
+			"not-reachable": "niet bereikbaar",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Lichtsterkte",
+			"lux": "__lux__ lux",
+			"lux-dark": "__lux__ lux (donker)",
+			"lux-daylight": "__lux__ lux (daglicht)",
+			"input": "statusopvraging",
+			"output": "lichtsterkte (gewijzigd)",
+			"error-no-id": "Geef een geldig sensor-ID op.",
+			"error-not-available": "De sensor is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is."
+		}
+	}
+}

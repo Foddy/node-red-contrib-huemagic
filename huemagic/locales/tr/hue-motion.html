@@ -1,0 +1,64 @@
+<script type="text/markdown" data-help-name="hue-motion">
+«Hue Hareket» düğümü, bridge'e bağlı uygun bir sensörden gelen hareketleri kaydedebilir ve bildirebilir.
+
+### Kurulum
+
+Önceden yapılandırılmış Hue Bridge'i seçin ve mevcut tüm sensörleri bulmak için arama düğmesine tıklayın. Sensörün kimliğini zaten biliyorsanız, buraya elle de girebilirsiniz. Sensöre dahili olarak yeni bir ad verebilir veya önceden tanımlı adı kullanabilirsiniz. İsteğe bağlı olarak «Düğümün mesajlarını yoksay» ayarıyla bu düğümün tüm otomatik durum mesajlarını devre dışı bırakabilirsiniz. Düğüm bundan sonra cihaz güncellemesi yayınlamaz. Alternatif olarak, Node-RED başlatılırken düğümün başlatma mesajının bastırılmamasını seçebilirsiniz. Bu ayarı etkinleştirirseniz her dağıtımdan sonra seçili sensörün durum mesajını alırsınız. Düğümün siz bir şey gönderene kadar sessiz kalmasını tercih ediyorsanız «Yalnızca bir komuttan sonra bildir» seçeneğini etkinleştirin. Bu durumda uygulamadan veya bir anahtardan gelen değişiklikleri yok sayar ve yalnızca sizin komutlarınıza yanıt verir.
+
+Bir sensör seçmez ve düğüm yapılandırmasını bu şekilde kullanırsanız, düğüm «evrensel mod» adı verilen modda çalışır. Bu modda düğüm aynı türdeki tüm durum mesajlarını alır ve yayınlar. Evrensel modda ayarları belirli bir sensöre uygulamak için ilgili sensör kimliğini `msg.topic` içinde dize olarak ayarlarınızla birlikte gönderebilirsiniz.
+
+### Durumu sorgulama
+
+Düğüme aşağıdaki içeriğe sahip bir `msg.payload` nesnesi iletildiğinde sensörün güncel durumunu verir. Alternatif olarak, önce düğüme bir mesaj göndermeden Node-RED arayüzündeki düğmeye de basabilirsiniz.
+
+: status (boolean): Sensörün güncel durumunu döndürür
+
+### Sensörü açma / kapatma
+
+Gerekirse sensör uzaktan açılıp kapatılabilir. Sensör kapatıldığında artık hareket kaydetmez ve dolayısıyla bildirmez. Bunun için aşağıdaki içeriğe sahip bir nesne gönderin:
+
+: payload (boolean): `true` sensörü açar, `false` kapatır
+
+### Düğümün durum mesajları
+
+Sensör bir hareket kaydettiği anda düğüm aşağıdaki durum mesajını döndürür:
+
+#### `msg.payload` altındaki durum nesnesi
+
+: active (boolean): Sensörün açık mı kapalı mı olduğunu belirtir
+: reachable (boolean | string): Sensör bridge'e bağlıysa `true`, bağlantı durumu farklıysa `unknown`
+: connectionStatus (string): Bridge ile olan güncel bağlantı durumu (dize olarak). Değer olarak `connected`, `disconnected`, `connectivity_issue` veya `unidirectional_incoming` içerebilir
+: motion (boolean): Hareket kaydedilip kaydedilmediğini belirtir
+: updated (string): Kaynağın HueMagic tarafından son güncellenme zamanı (ISO 8601)
+
+#### `msg.info` altındaki sensör bilgileri
+
+: id (string): Sensörün yeni kimliğini belirtir
+: idV1 (string | boolean): Sensörün eski kimliğini belirtir
+: uniqueId (string): Sensörün benzersiz kimliği
+: deviceId (string): Cihazın benzersiz kimliği
+: name (string): Sensörün geçerli adı
+: type (string): Sensörün türü (her zaman `motion`)
+: softwareVersion (string): Sensörün geçerli ürün yazılımı
+: battery (float): Sensörün geçerli pil düzeyi
+: batteryState (string): Pil düzeyinin geçerli durumu. Değer olarak `normal`, `low` veya `critical` içerebilir
+: model (object): Sensörün model bilgilerini `id`, `manufacturer`, `name`, `type` ve `certified` altında içerir
+
+#### `msg.updated` altındaki durum değişiklikleri
+
+Sensörün önceki durumuna kıyasla değişen parametreleri bir nesne olarak listeler. Herhangi bir değişiklik kaydedilmediyse bu nesne boştur.
+
+#### `msg.lastState` altındaki son sensör durumu
+
+Son kaydedilen değişiklikten önceki durumun eksiksiz durum nesnesini içerir (yukarıdaki çıktı değerlerine bakın). HueMagic önceki durumu henüz kaydetmediyse `false` verilir.
+
+#### `msg.command` altındaki son komut (isteğe bağlı)
+
+Düğümün durumu belirli bir komutla değiştiyse, yürütülen komutun tamamı da çıktı olarak verilir. Aksi hâlde düğüm bu nesneyi çıktı olarak vermez.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

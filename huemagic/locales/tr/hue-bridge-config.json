@@ -1,0 +1,40 @@
+{
+	"hue-bridge-config": {
+		"config": {
+			"name": "Ad",
+			"apikey": "API anahtarı",
+			"missing-ip": "Hue Bridge IP adresi eksik…",
+			"disable-events": "Olayları devre dışı bırak",
+			"disable-events-info": "Tüm düğümlerde olayları devre dışı bırak",
+			"searching": "Hue Bridge aranıyor…",
+			"none-found": "Hiç Hue Bridge bulunamadı!",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"invalid": "Üzgünüz. Seçtiğiniz Hue Bridge geçersiz: ",
+			"error-select-first": "Yeni bir kullanıcı oluşturmadan önce Hue Bridge cihazınızı seçin!",
+			"waiting": "bağlantı düğmesi bekleniyor…",
+			"new-user-press": "Yeni bir kullanıcı oluşturmak için şimdi Hue Bridge cihazınızdaki düğmeye basın!",
+			"retry": "Düğmeye basılmadı. Lütfen tekrar deneyin…",
+			"success": "Kullanıcı başarıyla oluşturuldu!",
+			"connecting": "Bridge ile bağlantı kuruluyor…",
+			"autoupdates": "Otomatik ürün yazılımı güncellemelerini etkinleştir",
+			"bridge-ip": "Bridge IP adresi",
+			"worker": "İş parçacığı"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"initializing": "Bridge başlatılıyor (__bridge__)…",
+			"connected": "Bridge ile bağlantı kuruldu",
+			"processing": "Bridge kaynakları işleniyor…",
+			"initial-emit": "Kaynak durumlarının ilk yayını…",
+			"keep-updated": "Düğümler güncel tutuluyor…",
+			"subscribing": "Bridge olaylarına abone olunuyor…",
+			"unsubscribing": "Bridge olayları aboneliği sonlandırılıyor…",
+			"no-legacy-api": "Bridge eski API üzerinden yanıt vermiyor, yapılandırması olmadan devam ediliyor…",
+			"request-error": "Bridge'ten bilgi istenirken hata oluştu (__error__)",
+			"connection-lost": "Bridge bağlantısı koptu (__reason__). __seconds__ saniye içinde yeniden denenecek…",
+			"resources-changed": "Bridge üzerindeki kaynaklar değişti. Yeniden yükleniyor…",
+			"not-connected": "Bridge bağlı değil."
+		}
+	}
+}

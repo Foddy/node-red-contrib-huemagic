@@ -1,8 +1,6 @@
 {
-	"hue-bridge-config":
-	{
-		"config":
-		{
+	"hue-bridge-config": {
+		"config": {
 			"name": "Name",
 			"apikey": "Nutzer",
 			"missing-ip": "Die IP-Adresse der Hue Bridge fehlt!",
@@ -13,17 +11,30 @@
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
 			"invalid": "Sorry. Die ausgewählte Hue Bridge ist ungültig: ",
 			"error-select-first": "Bitte wählen Sie eine Hue Bridge, bevor Sie versuchen einen neuen Nutzer zu erstellen!",
-			"waiting": "warte 20 Sekunden…",
-			"new-user-press": "Bitte betätigen Sie die taste der Hue Bridge innerhalb der nächsten 20 Sekunden!",
-			"retry": "Bitte versuchen Sie es erneut innerhalb von 20 Sekunden!",
+			"waiting": "warte auf den Knopfdruck…",
+			"new-user-press": "Bitte betätigen Sie jetzt die Taste auf der Hue Bridge!",
+			"retry": "Keine Taste erkannt. Bitte erneut versuchen…",
 			"success": "Ein neuer Nutzer wurde erfolgreich angelegt!",
 			"connecting": "Verbindungsaufbau mit der Hue Bridge…",
-			"autoupdates": "Automatische Firmware-Updates aktivieren"
+			"autoupdates": "Automatische Firmware-Updates aktivieren",
+			"bridge-ip": "Bridge IP",
+			"worker": "Worker"
 		},
-		"node":
-		{
+		"node": {
 			"title": "Hue Bridge",
-			"statusmsg": "Status erfolgreich abgefragt…"
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"initializing": "Initialisiere die Bridge (__bridge__)…",
+			"connected": "Mit der Bridge verbunden",
+			"processing": "Verarbeite die Ressourcen der Bridge…",
+			"initial-emit": "Erstmalige Ausgabe der Ressourcen-Zustände…",
+			"keep-updated": "Halte die Nodes auf dem aktuellen Stand…",
+			"subscribing": "Abonniere die Ereignisse der Bridge…",
+			"unsubscribing": "Ereignisse der Bridge abbestellt…",
+			"no-legacy-api": "Die Bridge antwortet nicht auf die alte API, fahre ohne ihre Konfiguration fort…",
+			"request-error": "Fehler beim Abrufen der Informationen von der Bridge (__error__)",
+			"connection-lost": "Verbindung zur Bridge verloren (__reason__). Neuer Versuch in __seconds__ Sekunden…",
+			"resources-changed": "Die Ressourcen auf der Bridge haben sich geändert. Lade neu…",
+			"not-connected": "Die Bridge ist nicht verbunden."
 		}
 	}
 }

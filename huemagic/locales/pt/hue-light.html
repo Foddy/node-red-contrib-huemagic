@@ -1,0 +1,97 @@
+<script type="text/markdown" data-help-name="hue-light">
+O nó «Hue Luz» pode controlar as luzes ligadas ao bridge e receber as respetivas mensagens de estado.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todas as luzes disponíveis. Se já souber o ID de uma luz, também o pode introduzir aqui manualmente. Pode atribuir internamente um novo nome à luz ou manter o nome predefinido. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». O nó deixará de emitir atualizações do dispositivo. Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se ativar esta definição, receberá uma mensagem de estado da luz selecionada após cada implementação. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+Se ativar a definição «Ativar a denominação das cores», o nó tentará descrever a cor de luz definida em cada mensagem de estado. Receberá então na saída um parâmetro adicional com a descrição em inglês da cor atual.
+
+Se não selecionar nenhuma luz e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo. Também pode aplicar definições no modo universal a uma luz específica, transmitindo o respetivo ID como cadeia de carateres em `msg.topic` juntamente com as suas definições.
+
+### Consultar o estado
+
+Emite o estado atual da luz assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: status (boolean): Devolve o estado atual da luz
+
+### Ligar / desligar a luz (modo simples)
+
+Para ligar ou desligar rapidamente uma luz no modo simples, transmita ao nó um objeto com o seguinte conteúdo:
+
+: payload (boolean): `true` liga a luz, `false` desliga-a
+
+### Comandos de luz (avançado)
+
+Para além de simplesmente ligar e desligar, existem muitas outras opções para controlar a luz. Todos os nós do HueMagic podem ser controlados com comandos aditivos. Isto significa que pode transmitir primeiro uma definição e depois outra num comando posterior sem descartar a definição anterior. Transmita os seguintes parâmetros num objeto `msg.payload` para efetuar definições mais amplas na luz:
+
+: on (boolean): `true` liga a luz, `false` desliga-a
+: toggle (boolean | any): Alterna entre ligar e desligar, consoante o estado anterior da luz
+: brightness (int | string): Valor percentual do brilho da luz (0-100) ou uma cadeia de carateres com o valor `auto` para definir automaticamente o brilho com base na hora atual
+: brightnessLevel (int): Valor numérico do brilho da luz (0-254)
+: incrementBrightness (int | boolean): Indica em quantos pontos percentuais a luz deve ficar mais clara, ou `true` para a aumentar em passos de 10 %
+: decrementBrightness (int | boolean): Indica em quantos pontos percentuais a luz deve ficar mais escura, ou `true` para a diminuir em passos de 10 %
+: color (string): `random` para definir uma cor aleatória ou um nome de cor em inglês (p. ex. `red`)
+: hex (string): Valor de cor em hexadecimal sob a forma de cadeia de carateres
+: rgb (array [0,0,0]): Valor de cor em formato RGB sob a forma de matriz
+: xyColor (object {x [float], y [float]}): Valor de cor no formato de cor XY sob a forma de objeto
+: gradient (object {hex […]}): Um objeto com um objeto de cor suportado (p. ex. `hex`, `rgb`, …) e várias cores para aplicar um gradiente às luzes compatíveis
+: mixColor (object): Uma cor a misturar com a cor de luz atual. Aceita objetos `color`, `hex`, `rgb` ou `xyColor` e, opcionalmente, `amount` (int) para indicar a proporção de mistura em percentagem
+: image (string): Caminho de uma imagem (local ou na web) para definir a cor atual da luz como a cor média da imagem
+: saturation (int): Percentagem da saturação da cor atual (beta)
+: colorTemp (int | string): Valor entre 153 e 500 para definir a temperatura de cor da luz, ou os valores `cold`, `normal`, `warm`, `hot` e `auto`, sendo que `auto` define a temperatura de cor com base na hora atual
+: incrementColorTemp (int | boolean): Valor que indica quanto a temperatura de cor deve ficar mais quente, ou `true` para a tornar mais quente em passos de 50
+: decrementColorTemp (int | boolean): Valor que indica quanto a temperatura de cor deve ficar mais fria, ou `true` para a tornar mais fria em passos de 50
+: transitionTime (float): Tempo de transição da definição atual em segundos. Se for indicado `0`, a luz muda de imediato para a definição pretendida. Se for indicado `3`, a luz muda para a definição pretendida com uma ligeira transição nos 3 segundos seguintes
+: colorloop (float): Reproduz uma animação «colorloop» durante os segundos indicados e volta depois ao estado original da luz
+: alert (float): Reproduz uma animação «alert» durante os segundos indicados e volta depois ao estado original da luz
+
+### Mensagens de estado do nó
+
+Assim que é detetada uma alteração nas definições da luz (quer através do Node-RED, quer externamente), o nó devolve a seguinte mensagem de estado:
+
+#### Objeto de estado em `msg.payload`
+
+: on (boolean): Estado da luz, em que `true` significa acesa e `false` apagada
+: brightness (int | boolean): Brilho atual em percentagem ou `false` se a luz não suportar definição de brilho
+: brightnessLevel (int | boolean): Brilho atual de 0 a 254 ou `false` se a luz não suportar definição de brilho
+: reachable (boolean | string): `true` se a luz estiver ligada ao bridge, `unknown` se o estado da ligação divergir
+: connectionStatus (string): O estado atual da ligação com o bridge sob a forma de uma cadeia de carateres. Pode conter `connected`, `disconnected`, `connectivity_issue` ou `unidirectional_incoming` como valor
+: rgb (array [int, int, int] | optional): Cor de luz atual sob a forma de valor RGB, se a luz conseguir apresentar cores
+: hex (string | optional): Cor de luz atual sob a forma de valor hexadecimal, se a luz conseguir apresentar cores
+: xyColor (object {x [float], y [float]} | optional): Cor de luz atual sob a forma de valor XY, se a luz conseguir apresentar cores
+: color (string | optional): Nome atual da cor em inglês, se a luz conseguir apresentar cores e a definição correspondente do nó estiver ativada
+: gradient (object | optional): Definição de gradiente atual com todas as unidades de cor disponíveis sob a forma de matriz, se a luz suportar gradientes, em que `colors` devolve as cores, `numColors` o número de cores definidas no gradiente e `totalColors` o número máximo de cores que o recurso consegue suportar no gradiente
+: colorTemp (int | boolean | optional): Temperatura de cor atual da luz, se a luz conseguir apresentar temperaturas de cor e tiver sido definida uma
+: colorTempName (string | optional): Temperatura de cor atual da luz sob a forma de cadeia descritiva com os valores `cold`, `normal`, `warm` ou `hot`, se a luz conseguir apresentar temperaturas de cor e tiver sido definida uma. Caso contrário, é emitido `unknown`
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+
+#### Informações sobre a luz em `msg.info`
+
+: id (string): Indica o novo ID da luz
+: idV1 (string | boolean): Indica o ID antigo da luz
+: uniqueId (string): O ID único da luz
+: deviceId (string): O ID único do dispositivo
+: name (string): O nome atualmente atribuído à luz
+: type (string): O tipo da luz (sempre `light`)
+: softwareVersion (string): O firmware atual da luz
+: model (object): Contém as informações de modelo da luz em `id`, `manufacturer`, `name`, `type`, `certified`, `friendsOfHue`, `colorGamut` e `colorGamutType`
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado da luz. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado da luz em `msg.lastState`
+
+Contém o objeto de estado completo (ver os valores de saída acima) do último estado antes da última alteração. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

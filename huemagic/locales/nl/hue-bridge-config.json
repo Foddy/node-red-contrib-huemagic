@@ -1,0 +1,40 @@
+{
+	"hue-bridge-config": {
+		"config": {
+			"name": "Naam",
+			"apikey": "API-sleutel",
+			"missing-ip": "IP van de Hue Bridge ontbreekt…",
+			"disable-events": "Gebeurtenissen uitschakelen",
+			"disable-events-info": "Gebeurtenissen op alle nodes uitschakelen",
+			"searching": "Zoeken naar Hue Bridges…",
+			"none-found": "Geen Hue Bridges gevonden!",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"invalid": "Sorry. De geselecteerde Hue Bridge is ongeldig: ",
+			"error-select-first": "Selecteer uw Hue Bridge voordat u een nieuwe gebruiker aanmaakt!",
+			"waiting": "wachten op de koppelknop…",
+			"new-user-press": "Druk nu op de knop van uw Hue Bridge om een nieuwe gebruiker aan te maken!",
+			"retry": "Geen druk op de knop gedetecteerd. Probeer het opnieuw…",
+			"success": "Gebruiker succesvol aangemaakt!",
+			"connecting": "Verbinden met de bridge…",
+			"autoupdates": "Automatische firmware-updates activeren",
+			"bridge-ip": "IP van de bridge",
+			"worker": "Workers"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"initializing": "Bridge initialiseren (__bridge__)…",
+			"connected": "Verbonden met de bridge",
+			"processing": "Bridge-bronnen verwerken…",
+			"initial-emit": "Eerste uitgifte van de brontoestanden…",
+			"keep-updated": "Nodes actueel houden…",
+			"subscribing": "Abonneren op bridge-gebeurtenissen…",
+			"unsubscribing": "Abonnement op bridge-gebeurtenissen opzeggen…",
+			"no-legacy-api": "De bridge antwoordt niet op de oude API, er wordt doorgegaan zonder de configuratie ervan…",
+			"request-error": "Fout bij het opvragen van informatie van de bridge (__error__)",
+			"connection-lost": "Verbinding met de bridge verbroken (__reason__). Nieuwe poging over __seconds__ seconden…",
+			"resources-changed": "De bronnen op de bridge zijn gewijzigd. Herladen…",
+			"not-connected": "De bridge is niet verbonden."
+		}
+	}
+}

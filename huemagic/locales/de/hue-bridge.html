@@ -27,7 +27,10 @@ Mit dem „fetch“-Befehl können Sie eine Liste von spezifischen Geräten ausg
 
 ### Hue Bridge Einstellungen ändern
 
-Mit dem folgenden Befehl können Sie spezifische Einstellungen auf der Bridge ändern. Bitte beachten Sie, dass das Ändern der Netzwerkeinstellungen die Neukonfiguration der Bridge auf HueMagic erfordert. Übergeben Sie das Objekt `msg.payload.settings` mit folgenden Einstellungsmöglichkeiten an den Node:
+Mit dem folgenden Befehl können Sie spezifische Einstellungen auf der Bridge ändern. Übergeben Sie das Objekt `msg.payload.settings` mit folgenden Einstellungsmöglichkeiten an den Node:
+
+> [!WARNING]
+> Das Ändern der Netzwerkeinstellungen erfordert die Neukonfiguration der Bridge auf HueMagic.
 
 : name (string) : Ändert den Namen der Bridge und muss mind. 4 bis max. 16 Zeichen enthalten
 : zigbeeChannel (int) : Ändert den aktuellen ZigBee-Kanal (entweder `11`, `15`, `20`, `25` oder `0`)
@@ -41,7 +44,7 @@ Mit dem folgenden Befehl können Sie spezifische Einstellungen auf der Bridge ä
 
 ### Statusnachrichten des Nodes
 
-Die Statusmittilungen des „Hue Bridge“-Nodes sind dynamisch. Sie folgen zwar einem bestimmten Muster, können aber in ihrer Ausgabe variieren, je nachdem welche Aktion auf dem Node gerade ausgeführt wurde.
+Die Statusmitteilungen des „Hue Bridge“-Nodes sind dynamisch. Sie folgen zwar einem bestimmten Muster, können aber in ihrer Ausgabe variieren, je nachdem welche Aktion auf dem Node gerade ausgeführt wurde.
 
 #### Statusobjekt unter `msg.payload`
 
@@ -60,7 +63,7 @@ Die Statusmittilungen des „Hue Bridge“-Nodes sind dynamisch. Sie folgen zwar
 : netmask (string) : Netzmaske der Bridge
 : gateway (string) : Gateway der Bridge
 : proxyAddress (string | boolean) : Aktuell verwendete Proxy-Adresse oder `false`
-: proxyPort (string) : Aktuell verwender Proxy-Port
+: proxyPort (string) : Aktuell verwendeter Proxy-Port
 : utcTime (string) : UTC-Zeit auf der Bridge
 : timeZone (string) : Aktuell eingestellte Zeitzone auf der Bridge
 : localTime (string) : Lokale Zeitzone
@@ -89,5 +92,5 @@ Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wi
 
 HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
 
-![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
+![examples](hue/assets/huemagic-examples.gif)
 </script>

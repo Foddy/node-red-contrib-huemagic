@@ -1,0 +1,150 @@
+[
+    {
+        "id": "b41c7d2ea9f30c15",
+        "type": "tab",
+        "label": "Hue Contact (example)",
+        "disabled": false,
+        "info": "Exemplo de utilização do nó «Hue Contact»"
+    },
+    {
+        "id": "6d2f0b9a4c8e1573",
+        "type": "comment",
+        "z": "b41c7d2ea9f30c15",
+        "name": "PRIMEIROS PASSOS (faça duplo clique)",
+        "info": "Clique no nó «Hue Contacto» e selecione na lista tanto o seu bridge como um sensor. Se ainda não tiver configurado um bridge, ser-lhe-á pedido que configure um antes de poder concluir a configuração do nó.\n\nAssim que o nó estiver ligado ao seu bridge e o sensor e tiver implementado as alterações no Node-RED, o nó pode receber e executar os seus comandos. O nó «Hue Contacto» emite além disso automaticamente uma mensagem sempre que o contacto do sensor no bridge é aberto ou fechado. Receberá o estado atualizado e toda a sua informação na mensagem emitida.\n\nSe pretender mais informações sobre este nó, os comandos possíveis e os valores de saída, clique nele uma vez no seu fluxo e navegue até ao ícone do livro do Node-RED (canto superior direito).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "0a7e35c1bd694f28",
+        "type": "debug",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Informação",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "3c8b17d0e5a94261",
+        "type": "comment",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Consultar o estado atual",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f59a2c7b8d031e46",
+        "type": "inject",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Estado",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "9e4d6a13f70c25b8"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "7b3e09fca1d54628",
+        "type": "comment",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Ligar / desligar o dispositivo",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "2f6c8b510ae9d374",
+        "type": "inject",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Ligar",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "9e4d6a13f70c25b8"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "8d51042fbe37c9a6",
+        "type": "inject",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Desligar",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "9e4d6a13f70c25b8"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "9e4d6a13f70c25b8",
+        "type": "hue-contact",
+        "z": "b41c7d2ea9f30c15",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "0a7e35c1bd694f28"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,148 @@
+[
+    {
+        "id": "f6ddc6bb.8646a8",
+        "type": "tab",
+        "label": "Hue Magic (example)",
+        "disabled": false,
+        "info": "Exemple d'utilisation du nœud « Hue Magic »"
+    },
+    {
+        "id": "652f80ad.692fe",
+        "type": "hue-magic",
+        "z": "f6ddc6bb.8646a8",
+        "name": "",
+        "endless": true,
+        "restore": false,
+        "preset": "",
+        "steps": "",
+        "x": 490,
+        "y": 160,
+        "wires": [
+            [
+                "f5819321.8928f8"
+            ]
+        ]
+    },
+    {
+        "id": "96c705ff.4785d",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Lancer l'animation",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "f5819321.8928f8",
+        "type": "hue-light",
+        "z": "f6ddc6bb.8646a8",
+        "colornamer": true,
+        "skipevents": false,
+        "initevents": false,
+        "x": 680,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7175f681.8ac4a8",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Arrêter l'animation",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 200,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "5b111243.1e472c",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Animation personnalisée",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":0}}]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-magic"
+    },
+    {
+        "id": "ea1b64ce5ba37564",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "PREMIERS PAS (double-cliquez ici)",
+        "info": "Cliquez sur le nœud « Hue Magic » et sélectionnez une animation prête à l'emploi dans la liste. Cliquez ensuite sur le nœud « Hue Lumière » pour choisir la lumière que le nœud « Hue Magic » doit animer. Si vous n'avez pas encore configuré de bridge, il vous sera demandé ici d'en configurer un avant de pouvoir terminer la configuration du nœud.\n\nDès que le nœud « Hue Magic » est relié au nœud « Hue Lumière » et que vous avez déployé les modifications dans Node-RED, le nœud peut recevoir et exécuter votre animation.\n\nSi vous souhaitez obtenir davantage d'informations sur ce nœud, les commandes possibles et les valeurs de sortie, cliquez une fois dessus dans votre flux et accédez à l'icône du livre de Node-RED (coin supérieur droit).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "b632a445364cbc5d",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Commandes de l'animation",
+        "info": "",
+        "x": 110,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "20cdbc9acd4ecf73",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Animation personnalisée",
+        "info": "",
+        "x": 110,
+        "y": 260,
+        "wires": []
+    }
+]

@@ -1,0 +1,36 @@
+{
+	"hue-motion": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"universalevents": "Evrensel olaylar",
+			"universalevents-node": "Aynı türdeki diğer düğümlerin tüm mesajlarını alır (yalnızca evrensel modda)",
+			"input-name": "Sensör adı",
+			"searching": "Hareket sensörleri aranıyor…",
+			"none-found": "Hiç hareket sensörü bulunamadı!",
+			"sensor": "Sensör"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"not-reachable": "erişilemiyor",
+			"activated": "etkin",
+			"deactivated": "devre dışı",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Hareket",
+			"motion": "hareket algılandı",
+			"no-motion": "hareket yok",
+			"input": "etkinleştir / devre dışı bırak / durum",
+			"output": "hareket algılandı",
+			"error-no-id": "Lütfen geçerli bir sensör kimliği girin.",
+			"error-not-available": "Sensör henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin.",
+			"error-no-sensitivity": "Bu hareket kaynağının ayarlanabilir bir hassasiyeti yok.",
+			"error-invalid-sensitivity": "Geçersiz hassasiyet. Yalnızca 0 ile __max__ arasındaki değerlere izin verilir."
+		}
+	}
+}

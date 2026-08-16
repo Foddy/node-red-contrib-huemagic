@@ -1,0 +1,40 @@
+{
+	"hue-bridge-config": {
+		"config": {
+			"name": "Name",
+			"apikey": "API Key",
+			"missing-ip": "Missing Hue Bridge IP…",
+			"disable-events": "Disable events",
+			"disable-events-info": "Disable events on all nodes",
+			"searching": "Searching for Hue Bridges…",
+			"none-found": "No Hue Bridges found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"invalid": "Sorry. Your selected Hue Bridge is invalid: ",
+			"error-select-first": "Please select your Hue Bridge before trying to create a new user!",
+			"waiting": "waiting for the link button…",
+			"new-user-press": "Please press the button on your Hue Bridge now to create a new user!",
+			"retry": "No button press detected. Please retry…",
+			"success": "User created successfully!",
+			"connecting": "Connecting with the bridge…",
+			"autoupdates": "Activate automatic firmware updates",
+			"bridge-ip": "Bridge IP",
+			"worker": "Worker"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"statusmsg": "Status queried successfully…",
+			"initializing": "Initializing the bridge (__bridge__)…",
+			"connected": "Connected to bridge",
+			"processing": "Processing bridge resources…",
+			"initial-emit": "Initial emit of resource states…",
+			"keep-updated": "Keeping nodes up-to-date…",
+			"subscribing": "Subscribing to bridge events…",
+			"unsubscribing": "Unsubscribing from bridge events…",
+			"no-legacy-api": "The bridge does not answer on the legacy API, continuing without its configuration…",
+			"request-error": "Error requesting info from the bridge (__error__)",
+			"connection-lost": "Connection to the bridge lost (__reason__). Trying to reconnect in __seconds__ seconds…",
+			"resources-changed": "Resources on the bridge have changed. Reloading…",
+			"not-connected": "The bridge is not connected."
+		}
+	}
+}

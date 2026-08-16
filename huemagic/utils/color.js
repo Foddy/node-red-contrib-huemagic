@@ -1,13 +1,18 @@
 // EXTERNAL HELPERS
 const colornames = require("colornames");
 const colornamer = require('color-namer');
-const getColors = require('get-image-colors');
+
+// LOADED ON DEMAND, IT PULLS IN A LARGE DEPENDENCY TREE
+function getColors(...args)
+{
+	return require('get-image-colors')(...args);
+}
 
 // RGB -> XY
 function rgbToXy(red, green, blue, gamut = null)
 {
 	var colorGamut = { red: [1.0, 0], green: [0.0, 1.0], blue: [0.0, 0.0] };
-	if(!!gamut)
+	if(!!gamut && !!gamut.red && !!gamut.green && !!gamut.blue)
 	{
 		colorGamut = { red: [gamut.red.x, gamut.red.y], green: [gamut.green.x, gamut.green.y], blue: [gamut.blue.x, gamut.blue.y] };
 	}
@@ -34,7 +39,17 @@ function rgbToXy(red, green, blue, gamut = null)
 		xy = _getClosestColor(xy, colorGamut);
 	}
 
+	// THE BRIDGE REJECTS ANYTHING OUTSIDE 0…1 WITH A 400
+	xy.x = _clampToColorSpace(xy.x);
+	xy.y = _clampToColorSpace(xy.y);
+
 	return xy;
+}
+
+function _clampToColorSpace(value)
+{
+	if(isNaN(value)) { return 0; }
+	return (value < 0) ? 0 : ((value > 1) ? 1 : value);
 }
 
 function _getGammaCorrectedValue(value)
@@ -152,6 +167,9 @@ function _getClosestPoint(xy, pointA, pointB)
 	let a2bSqr = Math.pow(a2b[0],2) + Math.pow(a2b[1],2);
 	let xy2a_dot_a2b = xy2a[0] * a2b[0] + xy2a[1] * a2b[1];
 	let t = xy2a_dot_a2b /a2bSqr;
+
+	// STAY ON THE EDGE OF THE GAMUT, NOT ON THE INFINITE LINE BEHIND IT
+	t = (t < 0) ? 0 : ((t > 1) ? 1 : t);
 
 	return {
 		x: pointA.x + a2b[0] * t,

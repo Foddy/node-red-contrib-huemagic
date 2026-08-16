@@ -1,0 +1,32 @@
+{
+	"hue-scene": {
+		"config": {
+			"name": "Nombre",
+			"input-name": "Nombre de la escena",
+			"skipevents-node": "Omitir los mensajes del nodo",
+			"sendinitevents-node": "No suprimir el evento de inicialización",
+			"searching": "Buscando escenas…",
+			"none-found": "¡No se ha encontrado ninguna escena!",
+			"unknown-error": "Algo ha salido mal. Inténtelo de nuevo.",
+			"scene": "Escena",
+			"group": "Grupo",
+			"group-none-found": "¡No se ha encontrado ningún grupo!",
+			"group-searching": "Buscando grupos…",
+			"groups-all": "Todos los grupos / luces",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Escena",
+			"not-configured": "sin configurar",
+			"recalled": "escena activada",
+			"recalled-on-group": "escena activada en el grupo",
+			"no-id": "Sin ID de escena.",
+			"input": "activar escena",
+			"output": "grupo(s) de destino",
+			"command": "ejecutando comando…",
+			"statusmsg": "Activando la escena…",
+			"error-not-available": "La escena aún no está disponible. Espere hasta que HueMagic haya establecido la conexión con el bridge o compruebe si el ID del recurso indicado en la configuración es válido.",
+			"error-invalid-brightness": "Ajuste de brillo no válido. Solo se permite de 0 a 100 por ciento."
+		}
+	}
+}

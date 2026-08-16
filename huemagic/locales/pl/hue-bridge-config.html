@@ -1,0 +1,31 @@
+<script type="text/markdown" data-help-name="hue-bridge">
+Łączy się z mostkiem Philips Hue Bridge.
+
+### Nazwa
+
+Możesz nadać bridge własną nazwę wewnętrzną albo zachować nazwę domyślną.
+
+### Adres IP i port bridge
+
+Wpisz adres IP Hue Bridge ręcznie albo naciśnij przycisk, aby wyświetlić wszystkie dostępne lokalnie mostki (zalecana jest statyczna konfiguracja IP na Hue Bridge). Opcjonalnie możesz też określić inny port, dopisując dwukropek do adresu IP.
+
+### Klucz API
+
+Wpisz klucz API Hue Bridge ręcznie albo naciśnij przycisk, aby utworzyć nowy klucz. Aby utworzyć nowy klucz, w ciągu 20 sekund naciśnij fizyczny przycisk na bridge, co zakończy proces.
+
+### Procesy robocze
+
+Wartość „Procesy robocze” określa, ile równoległych poleceń HueMagic może wysyłać do bridge jednocześnie. Zgodnie z oficjalną dokumentacją Philips Hue Bridge nie należy wysyłać więcej niż 10 poleceń na sekundę, w przeciwnym razie bridge może nie nadążyć z przetwarzaniem żądań i zwróci błędy.
+
+Jeśli jednocześnie zostanie wysłanych więcej poleceń niż ustawiona tu wartość, HueMagic wykona je po kolei, gdy tylko przepustowość znów na to pozwoli.
+
+Ustaw wartość poniżej 10 (np. od 4 do 7), jeśli wysyłasz polecenia do bridge również poza HueMagic, aby zachować zalecaną przez Philips Hue przepustowość poleceń na sekundę.
+
+### Automatyczne aktualizacje oprogramowania układowego
+
+HueMagic okresowo sprawdza dostępność aktualizacji oprogramowania układowego Philips Hue i instaluje je automatycznie, gdy są dostępne. Możesz wyłączyć to zachowanie, klikając odpowiednie pole wyboru.
+
+### Wyłączanie powiadomień
+
+Po włączeniu tego ustawienia wszystkie węzły powiązane z tym bridge przestaną otrzymywać automatyczne komunikaty stanu.
+</script>

@@ -1,0 +1,378 @@
+[
+    {
+        "id": "c93b5e7af2ab6d48",
+        "type": "tab",
+        "label": "Hue Sync Box (example)",
+        "disabled": false,
+        "info": "Przykładowe użycie węzła „Hue Sync Box”"
+    },
+    {
+        "id": "c1c6029d8e5f2317",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "PIERWSZE KROKI (kliknij dwukrotnie)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Kliknij węzeł „Hue Sync Box” i skonfiguruj swój sync box. Urządzenie nie jest połączone z Twoim Hue Bridge, lecz korzysta z własnego lokalnego API, dlatego wymaga osobnej konfiguracji z własnym tokenem dostępu.\n\nWpisz adres IP swojego sync box i kliknij przycisk obok pola tokenu dostępu. Następnie przytrzymaj przycisk na sync box, aż dioda zamiga na zielono. HueMagic przez minutę odpytuje urządzenie i zapisuje token, gdy tylko ono odpowie.\n\nPonieważ sync box nie wysyła swojego stanu samodzielnie, HueMagic pyta o niego co kilka sekund. Częstotliwość możesz zmienić w konfiguracji sync box.\n\nJeśli chcesz uzyskać więcej informacji o tym węźle, dostępnych poleceniach i wartościach wyjściowych, kliknij go raz w swoim przepływie i przejdź do ikony książki Node-RED (prawy górny róg)."
+    },
+    {
+        "id": "d2d713ae9f603428",
+        "type": "debug",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Informacja",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3e824bf0a714539",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Odczytaj bieżący stan",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4f935c01b825664a",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Stan",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c5a146d12c936750",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Włącz / wyłącz sync box",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i6b257e23d047861b",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Włącz",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i7c368f34e158972c",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Wyłącz",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i8d479045f269a83d",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Przełącz synchronizację",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "c9e58a156037b94e",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Wybierz tryb synchronizacji",
+        "x": 120,
+        "y": 400,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iaf69b267148ac05f",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Video",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"video\",\"intensity\":\"high\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-film"
+    },
+    {
+        "id": "iba7ac378259bd160",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Gra",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"game\",\"intensity\":\"intense\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-gamepad"
+    },
+    {
+        "id": "icb8bd489360ce271",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Muzyka",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"music\",\"intensity\":\"moderate\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-music"
+    },
+    {
+        "id": "idc9ce59a471df382",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Tylko przekazywanie obrazu",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"passthrough\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-television"
+    },
+    {
+        "id": "cedadf6ab582e0493",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Jasność i wejście",
+        "x": 120,
+        "y": 620,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "ifebea7bc693f1504",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Jasność 70 %",
+        "x": 110,
+        "y": 660,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":70}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "i0fcfb8cd7a402615",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Przyciemnij o 20 %",
+        "x": 110,
+        "y": 700,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":20}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "i10d0c9de8b513726",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Przełącz na HDMI 2",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":2}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-plug"
+    },
+    {
+        "id": "s6a046b12c935d75b",
+        "type": "hue-syncbox",
+        "z": "c93b5e7af2ab6d48",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2d713ae9f603428"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

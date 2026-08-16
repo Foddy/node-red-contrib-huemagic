@@ -1,0 +1,37 @@
+{
+	"hue-brightness": {
+		"config": {
+			"name": "Nom",
+			"skipevents-node": "Ignorer les messages du nœud",
+			"sendinitevents-node": "Ne pas supprimer l'événement d'initialisation",
+			"onlycommands-node": "Signaler uniquement après une commande",
+			"unknown-error": "Une erreur est survenue. Veuillez réessayer.",
+			"bridge": "Bridge",
+			"universalevents": "Événements universels",
+			"universalevents-node": "Reçoit tous les messages des autres nœuds du même type (uniquement en mode universel)",
+			"input-name": "Nom du capteur de luminosité",
+			"searching": "Recherche de capteurs…",
+			"none-found": "Aucun capteur de luminosité trouvé !",
+			"sensor": "Capteur",
+			"all": "Tous les groupes / lumières",
+			"darkthreshold": "Sombre en dessous de"
+		},
+		"node": {
+			"not-configured": "non configuré",
+			"deactivated": "désactivé",
+			"init": "initialisation…",
+			"not-reachable": "non joignable",
+			"universal": "mode universel",
+			"command": "exécution de la commande…",
+			"statusmsg": "Statut interrogé avec succès…",
+			"title": "Hue Luminosité",
+			"lux": "__lux__ lux",
+			"lux-dark": "__lux__ lux (sombre)",
+			"lux-daylight": "__lux__ lux (lumière du jour)",
+			"input": "interrogation du statut",
+			"output": "luminosité (modifiée)",
+			"error-no-id": "Veuillez indiquer un ID de capteur valide.",
+			"error-not-available": "Le capteur n'est pas encore disponible. Veuillez attendre que HueMagic ait établi la connexion avec le bridge ou vérifiez si l'ID de ressource indiqué dans la configuration est valide."
+		}
+	}
+}

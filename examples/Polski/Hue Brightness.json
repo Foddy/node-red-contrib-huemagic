@@ -1,0 +1,150 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Brightness (example)",
+        "disabled": false,
+        "info": "Przykładowe użycie węzła „Hue Brightness”"
+    },
+    {
+        "id": "bc4daa7a.ddc16",
+        "type": "hue-brightness",
+        "z": "d081bb24.81a8d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "4cf0eb6d2a66fd14"
+            ]
+        ]
+    },
+    {
+        "id": "6a8f3df98e7625b8",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "PIERWSZE KROKI (kliknij dwukrotnie)",
+        "info": "Kliknij węzeł „Hue Jasność” i wybierz z listy zarówno swój bridge, jak i czujnik. Jeśli nie masz jeszcze skonfigurowanego bridge, zostaniesz poproszony o jego konfigurację, zanim dokończysz ustawienia węzła.\n\nGdy węzeł będzie połączony z Twoim bridge oraz czujnikiem, a zmiany zostaną wdrożone w Node-RED, węzeł będzie mógł odbierać i wykonywać Twoje polecenia. Węzeł „Hue Jasność” dodatkowo automatycznie wysyła komunikat za każdym razem, gdy stan czujnika na bridge zostanie zaktualizowany (zarejestrowano nowy poziom oświetlenia). Zaktualizowany stan wraz ze wszystkimi informacjami otrzymasz w wysyłanym komunikacie.\n\nJeśli chcesz uzyskać więcej informacji o tym węźle, dostępnych poleceniach i wartościach wyjściowych, kliknij go raz w swoim przepływie i przejdź do ikony książki Node-RED (prawy górny róg).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "4cf0eb6d2a66fd14",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Informacja",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "433f55c9fedd4e3b",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Odczytaj bieżący stan",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88b02ac839431cc1",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Stan",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "bd060e6399f15f95",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Włącz / wyłącz urządzenie",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "15c9417b8ed13b49",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Włącz",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "89e7bcee38350561",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Wyłącz",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    }
+]

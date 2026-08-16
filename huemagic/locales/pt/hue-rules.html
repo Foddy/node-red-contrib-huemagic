@@ -1,0 +1,69 @@
+<script type="text/markdown" data-help-name="hue-rules">
+O nó «Hue Regra» pode ativar ou desativar as regras guardadas no bridge e consultar as respetivas definições.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todas as regras disponíveis. Se já souber o ID da regra, também o pode introduzir aqui manualmente. Em alternativa, pode atribuir um novo nome ou manter o nome predefinido da regra. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». O nó deixará de emitir atualizações. Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+Se não selecionar nenhuma regra e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo. Também pode aplicar definições no modo universal a uma regra específica, transmitindo o respetivo ID como cadeia de carateres em `msg.topic` juntamente com as suas definições.
+
+### Consultar propriedades e definições
+
+Emite as propriedades atuais da regra assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: status (boolean): Devolve o estado atual da regra
+
+### Ativar / desativar a regra
+
+A regra pode ser ativada e desativada sempre que necessário. Se a regra estiver desativada, deixa de ser executada no bridge até a reativar. Para tal, transmita um objeto com o seguinte conteúdo:
+
+: payload (boolean): `true` ativa a regra, `false` desativa-a
+
+### Mensagens de estado do nó
+
+Assim que o estado (ativada / desativada) de uma regra muda, o nó devolve a seguinte mensagem de estado:
+
+#### Objeto de estado em `msg.payload`
+
+: enabled (boolean): Indica se a regra está ativada ou desativada
+: triggered (string): Momento da última execução (ISO 8601)
+
+#### Informações sobre a regra em `msg.info`
+
+: id (string): O ID único da regra
+: created (string): Data de criação da regra (ISO 8601)
+: name (string): Nome da regra no bridge
+: timesTriggered (int): Número de vezes que a regra foi executada no bridge
+: owner (string): ID do proprietário desta regra
+: status (string): Estado da regra sob a forma de cadeia de carateres
+
+#### Condições da regra em `msg.conditions` (matriz)
+
+: address (string): Caminho para um atributo de um sensor
+: operator (string): Operador
+: value (string): O valor a verificar
+
+#### Ações da regra em `msg.actions` (matriz)
+
+: address (string): O endereço de destino do recurso
+: method (string): O método do pedido
+: body (object): A ação a executar
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado da regra. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado da regra em `msg.lastState`
+
+Contém o objeto completo (ver os valores de saída acima) do último estado antes da última alteração registada da regra. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

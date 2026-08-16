@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Włącz nazywanie kolorów",
+			"input-name": "Nazwa światła",
+			"searching": "Wyszukiwanie świateł…",
+			"none-found": "Nie znaleziono żadnego światła!",
+			"light": "Światło"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"init": "inicjalizacja…",
+			"not-reachable": "nieosiągalny",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Światło",
+			"turned-on": "włączone",
+			"turned-on-percent": "włączone (__percent__ %)",
+			"turned-off": "wyłączone",
+			"error-no-id": "Nie podano identyfikatora światła. Zajrzyj do dokumentacji.",
+			"error-input": "błąd danych wejściowych",
+			"error-invalid-temp": "Nieprawidłowa temperatura barwowa. Dozwolone są tylko wartości od 153 do 500.",
+			"input": "włącz / wyłącz",
+			"output": "stan",
+			"error-not-available": "Światło nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy.",
+			"error-invalid-brightness": "Nieprawidłowe ustawienie jasności. Dozwolone są tylko wartości od 0 do 100 procent.",
+			"error-invalid-brightness-level": "Nieprawidłowe ustawienie jasności. Dozwolone są tylko wartości od 0 do 254.",
+			"error-invalid-sat": "Nieprawidłowe ustawienie nasycenia. Dozwolone są tylko wartości od 0 do 100.",
+			"error-no-colorloop": "Efekt colorloop nie jest dostępny dla tego światła.",
+			"error-invalid-effect": "Nieprawidłowy efekt. To światło obsługuje: __effects__",
+			"error-invalid-powerup": "Nieprawidłowe ustawienie po włączeniu zasilania. Dozwolone ustawienia to: __presets__"
+		}
+	}
+}

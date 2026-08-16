@@ -1,0 +1,87 @@
+<script type="text/markdown" data-help-name="hue-group">
+Il nodo «Hue Gruppo» può controllare contemporaneamente più luci raccolte in un gruppo sul bridge.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutti i gruppi disponibili. Se conosce già l'ID di un gruppo, può anche inserirlo qui manualmente. Può assegnare internamente un nuovo nome al gruppo oppure mantenere quello predefinito. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». Il nodo non emetterà più aggiornamenti. In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Attivando questa impostazione riceverà un messaggio di stato del gruppo selezionato dopo ogni deploy. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+Se non seleziona alcun gruppo e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo. Può anche applicare impostazioni in modalità universale a un gruppo specifico trasmettendo il relativo ID come stringa in `msg.topic` insieme alle sue impostazioni.
+
+### Richiedere lo stato
+
+Emette lo stato attuale del gruppo non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.
+
+: status (boolean): Restituisce lo stato attuale del gruppo
+
+### Accendere / spegnere (modalità semplice)
+
+Per accendere o spegnere rapidamente un intero gruppo in modalità semplice, trasmetta al nodo un oggetto con il seguente contenuto.
+
+: payload (boolean): `true` accende l'intero gruppo, `false` lo spegne
+
+### Comandi gruppo (esteso)
+
+Oltre al semplice accendere e spegnere, sono disponibili molte altre opzioni per controllare il gruppo. Tutti i nodi di HueMagic possono essere controllati con comandi additivi. Ciò significa che può trasmettere prima un'impostazione e poi un'altra in un comando successivo senza annullare quella precedente. Trasmetta i seguenti parametri in un oggetto `msg.payload` per effettuare impostazioni più estese sul gruppo:
+
+: on (boolean): `true` accende l'intero gruppo, `false` lo spegne
+: toggle (boolean | any): Alterna tra accensione e spegnimento, a seconda dello stato precedente del gruppo
+: brightness (int | string): Valore percentuale della luminosità (0-100) oppure una stringa con il valore `auto` per impostare automaticamente la luminosità in base all'ora attuale
+: brightnessLevel (int): Valore numerico della luminosità della luce (0-254)
+: incrementBrightness (int): Valore percentuale di una variazione relativa della luminosità. L'intervallo valido va da -100 % a +100 %. I valori positivi aumentano la luminosità. Il valore predefinito è +10 %
+: decrementBrightness (int): Valore percentuale di una variazione relativa della luminosità. L'intervallo valido va da -100 % a +100 %. I valori positivi riducono la luminosità. Il valore predefinito è +10 %
+: color (string): `random` per impostare un colore casuale oppure un nome di colore in inglese (ad es. `red`)
+: hex (string): Valore di colore esadecimale sotto forma di stringa
+: rgb (array [0,0,0]): Valore di colore in formato RGB sotto forma di array
+: xyColor (object {x [float], y [float]}): Valore di colore nel formato XY sotto forma di oggetto
+: image (string): Percorso di un'immagine (locale o sul web) per impostare il colore attuale del gruppo sul colore medio dell'immagine
+: colorTemp (int | string): Valore compreso tra 153 e 500 per impostare la temperatura di colore del gruppo, oppure i valori `cold`, `normal`, `warm`, `hot` e `auto`, dove `auto` imposta la temperatura di colore in base all'ora attuale
+: transitionTime (float): Tempo di transizione dell'impostazione attuale in secondi. Se viene trasmesso `0`, il gruppo passa subito all'impostazione desiderata. Se trasmette `3`, il gruppo passa all'impostazione desiderata con una leggera transizione nei 3 secondi successivi
+: colorloop (float): Riproduce un'animazione «colorloop» per la durata indicata in secondi e poi ripristina lo stato originale del gruppo
+: alert (float): Riproduce un'animazione «alert» per la durata indicata in secondi e poi ripristina lo stato originale del gruppo
+
+### Messaggi di stato del nodo
+
+Quando viene rilevata una modifica nel gruppo, il nodo restituisce il seguente messaggio di stato.
+
+> [!NOTE]
+> Il gruppo emette messaggi di stato solo quando viene spenta l'ultima luce oppure quando viene accesa la prima (se prima erano tutte spente).
+
+A differenza del nodo «Hue Luce», qui dispone di molte meno informazioni di stato, poiché un gruppo può contenere molti tipi di dispositivo diversi con valori che non possono essere combinati.
+
+#### Oggetto di stato in `msg.payload`
+
+: on (boolean): Stato del gruppo, dove `true` significa acceso e `false` spento
+: brightness (float | boolean): Luminosità del gruppo in percentuale oppure `false` se il gruppo non è dimmerabile
+: brightnessLevel (int | boolean): Luminosità del gruppo come valore numerico (0-254) oppure `false` se il gruppo non è dimmerabile
+: rgb (array [0,0,0]): Colore attuale del gruppo in formato RGB (solo se disponibile)
+: hex (string): Colore attuale del gruppo in formato esadecimale (solo se disponibile)
+: xyColor (object {x [float], y [float]}): Colore attuale del gruppo nel formato XY (solo se disponibile)
+: colorTemp (int): Temperatura di colore attualmente impostata per il gruppo (solo se disponibile)
+: updated (string): Momento dell'ultimo aggiornamento della risorsa da parte di HueMagic (ISO 8601)
+
+#### Informazioni sul gruppo in `msg.info`
+
+: id (string): Indica il nuovo ID del gruppo
+: idV1 (string | boolean): Indica il vecchio ID del gruppo
+: name (string): Il nome attualmente assegnato al gruppo
+: resources (object) : Contiene tutti i dispositivi e le risorse dietro il gruppo
+: type (string): Il tipo di gruppo (sempre `group`)
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato del gruppo. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato della luce in `msg.lastState`
+
+Contiene l'oggetto di stato completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

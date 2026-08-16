@@ -1,0 +1,123 @@
+<script type="text/x-red" data-template-name="hue-syncbox-config">
+	<div class="form-row">
+		<label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-syncbox-config.config.name"></span></label>
+		<input type="text" id="node-config-input-name" style="width: calc(100% - 105px)">
+	</div>
+	<div class="form-row">
+		<label for="node-config-input-syncbox"><i class="fa fa-television"></i> <span data-i18n="hue-syncbox-config.config.syncbox-ip"></span></label>
+		<input type="text" id="node-config-input-syncbox" placeholder="X.X.X.X" style="width: calc(100% - 105px)">
+	</div>
+	<div class="form-row">
+		<label for="node-config-input-token"><i class="fa fa-key"></i> <span data-i18n="hue-syncbox-config.config.token"></span></label>
+		<div style="display: inline-flex; width: calc(100% - 105px)">
+			<div style="flex-grow: 1;">
+				<input type="text" id="node-config-input-token" style="width: 100%"/>
+			</div>
+			<button id="node-config-input-register-syncbox" type="button" class="red-ui-button" style="margin-left: 10px;">
+				<i class="fa fa-user-circle-o"></i>
+			</button>
+		</div>
+	</div>
+	<div class="form-row">
+		<label for="node-config-input-pollinterval"><i class="fa fa-refresh"></i> <span data-i18n="hue-syncbox-config.config.pollinterval"></span></label>
+		<input type="number" id="node-config-input-pollinterval" placeholder="10" min="2" style="width: calc(100% - 105px)">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType("hue-syncbox-config", {
+		category: "config",
+		color: '#c7d8d8',
+		defaults: {
+			name: { value:"Hue Sync Box", required: true },
+			syncbox: { value:"", required: true },
+			token: { value:"", required: true },
+			pollinterval: { value: 10, required: true, validate: function(v) {
+				return (!isNaN(v) && v >= 2);
+			}}
+		},
+		icon: "hue-syncbox.svg",
+		label: function() {
+			return this.name;
+		},
+		paletteLabel: function() {
+			return this._("hue-syncbox-config.node.title");
+		},
+		oneditprepare: function()
+		{
+			const scope = this;
+
+			// CHANGED IP? -> GET NAME (IF POSSIBLE)
+			$(document).off('change', '#node-config-input-syncbox');
+			$(document).on('change', '#node-config-input-syncbox', function(e)
+			{
+				let currentIP = $(e.currentTarget).val();
+				if(currentIP.length > 3)
+				{
+					var notification = RED.notify(scope._("hue-syncbox-config.config.connecting"), { type: "compact", modal: true, fixed: true });
+
+					$.ajax({
+						url: 'hue/syncbox/name',
+						type: "GET",
+						data: { ip: currentIP },
+						timeout: 5000
+					})
+					.done( function(data)
+					{
+						$('#node-config-input-name').val(data);
+						setTimeout(function() { notification.close(); }, 500);
+					})
+					.fail(function(err)
+					{
+						notification.close();
+						RED.notify(scope._("hue-syncbox-config.config.invalid") + err.statusText, "error");
+					});
+				}
+			});
+
+			$('#node-config-input-register-syncbox').click(function()
+			{
+				if(!$('#node-config-input-syncbox').val())
+				{
+					RED.notify(scope._("hue-syncbox-config.config.error-select-first"), "error");
+					return false;
+				}
+
+				$('#node-config-input-token').val("");
+				$('#node-config-input-token').attr("placeholder", scope._("hue-syncbox-config.config.waiting"));
+
+				RED.notify(scope._("hue-syncbox-config.config.new-user-press"));
+
+				// KEEP ASKING THE BOX UNTIL THE BUTTON HAS BEEN PRESSED
+				var attempt = 0;
+				var register = function()
+				{
+					attempt += 1;
+
+					$.get('hue/syncbox/register', { ip: $('#node-config-input-syncbox').val() } )
+					.done( function(data)
+					{
+						if(data == "error")
+						{
+							if(attempt < 30) { return setTimeout(register, 2000); }
+
+							RED.notify(scope._("hue-syncbox-config.config.retry"), "error");
+							$('#node-config-input-token').attr("placeholder", "");
+						}
+						else
+						{
+							var registration = JSON.parse(data);
+							$('#node-config-input-token').val(registration.accessToken);
+							RED.notify(scope._("hue-syncbox-config.config.success"));
+						}
+					}).fail(function(err)
+					{
+						RED.notify(err.responseText, "error");
+					});
+				}
+
+				register();
+			});
+		}
+	});
+</script>

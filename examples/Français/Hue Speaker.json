@@ -1,0 +1,274 @@
+[
+    {
+        "id": "a71f3c58d0e94b26",
+        "type": "tab",
+        "label": "Hue Speaker (example)",
+        "disabled": false,
+        "info": "Exemple d'utilisation du nœud « Hue Speaker »"
+    },
+    {
+        "id": "c1a4e07b6d3f8215",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "PREMIERS PAS (double-cliquez ici)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Cliquez sur le nœud « Hue Haut-parleur » et sélectionnez dans la liste à la fois votre bridge et un haut-parleur. Si vous n'avez pas encore configuré de bridge, il vous sera demandé d'en configurer un avant de pouvoir terminer la configuration du nœud.\n\nDès que le nœud est relié à votre bridge et le haut-parleur et que vous avez déployé les modifications dans Node-RED, le nœud peut recevoir et exécuter vos commandes. Le nœud « Hue Haut-parleur » émet en outre automatiquement un message chaque fois que le haut-parleur commence ou cesse de jouer un son. Vous recevrez le statut actualisé et toutes ses informations dans le message émis.\n\nLes sons réellement connus de votre appareil sont listés sous msg.info.sounds. Notez que le bridge signale le dernier son joué et ne le réinitialise que bien après la fin de la lecture.\n\nSi vous souhaitez obtenir davantage d'informations sur ce nœud, les commandes possibles et les valeurs de sortie, cliquez une fois dessus dans votre flux et accédez à l'icône du livre de Node-RED (coin supérieur droit)."
+    },
+    {
+        "id": "d2b5f18c7e4a9306",
+        "type": "debug",
+        "z": "a71f3c58d0e94b26",
+        "name": "Informations",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3c6028d8f5b0417",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Interroger le statut actuel",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4d7139e90a6c1528",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Statut",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6f935b12c8e3740",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Faire sonner la sonnette",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7a046c23d9f4851a",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Carillon classique",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":\"ding_dong_classic\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell"
+    },
+    {
+        "id": "i8b157d34ea05962b",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Carillon à 50 % de volume",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":{\"sound\":\"westminster_classic\",\"volume\":50}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell-o"
+    },
+    {
+        "id": "c9c268e45fb16a73",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "L'utiliser comme sirène",
+        "x": 120,
+        "y": 360,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iad379f56a0c27b84",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Alarme pendant 10 secondes",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":{\"sound\":\"siren\",\"volume\":100,\"duration\":10}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "ibe48a067b1d38c95",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Arrêter l'alarme",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-stop"
+    },
+    {
+        "id": "ccf59b178c2e49a6",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Mettre le haut-parleur en sourdine",
+        "x": 120,
+        "y": 500,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "id6a0c289d3f5ab07",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Mettre en sourdine",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-off"
+    },
+    {
+        "id": "ie7b1d39ae406bc18",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Réactiver le son",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-up"
+    },
+    {
+        "id": "s5e824af01b7d2639",
+        "type": "hue-speaker",
+        "z": "a71f3c58d0e94b26",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2b5f18c7e4a9306"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

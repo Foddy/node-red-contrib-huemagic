@@ -1,0 +1,26 @@
+{
+	"hue-bridge": {
+		"config": {
+			"name": "Naam",
+			"input-name": "Naam van de Hue Bridge",
+			"skipglobalevents-info": "Globale apparaatupdates en -berichten op deze node overslaan",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"not-configured": "niet geconfigureerd",
+			"connecting": "verbinden…",
+			"connected": "verbonden",
+			"starting-tl": "TouchLink starten…",
+			"started-tl": "TouchLink gestart…",
+			"f-resources": "bronnen ophalen…",
+			"updating-settings": "instellingen bijwerken…",
+			"settings-updated": "instellingen bijgewerkt",
+			"input": "instellingen / ophalen",
+			"output": "bridge-informatie",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"error-not-available": "De bridge is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt."
+		}
+	}
+}

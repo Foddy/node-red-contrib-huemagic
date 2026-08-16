@@ -1,0 +1,176 @@
+[
+    {
+        "id": "b82a4d69e1fa5c37",
+        "type": "tab",
+        "label": "Hue Automation (example)",
+        "disabled": false,
+        "info": "«Hue Automation» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "c1b5f18c7d4e9206",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "«Hue Otomasyon» düğümüne tıklayın ve listeden hem bridge'inizi hem de bir otomasyon seçin. Henüz bir bridge kurmadıysanız, düğümün yapılandırmasını tamamlayabilmeniz için önce bir bridge kurmanız istenir.\n\nBurada seçebileceğiniz otomasyonlar, Philips Hue uygulamasında oluşturduklarınızdır; örneğin bir uyandırma ışığı ya da eve geliş rutini. HueMagic bunları etkinleştirip devre dışı bırakabilir; böylece akışlarınız bir rutinin ne zaman çalışacağına karar verebilir.\n\nDüğüm bağlandığında ve değişiklikleri Node-RED'de dağıttığınızda, düğüm otomasyon her değiştiğinde otomatik olarak bir mesaj verir. Güncellenen durumu ve tüm bilgilerini yayınlanan mesajda alırsınız.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında daha fazla bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe)."
+    },
+    {
+        "id": "d2c6027d8e5f1317",
+        "type": "debug",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Bilgi",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3d7138e9f602428",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Güncel durumu sorgula",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4e8249f0a713b539",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Durum",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6a04b12c935d75b",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Otomasyonu etkinleştir / devre dışı bırak",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7b15c23d0a46e86c",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Etkinleştir",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i8c26d34e1b57f97d",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Devre dışı bırak",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i9d37e45f2c680a8e",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Geçiş yap",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "s5f935a01b824c64a",
+        "type": "hue-automation",
+        "z": "b82a4d69e1fa5c37",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2c6027d8e5f1317"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

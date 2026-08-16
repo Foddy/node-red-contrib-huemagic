@@ -1,0 +1,67 @@
+<script type="text/markdown" data-help-name="hue-contact">
+O nó «Hue Contacto» indica se um sensor de contacto (p. ex. Hue Secure) está atualmente aberto ou fechado.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todos os sensores disponíveis. Se já souber o ID do sensor, também o pode introduzir aqui manualmente. Pode atribuir internamente um novo nome ao sensor ou manter o nome predefinido. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». O nó deixará de emitir atualizações do dispositivo. Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se ativar esta definição, receberá uma mensagem de estado do sensor selecionado após cada implementação. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+Se não selecionar nenhum sensor e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo. Também pode aplicar definições no modo universal a um sensor específico, transmitindo o respetivo ID do sensor como cadeia de carateres em `msg.topic` juntamente com as suas definições.
+
+### Consultar o estado
+
+Emite o estado atual do sensor assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: status (boolean): Devolve o estado atual do sensor
+
+### Ligar / desligar o sensor
+
+Se necessário, o sensor pode ser ligado e desligado remotamente. Se o sensor estiver desligado, deixa de registar alterações de contacto e, por conseguinte, deixa de as emitir. Para tal, transmita um objeto com o seguinte conteúdo:
+
+: payload (boolean): `true` liga o sensor, `false` desliga-o
+
+### Mensagens de estado do nó
+
+Assim que o contacto muda, o nó devolve a seguinte mensagem de estado:
+
+#### Objeto de estado em `msg.payload`
+
+: active (boolean): Indica se o sensor está ligado ou desligado
+: reachable (boolean | string): `true` se o sensor estiver ligado ao bridge, `unknown` se o estado da ligação divergir
+: connectionStatus (string): O estado atual da ligação com o bridge sob a forma de uma cadeia de carateres. Pode conter `connected`, `disconnected`, `connectivity_issue` ou `unidirectional_incoming` como valor
+: contact (string | boolean): `contact` se o contacto estiver fechado, `no_contact` se estiver aberto ou `false` se o sensor ainda não tiver comunicado
+: changed (string | boolean): Momento da última alteração de contacto (ISO 8601) ou `false` se o sensor ainda não tiver comunicado
+: tampered (boolean): Apenas disponível em sensores com deteção de manipulação; `true` se o sensor tiver sido manipulado
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+
+#### Informações sobre o sensor em `msg.info`
+
+: id (string): Indica o novo ID do sensor
+: idV1 (string | boolean): Indica o ID antigo do sensor
+: uniqueId (string): O ID único do sensor
+: deviceId (string): O ID único do dispositivo
+: name (string): O nome atualmente atribuído ao sensor
+: type (string): O tipo do sensor (sempre `contact`)
+: softwareVersion (string): O firmware atual do sensor
+: battery (float | boolean): O nível atual da bateria do sensor, `false` quando não existe bateria
+: batteryState (string | boolean): O estado atual do nível da bateria. Pode conter `normal`, `low` ou `critical` como valor, ou `false` quando não existe bateria
+: model (object): Contém as informações de modelo do sensor em `id`, `manufacturer`, `name`, `type` e `certified`
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado do sensor. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado do sensor em `msg.lastState`
+
+Contém o objeto de estado completo (ver os valores de saída acima) do último estado antes da última alteração registada. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+
+</script>

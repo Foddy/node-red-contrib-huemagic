@@ -1,0 +1,87 @@
+<script type="text/markdown" data-help-name="hue-group">
+«Hue Grup» düğümü, bridge üzerinde bir grupta toplanmış birden çok ışığı aynı anda denetleyebilir.
+
+### Kurulum
+
+Önceden yapılandırılmış Hue Bridge'i seçin ve mevcut tüm grupları bulmak için arama düğmesine tıklayın. Bir grubun kimliğini zaten biliyorsanız, buraya elle de girebilirsiniz. Gruba dahili olarak yeni bir ad verebilir veya önceden tanımlı adı kullanabilirsiniz. İsteğe bağlı olarak «Düğümün mesajlarını yoksay» ayarıyla bu düğümün tüm otomatik durum mesajlarını devre dışı bırakabilirsiniz. Düğüm bundan sonra güncelleme yayınlamaz. Alternatif olarak, Node-RED başlatılırken düğümün başlatma mesajının bastırılmamasını seçebilirsiniz. Bu ayarı etkinleştirirseniz her dağıtımdan sonra seçili grubun durum mesajını alırsınız. Düğümün siz bir şey gönderene kadar sessiz kalmasını tercih ediyorsanız «Yalnızca bir komuttan sonra bildir» seçeneğini etkinleştirin. Bu durumda uygulamadan veya bir anahtardan gelen değişiklikleri yok sayar ve yalnızca sizin komutlarınıza yanıt verir.
+
+Bir grup seçmez ve düğüm yapılandırmasını bu şekilde kullanırsanız, düğüm «evrensel mod» adı verilen modda çalışır. Bu modda düğüm aynı türdeki tüm durum mesajlarını alır ve yayınlar. Evrensel modda ayarları belirli bir gruba uygulamak için ilgili grup kimliğini `msg.topic` içinde dize olarak ayarlarınızla birlikte gönderebilirsiniz.
+
+### Durumu sorgulama
+
+Düğüme aşağıdaki içeriğe sahip bir `msg.payload` nesnesi iletildiğinde grubun güncel durumunu verir. Alternatif olarak, önce düğüme bir mesaj göndermeden Node-RED arayüzündeki düğmeye de basabilirsiniz.
+
+: status (boolean): Grubun güncel durumunu döndürür
+
+### Açma / kapatma (basit)
+
+Basit modda bir grubun tamamını hızlıca açmak veya kapatmak için düğüme aşağıdaki içeriğe sahip bir nesne gönderin.
+
+: payload (boolean): `true` tüm grubu açar, `false` kapatır
+
+### Grup komutları (genişletilmiş)
+
+Yalnızca açıp kapatmanın yanı sıra grubu denetlemek için başka birçok seçenek de vardır. HueMagic'teki tüm düğümler eklemeli komutlarla denetlenebilir. Yani önce bir ayarı, sonra daha ileri bir komutta başka bir ayarı, öncekini iptal etmeden gönderebilirsiniz. Grupta daha kapsamlı ayarlar yapmak için aşağıdaki parametreleri bir `msg.payload` nesnesinde gönderin:
+
+: on (boolean): `true` grubun tamamını açar, `false` kapatır
+: toggle (boolean | any): Grubun önceki durumuna göre açma ve kapatma arasında geçiş yapar
+: brightness (int | string): Işık parlaklığının yüzde değeri (0-100) veya parlaklığın güncel saate göre otomatik ayarlanması için `auto` değerini içeren bir dize
+: brightnessLevel (int): Işık parlaklığının sayısal değeri (0-254)
+: incrementBrightness (int): Göreli bir parlaklık değişiminin yüzde değeri. Geçerli aralık -%100 ile +%100 arasıdır. Pozitif değerler parlaklığı artırır. Varsayılan +%10
+: decrementBrightness (int): Göreli bir parlaklık değişiminin yüzde değeri. Geçerli aralık -%100 ile +%100 arasıdır. Pozitif değerler parlaklığı azaltır. Varsayılan +%10
+: color (string): Rastgele bir renk için `random` veya İngilizce bir renk adı (ör. `red`)
+: hex (string): Onaltılık renk değeri (dize olarak)
+: rgb (array [0,0,0]): RGB biçiminde renk değeri (dizi olarak)
+: xyColor (object {x [float], y [float]}): XY renk biçiminde renk değeri (nesne olarak)
+: image (string): Grubun güncel rengini görüntünün ortalama rengine ayarlamak için bir görüntünün yolu (yerel veya web'de)
+: colorTemp (int | string): Grubun renk sıcaklığını ayarlamak için 153 ile 500 arasında bir değer ya da `cold`, `normal`, `warm`, `hot` ve `auto` değerleri — `auto`, renk sıcaklığını güncel saate göre belirler
+: transitionTime (float): Geçerli ayarın saniye cinsinden geçiş süresi. `0` gönderilirse grup istenen ayara hemen geçer. `3` gönderirseniz grup sonraki 3 saniye içinde hafif bir geçişle istenen ayara ulaşır
+: colorloop (float): Seçilen saniye boyunca bir «colorloop» animasyonu oynatır ve ardından grubun özgün durumuna döner
+: alert (float): Seçilen saniye boyunca bir «alert» animasyonu oynatır ve ardından grubun özgün durumuna döner
+
+### Düğümün durum mesajları
+
+Grupta bir değişiklik algılandığında düğüm aşağıdaki durum mesajını döndürür.
+
+> [!NOTE]
+> Grup yalnızca son ışık kapatıldığında ya da ilk ışık açıldığında (öncesinde hepsi kapalıysa) durum mesajı yayınlar.
+
+«Hue Işık» düğümünün aksine burada çok daha az durum bilgisi bulunur; çünkü bir grup, değerleri birleştirilemeyen birçok farklı cihaz türü içerebilir.
+
+#### `msg.payload` altındaki durum nesnesi
+
+: on (boolean): Grubun durumu; `true` açık, `false` kapalı anlamına gelir
+: brightness (float | boolean): Yüzde cinsinden grup parlaklığı veya grup kısılamıyorsa `false`
+: brightnessLevel (int | boolean): Sayısal değer olarak grup parlaklığı (0-254) veya grup kısılamıyorsa `false`
+: rgb (array [0,0,0]): Grubun RGB biçimindeki güncel rengi (yalnızca varsa)
+: hex (string): Grubun onaltılık biçimdeki güncel rengi (yalnızca varsa)
+: xyColor (object {x [float], y [float]}): Grubun XY renk biçimindeki güncel rengi (yalnızca varsa)
+: colorTemp (int): Grup için ayarlı güncel renk sıcaklığı (yalnızca varsa)
+: updated (string): Kaynağın HueMagic tarafından son güncellenme zamanı (ISO 8601)
+
+#### `msg.info` altındaki grup bilgileri
+
+: id (string): Grubun yeni kimliğini belirtir
+: idV1 (string | boolean): Grubun eski kimliğini belirtir
+: name (string): Grubun geçerli adı
+: resources (object) : Grubun arkasındaki tüm cihazları ve kaynakları içerir
+: type (string): Grubun türü (her zaman `group`)
+
+#### `msg.updated` altındaki durum değişiklikleri
+
+Grubun önceki durumuna kıyasla değişen parametreleri bir nesne olarak listeler. Herhangi bir değişiklik kaydedilmediyse bu nesne boştur.
+
+#### `msg.lastState` altındaki son ışık durumu
+
+Son değişiklikten önceki durumun eksiksiz durum nesnesini içerir (yukarıdaki çıktı değerlerine bakın). HueMagic önceki durumu henüz kaydetmediyse `false` verilir.
+
+#### `msg.command` altındaki son komut (isteğe bağlı)
+
+Düğümün durumu belirli bir komutla değiştiyse, yürütülen komutun tamamı da çıktı olarak verilir. Aksi hâlde düğüm bu nesneyi çıktı olarak vermez.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

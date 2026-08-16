@@ -1,0 +1,176 @@
+[
+    {
+        "id": "b82a4d69e1fa5c37",
+        "type": "tab",
+        "label": "Hue Automation (example)",
+        "disabled": false,
+        "info": "Voorbeeld van het gebruik van de node \"Hue Automation\""
+    },
+    {
+        "id": "c1b5f18c7d4e9206",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "EERSTE STAPPEN (dubbelklik hier)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Klik op de node \"Hue Automatisering\" en kies uit de lijst zowel uw bridge als een automatisering. Hebt u nog geen bridge ingesteld, dan wordt u gevraagd er eerst een in te stellen voordat u de configuratie van de node kunt afronden.\n\nDe automatiseringen die u hier kunt kiezen zijn die welke u in de Philips Hue-app hebt gemaakt, bijvoorbeeld een wek-lamp of een thuiskomstroutine. HueMagic kan ze in- en uitschakelen, zodat uw flows kunnen bepalen wanneer een van uw routines überhaupt moet lopen.\n\nZodra de node is verbonden en u de wijzigingen in Node-RED hebt gedeployed, geeft de node telkens automatisch een bericht uit wanneer de automatisering verandert. De bijgewerkte status en alle informatie ontvangt u in het uitgegeven bericht.\n\nWilt u meer informatie over deze node, de mogelijke commando's en uitvoerwaarden, klik er dan één keer op in uw flow en ga naar het boekpictogram van Node-RED (rechtsboven)."
+    },
+    {
+        "id": "d2c6027d8e5f1317",
+        "type": "debug",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Informatie",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3d7138e9f602428",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Huidige status opvragen",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4e8249f0a713b539",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Status",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6a04b12c935d75b",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Automatisering in-/uitschakelen",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7b15c23d0a46e86c",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Inschakelen",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i8c26d34e1b57f97d",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Uitschakelen",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i9d37e45f2c680a8e",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Omschakelen",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "s5f935a01b824c64a",
+        "type": "hue-automation",
+        "z": "b82a4d69e1fa5c37",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2c6027d8e5f1317"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

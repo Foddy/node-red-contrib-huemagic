@@ -1,0 +1,33 @@
+{
+	"hue-temperature": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"universalevents": "Evrensel olaylar",
+			"universalevents-node": "Aynı türdeki diğer düğümlerin tüm mesajlarını alır (yalnızca evrensel modda)",
+			"input-name": "Sensör adı",
+			"searching": "sıcaklık sensörleri aranıyor…",
+			"none-found": "Hiç sıcaklık sensörü bulunamadı.",
+			"sensor": "Sensör",
+			"offset": "Düzeltme"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"init": "başlatılıyor…",
+			"not-reachable": "erişilemiyor",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"deactivated": "devre dışı",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Sıcaklık",
+			"input": "durum sorgusu",
+			"output": "sıcaklık (değişti)",
+			"error-no-id": "Lütfen geçerli bir sensör kimliği girin.",
+			"error-not-available": "Sensör henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin."
+		}
+	}
+}

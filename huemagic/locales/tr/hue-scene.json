@@ -1,0 +1,32 @@
+{
+	"hue-scene": {
+		"config": {
+			"name": "Ad",
+			"input-name": "Sahne adı",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"searching": "Sahneler aranıyor…",
+			"none-found": "Hiç sahne bulunamadı!",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"scene": "Sahne",
+			"group": "Grup",
+			"group-none-found": "Hiç grup bulunamadı!",
+			"group-searching": "Gruplar aranıyor…",
+			"groups-all": "Tüm gruplar / ışıklar",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Sahne",
+			"not-configured": "yapılandırılmadı",
+			"recalled": "sahne etkinleştirildi",
+			"recalled-on-group": "sahne grupta etkinleştirildi",
+			"no-id": "Sahne kimliği yok.",
+			"input": "sahneyi etkinleştir",
+			"output": "hedef grup(lar)",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Sahne etkinleştiriliyor…",
+			"error-not-available": "Sahne henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin.",
+			"error-invalid-brightness": "Geçersiz parlaklık ayarı. Yalnızca 0 ile 100 arasındaki yüzde değerlerine izin verilir."
+		}
+	}
+}

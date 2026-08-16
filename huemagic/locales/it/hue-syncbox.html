@@ -1,0 +1,86 @@
+<script type="text/markdown" data-help-name="hue-syncbox">
+Il nodo «Hue Sync Box» controlla una Philips Hue Play HDMI Sync Box e comunica ciò che sta facendo in quel momento.
+
+### Configurazione
+
+La sync box non è collegata al suo Hue Bridge ma parla una propria API locale, quindi necessita di una configurazione a sé. Inserisca l'indirizzo IP della sua sync box e faccia clic sul pulsante accanto al campo del token di accesso. Tenga poi premuto il pulsante sulla sync box finché il LED non lampeggia in verde: HueMagic continua a interrogare il dispositivo per un minuto e memorizza il token non appena risponde.
+
+Poiché la sync box non invia da sola il proprio stato, HueMagic lo richiede regolarmente. Può impostare la frequenza nella configurazione; il valore predefinito è ogni 10 secondi. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+### Richiedere lo stato
+
+Emette lo stato attuale della sync box non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.
+
+: status (boolean): Restituisce lo stato attuale della sync box
+
+### Accendere / spegnere (modalità semplice)
+
+Per accendere o spegnere rapidamente la sync box, trasmetta al nodo un oggetto con il seguente contenuto. All'accensione viene ripristinata l'ultima modalità di sincronizzazione utilizzata.
+
+: payload (boolean): `true` avvia la sincronizzazione, `false` mette il dispositivo in risparmio energetico
+
+### Comandi della sync box (esteso)
+
+Trasmetta i seguenti parametri in un oggetto `msg.payload` per controllare la sync box in modo più dettagliato:
+
+: mode (string): Uno tra `powersave`, `passthrough`, `video`, `game`, `music` o `ambient`
+: sync (boolean): `true` avvia la sincronizzazione, `false` la arresta
+: toggle (boolean | any): Alterna la sincronizzazione a seconda dello stato precedente
+: passthrough (boolean): `true` passa l'immagine al suo televisore senza sincronizzare
+: intensity (string): Con quale intensità le luci seguono l'immagine. Uno tra `subtle`, `moderate`, `high` o `intense`
+: brightness (int): Valore percentuale della luminosità (0-100)
+: brightnessLevel (int): Valore numerico della luminosità come lo conta il dispositivo (0-200, dove 100 è il valore di riferimento)
+: incrementBrightness (int | boolean): Indica di quanti punti percentuali aumentare la luminosità della sync box, oppure `true` per passi del 10 %
+: decrementBrightness (int | boolean): Indica di quanti punti percentuali ridurre la luminosità della sync box, oppure `true` per passi del 10 %
+: input (string | int): L'ingresso HDMI da mostrare, da `input1` a `input4` oppure semplicemente da `1` a `4`
+: entertainmentArea (string): L'area entertainment che il dispositivo deve pilotare, ad es. `groups/13`
+
+### Messaggi di stato del nodo
+
+Ogni volta che lo stato della sync box cambia, il nodo restituisce il seguente messaggio di stato:
+
+#### Oggetto di stato in `msg.payload`
+
+: on (boolean): `false` mentre il dispositivo è in risparmio energetico
+: syncing (boolean): `true` mentre le luci seguono l'immagine
+: passthrough (boolean): `true` mentre il dispositivo passa l'immagine senza sincronizzare
+: mode (string): La modalità attualmente attiva
+: lastSyncMode (string): L'ultima modalità di sincronizzazione utilizzata
+: intensity (string | boolean): Intensità della modalità attualmente attiva
+: brightness (int | boolean): Luminosità in percentuale
+: brightnessLevel (int | boolean): Luminosità come la conta il dispositivo (0-200)
+: input (string | boolean): L'ingresso HDMI attualmente mostrato
+: inputs (object): Tutti e quattro gli ingressi HDMI con `name`, `type`, `status` (`unplugged`, `plugged`, `linked` o `unknown`) e se sono `active`
+: entertainmentArea (string | boolean): L'area entertainment pilotata dal dispositivo
+: updated (string): Momento dell'ultimo aggiornamento della risorsa da parte di HueMagic (ISO 8601)
+
+#### Informazioni sulla sync box in `msg.info`
+
+: id (string | boolean): L'ID univoco della sync box
+: name (string | boolean): Il nome attualmente assegnato alla sync box
+: type (string): Il tipo di dispositivo (sempre `syncbox`)
+: ipAddress (string | boolean): L'indirizzo IP che il dispositivo indica per sé stesso
+: softwareVersion (string | boolean): Il firmware attuale della sync box
+: apiLevel (int | boolean): Il livello API della sync box
+: ledMode (int | boolean): La modalità LED attualmente impostata
+: wifi (object | boolean): Contiene `ssid` e `strength` della connessione wireless
+: model (object): Contiene le informazioni sul modello della sync box in `id`, `manufacturer` e `name`
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato della sync box. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato della sync box in `msg.lastState`
+
+Contiene l'oggetto di stato completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica registrata. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

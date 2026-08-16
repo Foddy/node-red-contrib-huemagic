@@ -1,0 +1,176 @@
+[
+    {
+        "id": "b82a4d69e1fa5c37",
+        "type": "tab",
+        "label": "Hue Automation (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Automation»"
+    },
+    {
+        "id": "c1b5f18c7d4e9206",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Πατήστε τον κόμβο «Hue Αυτοματισμός» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και έναν αυτοματισμό. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΟι αυτοματισμοί που μπορείτε να επιλέξετε εδώ είναι όσοι δημιουργήσατε στην εφαρμογή Philips Hue, για παράδειγμα ένα φως αφύπνισης ή μια ρουτίνα επιστροφής στο σπίτι. Το HueMagic μπορεί να τους ενεργοποιεί και να τους απενεργοποιεί, ώστε οι ροές σας να αποφασίζουν πότε θα εκτελεστεί μια ρουτίνα.\n\nΜόλις ο κόμβος συνδεθεί και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος εκπέμπει αυτόματα ένα μήνυμα κάθε φορά που αλλάζει ο αυτοματισμός. Την ενημερωμένη κατάσταση και όλες τις πληροφορίες της τη λαμβάνετε στο μήνυμα που εκπέμπεται.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία)."
+    },
+    {
+        "id": "d2c6027d8e5f1317",
+        "type": "debug",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Πληροφορίες",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3d7138e9f602428",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4e8249f0a713b539",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Κατάσταση",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6a04b12c935d75b",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Ενεργοποίηση / απενεργοποίηση του αυτοματισμού",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7b15c23d0a46e86c",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Ενεργοποίηση",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i8c26d34e1b57f97d",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Απενεργοποίηση",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i9d37e45f2c680a8e",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Εναλλαγή",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "s5f935a01b824c64a",
+        "type": "hue-automation",
+        "z": "b82a4d69e1fa5c37",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2c6027d8e5f1317"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

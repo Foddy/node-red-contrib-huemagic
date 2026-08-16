@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"universalevents": "Evrensel olaylar",
+			"universalevents-node": "Aynı türdeki diğer düğümlerin tüm mesajlarını alır (yalnızca evrensel modda)",
+			"input-name": "Hoparlör adı",
+			"searching": "Hoparlörler aranıyor…",
+			"none-found": "Hiç hoparlör bulunamadı!",
+			"speaker": "Hoparlör"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"not-reachable": "erişilemiyor",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Hoparlör",
+			"silent": "sessiz",
+			"muted": "susturuldu",
+			"playing-alarm": "alarm (__sound__)",
+			"playing-chime": "kapı zili (__sound__)",
+			"playing-alert": "uyarı (__sound__)",
+			"input": "ses çal / durum",
+			"output": "hoparlör",
+			"error-no-id": "Lütfen geçerli bir hoparlör kimliği girin.",
+			"error-not-available": "Hoparlör henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin.",
+			"error-no-channel": "Bu hoparlörde __channel__ türünde ses yok.",
+			"error-invalid-sound": "Geçersiz __channel__ sesi. İzin verilenler: __sounds__",
+			"error-invalid-volume": "Geçersiz ses düzeyi ayarı. Yalnızca 0 ile 100 arasındaki değerlere izin verilir."
+		}
+	}
+}

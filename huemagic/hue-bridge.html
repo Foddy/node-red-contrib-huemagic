@@ -4,19 +4,19 @@
         <input type="text" id="node-input-name" data-i18n="[placeholder]hue-bridge.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
-        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <label for="node-input-bridge"><i class="fa fa-server"></i> <span data-i18n="hue-bridge.config.bridge"></span></label>
         <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row" style="margin-top: 30px">
-        <div style="display: inline-flex; width: calc(100% - 105px)">
-            <input type="checkbox" id="node-input-skipglobalevents" style="flex: 15px;">
-            <span data-i18n="hue-bridge.config.skipglobalevents-info" style="width: 100%; margin-left: 10px;"></span>
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipglobalevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-bridge.config.skipglobalevents-info" style="flex: 1; margin-left: 8px;"></span>
         </div>
     </div>
     <div class="form-row">
-        <div style="display: inline-flex; width: calc(100% - 105px)">
-            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
-            <span data-i18n="hue-bridge.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-bridge.config.sendinitevents-node" style="flex: 1; margin-left: 8px;"></span>
         </div>
     </div>
 </script>
@@ -33,7 +33,7 @@
             initevents: { value: false }
         },
         align: 'left',
-        icon: "hue-bridge.png",
+        icon: "hue-bridge.svg",
         inputs: 1,
         outputs: 1,
         label: function() {

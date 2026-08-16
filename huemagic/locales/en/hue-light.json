@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Name",
+			"input-name": "Light name",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"onlycommands-node": "Only report after a command",
+			"searching": "Searching lights…",
+			"none-found": "No lights found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"light": "Light",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Activate color naming",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Light",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"not-reachable": "not reachable",
+			"universal": "universal mode",
+			"turned-on": "turned on",
+			"turned-on-percent": "turned on (__percent__%)",
+			"turned-off": "turned off",
+			"error-no-id": "No light Id defined. Please check the docs.",
+			"error-input": "input error",
+			"error-invalid-temp": "Invalid color temperature. Only 153 - 500 allowed.",
+			"input": "turn on / off",
+			"output": "status",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…",
+			"error-not-available": "The light is not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.",
+			"error-invalid-brightness": "Invalid brightness setting. Only 0 - 100 percent allowed.",
+			"error-invalid-brightness-level": "Invalid brightness setting. Only 0 - 254 allowed.",
+			"error-invalid-sat": "Invalid saturation setting. Only 0 - 100 allowed.",
+			"error-no-colorloop": "The colorloop effect is not available for this light.",
+			"error-invalid-effect": "Invalid effect. This light supports: __effects__",
+			"error-invalid-powerup": "Invalid power up setting. Allowed presets are: __presets__"
+		}
+	}
+}

@@ -3,7 +3,7 @@ Der „Hue Regel“-Node kann in der Bridge gespeicherte Regeln aktivieren oder 
 
 ### Einrichtung
 
-Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Regeln zu finden. Wenn Sie die ID der Regel bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Alternativ können Sie auch einen neuen Namen vergeben oder den vordefinierten Namen der Regel wählen.
+Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Regeln zu finden. Wenn Sie die ID der Regel bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Alternativ können Sie auch einen neuen Namen vergeben oder den vordefinierten Namen der Regel wählen. Optional können Sie auch alle automatischen Statusmeldungen dieses Nodes deaktivieren, indem Sie die Einstellung „Ignoriere die Mitteilungen des Nodes“ anklicken. Der Node wird anschließend keine Updates mehr ausgeben. Alternativ können Sie auch auswählen, ob die Initialisierungsnachricht des Nodes beim Start von Node-RED nicht unterdrückt werden soll. Wenn der Node lieber still bleiben soll, bis Sie ihm etwas schicken, aktivieren Sie „Nur nach einem Befehl melden“. Er ignoriert dann Änderungen aus der App oder von einem Schalter und antwortet nur auf Ihre eigenen Befehle.
 
 Wenn Sie keine Regel auswählen und die Node-Konfiguration so anwenden, arbeitet der Node im sogenannten „Universalmodus“. In diesem Modus empfängt der Node alle Statusmitteilungen desselben Typs und gibt diese aus. Sie können aber auch Einstellungen im Universalmodus auf eine bestimmte Regel anwenden, indem Sie die entsprechende Regel-ID als String in `msg.topic` zusammen mit Ihren Einstellungen übergeben.
 
@@ -65,5 +65,5 @@ Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wi
 
 HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
 
-![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
+![examples](hue/assets/huemagic-examples.gif)
 </script>

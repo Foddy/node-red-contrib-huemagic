@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+O nó «Hue Cena» pode retomar cenas guardadas no bridge e aplicá-las a determinados grupos.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todas as cenas disponíveis. As cenas são ordenadas primeiro por divisão ou zona e depois pelo nome, para que as cenas da mesma divisão fiquem sempre juntas na lista. Se já souber o ID da cena, também o pode introduzir aqui manualmente. Em alternativa, pode atribuir internamente um nome à cena ou manter o nome predefinido.
+
+### Ativar uma cena
+
+Pode ativar uma cena predefinida transmitindo um objeto com o seguinte conteúdo:
+
+: payload (boolean): Ativa uma cena pré-configurada
+: transitionTime (float): Tempo de transição da cena em segundos. Se for transmitido `0`, a cena é aplicada de imediato. Se transmitir `3`, as luzes fazem a transição para a cena nos 3 segundos seguintes. O bridge aceita até 6000 segundos
+: brightness (float): Brilho de toda a cena em percentagem (`0` – `100`), para poder ativar a mesma cena mais clara ou mais suave consoante a hora do dia
+
+> [!NOTE]
+> Ambas as definições só estão disponíveis para cenas normais. Uma cena inteligente segue os horários que definiu para ela na aplicação Philips Hue.
+
+### Ativar uma cena no modo universal
+
+Se utilizar este nó no chamado «modo universal» e não tiver definido nenhuma cena na configuração do nó, também pode transmitir ao nó a cena pretendida como comando. Para tal, transmita um objeto `msg.payload` com o seguinte conteúdo:
+
+: scene (string): ID da cena a ativar no bridge
+
+### Ativar uma cena em determinados grupos
+
+Ligue a saída deste nó a um ou mais grupos para aplicar uma cena a grupos específicos. Em alternativa, pode fazê-lo «dinamicamente», transmitindo ao nó um objeto `msg.payload` com o seguinte conteúdo:
+
+: group (string | array [string,…]): ID do grupo ou uma matriz com os ID de vários grupos para limitar a cena a esses grupos
+
+### Mais informações sobre o nó
+
+Este nó não emite mensagens de estado.
+
+> [!IMPORTANT]
+> Só pode aplicar cenas a grupos se estes já estiverem associados à respetiva cena no bridge. Caso contrário, não será aplicado nada.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

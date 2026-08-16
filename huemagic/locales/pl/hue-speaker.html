@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+Węzeł „Hue Głośnik” odtwarza dźwięki dzwonka Hue Secure i pozwala używać go jako syreny wewnętrznej.
+
+### Konfiguracja
+
+Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć wszystkie dostępne głośniki. Jeśli znasz już identyfikator głośnika, możesz go też wpisać ręcznie. Możesz nadać głośnikowi własną nazwę wewnętrzną albo zachować nazwę domyślną. Opcjonalnie możesz wyłączyć wszystkie automatyczne komunikaty stanu tego węzła ustawieniem „Pomijaj komunikaty węzła”. Węzeł przestanie wtedy wysyłać aktualizacje urządzenia. Możesz też zdecydować, aby komunikat inicjalizacji węzła nie był pomijany przy starcie Node-RED. Po włączeniu tego ustawienia po każdym wdrożeniu otrzymasz komunikat stanu wybranego głośnika. Jeśli wolisz, aby węzeł milczał, dopóki czegoś do niego nie wyślesz, włącz „Zgłaszaj tylko po poleceniu”. Węzeł zignoruje wtedy zmiany z aplikacji lub z przełącznika i odpowie wyłącznie na Twoje polecenia.
+
+Jeśli nie wybierzesz głośnika i użyjesz konfiguracji węzła w ten sposób, węzeł działa w tzw. „trybie uniwersalnym”. W tym trybie węzeł odbiera i wysyła wszystkie komunikaty stanu tego samego typu. Ustawienia w trybie uniwersalnym możesz też zastosować do konkretnego głośnika, przekazując jego identyfikator jako ciąg znaków w `msg.topic` razem z ustawieniami.
+
+### Odczyt stanu
+
+Zwraca bieżący stan głośnika, gdy tylko do węzła zostanie przekazany obiekt `msg.payload` o następującej zawartości. Możesz też nacisnąć przycisk w interfejsie Node-RED, bez wcześniejszego wysyłania komunikatu do węzła.
+
+: status (boolean): Zwraca bieżący stan głośnika
+
+### Odtwarzanie dźwięku
+
+Głośnik ma trzy osobne kanały. `chime` to dźwięk dzwonka do drzwi, `alarm` to syrena, a `alert` to krótkie powiadomienie. Dźwięki, które dane urządzenie faktycznie zna, są wymienione w `msg.info.sounds`. Przekaż następujące parametry w obiekcie `msg.payload`:
+
+: chime (string | object | boolean): Nazwa dźwięku dzwonka; `false` ponownie go zatrzymuje
+: alarm (string | object | boolean): Nazwa dźwięku syreny; `false` ponownie go zatrzymuje
+: alert (string | object | boolean): Nazwa dźwięku powiadomienia; `false` ponownie go zatrzymuje
+: mute (boolean): `true` wycisza głośnik, `false` ponownie włącza dźwięk
+
+Zamiast samej nazwy dźwięku możesz też przekazać obiekt, aby sterować głośnością i czasem trwania:
+
+: sound (string): Nazwa dźwięku, np. `ding_dong_classic` lub `siren`
+: volume (int): Głośność w procentach (0-100)
+: duration (float): Czas odtwarzania w sekundach
+
+### Komunikaty stanu węzła
+
+Gdy tylko głośnik zacznie lub przestanie odtwarzać, węzeł zwraca następujący komunikat stanu.
+
+> [!NOTE]
+> Bridge zgłasza ostatnio odtworzony dźwięk i zeruje go dopiero długo po zakończeniu odtwarzania, więc te wartości nieco się opóźniają względem dźwięku.
+
+#### Obiekt stanu w `msg.payload`
+
+: reachable (boolean | string): `true`, jeśli głośnik jest połączony z bridge, `unknown`, jeśli stan połączenia jest inny
+: connectionStatus (string): Bieżący stan połączenia z bridge w postaci ciągu znaków. Może przyjmować wartości `connected`, `disconnected`, `connectivity_issue` lub `unidirectional_incoming`
+: playing (boolean): `true`, gdy głośnik odtwarza jakikolwiek dźwięk
+: chime (string | boolean): Nazwa odtwarzanego dźwięku dzwonka albo `false`
+: alarm (string | boolean): Nazwa odtwarzanego dźwięku syreny albo `false`
+: alert (string | boolean): Nazwa odtwarzanego dźwięku powiadomienia albo `false`
+: muted (boolean): Wskazuje, czy głośnik jest wyciszony
+: updated (string): Czas ostatniej aktualizacji zasobu przez HueMagic (ISO 8601)
+
+#### Informacje o głośniku w `msg.info`
+
+: id (string): Wskazuje nowy identyfikator głośnika
+: idV1 (string | boolean): Wskazuje stary identyfikator głośnika
+: uniqueId (string): Unikatowy identyfikator głośnika
+: deviceId (string): Unikatowy identyfikator urządzenia
+: name (string): Aktualnie ustawiona nazwa głośnika
+: type (string): Typ urządzenia (zawsze `speaker`)
+: softwareVersion (string): Bieżące oprogramowanie układowe głośnika
+: battery (float | boolean): Bieżący poziom naładowania baterii głośnika, `false`, gdy urządzenie nie ma baterii
+: batteryState (string | boolean): Bieżący stan poziomu baterii. Może przyjmować wartości `normal`, `low` lub `critical`, albo `false`, gdy urządzenie nie ma baterii
+: sounds (object): Zawiera dźwięki znane temu urządzeniu w polach `chime`, `alarm` i `alert`
+: model (object): Zawiera informacje o modelu głośnika w polach `id`, `manufacturer`, `name`, `type` i `certified`
+
+#### Zmiany stanu w `msg.updated`
+
+Wymienia w postaci obiektu poszczególne parametry, które zmieniły się względem poprzedniego stanu głośnika. Jeśli nie zarejestrowano żadnych zmian, obiekt jest pusty.
+
+#### Poprzedni stan głośnika w `msg.lastState`
+
+Zawiera pełny obiekt stanu (patrz wartości wyjściowe powyżej) sprzed ostatniej zarejestrowanej zmiany. Jeśli HueMagic nie zarejestrował jeszcze poprzedniego stanu, zwracane jest `false`.
+
+#### Ostatnie polecenie w `msg.command` (opcjonalnie)
+
+Jeśli stan węzła zmienił się w wyniku określonego polecenia, wysyłane jest również całe wykonane polecenie. W przeciwnym razie węzeł nie wysyła tego obiektu.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

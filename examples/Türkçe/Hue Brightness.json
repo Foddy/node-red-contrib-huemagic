@@ -1,0 +1,150 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Brightness (example)",
+        "disabled": false,
+        "info": "«Hue Brightness» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "bc4daa7a.ddc16",
+        "type": "hue-brightness",
+        "z": "d081bb24.81a8d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "4cf0eb6d2a66fd14"
+            ]
+        ]
+    },
+    {
+        "id": "6a8f3df98e7625b8",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "info": "«Hue Parlaklık» düğümüne tıklayın ve listeden hem bridge'inizi hem de bir sensör seçin. Henüz bir bridge kurmadıysanız, düğümün yapılandırmasını tamamlayabilmeniz için önce bir bridge kurmanız istenir.\n\nDüğüm bridge'inize ve sensöre bağlandığında ve değişiklikleri Node-RED'de dağıttığınızda, düğüm komutlarınızı alıp yürütebilir. «Hue Parlaklık» düğümü ayrıca sensörün bridge üzerindeki durumu her güncellendiğinde otomatik olarak bir mesaj verir (yeni bir ışık düzeyi kaydedildi). Güncellenen durumu ve tüm bilgilerini yayınlanan mesajda alırsınız.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında daha fazla bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "4cf0eb6d2a66fd14",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Bilgi",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "433f55c9fedd4e3b",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Güncel durumu sorgula",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88b02ac839431cc1",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Durum",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "bd060e6399f15f95",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Cihazı aç / kapat",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "15c9417b8ed13b49",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Aç",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "89e7bcee38350561",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Kapat",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    }
+]

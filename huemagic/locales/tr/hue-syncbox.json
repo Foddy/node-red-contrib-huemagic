@@ -1,0 +1,30 @@
+{
+	"hue-syncbox": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"input-name": "Sync Box adı",
+			"syncbox": "Sync Box"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Sync Box",
+			"connecting": "bağlanılıyor…",
+			"powersave": "kapalı",
+			"passthrough": "doğrudan aktarım",
+			"syncing": "__mode__ (__intensity__)",
+			"input": "sync box'ı kontrol et",
+			"output": "sync box",
+			"error-not-available": "Sync box henüz kullanılabilir değil. HueMagic onunla bağlantı kurana kadar bekleyin.",
+			"error-invalid-mode": "Geçersiz mod. İzin verilenler: __modes__",
+			"error-invalid-intensity": "Geçersiz yoğunluk. İzin verilenler: __intensities__",
+			"error-invalid-brightness": "Geçersiz parlaklık ayarı. Yalnızca 0 ile 100 arasındaki yüzde değerlerine izin verilir.",
+			"error-invalid-brightness-level": "Geçersiz parlaklık ayarı. Yalnızca 0 ile 200 arasındaki değerlere izin verilir.",
+			"error-invalid-input": "Geçersiz HDMI girişi. Yalnızca input1 – input4 arasına izin verilir."
+		}
+	}
+}

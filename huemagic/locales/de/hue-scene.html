@@ -3,13 +3,18 @@ Der „Hue Szene“-Node kann in der Bridge gespeicherte Szenen wiederaufnehmen 
 
 ### Einrichtung
 
-Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Szenen zu finden. Wenn Sie die ID der Szene bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Alternativ können Sie auch einen internen Namen für die Szene vergeben oder den vordefinierten Namen der Szene wählen.
+Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Szenen zu finden. Die Szenen werden zuerst nach Raum bzw. Zone und danach nach ihrem Namen sortiert, sodass die Szenen eines Raumes in der Liste immer beieinander bleiben. Wenn Sie die ID der Szene bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Alternativ können Sie auch einen internen Namen für die Szene vergeben oder den vordefinierten Namen der Szene wählen.
 
 ### Szene aktivieren
 
 Sie können eine vordefinierte Szene aktivieren, indem Sie ein Objekt mit folgendem Inhalt übergeben:
 
 : payload (boolean) : Aktiviert eine vorkonfigurierte Szene
+: transitionTime (float) : Übergangszeit der Szene in Sekunden. Wird `0` übergeben, wird die Szene sofort angewendet. Übergeben Sie `3`, blenden die Lampen innerhalb der nächsten 3 Sekunden in die Szene über. Die Bridge akzeptiert bis zu 6000 Sekunden
+: brightness (float) : Helligkeit der gesamten Szene in Prozent (`0` – `100`), sodass Sie ein und dieselbe Szene je nach Tageszeit heller oder gedimmter aufrufen können
+
+> [!NOTE]
+> Beide Einstellungen stehen nur für normale Szenen zur Verfügung. Eine smarte Szene richtet sich nach den Zeiten, die Sie für sie in der Philips Hue App festgelegt haben.
 
 ### Szene im Universalmodus aktivieren
 
@@ -25,11 +30,14 @@ Verbinden Sie den Ausgangspunkt dieses Nodes mit eine oder mehreren Gruppen, um 
 
 ### Weitere Informationen zum Node
 
-Dieser Node gibt keine Statusnachrichten aus. Bitte beachten Sie auch, dass Sie Szenen nur dann auf Gruppen anwenden können, wenn diese bereits auf der Bridge mit der jeweiligen Szene verknüpft sind. Andernfalls wird nichts angewendet.
+Dieser Node gibt keine Statusnachrichten aus.
+
+> [!IMPORTANT]
+> Sie können Szenen nur dann auf Gruppen anwenden, wenn diese bereits auf der Bridge mit der jeweiligen Szene verknüpft sind. Andernfalls wird nichts angewendet.
 
 ### Beispiele von HueMagic
 
 HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
 
-![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
+![examples](hue/assets/huemagic-examples.gif)
 </script>

@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"universalevents": "Evrensel olaylar",
+			"universalevents-node": "Aynı türdeki diğer düğümlerin tüm mesajlarını alır (yalnızca evrensel modda)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Renk adlandırmayı etkinleştir",
+			"input-name": "Işık adı",
+			"searching": "Işıklar aranıyor…",
+			"none-found": "Hiç ışık bulunamadı!",
+			"light": "Işık"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"init": "başlatılıyor…",
+			"not-reachable": "erişilemiyor",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Işık",
+			"turned-on": "açık",
+			"turned-on-percent": "açık (%__percent__)",
+			"turned-off": "kapalı",
+			"error-no-id": "Işık kimliği tanımlanmadı. Lütfen belgelere bakın.",
+			"error-input": "giriş hatası",
+			"error-invalid-temp": "Geçersiz renk sıcaklığı. Yalnızca 153 ile 500 arasındaki değerlere izin verilir.",
+			"input": "aç / kapat",
+			"output": "durum",
+			"error-not-available": "Işık henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin.",
+			"error-invalid-brightness": "Geçersiz parlaklık ayarı. Yalnızca 0 ile 100 arasındaki yüzde değerlerine izin verilir.",
+			"error-invalid-brightness-level": "Geçersiz parlaklık ayarı. Yalnızca 0 ile 254 arasındaki değerlere izin verilir.",
+			"error-invalid-sat": "Geçersiz doygunluk ayarı. Yalnızca 0 ile 100 arasındaki değerlere izin verilir.",
+			"error-no-colorloop": "colorloop efekti bu ışık için kullanılamıyor.",
+			"error-invalid-effect": "Geçersiz efekt. Bu ışık şunları destekler: __effects__",
+			"error-invalid-powerup": "Geçersiz açılış ayarı. İzin verilen ön ayarlar: __presets__"
+		}
+	}
+}

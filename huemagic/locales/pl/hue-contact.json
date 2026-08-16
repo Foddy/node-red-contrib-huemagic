@@ -1,0 +1,35 @@
+{
+	"hue-contact": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"input-name": "Nazwa czujnika",
+			"searching": "Wyszukiwanie czujników kontaktowych…",
+			"none-found": "Nie znaleziono żadnego czujnika kontaktowego!",
+			"sensor": "Czujnik"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"not-reachable": "nieosiągalny",
+			"activated": "włączony",
+			"deactivated": "wyłączony",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Kontakt",
+			"contact": "kontakt",
+			"no-contact": "brak kontaktu",
+			"input": "włącz / wyłącz / stan",
+			"output": "kontakt",
+			"tampered": "naruszony",
+			"error-no-id": "Podaj prawidłowy identyfikator: czujnik.",
+			"error-not-available": "Czujnik nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy."
+		}
+	}
+}

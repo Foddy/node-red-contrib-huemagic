@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("contact", config.sensorid, function(info)
+		this.unsubscribe = bridge.subscribe("contact", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("contact", info.id);
 
@@ -45,7 +45,7 @@ module.exports = function(RED)
 			if(currentState !== false)
 			{
 				// SEND MESSAGE
-				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
 				{
 					// SET LAST COMMAND
 					if(scope.lastCommand !== null)
@@ -67,18 +67,22 @@ module.exports = function(RED)
 					{
 						scope.status({fill: "red", shape: "ring", text: "hue-contact.node.not-reachable"});
 					}
-					else 
+					else if(currentState.payload.active == false)
 					{
-						if(currentState.payload.contact == "contact")
-						{
-							scope.status({fill: "green", shape: "dot", text: "hue-contact.node.contact"});
-						}
-						else
-						{
-							scope.status({fill: "red", shape: "dot", text: "hue-contact.node.no-contact"});
-						}
+						scope.status({fill: "red", shape: "ring", text: "hue-contact.node.deactivated"});
 					}
-					
+					else if(currentState.payload.tampered === true)
+					{
+						scope.status({fill: "yellow", shape: "ring", text: "hue-contact.node.tampered"});
+					}
+					else if(currentState.payload.contact == "contact")
+					{
+						scope.status({fill: "green", shape: "dot", text: "hue-contact.node.contact"});
+					}
+					else
+					{
+						scope.status({fill: "red", shape: "dot", text: "hue-contact.node.no-contact"});
+					}
 				}
 			}
 		});
@@ -101,14 +105,14 @@ module.exports = function(RED)
 			const tempSensorID = (!config.sensorid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.sensorid;
 			if(!tempSensorID)
 			{
-				scope.error("Please submit a valid sensor ID.");
+				scope.error(RED._("hue-contact.node.error-no-id"), msg);
 				return false;
 			}
 
 			let currentState = bridge.get("contact", tempSensorID);
 			if(!currentState)
 			{
-				scope.error("The sensor in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
+				scope.error(RED._("hue-contact.node.error-not-available"), msg);
 				return false;
 			}
 
@@ -191,6 +195,14 @@ module.exports = function(RED)
 				if(done) { done(); }
 			}
 		});
+
+		//
+		// CLOSE NODE / DETACH FROM THE BRIDGE
+		this.on('close', function()
+		{
+			if(scope.unsubscribe) { scope.unsubscribe(); }
+		});
+
 	}
 
 	RED.nodes.registerType("hue-contact", HueContact);

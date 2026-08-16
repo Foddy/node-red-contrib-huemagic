@@ -1,0 +1,31 @@
+<script type="text/markdown" data-help-name="hue-bridge">
+Maakt verbinding met een Philips Hue Bridge.
+
+### Naam
+
+U kunt de bridge een alternatieve, interne naam geven of de standaardnaam behouden.
+
+### IP en poort van de bridge
+
+Voer het IP-adres van de Hue Bridge handmatig in of druk op de knop om alle lokaal beschikbare bridges op te halen (een statische IP-configuratie op de Hue Bridge wordt aanbevolen). Optioneel kunt u ook een andere poort voor de bridge opgeven door een dubbele punt aan het IP-adres toe te voegen.
+
+### API-sleutel
+
+Voer de API-sleutel van de Hue Bridge handmatig in of druk op de knop om een nieuwe sleutel aan te maken. Wilt u een nieuwe sleutel aanmaken, dan moet u binnen 20 seconden op de fysieke knop van de bridge drukken om het proces af te ronden.
+
+### Workers
+
+De waarde "Workers" bepaalt hoeveel parallelle commando's HueMagic tegelijk naar de bridge mag sturen. Volgens de officiële documentatie van de Philips Hue Bridge mogen er niet meer dan 10 commando's per seconde worden verstuurd, anders bestaat het risico dat de bridge de aanvragen niet snel genoeg kan verwerken en fouten teruggeeft.
+
+Worden er tegelijk meer commando's verstuurd dan hier is ingesteld, dan voert HueMagic de commando's na elkaar uit zodra er weer doorvoer mogelijk is.
+
+Stel deze waarde lager dan 10 in (bijv. 4 tot 7) als u ook buiten HueMagic om commando's naar de bridge stuurt, om de door Philips Hue aanbevolen doorvoer van commando's per seconde aan te houden.
+
+### Automatische firmware-updates
+
+HueMagic controleert regelmatig op beschikbare Philips Hue firmware-updates en installeert deze automatisch zodra ze beschikbaar zijn. U kunt dit gedrag uitschakelen door het bijbehorende selectievakje aan te klikken.
+
+### Meldingen uitschakelen
+
+Als u deze instelling activeert, ontvangen alle nodes achter deze bridge geen automatische statusberichten meer.
+</script>

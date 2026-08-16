@@ -1,0 +1,88 @@
+[
+    {
+        "id": "d5d4a606.0f05",
+        "type": "tab",
+        "label": "Hue Buttons (example)",
+        "disabled": false,
+        "info": "Exemple d'utilisation du nœud « Hue Buttons »"
+    },
+    {
+        "id": "b650df5fecbbc08d",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "PREMIERS PAS (double-cliquez ici)",
+        "info": "Cliquez sur le nœud « Hue Boutons » et sélectionnez dans la liste à la fois votre bridge et un appareil. Si vous n'avez pas encore configuré de bridge, il vous sera demandé d'en configurer un avant de pouvoir terminer la configuration du nœud.\n\nDès que le nœud est relié à votre bridge et à l'appareil et que vous avez déployé les modifications dans Node-RED, le nœud émet automatiquement un message lorsque le statut de l'appareil sur le bridge est actualisé (touche actionnée). Vous recevrez le statut actualisé et toutes ses informations dans le message émis.\n\nSi vous souhaitez obtenir davantage d'informations sur ce nœud, les commandes possibles et les valeurs de sortie, cliquez une fois dessus dans votre flux et accédez à l'icône du livre de Node-RED (coin supérieur droit).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "79f1f61985718e40",
+        "type": "debug",
+        "z": "d5d4a606.0f05",
+        "name": "Informations",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "9b5c4dce9c98015c",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "Interroger le statut actuel",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "74f3cdad2b625d5c",
+        "type": "inject",
+        "z": "d5d4a606.0f05",
+        "name": "Statut",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "664e68b0b62d7e4e"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "664e68b0b62d7e4e",
+        "type": "hue-buttons",
+        "z": "d5d4a606.0f05",
+        "skipevents": false,
+        "initevents": false,
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "79f1f61985718e40"
+            ]
+        ]
+    }
+]

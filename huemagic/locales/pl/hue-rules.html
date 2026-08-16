@@ -1,0 +1,69 @@
+<script type="text/markdown" data-help-name="hue-rules">
+Węzeł „Hue Reguła” włącza i wyłącza reguły zapisane w bridge oraz odczytuje ich ustawienia.
+
+### Konfiguracja
+
+Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć wszystkie dostępne reguły. Jeśli znasz już identyfikator reguły, możesz go też wpisać ręcznie. Możesz też nadać regule nową nazwę albo zachować nazwę domyślną. Opcjonalnie możesz wyłączyć wszystkie automatyczne komunikaty stanu tego węzła ustawieniem „Pomijaj komunikaty węzła”. Węzeł przestanie wtedy wysyłać aktualizacje. Możesz też zdecydować, aby komunikat inicjalizacji węzła nie był pomijany przy starcie Node-RED. Jeśli wolisz, aby węzeł milczał, dopóki czegoś do niego nie wyślesz, włącz „Zgłaszaj tylko po poleceniu”. Węzeł zignoruje wtedy zmiany z aplikacji lub z przełącznika i odpowie wyłącznie na Twoje polecenia.
+
+Jeśli nie wybierzesz reguły i użyjesz konfiguracji węzła w ten sposób, węzeł działa w tzw. „trybie uniwersalnym”. W tym trybie węzeł odbiera i wysyła wszystkie komunikaty stanu tego samego typu. Ustawienia w trybie uniwersalnym możesz też zastosować do konkretnej reguły, przekazując jej identyfikator jako ciąg znaków w `msg.topic` razem z ustawieniami.
+
+### Odczyt właściwości i ustawień
+
+Zwraca bieżące właściwości reguły, gdy tylko do węzła zostanie przekazany obiekt `msg.payload` o następującej zawartości. Możesz też nacisnąć przycisk w interfejsie Node-RED, bez wcześniejszego wysyłania komunikatu do węzła.
+
+: status (boolean): Zwraca bieżący stan reguły
+
+### Włączanie / wyłączanie reguły
+
+Regułę można w razie potrzeby włączać i wyłączać. Wyłączona reguła nie jest wykonywana w bridge, dopóki jej ponownie nie włączysz. Przekaż w tym celu obiekt o następującej zawartości:
+
+: payload (boolean): `true` włącza regułę, `false` ją wyłącza
+
+### Komunikaty stanu węzła
+
+Gdy tylko zmieni się stan reguły (włączona / wyłączona), węzeł zwraca następujący komunikat stanu:
+
+#### Obiekt stanu w `msg.payload`
+
+: enabled (boolean): Wskazuje, czy reguła jest włączona, czy wyłączona
+: triggered (string): Czas ostatniego wykonania (ISO 8601)
+
+#### Informacje o regule w `msg.info`
+
+: id (string): Unikatowy identyfikator reguły
+: created (string): Data utworzenia reguły (ISO 8601)
+: name (string): Nazwa reguły na bridge
+: timesTriggered (int): Liczba wykonań reguły na bridge
+: owner (string): Identyfikator właściciela tej reguły
+: status (string): Stan reguły w postaci ciągu znaków
+
+#### Warunki reguły w `msg.conditions` (tablica)
+
+: address (string): Ścieżka do atrybutu czujnika
+: operator (string): Operator
+: value (string): Wartość, która ma zostać sprawdzona
+
+#### Akcje reguły w `msg.actions` (tablica)
+
+: address (string): Adres docelowy zasobu
+: method (string): Metoda żądania
+: body (object): Akcja, która ma zostać wykonana
+
+#### Zmiany stanu w `msg.updated`
+
+Wymienia w postaci obiektu poszczególne parametry, które zmieniły się względem poprzedniego stanu reguły. Jeśli nie zarejestrowano żadnych zmian, obiekt jest pusty.
+
+#### Poprzedni stan reguły w `msg.lastState`
+
+Zawiera pełny obiekt (patrz wartości wyjściowe powyżej) sprzed ostatniej zarejestrowanej zmiany reguły. Jeśli HueMagic nie zarejestrował jeszcze poprzedniego stanu, zwracane jest `false`.
+
+#### Ostatnie polecenie w `msg.command` (opcjonalnie)
+
+Jeśli stan węzła zmienił się w wyniku określonego polecenia, wysyłane jest również całe wykonane polecenie. W przeciwnym razie węzeł nie wysyła tego obiektu.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

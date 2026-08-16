@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-automation">
+Le nœud « Hue Automatisation » peut activer et désactiver les automatisations que vous avez créées dans l'application Philips Hue.
+
+### Configuration
+
+Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche pour trouver toutes les automatisations disponibles. Si vous connaissez déjà l'ID de l'automatisation, vous pouvez également le saisir ici manuellement. Vous pouvez attribuer en interne un nouveau nom à l'automatisation ou conserver son nom prédéfini. En option, vous pouvez désactiver tous les messages de statut automatiques de ce nœud à l'aide du réglage « Ignorer les messages du nœud ». Le nœud n'émettra alors plus de mises à jour. Vous pouvez également choisir que le message d'initialisation du nœud ne soit pas supprimé au démarrage de Node-RED. Si vous activez ce réglage, vous recevrez un message de statut de l'automatisation sélectionnée après chaque déploiement. Si vous préférez que le nœud reste silencieux jusqu'à ce que vous lui envoyiez quelque chose, activez « Signaler uniquement après une commande ». Il ignorera alors les changements provenant de l'application ou d'un interrupteur et ne répondra qu'à vos propres commandes.
+
+Si vous ne sélectionnez aucune automatisation et utilisez la configuration du nœud de cette manière, le nœud fonctionne dans ce que l'on appelle le « mode universel ». Dans ce mode, le nœud reçoit et émet tous les messages de statut du même type. Vous pouvez également appliquer des réglages en mode universel à une automatisation précise en transmettant l'ID de l'automatisation correspondante sous forme de chaîne dans `msg.topic` avec vos réglages.
+
+### Activer / désactiver l'automatisation
+
+Une automatisation désactivée reste sur le bridge et peut être réactivée à tout moment. Pour cela, transmettez un objet ayant le contenu suivant :
+
+: payload (boolean): `true` active l'automatisation, `false` la désactive
+: enabled (boolean): Comme ci-dessus, si vous préférez transmettre un objet
+: toggle (boolean | any): Bascule entre activée et désactivée, selon le statut précédent
+
+### Messages de statut du nœud
+
+Dès que l'automatisation change, le nœud renvoie le message de statut suivant :
+
+#### Objet de statut dans `msg.payload`
+
+: enabled (boolean): Indique si l'automatisation est activée
+: running (boolean): `true` tant que le bridge exécute effectivement l'automatisation
+: status (string | boolean): Le statut actuel. Peut contenir `initializing`, `running`, `disabled` ou `errored` comme valeur
+: lastError (string | boolean): La dernière erreur signalée par le bridge ou `false`
+: updated (string): Heure de la dernière mise à jour de la ressource par HueMagic (ISO 8601)
+
+#### Informations sur l'automatisation dans `msg.info`
+
+: id (string): Indique l'ID de l'automatisation
+: idV1 (string | boolean): Indique l'ancien ID de l'automatisation
+: name (string | boolean): Le nom que vous avez donné à l'automatisation dans l'application Philips Hue
+: type (string): Le type de la ressource (toujours `automation`)
+: script (string | boolean): L'ID du script de comportement qui sous-tend l'automatisation
+
+#### Configuration dans `msg.configuration`
+
+Contient les réglages de l'automatisation tels qu'ils ont été enregistrés par l'application Philips Hue. La structure dépend du type d'automatisation et est transmise telle quelle.
+
+#### Changements d'état dans `msg.updated`
+
+Énumère sous forme d'objet les paramètres qui ont changé par rapport au dernier état de l'automatisation. Si aucun changement n'a été enregistré, cet objet est vide.
+
+#### Dernier état de l'automatisation dans `msg.lastState`
+
+Contient l'objet de statut complet (voir les valeurs de sortie ci-dessus) du dernier état avant le dernier changement enregistré. Si HueMagic n'a pas encore enregistré le dernier état, `false` est émis.
+
+#### Dernière commande dans `msg.command` (facultatif)
+
+Si le statut du nœud a changé suite à une commande particulière, la commande complète qui a été exécutée est également émise. Sinon, cet objet n'est pas émis par le nœud.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

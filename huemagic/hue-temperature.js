@@ -37,15 +37,15 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("temperature", config.sensorid, function(info)
+		this.unsubscribe = bridge.subscribe("temperature", config.sensorid, function(info)
 		{
-			let currentState = bridge.get("temperature", info.id);
+			let currentState = bridge.get("temperature", info.id, { offset: config.offset });
 
 			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
 				// SEND MESSAGE
-				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
 				{
 					// SET LAST COMMAND
 					if(scope.lastCommand !== null)
@@ -112,14 +112,14 @@ module.exports = function(RED)
 			const tempSensorID = (!config.sensorid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.sensorid;
 			if(!tempSensorID)
 			{
-				scope.error("Please submit a valid sensor ID.");
+				scope.error(RED._("hue-temperature.node.error-no-id"), msg);
 				return false;
 			}
 
-			let currentState = bridge.get("temperature", tempSensorID);
+			let currentState = bridge.get("temperature", tempSensorID, { offset: config.offset });
 			if(!currentState)
 			{
-				scope.error("The sensor in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
+				scope.error(RED._("hue-temperature.node.error-not-available"), msg);
 				return false;
 			}
 
@@ -202,6 +202,14 @@ module.exports = function(RED)
 				if(done) { done(); }
 			}
 		});
+
+		//
+		// CLOSE NODE / DETACH FROM THE BRIDGE
+		this.on('close', function()
+		{
+			if(scope.unsubscribe) { scope.unsubscribe(); }
+		});
+
 	}
 
 	RED.nodes.registerType("hue-temperature", HueTemperature);

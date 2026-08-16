@@ -1,0 +1,96 @@
+<script type="text/markdown" data-help-name="hue-bridge-node">
+Węzeł „Hue Bridge” to uniwersalny węzeł, który potrafi zwracać wszystkie ustawienia bridge oraz komunikaty stanu pozostałych węzłów.
+
+### Konfiguracja
+
+Najpierw wybierz żądany Hue Bridge. Opcjonalnie możesz wyłączyć wszystkie automatyczne komunikaty stanu tego węzła ustawieniem „Pomijaj globalne aktualizacje i komunikaty urządzeń w tym węźle”. Węzeł przestanie wtedy wysyłać aktualizacje urządzeń.
+
+Możesz też zdecydować, aby komunikaty inicjalizacji wszystkich węzłów nie były pomijane przy starcie Node-RED. Po włączeniu tego ustawienia po każdym wdrożeniu otrzymasz komunikat stanu ze wszystkich zasobów połączonych z bridge.
+
+### Odczyt ustawień i stanu
+
+Zwraca bieżący stan i ustawienia bridge, gdy tylko do węzła zostanie wysłany poniższy komunikat. Możesz też nacisnąć przycisk w interfejsie Node-RED, bez wcześniejszego wysyłania komunikatu do węzła.
+
+: payload (boolean): Zwraca bieżący stan bridge
+
+### Uruchamianie skanowania TouchLink
+
+Za pomocą „skanowania TouchLink” możesz sparować z bridge nowe lub stare urządzenia (np. po przywróceniu ustawień fabrycznych). Przekaż w tym celu obiekt `msg.payload` o następującej zawartości:
+
+: touchLink (boolean): Paruje stare lub nowe urządzenia z bridge
+
+### Odczyt wszystkich urządzeń i zasobów
+
+Poleceniem „fetch” możesz uzyskać listę wybranych urządzeń aktualnie połączonych z bridge. Przekaż w tym celu obiekt `msg.payload` o następującej zawartości:
+
+: fetch (string | array [string, ...]): Przyjmuje wartości `light`, `group`, `button`, `motion`, `temperature`, `light_level` lub `rule`
+
+### Zmiana ustawień Hue Bridge
+
+Poniższym poleceniem możesz zmienić wybrane ustawienia bridge. Przekaż do węzła obiekt `msg.payload.settings` z następującymi opcjami:
+
+> [!WARNING]
+> Zmiana ustawień sieciowych wymaga ponownej konfiguracji bridge w HueMagic.
+
+: name (string): Zmienia nazwę bridge; musi zawierać od 4 do 16 znaków
+: zigbeeChannel (int): Zmienia bieżący kanał ZigBee (`11`, `15`, `20`, `25` lub `0`)
+: ipAddress (string): Zmienia adres IP w ustawieniach sieciowych
+: dhcpEnabled (boolean): `true` włącza DHCP w ustawieniach sieciowych, `false` je wyłącza
+: netmask (string): Zmienia maskę sieci w ustawieniach sieciowych
+: gateway (string): Określa bramę w ustawieniach sieciowych
+: proxyAddress (string): Ustawia adres serwera proxy w ustawieniach sieciowych
+: proxyPort (string | int): Określa port serwera proxy w ustawieniach sieciowych
+: timeZone (string): Zmienia strefę czasową ustawioną na bridge
+
+### Komunikaty stanu węzła
+
+Komunikaty stanu węzła „Hue Bridge” są dynamiczne. Choć mają określony schemat, ich zawartość może się różnić w zależności od tego, jaka akcja została właśnie wykonana na węźle.
+
+#### Obiekt stanu w `msg.payload`
+
+: id (string): Unikatowy identyfikator Hue Bridge
+: name (string): Aktualnie ustawiona nazwa
+: factoryNew (boolean): Wskazuje, czy bridge jest fabrycznie nowy
+: replacesBridgeId (string | boolean): Zwraca stary identyfikator bridge (jeśli przeprowadzono migrację) albo `false`
+: dataStoreVersion (string): Wersja magazynu danych
+: starterKitId (string | boolean): Nazwa zestawu startowego utworzonego fabrycznie albo `false`
+: softwareVersion (string): Wersja oprogramowania bridge
+: apiVersion (string): Wersja API bridge
+: zigbeeChannel (int): Aktualnie używany kanał ZigBee
+: macAddress (string): Adres MAC bridge
+: ipAddress (string): Adres IP bridge
+: dhcpEnabled (boolean): Wskazuje, czy DHCP jest włączone
+: netmask (string): Maska sieci bridge
+: gateway (string): Brama bridge
+: proxyAddress (string | boolean): Aktualnie używany adres serwera proxy albo `false`
+: proxyPort (string): Aktualnie używany port serwera proxy
+: utcTime (string): Czas UTC na bridge
+: timeZone (string): Strefa czasowa ustawiona na bridge
+: localTime (string): Lokalna strefa czasowa
+: portalServicesEnabled (boolean): Wskazuje, czy usługi portalu są włączone
+: portalConnected (boolean): Wskazuje, czy bridge jest połączony z portalem
+: linkButtonEnabled (boolean): Wskazuje, czy przycisk parowania jest aktywny
+: touchlinkEnabled (boolean): Wskazuje, czy TouchLink jest włączony
+: autoUpdatesEnabled (boolean): Wskazuje, czy HueMagic będzie automatycznie sprawdzać aktualizacje
+: users (array [object, ...]): Lista wszystkich użytkowników bridge (tablica obiektów)
+: updated (string): Czas ostatniej aktualizacji zasobu przez HueMagic (ISO 8601)
+: model (object): Zawiera informacje o modelu bridge w polach `id`, `manufacturer` i `name`
+
+#### Wyniki „fetch” w `msg.results` (opcjonalnie)
+
+Jeśli w węźle użyto polecenia „fetch”, bridge zwraca odpowiednie wyniki w obiekcie `msg.results`. Obiekt zawiera odpytane grupy zasobów, a te z kolei wszystkie odpowiadające im zasoby w postaci tablicy.
+
+#### Globalne komunikaty stanu w `msg.updated` (opcjonalnie)
+
+O ile nie zostanie to wyłączone, węzeł zwraca zaktualizowany komunikat stanu dla każdego zasobu na bridge. Komunikat w `msg.updated` odpowiada schematowi danego zasobu i różni się w zależności od typu urządzenia, które zaktualizowano jako ostatnie.
+
+#### Ostatnie polecenie w `msg.command` (opcjonalnie)
+
+Jeśli stan węzła zmienił się w wyniku określonego polecenia, wysyłane jest również całe wykonane polecenie. W przeciwnym razie węzeł nie wysyła tego obiektu.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

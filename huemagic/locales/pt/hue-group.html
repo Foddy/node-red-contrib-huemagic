@@ -1,0 +1,87 @@
+<script type="text/markdown" data-help-name="hue-group">
+O nó «Hue Grupo» pode controlar em simultâneo várias luzes agrupadas no bridge.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todos os grupos disponíveis. Se já souber o ID de um grupo, também o pode introduzir aqui manualmente. Pode atribuir internamente um novo nome ao grupo ou manter o nome predefinido. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». O nó deixará de emitir atualizações. Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se ativar esta definição, receberá uma mensagem de estado do grupo selecionado após cada implementação. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+Se não selecionar nenhum grupo e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo. Também pode aplicar definições no modo universal a um grupo específico, transmitindo o respetivo ID como cadeia de carateres em `msg.topic` juntamente com as suas definições.
+
+### Consultar o estado
+
+Emite o estado atual do grupo assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: status (boolean): Devolve o estado atual do grupo
+
+### Ligar / desligar (modo simples)
+
+Para ligar ou desligar rapidamente um grupo inteiro no modo simples, transmita ao nó um objeto com o seguinte conteúdo.
+
+: payload (boolean): `true` liga todo o grupo, `false` desliga-o
+
+### Comandos de grupo (avançado)
+
+Para além de simplesmente ligar e desligar, existem muitas outras opções para controlar o grupo. Todos os nós do HueMagic podem ser controlados com comandos aditivos. Isto significa que pode transmitir primeiro uma definição e depois outra num comando posterior sem descartar a definição anterior. Transmita os seguintes parâmetros num objeto `msg.payload` para efetuar definições mais amplas no grupo:
+
+: on (boolean): `true` liga todo o grupo, `false` desliga-o
+: toggle (boolean | any): Alterna entre ligar e desligar, consoante o estado anterior do grupo
+: brightness (int | string): Valor percentual do brilho da luz (0-100) ou uma cadeia de carateres com o valor `auto` para definir automaticamente o brilho com base na hora atual
+: brightnessLevel (int): Valor numérico do brilho da luz (0-254)
+: incrementBrightness (int): Valor percentual de uma alteração relativa do brilho. O intervalo válido vai de -100 % a +100 %. Os valores positivos aumentam o brilho. O valor predefinido é +10 %
+: decrementBrightness (int): Valor percentual de uma alteração relativa do brilho. O intervalo válido vai de -100 % a +100 %. Os valores positivos diminuem o brilho. O valor predefinido é +10 %
+: color (string): `random` para definir uma cor aleatória ou um nome de cor em inglês (p. ex. `red`)
+: hex (string): Valor de cor em hexadecimal sob a forma de cadeia de carateres
+: rgb (array [0,0,0]): Valor de cor em formato RGB sob a forma de matriz
+: xyColor (object {x [float], y [float]}): Valor de cor no formato de cor XY sob a forma de objeto
+: image (string): Caminho de uma imagem (local ou na web) para definir a cor atual do grupo como a cor média da imagem
+: colorTemp (int | string): Valor entre 153 e 500 para definir a temperatura de cor do grupo, ou os valores `cold`, `normal`, `warm`, `hot` e `auto`, sendo que `auto` define a temperatura de cor com base na hora atual
+: transitionTime (float): Tempo de transição da definição atual em segundos. Se for transmitido `0`, o grupo muda de imediato para a definição pretendida. Se transmitir `3`, o grupo muda para a definição pretendida com uma ligeira transição nos 3 segundos seguintes
+: colorloop (float): Reproduz uma animação «colorloop» durante os segundos indicados e volta depois ao estado original do grupo
+: alert (float): Reproduz uma animação «alert» durante os segundos indicados e volta depois ao estado original do grupo
+
+### Mensagens de estado do nó
+
+Quando é detetada uma alteração no grupo, o nó devolve a seguinte mensagem de estado.
+
+> [!NOTE]
+> O grupo só emite mensagens de estado quando a última luz é desligada ou quando a primeira é ligada (se todas estivessem apagadas antes).
+
+Ao contrário do nó «Hue Luz», dispõe aqui de muito menos informação de estado, uma vez que um grupo pode conter muitos tipos de dispositivo diferentes com valores que não podem ser combinados.
+
+#### Objeto de estado em `msg.payload`
+
+: on (boolean): Estado do grupo, em que `true` significa ligado e `false` desligado
+: brightness (float | boolean): Brilho do grupo em percentagem ou `false` se o grupo não puder ser regulado
+: brightnessLevel (int | boolean): Brilho do grupo como valor numérico (0-254) ou `false` se o grupo não puder ser regulado
+: rgb (array [0,0,0]): Cor atual do grupo em formato RGB (apenas se disponível)
+: hex (string): Cor atual do grupo em formato hexadecimal (apenas se disponível)
+: xyColor (object {x [float], y [float]}): Cor atual do grupo no formato de cor XY (apenas se disponível)
+: colorTemp (int): Temperatura de cor atualmente definida para o grupo (apenas se disponível)
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+
+#### Informações sobre o grupo em `msg.info`
+
+: id (string): Indica o novo ID do grupo
+: idV1 (string | boolean): Indica o ID antigo do grupo
+: name (string): O nome atualmente atribuído ao grupo
+: resources (object) : Contém todos os dispositivos e recursos associados ao grupo
+: type (string): O tipo do grupo (sempre `group`)
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado do grupo. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado da luz em `msg.lastState`
+
+Contém o objeto de estado completo (ver os valores de saída acima) do último estado antes da última alteração. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

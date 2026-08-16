@@ -1,0 +1,35 @@
+{
+	"hue-contact": {
+		"config": {
+			"name": "Nombre",
+			"skipevents-node": "Omitir los mensajes del nodo",
+			"sendinitevents-node": "No suprimir el evento de inicialización",
+			"onlycommands-node": "Informar solo tras un comando",
+			"unknown-error": "Algo ha salido mal. Inténtelo de nuevo.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universales",
+			"universalevents-node": "Recibe todos los mensajes de otros nodos del mismo tipo (solo en modo universal)",
+			"input-name": "Nombre del sensor",
+			"searching": "Buscando sensores de contacto…",
+			"none-found": "¡No se ha encontrado ningún sensor de contacto!",
+			"sensor": "Sensor"
+		},
+		"node": {
+			"not-configured": "sin configurar",
+			"not-reachable": "no accesible",
+			"activated": "activado",
+			"deactivated": "desactivado",
+			"universal": "modo universal",
+			"command": "ejecutando comando…",
+			"statusmsg": "Estado consultado correctamente…",
+			"title": "Hue Contacto",
+			"contact": "contacto",
+			"no-contact": "sin contacto",
+			"input": "activar / desactivar / estado",
+			"output": "contacto",
+			"tampered": "manipulado",
+			"error-no-id": "Indique un ID de sensor válido.",
+			"error-not-available": "El sensor aún no está disponible. Espere hasta que HueMagic haya establecido la conexión con el bridge o compruebe si el ID del recurso indicado en la configuración es válido."
+		}
+	}
+}

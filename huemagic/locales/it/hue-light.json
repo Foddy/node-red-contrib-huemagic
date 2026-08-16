@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignora i messaggi del nodo",
+			"sendinitevents-node": "Non sopprimere l'evento di inizializzazione",
+			"onlycommands-node": "Segnala solo dopo un comando",
+			"unknown-error": "Qualcosa è andato storto. Riprovi.",
+			"bridge": "Bridge",
+			"universalevents": "Eventi universali",
+			"universalevents-node": "Riceve tutti i messaggi dagli altri nodi dello stesso tipo (solo in modalità universale)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Attiva la denominazione dei colori",
+			"input-name": "Nome della luce",
+			"searching": "Ricerca di luci…",
+			"none-found": "Nessuna luce trovata!",
+			"light": "Luce"
+		},
+		"node": {
+			"not-configured": "non configurato",
+			"init": "inizializzazione…",
+			"not-reachable": "non raggiungibile",
+			"universal": "modalità universale",
+			"command": "esecuzione del comando…",
+			"statusmsg": "Stato interrogato correttamente…",
+			"title": "Hue Luce",
+			"turned-on": "accesa",
+			"turned-on-percent": "accesa (__percent__ %)",
+			"turned-off": "spenta",
+			"error-no-id": "Nessun ID luce definito. Consulti la documentazione.",
+			"error-input": "errore di immissione",
+			"error-invalid-temp": "Temperatura di colore non valida. Sono consentiti solo valori da 153 a 500.",
+			"input": "accendi / spegni",
+			"output": "stato",
+			"error-not-available": "La luce non è ancora disponibile. Attenda che HueMagic abbia stabilito la connessione con il bridge oppure verifichi se l'ID della risorsa indicato nella configurazione è valido.",
+			"error-invalid-brightness": "Impostazione di luminosità non valida. Sono consentiti solo valori da 0 a 100 percento.",
+			"error-invalid-brightness-level": "Impostazione di luminosità non valida. Sono consentiti solo valori da 0 a 254.",
+			"error-invalid-sat": "Impostazione di saturazione non valida. Sono consentiti solo valori da 0 a 100.",
+			"error-no-colorloop": "L'effetto colorloop non è disponibile per questa luce.",
+			"error-invalid-effect": "Effetto non valido. Questa luce supporta: __effects__",
+			"error-invalid-powerup": "Impostazione di accensione non valida. I preset consentiti sono: __presets__"
+		}
+	}
+}

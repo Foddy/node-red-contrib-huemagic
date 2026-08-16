@@ -1,0 +1,150 @@
+[
+    {
+        "id": "4e9f59149660a0d5",
+        "type": "tab",
+        "label": "Hue Temperature (example)",
+        "disabled": false,
+        "info": "Przykładowe użycie węzła „Hue Temperature”"
+    },
+    {
+        "id": "3a0ce323d25bbb89",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "PIERWSZE KROKI (kliknij dwukrotnie)",
+        "info": "Kliknij węzeł „Hue Temperatura” i wybierz z listy zarówno swój bridge, jak i czujnik. Jeśli nie masz jeszcze skonfigurowanego bridge, zostaniesz poproszony o jego konfigurację, zanim dokończysz ustawienia węzła.\n\nGdy węzeł będzie połączony z Twoim bridge oraz czujnikiem, a zmiany zostaną wdrożone w Node-RED, węzeł będzie mógł odbierać i wykonywać Twoje polecenia. Węzeł „Hue Temperatura” dodatkowo automatycznie wysyła komunikat, gdy tylko stan czujnika na bridge zostanie zaktualizowany (zmiana temperatury). Zaktualizowany stan wraz ze wszystkimi informacjami otrzymasz w wysyłanym komunikacie.\n\nJeśli chcesz uzyskać więcej informacji o tym węźle, dostępnych poleceniach i wartościach wyjściowych, kliknij go raz w swoim przepływie i przejdź do ikony książki Node-RED (prawy górny róg).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "0ebb67a61954b5d7",
+        "type": "debug",
+        "z": "4e9f59149660a0d5",
+        "name": "Informacja",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "61bd0f6cab995030",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Odczytaj bieżący stan",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "266a95ec791a4434",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Stan",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "64d6a759a6ee3c70",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Włącz / wyłącz urządzenie",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ede50c625f3d6870",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Włącz",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e8cf23462e2c1f9a",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Wyłącz",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "20a19938c9eb011c",
+        "type": "hue-temperature",
+        "z": "4e9f59149660a0d5",
+        "skipevents": false,
+        "initevents": false,
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "0ebb67a61954b5d7"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,40 @@
+{
+	"hue-bridge-config": {
+		"config": {
+			"name": "Nazwa",
+			"apikey": "Klucz API",
+			"missing-ip": "Brak adresu IP Hue Bridge…",
+			"disable-events": "Wyłącz zdarzenia",
+			"disable-events-info": "Wyłącz zdarzenia we wszystkich węzłach",
+			"searching": "Wyszukiwanie urządzeń Hue Bridge…",
+			"none-found": "Nie znaleziono żadnego Hue Bridge!",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"invalid": "Niestety. Wybrany Hue Bridge jest nieprawidłowy: ",
+			"error-select-first": "Wybierz swój Hue Bridge, zanim utworzysz nowego użytkownika!",
+			"waiting": "oczekiwanie na przycisk parowania…",
+			"new-user-press": "Naciśnij teraz przycisk na swoim Hue Bridge, aby utworzyć nowego użytkownika!",
+			"retry": "Nie wykryto naciśnięcia przycisku. Spróbuj ponownie…",
+			"success": "Użytkownik został utworzony!",
+			"connecting": "Łączenie z bridge…",
+			"autoupdates": "Włącz automatyczne aktualizacje oprogramowania układowego",
+			"bridge-ip": "Adres IP bridge",
+			"worker": "Procesy robocze"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"initializing": "Inicjalizacja bridge (__bridge__)…",
+			"connected": "Połączono z bridge",
+			"processing": "Przetwarzanie zasobów bridge…",
+			"initial-emit": "Pierwsza emisja stanów zasobów…",
+			"keep-updated": "Aktualizowanie węzłów…",
+			"subscribing": "Subskrybowanie zdarzeń bridge…",
+			"unsubscribing": "Anulowanie subskrypcji zdarzeń bridge…",
+			"no-legacy-api": "Bridge nie odpowiada na starym API, kontynuacja bez jego konfiguracji…",
+			"request-error": "Błąd podczas pobierania informacji z bridge (__error__)",
+			"connection-lost": "Utracono połączenie z bridge (__reason__). Ponowna próba za __seconds__ s…",
+			"resources-changed": "Zasoby na bridge uległy zmianie. Ponowne wczytywanie…",
+			"not-connected": "Bridge nie jest połączony."
+		}
+	}
+}

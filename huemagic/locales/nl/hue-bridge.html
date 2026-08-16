@@ -1,0 +1,96 @@
+<script type="text/markdown" data-help-name="hue-bridge-node">
+De node "Hue Bridge" is een universele node die alle instellingen van de bridge en de statusberichten van andere nodes kan uitgeven.
+
+### Instellen
+
+Selecteer eerst de gewenste Hue Bridge. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Globale apparaatupdates en -berichten op deze node overslaan". De node geeft dan geen apparaatupdates meer uit.
+
+U kunt ook kiezen of de initialisatieberichten van alle nodes bij het starten van Node-RED niet worden onderdrukt. Als u deze instelling activeert, ontvangt u na elke deploy een statusbericht van alle bronnen die met de bridge zijn verbonden.
+
+### Instellingen en status opvragen
+
+Geeft de huidige status en instellingen van de bridge uit zodra het volgende bericht naar de node is gestuurd. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: payload (boolean): Geeft de huidige status van de bridge terug
+
+### TouchLink-scan starten
+
+Met een "TouchLink-scan" kunt u nieuwe of oude apparaten aan de bridge koppelen (bijv. na een reset). Geef hiervoor het object `msg.payload` met de volgende inhoud mee:
+
+: touchLink (boolean): Koppelt oude of nieuwe apparaten aan de bridge
+
+### Alle apparaten en bronnen opvragen
+
+Met het commando "fetch" kunt u een lijst van bepaalde apparaten opvragen die momenteel met de bridge verbonden zijn. Geef hiervoor het object `msg.payload` met de volgende inhoud mee:
+
+: fetch (string | array [string, ...]): Accepteert `light`, `group`, `button`, `motion`, `temperature`, `light_level` of `rule` als waarde(n)
+
+### Instellingen van de Hue Bridge wijzigen
+
+Met het volgende commando kunt u bepaalde instellingen op de bridge wijzigen. Geef de node het object `msg.payload.settings` met de volgende instelmogelijkheden mee:
+
+> [!WARNING]
+> Het wijzigen van de netwerkinstellingen vereist dat de bridge in HueMagic opnieuw wordt geconfigureerd.
+
+: name (string): Wijzigt de naam van de bridge en moet minimaal 4 en maximaal 16 tekens bevatten
+: zigbeeChannel (int): Wijzigt het huidige ZigBee-kanaal (`11`, `15`, `20`, `25` of `0`)
+: ipAddress (string): Wijzigt het IP-adres in de netwerkinstellingen
+: dhcpEnabled (boolean): `true` schakelt DHCP in de netwerkinstellingen in, `false` schakelt het uit
+: netmask (string): Wijzigt het netwerkmasker in de netwerkinstellingen
+: gateway (string): Bepaalt de gateway in de netwerkinstellingen
+: proxyAddress (string): Stelt een proxyadres in de netwerkinstellingen in
+: proxyPort (string | int): Bepaalt de poort van de proxy in de netwerkinstellingen
+: timeZone (string): Wijzigt de momenteel ingestelde tijdzone op de bridge
+
+### Statusberichten van de node
+
+De statusberichten van de node "Hue Bridge" zijn dynamisch. Ze volgen weliswaar een bepaald patroon, maar hun uitvoer kan variëren afhankelijk van welke actie er zojuist op de node is uitgevoerd.
+
+#### Statusobject onder `msg.payload`
+
+: id (string): Uniek ID van de Hue Bridge
+: name (string): Momenteel ingestelde naam
+: factoryNew (boolean): Geeft aan of de bridge fabrieksnieuw is
+: replacesBridgeId (string | boolean): Geeft het oude bridge-ID terug (als er een migratie heeft plaatsgevonden) of `false`
+: dataStoreVersion (string): Versie van de gegevensopslag
+: starterKitId (string | boolean): Naam van het in de fabriek aangemaakte starterpakket of `false`
+: softwareVersion (string): Softwareversie van de bridge
+: apiVersion (string): API-versie van de bridge
+: zigbeeChannel (int): Momenteel gebruikt ZigBee-kanaal
+: macAddress (string): MAC-adres van de bridge
+: ipAddress (string): IP-adres van de bridge
+: dhcpEnabled (boolean): Geeft aan of DHCP is ingeschakeld
+: netmask (string): Netwerkmasker van de bridge
+: gateway (string): Gateway van de bridge
+: proxyAddress (string | boolean): Momenteel gebruikt proxyadres of `false`
+: proxyPort (string): Momenteel gebruikte proxypoort
+: utcTime (string): UTC-tijd op de bridge
+: timeZone (string): Momenteel ingestelde tijdzone op de bridge
+: localTime (string): Lokale tijdzone
+: portalServicesEnabled (boolean): Geeft aan of de portaldiensten zijn ingeschakeld
+: portalConnected (boolean): Geeft aan of de bridge met het portaal is verbonden
+: linkButtonEnabled (boolean): Geeft aan of de koppelknop is ingeschakeld
+: touchlinkEnabled (boolean): Geeft aan of TouchLink is ingeschakeld
+: autoUpdatesEnabled (boolean): Geeft aan of HueMagic automatisch op updates controleert
+: users (array [object, ...]): Lijst van alle gebruikers op de bridge (array met objecten)
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+: model (object): Bevat de modelinformatie van de bridge onder `id`, `manufacturer` en `name`
+
+#### Fetch-resultaten onder `msg.results` (optioneel)
+
+Als het commando "fetch" op de node is gebruikt, geeft de bridge de bijbehorende resultaten uit in het object `msg.results`. Het object bevat de opgevraagde brongroepen, die op hun beurt alle bijbehorende bronnen in de vorm van een array bevatten.
+
+#### Globale statusberichten onder `msg.updated` (optioneel)
+
+Tenzij uitgeschakeld geeft de node voor elke bron op de bridge een bijgewerkt statusbericht uit. Het statusbericht onder `msg.updated` volgt het patroon van de betreffende bron en varieert afhankelijk van het type apparaat dat het laatst is bijgewerkt.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

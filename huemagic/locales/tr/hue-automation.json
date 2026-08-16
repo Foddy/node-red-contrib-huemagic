@@ -1,0 +1,33 @@
+{
+	"hue-automation": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"universalevents": "Evrensel olaylar",
+			"universalevents-node": "Aynı türdeki diğer düğümlerin tüm mesajlarını alır (yalnızca evrensel modda)",
+			"input-name": "Otomasyon adı",
+			"searching": "Otomasyonlar aranıyor…",
+			"none-found": "Hiç otomasyon bulunamadı!",
+			"automation": "Otomasyon"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"init": "başlatılıyor…",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Otomasyon",
+			"enabled": "etkin",
+			"disabled": "devre dışı",
+			"errored": "hata",
+			"input": "etkinleştir / devre dışı bırak",
+			"output": "otomasyon",
+			"error-no-id": "Lütfen geçerli bir otomasyon kimliği girin.",
+			"error-not-available": "Otomasyon henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin."
+		}
+	}
+}

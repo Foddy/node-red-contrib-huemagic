@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-automation">
+O nó «Hue Automatização» pode ativar e desativar as automatizações que criou na aplicação Philips Hue.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todas as automatizações disponíveis. Se já souber o ID da automatização, também o pode introduzir aqui manualmente. Pode atribuir internamente um novo nome à automatização ou manter o nome predefinido. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». O nó deixará de emitir atualizações. Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se ativar esta definição, receberá uma mensagem de estado da automatização selecionada após cada implementação. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+Se não selecionar nenhuma automatização e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo. Também pode aplicar definições no modo universal a uma automatização específica, transmitindo o respetivo ID como cadeia de carateres em `msg.topic` juntamente com as suas definições.
+
+### Ativar / desativar a automatização
+
+Uma automatização desativada permanece no bridge e pode ser reativada a qualquer momento. Para tal, transmita um objeto com o seguinte conteúdo:
+
+: payload (boolean): `true` ativa a automatização, `false` desativa-a
+: enabled (boolean): Como acima, se preferir transmitir um objeto
+: toggle (boolean | any): Alterna entre ativada e desativada, consoante o estado anterior
+
+### Mensagens de estado do nó
+
+Assim que a automatização muda, o nó devolve a seguinte mensagem de estado:
+
+#### Objeto de estado em `msg.payload`
+
+: enabled (boolean): Indica se a automatização está ativada
+: running (boolean): `true` enquanto o bridge estiver efetivamente a executar a automatização
+: status (string | boolean): O estado atual. Pode conter `initializing`, `running`, `disabled` ou `errored` como valor
+: lastError (string | boolean): O último erro comunicado pelo bridge ou `false`
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+
+#### Informações sobre a automatização em `msg.info`
+
+: id (string): Indica o ID da automatização
+: idV1 (string | boolean): Indica o ID antigo da automatização
+: name (string | boolean): O nome que atribuiu à automatização na aplicação Philips Hue
+: type (string): O tipo do recurso (sempre `automation`)
+: script (string | boolean): O ID do script de comportamento subjacente à automatização
+
+#### Configuração em `msg.configuration`
+
+Contém as definições da automatização tal como foram guardadas pela aplicação Philips Hue. A estrutura depende do tipo de automatização e é transmitida sem alterações.
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado da automatização. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado da automatização em `msg.lastState`
+
+Contém o objeto de estado completo (ver os valores de saída acima) do último estado antes da última alteração registada. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

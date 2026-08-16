@@ -1,0 +1,378 @@
+[
+    {
+        "id": "c93b5e7af2ab6d48",
+        "type": "tab",
+        "label": "Hue Sync Box (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Sync Box node"
+    },
+    {
+        "id": "c1c6029d8e5f2317",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "FIRST STEPS (double click me)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Click on the \"Hue Sync Box\" node and set up your sync box. The box is not connected to your Hue Bridge but speaks its own local API, so it needs its own configuration with its own access token.\n\nEnter the IP address of your sync box and click the button next to the access token field. Then press and hold the button on the sync box until its LED blinks green. HueMagic keeps asking the box for a minute and stores the token as soon as it answers.\n\nSince the sync box does not push its state, HueMagic asks it every few seconds. You can change how often in the configuration of the sync box.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner)."
+    },
+    {
+        "id": "d2d713ae9f603428",
+        "type": "debug",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Information",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3e824bf0a714539",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Get the current status",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4f935c01b825664a",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Status",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c5a146d12c936750",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Turn the sync box on / off",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i6b257e23d047861b",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Turn on",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i7c368f34e158972c",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Turn off",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i8d479045f269a83d",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Toggle sync",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "c9e58a156037b94e",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Choose a sync mode",
+        "x": 120,
+        "y": 400,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iaf69b267148ac05f",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Video",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"video\",\"intensity\":\"high\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-film"
+    },
+    {
+        "id": "iba7ac378259bd160",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Game",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"game\",\"intensity\":\"intense\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-gamepad"
+    },
+    {
+        "id": "icb8bd489360ce271",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Music",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"music\",\"intensity\":\"moderate\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-music"
+    },
+    {
+        "id": "idc9ce59a471df382",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Passthrough only",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"passthrough\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-television"
+    },
+    {
+        "id": "cedadf6ab582e0493",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Brightness and input",
+        "x": 120,
+        "y": 620,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "ifebea7bc693f1504",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Brightness 70%",
+        "x": 110,
+        "y": 660,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":70}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "i0fcfb8cd7a402615",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Dim by 20%",
+        "x": 110,
+        "y": 700,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":20}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "i10d0c9de8b513726",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Switch to HDMI 2",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":2}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-plug"
+    },
+    {
+        "id": "s6a046b12c935d75b",
+        "type": "hue-syncbox",
+        "z": "c93b5e7af2ab6d48",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2d713ae9f603428"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

@@ -1,0 +1,37 @@
+{
+	"hue-brightness": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"input-name": "Nazwa czujnika jasności",
+			"searching": "Wyszukiwanie czujników…",
+			"none-found": "Nie znaleziono żadnego czujnika jasności!",
+			"sensor": "Czujnik",
+			"all": "Wszystkie grupy / światła",
+			"darkthreshold": "Ciemno poniżej"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"deactivated": "wyłączony",
+			"init": "inicjalizacja…",
+			"not-reachable": "nieosiągalny",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Jasność",
+			"lux": "__lux__ lx",
+			"lux-dark": "__lux__ lx (ciemno)",
+			"lux-daylight": "__lux__ lx (światło dzienne)",
+			"input": "zapytanie o stan",
+			"output": "jasność (zmieniona)",
+			"error-no-id": "Podaj prawidłowy identyfikator: czujnik.",
+			"error-not-available": "Czujnik nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy."
+		}
+	}
+}

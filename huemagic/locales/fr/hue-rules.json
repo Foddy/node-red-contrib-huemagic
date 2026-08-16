@@ -1,0 +1,30 @@
+{
+	"hue-rules": {
+		"config": {
+			"name": "Nom",
+			"skipevents-node": "Ignorer les messages du nœud",
+			"sendinitevents-node": "Ne pas supprimer l'événement d'initialisation",
+			"onlycommands-node": "Signaler uniquement après une commande",
+			"unknown-error": "Une erreur est survenue. Veuillez réessayer.",
+			"bridge": "Bridge",
+			"input-name": "Nom de la règle",
+			"searching": "Recherche de règles…",
+			"none-found": "Aucune règle trouvée !",
+			"rule": "Règle"
+		},
+		"node": {
+			"init": "initialisation…",
+			"universal": "mode universel",
+			"command": "exécution de la commande…",
+			"statusmsg": "Statut interrogé avec succès…",
+			"title": "Hue Règle",
+			"no-rule": "aucune règle sélectionnée",
+			"enabled": "activée",
+			"disabled": "désactivée",
+			"output": "règle (déclenchée)",
+			"input": "activer / désactiver",
+			"error-no-id": "Veuillez indiquer un ID de règle valide.",
+			"error-not-available": "La règle n'est pas encore disponible. Veuillez attendre que HueMagic ait établi la connexion avec le bridge ou vérifiez si l'ID de ressource indiqué dans la configuration est valide."
+		}
+	}
+}

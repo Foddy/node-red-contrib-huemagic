@@ -1,0 +1,88 @@
+[
+    {
+        "id": "d5d4a606.0f05",
+        "type": "tab",
+        "label": "Hue Buttons (example)",
+        "disabled": false,
+        "info": "Przykładowe użycie węzła „Hue Buttons”"
+    },
+    {
+        "id": "b650df5fecbbc08d",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "PIERWSZE KROKI (kliknij dwukrotnie)",
+        "info": "Kliknij węzeł „Hue Przyciski” i wybierz z listy zarówno swój bridge, jak i urządzenie. Jeśli nie masz jeszcze skonfigurowanego bridge, zostaniesz poproszony o jego konfigurację, zanim dokończysz ustawienia węzła.\n\nGdy węzeł będzie połączony z Twoim bridge i urządzeniem, a zmiany zostaną wdrożone w Node-RED, węzeł automatycznie wyśle komunikat, gdy stan urządzenia na bridge zostanie zaktualizowany (naciśnięto przycisk). Zaktualizowany stan wraz ze wszystkimi informacjami otrzymasz w wysyłanym komunikacie.\n\nJeśli chcesz uzyskać więcej informacji o tym węźle, dostępnych poleceniach i wartościach wyjściowych, kliknij go raz w swoim przepływie i przejdź do ikony książki Node-RED (prawy górny róg).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "79f1f61985718e40",
+        "type": "debug",
+        "z": "d5d4a606.0f05",
+        "name": "Informacja",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "9b5c4dce9c98015c",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "Odczytaj bieżący stan",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "74f3cdad2b625d5c",
+        "type": "inject",
+        "z": "d5d4a606.0f05",
+        "name": "Stan",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "664e68b0b62d7e4e"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "664e68b0b62d7e4e",
+        "type": "hue-buttons",
+        "z": "d5d4a606.0f05",
+        "skipevents": false,
+        "initevents": false,
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "79f1f61985718e40"
+            ]
+        ]
+    }
+]

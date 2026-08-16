@@ -1,0 +1,26 @@
+{
+	"hue-magic": {
+		"config": {
+			"name": "Nombre",
+			"input-name": "Nombre de la animación",
+			"loop": "Bucle",
+			"loop-endless": "Repetir indefinidamente",
+			"restore": "Restaurar",
+			"restore-state": "Restaurar el estado anterior al detener",
+			"animation": "Animación",
+			"unknown-error": "Algo ha salido mal. Inténtelo de nuevo.",
+			"seconds": "s",
+			"minutes": "min"
+		},
+		"node": {
+			"title": "Hue Magic",
+			"no-animation": "ninguna animación indicada",
+			"animating": "animando…",
+			"stopped": "detenida",
+			"input": "iniciar / detener animación",
+			"output": "luz o grupo",
+			"command": "ejecutando comando…",
+			"playmsg": "Animación iniciada…"
+		}
+	}
+}

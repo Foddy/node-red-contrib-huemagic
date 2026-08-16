@@ -1,0 +1,69 @@
+<script type="text/markdown" data-help-name="hue-rules">
+Il nodo «Hue Regola» può attivare o disattivare le regole salvate nel bridge e richiamarne le impostazioni.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutte le regole disponibili. Se conosce già l'ID della regola, può anche inserirlo qui manualmente. In alternativa può assegnare un nuovo nome oppure mantenere quello predefinito della regola. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». Il nodo non emetterà più aggiornamenti. In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+Se non seleziona alcuna regola e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo. Può anche applicare impostazioni in modalità universale a una regola specifica trasmettendo il relativo ID come stringa in `msg.topic` insieme alle sue impostazioni.
+
+### Richiedere proprietà e impostazioni
+
+Emette le proprietà attuali della regola non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.
+
+: status (boolean): Restituisce lo stato attuale della regola
+
+### Attivare / disattivare la regola
+
+La regola può essere attivata e disattivata all'occorrenza. Se la regola è disattivata, non verrà più eseguita nel bridge finché non la riattiverà. A tal fine, trasmetta un oggetto con il seguente contenuto:
+
+: payload (boolean): `true` attiva la regola, `false` la disattiva
+
+### Messaggi di stato del nodo
+
+Non appena lo stato (attivata / disattivata) di una regola cambia, il nodo restituisce il seguente messaggio di stato:
+
+#### Oggetto di stato in `msg.payload`
+
+: enabled (boolean): Indica se la regola è attivata o disattivata
+: triggered (string): Momento dell'ultima esecuzione (ISO 8601)
+
+#### Informazioni sulla regola in `msg.info`
+
+: id (string): L'ID univoco della regola
+: created (string): Data di creazione della regola (ISO 8601)
+: name (string): Nome della regola sul bridge
+: timesTriggered (int): Numero di volte in cui la regola è stata eseguita sul bridge
+: owner (string): ID del proprietario di questa regola
+: status (string): Stato della regola sotto forma di stringa
+
+#### Condizioni della regola in `msg.conditions` (array)
+
+: address (string): Percorso verso un attributo di un sensore
+: operator (string): Operatore
+: value (string): Il valore da verificare
+
+#### Azioni della regola in `msg.actions` (array)
+
+: address (string): L'indirizzo di destinazione della risorsa
+: method (string): Il metodo della richiesta
+: body (object): L'azione da eseguire
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato della regola. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato della regola in `msg.lastState`
+
+Contiene l'oggetto completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica registrata della regola. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

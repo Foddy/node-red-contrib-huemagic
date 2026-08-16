@@ -1,19 +1,18 @@
 {
-	"hue-rules":
-	{
-		"config":
-		{
+	"hue-rules": {
+		"config": {
 			"name": "Name",
 			"input-name": "Name der Regel",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
 			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"onlycommands-node": "Nur nach einem Befehl melden",
 			"searching": "Suche nach Regeln…",
 			"none-found": "Keine Regeln gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"rule": "Regel"
+			"rule": "Regel",
+			"bridge": "Bridge"
 		},
-		"node":
-		{
+		"node": {
 			"title": "Hue Regel",
 			"no-rule": "keine Regel definiert",
 			"init": "initialisiere…",
@@ -23,7 +22,9 @@
 			"input": "aktivieren / deaktivieren",
 			"universal": "Universalmodus",
 			"command": "führt Befehl aus…",
-			"statusmsg": "Status erfolgreich abgefragt…"
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"error-no-id": "Bitte geben Sie eine gültige Regel-ID an.",
+			"error-not-available": "Die Regel ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist."
 		}
 	}
 }

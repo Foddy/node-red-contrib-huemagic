@@ -8,12 +8,21 @@ module.exports = function(RED)
 
 		const scope = this;
 		const bridge = RED.nodes.getNode(config.bridge);
+		const async = require('async');
 
 		// NODE UI STATUS TIMEOUT
 		this.timeout = null;
 
 		// SAVE LAST COMMAND
 		this.lastCommand = null;
+
+		//
+		// CLOSE NODE
+		this.on('close', function()
+		{
+			if(scope.timeout !== null) { clearTimeout(scope.timeout); }
+			if(scope.unsubscribe) { scope.unsubscribe(); }
+		});
 
 		//
 		// CHECK CONFIG
@@ -39,15 +48,17 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("button", config.sensorid, function(info)
+		this.unsubscribe = bridge.subscribe("button", config.sensorid, function(info)
 		{
 			let currentState = bridge.get("button", info.id);
 
 			// RESOURCE FOUND?
 			if(currentState !== false)
 			{
+				const hasEvent = (currentState.payload.button !== false || currentState.payload.rotation !== false);
+
 				// SEND MESSAGE
-				if(!config.skipevents && currentState.payload.button !== false && (config.initevents || info.suppressMessage == false))
+				if(!config.skipevents && hasEvent && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
 				{
 					// SET LAST COMMAND
 					if(scope.lastCommand !== null)
@@ -65,35 +76,47 @@ module.exports = function(RED)
 				// NOT IN UNIVERAL MODE? -> CHANGE UI STATES
 				if(config.sensorid)
 				{
-					if(currentState.payload.button === false)
+					if(!hasEvent)
 					{
 						scope.status({fill: "grey", shape: "dot", text: "hue-buttons.node.waiting"});
 					}
 					else
 					{
-						var action = "";
-						switch (currentState.payload.action)
+						var statusText = "";
+
+						if(currentState.payload.button === false)
 						{
-						  case "initial_press":
-						    action = "(pressed)";
-						    break;
-						  case "repeat":
-						    action = "(repeated)";
-						    break;
-						  case "short_release":
-						    action = "(short press)";
-						    break;
-						  case "long_release":
-						    action = "(long press)";
-						    break;
-						  case "double_short_release":
-						  	action = "(double pressed)";
-						  	break;
-						  default:
-						    action = "(pressed)";
+							const rotation = currentState.payload.rotation;
+							statusText = RED._(rotation.clockwise ? "hue-buttons.node.dial-clockwise" : "hue-buttons.node.dial-counterclockwise", { degrees: rotation.degrees });
+						}
+						else
+						{
+							var action = "";
+							switch (currentState.payload.action)
+							{
+							  case "repeat":
+							    action = "action-repeated";
+							    break;
+							  case "short_release":
+							    action = "action-shortreleased";
+							    break;
+							  case "long_press":
+							    action = "action-holded";
+							    break;
+							  case "long_release":
+							    action = "action-longreleased";
+							    break;
+							  case "double_short_release":
+							  	action = "action-doublepressed";
+							  	break;
+							  default:
+							    action = "action-pressed";
+							}
+
+							statusText = RED._("hue-buttons.node.button-status", { button: currentState.payload.button, action: RED._("hue-buttons.node." + action) });
 						}
 
-						scope.status({fill: "blue", shape: "dot", text: "Button #"+ currentState.payload.button + " " + action });
+						scope.status({fill: "blue", shape: "dot", text: statusText });
 
 						// RESET TO WAITING AFTER 3 SECONDS
 						if(scope.timeout !== null) { clearTimeout(scope.timeout); };
@@ -102,9 +125,12 @@ module.exports = function(RED)
 							scope.status({fill: "grey", shape: "dot", text: "hue-buttons.node.waiting"});
 
 							// REMOVE OLD BUTTON STATES
-							for (const [oneButtonID, oneButton] of Object.entries(bridge.resources[config.sensorid]["services"]["button"]))
+							const buttons = (bridge.resources[config.sensorid] && bridge.resources[config.sensorid]["services"]) ? bridge.resources[config.sensorid]["services"]["button"] : false;
+							if(!buttons) { return false; }
+
+							for (const [oneButtonID, oneButton] of Object.entries(buttons))
 							{
-								delete bridge.resources[config.sensorid]["services"]["button"][oneButtonID]["button"];
+								delete buttons[oneButtonID]["button"];
 							}
 						}, 3000);
 					}
@@ -127,14 +153,14 @@ module.exports = function(RED)
 			const tempSensorID = (!config.sensorid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.sensorid;
 			if(!tempSensorID)
 			{
-				scope.error("Please submit a valid button ID.");
+				scope.error(RED._("hue-buttons.node.error-no-id"), msg);
 				return false;
 			}
 
 			let currentState = bridge.get("button", tempSensorID);
 			if(!currentState)
 			{
-				scope.error("The button/switch in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
+				scope.error(RED._("hue-buttons.node.error-not-available"), msg);
 				return false;
 			}
 
@@ -154,6 +180,43 @@ module.exports = function(RED)
 				scope.lastCommand = null;
 
 				if(done) { done(); }
+				return true;
+			}
+
+			// SWITCH BETWEEN ROCKER AND PUSHBUTTON MODE (WALL SWITCH MODULE)
+			if(typeof msg.payload != 'undefined' && typeof msg.payload.switchMode != 'undefined')
+			{
+				if(!currentState.info.switchModes)
+                {
+					scope.error(RED._("hue-buttons.node.error-no-switchmode"), msg);
+					return false;
+				}
+
+				if(currentState.info.switchModes.indexOf(msg.payload.switchMode) === -1)
+				{
+					scope.error(RED._("hue-buttons.node.error-invalid-switchmode", { modes: currentState.info.switchModes.join(", ") }), msg);
+					return false;
+				}
+
+				async.retry({
+					times: 5,
+					errorFilter: function(err) {
+						return (err.status == 503 || err.status == 429);
+					},
+					interval: function(retryCount) { return 750*retryCount; }
+				},
+				function(callback, results)
+				{
+					bridge.patch("switch_input_configuration", tempSensorID, { switch_mode: { mode: msg.payload.switchMode } })
+					.then(function() { callback(null, true); })
+					.catch(function(errors) { callback(errors, null); });
+				},
+				function(errors, success)
+				{
+					if(errors) { scope.error(errors, msg); }
+					else if(done) { done(); }
+				});
+
 				return true;
 			}
 		});

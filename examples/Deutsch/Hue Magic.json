@@ -1,0 +1,148 @@
+[
+    {
+        "id": "f6ddc6bb.8646a8",
+        "type": "tab",
+        "label": "Hue Magic (example)",
+        "disabled": false,
+        "info": "Beispielhafte Verwendung des „Hue Magic“-Nodes"
+    },
+    {
+        "id": "652f80ad.692fe",
+        "type": "hue-magic",
+        "z": "f6ddc6bb.8646a8",
+        "name": "",
+        "endless": true,
+        "restore": false,
+        "preset": "",
+        "steps": "",
+        "x": 490,
+        "y": 160,
+        "wires": [
+            [
+                "f5819321.8928f8"
+            ]
+        ]
+    },
+    {
+        "id": "96c705ff.4785d",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Animation starten",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "f5819321.8928f8",
+        "type": "hue-light",
+        "z": "f6ddc6bb.8646a8",
+        "colornamer": true,
+        "skipevents": false,
+        "initevents": false,
+        "x": 680,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7175f681.8ac4a8",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Animation stoppen",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 200,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "5b111243.1e472c",
+        "type": "inject",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Eigene Animation",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"animate\":true,\"steps\":[{\"delay\":500,\"animation\":{\"hex\":\"#FF0000\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#00FF00\",\"transitionTime\":0}},{\"delay\":500,\"animation\":{\"hex\":\"#0000FF\",\"transitionTime\":0}}]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "652f80ad.692fe"
+            ]
+        ],
+        "icon": "font-awesome/fa-magic"
+    },
+    {
+        "id": "ea1b64ce5ba37564",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "ERSTE SCHRITTE (doppelklicke mich)",
+        "info": "Klicken Sie auf den „Hue Magic“-Node und wählen Sie eine fertige Animation aus der Liste aus. Klicken Sie anschließend auf den „Hue Licht“-Node, um ein Licht auszuwählen, das vom „Hue Magic“-Node animiert werden soll. Sofern Sie noch keine Bridge eingerichtet haben, werden Sie hier gebeten, eine einzurichten, bevor Sie die Konfiguration des Nodes abschließen können.\n\nSobald der „Hue Magic“-Node mit dem „Hue Licht“-Node verbunden ist und Sie die Änderungen in Node-RED deployt haben, kann der Node Ihre Animation empfangen und ausführen.\n\nWenn Sie mehr Informationen zu diesem Node, den möglichen Befehlen und Ausgabewerten erhalten möchten, klicken Sie ihn in Ihrem Flow einmal an und navigieren Sie zum Buch-Symbol von Node-RED (obere rechte Ecke).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "b632a445364cbc5d",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Steuerung der Animation",
+        "info": "",
+        "x": 110,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "20cdbc9acd4ecf73",
+        "type": "comment",
+        "z": "f6ddc6bb.8646a8",
+        "name": "Eigene Animation",
+        "info": "",
+        "x": 110,
+        "y": 260,
+        "wires": []
+    }
+]

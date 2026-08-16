@@ -1,0 +1,176 @@
+[
+    {
+        "id": "b82a4d69e1fa5c37",
+        "type": "tab",
+        "label": "Hue Automation (example)",
+        "disabled": false,
+        "info": "Ejemplo de uso del nodo «Hue Automation»"
+    },
+    {
+        "id": "c1b5f18c7d4e9206",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "PRIMEROS PASOS (haz doble clic)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Haga clic en el nodo «Hue Automatización» y seleccione de la lista tanto su bridge como una automatización. Si aún no ha configurado ningún bridge, se le pedirá que configure uno antes de poder terminar la configuración del nodo.\n\nLas automatizaciones que puede seleccionar aquí son las que ha creado en la app de Philips Hue, por ejemplo una luz de despertador o una rutina de llegada a casa. HueMagic puede activarlas y desactivarlas, de modo que sus flujos decidan cuándo debe ejecutarse siquiera una de sus rutinas.\n\nEn cuanto el nodo esté conectado y haya desplegado los cambios en Node-RED, el nodo emitirá automáticamente un mensaje cada vez que cambie la automatización. Recibirá el estado actualizado y toda su información en el mensaje emitido.\n\nSi desea obtener más información sobre este nodo, los comandos posibles y los valores de salida, haga clic una vez sobre él en su flujo y vaya al icono del libro de Node-RED (esquina superior derecha)."
+    },
+    {
+        "id": "d2c6027d8e5f1317",
+        "type": "debug",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Información",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3d7138e9f602428",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Consultar el estado actual",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4e8249f0a713b539",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Estado",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6a04b12c935d75b",
+        "type": "comment",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Activar / desactivar la automatización",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7b15c23d0a46e86c",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Activar",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i8c26d34e1b57f97d",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Desactivar",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i9d37e45f2c680a8e",
+        "type": "inject",
+        "z": "b82a4d69e1fa5c37",
+        "name": "Alternar",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s5f935a01b824c64a"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "s5f935a01b824c64a",
+        "type": "hue-automation",
+        "z": "b82a4d69e1fa5c37",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2c6027d8e5f1317"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Όνομα",
+			"skipevents-node": "Παράβλεψη των μηνυμάτων του κόμβου",
+			"sendinitevents-node": "Να μην αποκρύπτεται το μήνυμα αρχικοποίησης",
+			"onlycommands-node": "Αναφορά μόνο μετά από εντολή",
+			"unknown-error": "Κάτι πήγε στραβά. Δοκιμάστε ξανά.",
+			"bridge": "Bridge",
+			"universalevents": "Καθολικά συμβάντα",
+			"universalevents-node": "Λαμβάνει όλα τα μηνύματα άλλων κόμβων ίδιου τύπου (μόνο σε καθολική λειτουργία)",
+			"input-name": "Όνομα κουμπιού",
+			"searching": "Αναζήτηση Hue Buttons…",
+			"none-found": "Δεν βρέθηκε κανένα Hue Button!",
+			"button": "Κουμπί"
+		},
+		"node": {
+			"not-configured": "μη ρυθμισμένο",
+			"universal": "καθολική λειτουργία",
+			"command": "εκτέλεση εντολής…",
+			"statusmsg": "Η κατάσταση ανακτήθηκε με επιτυχία…",
+			"title": "Hue Κουμπιά",
+			"waiting": "αναμονή…",
+			"button-on": "On",
+			"action-pressed": "πατήθηκε",
+			"action-holded": "κρατήθηκε πατημένο",
+			"action-shortreleased": "σύντομη απελευθέρωση",
+			"action-longreleased": "απελευθέρωση μετά από παρατεταμένο πάτημα",
+			"action-repeated": "επαναλήφθηκε",
+			"action-doublepressed": "διπλό πάτημα",
+			"dial-clockwise": "Επιλογέας ↻ __degrees__°",
+			"dial-counterclockwise": "Επιλογέας ↺ __degrees__°",
+			"button-status": "Κουμπί #__button__ (__action__)",
+			"input": "ερώτημα κατάστασης",
+			"output": "πατημένο κουμπί",
+			"error-no-id": "Δώστε ένα έγκυρο αναγνωριστικό (διακόπτη).",
+			"error-not-available": "Ο διακόπτης δεν είναι ακόμη διαθέσιμο. Περιμένετε έως ότου το HueMagic συνδεθεί με το bridge ή ελέγξτε αν το αναγνωριστικό πόρου στις ρυθμίσεις είναι έγκυρο.",
+			"error-no-switchmode": "Αυτή η συσκευή δεν διαθέτει ρυθμιζόμενη λειτουργία διακόπτη.",
+			"error-invalid-switchmode": "Μη έγκυρη λειτουργία διακόπτη. Η συσκευή υποστηρίζει: __modes__"
+		}
+	}
+}

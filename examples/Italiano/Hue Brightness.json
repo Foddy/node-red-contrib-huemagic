@@ -1,0 +1,150 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Brightness (example)",
+        "disabled": false,
+        "info": "Esempio di utilizzo del nodo «Hue Brightness»"
+    },
+    {
+        "id": "bc4daa7a.ddc16",
+        "type": "hue-brightness",
+        "z": "d081bb24.81a8d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "4cf0eb6d2a66fd14"
+            ]
+        ]
+    },
+    {
+        "id": "6a8f3df98e7625b8",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "PRIMI PASSI (fai doppio clic)",
+        "info": "Faccia clic sul nodo «Hue Luminosità» e selezioni dall'elenco sia il suo bridge sia un sensore. Se non ha ancora configurato un bridge, le verrà chiesto di configurarne uno prima di poter completare la configurazione del nodo.\n\nNon appena il nodo è collegato al suo bridge e il sensore e ha eseguito il deploy delle modifiche in Node-RED, il nodo può ricevere ed eseguire i suoi comandi. Il nodo «Hue Luminosità» emette inoltre automaticamente un messaggio ogni volta che lo stato del sensore sul bridge viene aggiornato (è stato registrato un nuovo livello di luce). Riceverà lo stato aggiornato e tutte le sue informazioni nel messaggio emesso.\n\nSe desidera maggiori informazioni su questo nodo, sui comandi disponibili e sui valori di uscita, ci faccia clic una volta nel suo flusso e vada all'icona del libro di Node-RED (angolo in alto a destra).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "4cf0eb6d2a66fd14",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Informazioni",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "433f55c9fedd4e3b",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Richiedere lo stato attuale",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88b02ac839431cc1",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Stato",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "bd060e6399f15f95",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Accendere / spegnere il dispositivo",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "15c9417b8ed13b49",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Accendere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "89e7bcee38350561",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Spegnere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    }
+]

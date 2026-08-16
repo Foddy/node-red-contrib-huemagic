@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-automation">
+Il nodo «Hue Automazione» può attivare e disattivare le automazioni create nell'app Philips Hue.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutte le automazioni disponibili. Se conosce già l'ID dell'automazione, può anche inserirlo qui manualmente. Può assegnare internamente un nuovo nome all'automazione oppure mantenere quello predefinito. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». Il nodo non emetterà più aggiornamenti. In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Attivando questa impostazione riceverà un messaggio di stato dell'automazione selezionata dopo ogni deploy. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+Se non seleziona alcuna automazione e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo. Può anche applicare impostazioni in modalità universale a un'automazione specifica trasmettendo il relativo ID come stringa in `msg.topic` insieme alle sue impostazioni.
+
+### Attivare / disattivare l'automazione
+
+Un'automazione disattivata rimane sul bridge e può essere riattivata in qualsiasi momento. A tal fine, trasmetta un oggetto con il seguente contenuto:
+
+: payload (boolean): `true` attiva l'automazione, `false` la disattiva
+: enabled (boolean): Come sopra, se preferisce trasmettere un oggetto
+: toggle (boolean | any): Alterna tra attivata e disattivata, a seconda dello stato precedente
+
+### Messaggi di stato del nodo
+
+Non appena l'automazione cambia, il nodo restituisce il seguente messaggio di stato:
+
+#### Oggetto di stato in `msg.payload`
+
+: enabled (boolean): Indica se l'automazione è attivata
+: running (boolean): `true` mentre il bridge sta effettivamente eseguendo l'automazione
+: status (string | boolean): Lo stato attuale. Può contenere `initializing`, `running`, `disabled` o `errored` come valore
+: lastError (string | boolean): L'ultimo errore segnalato dal bridge o `false`
+: updated (string): Momento dell'ultimo aggiornamento della risorsa da parte di HueMagic (ISO 8601)
+
+#### Informazioni sull'automazione in `msg.info`
+
+: id (string): Indica l'ID dell'automazione
+: idV1 (string | boolean): Indica il vecchio ID dell'automazione
+: name (string | boolean): Il nome che ha assegnato all'automazione nell'app Philips Hue
+: type (string): Il tipo di risorsa (sempre `automation`)
+: script (string | boolean): L'ID dello script di comportamento alla base dell'automazione
+
+#### Configurazione in `msg.configuration`
+
+Contiene le impostazioni dell'automazione così come sono state salvate dall'app Philips Hue. La struttura dipende dal tipo di automazione e viene trasmessa senza modifiche.
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato dell'automazione. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato dell'automazione in `msg.lastState`
+
+Contiene l'oggetto di stato completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica registrata. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

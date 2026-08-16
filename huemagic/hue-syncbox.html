@@ -1,0 +1,82 @@
+<script type="text/x-red" data-template-name="hue-syncbox">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="hue-syncbox.config.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]hue-syncbox.config.input-name" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-syncbox"><i class="fa fa-television"></i> <span data-i18n="hue-syncbox.config.syncbox"></span></label>
+        <input type="text" id="node-input-syncbox" style="width: calc(100% - 105px)">
+    </div>
+    <div class="form-row" style="margin-top: 30px">
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-syncbox.config.skipevents-node" style="flex: 1; margin-left: 8px;"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-syncbox.config.sendinitevents-node" style="flex: 1; margin-left: 8px;"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-onlycommands" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-syncbox.config.onlycommands-node" style="flex: 1; margin-left: 8px;"></span>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('hue-syncbox',{
+        category: 'HueMagic',
+        color: '#e0674d',
+        defaults: {
+            name: { value:"" },
+            syncbox: { type: "hue-syncbox-config", required: true },
+            skipevents: { value: false },
+            initevents: { value: false },
+            onlycommands: { value: false }
+        },
+        align: 'left',
+        icon: "hue-syncbox.svg",
+        inputs: 1,
+        outputs: 1,
+        label: function() {
+            return this.name || this._("hue-syncbox.node.title");
+        },
+        paletteLabel: function() {
+            return this._("hue-syncbox.node.title");
+        },
+        inputLabels: function() {
+            return this._("hue-syncbox.node.input");
+        },
+        outputLabels: function() {
+            return this._("hue-syncbox.node.output");
+        },
+        button: {
+            enabled: function() {
+                return !!this.syncbox
+            },
+            visible: function() {
+                return !!this.syncbox
+            },
+            onclick: function()
+            {
+                const node = this;
+                if(node.syncbox)
+                {
+                    $.ajax({
+                        url: "inject/" + node.id,
+                        type: "POST",
+                        data: JSON.stringify({ __user_inject_props__: "status"}),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (resp) {
+                            RED.notify(node.name + ": " + node._("hue-syncbox.node.statusmsg"), { type: "success", id: "status", timeout: 2000 });
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>

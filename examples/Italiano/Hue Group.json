@@ -1,0 +1,658 @@
+[
+    {
+        "id": "1a2adcb38abf1fae",
+        "type": "tab",
+        "label": "Hue Group (example)",
+        "disabled": false,
+        "info": "Esempio di utilizzo del nodo «Hue Group»"
+    },
+    {
+        "id": "09d257e340f50cc4",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "PRIMI PASSI (fai doppio clic)",
+        "info": "Faccia clic sul nodo «Hue Gruppo» e selezioni dall'elenco sia il suo bridge sia un gruppo. Se non ha ancora configurato un bridge, le verrà chiesto di configurarne uno prima di poter completare la configurazione del nodo.\n\nNon appena il nodo è collegato al suo bridge e il gruppo e ha eseguito il deploy delle modifiche in Node-RED, il nodo può ricevere ed eseguire i suoi comandi. Il nodo «Hue Gruppo» emette inoltre automaticamente un messaggio non appena lo stato del gruppo sul bridge viene aggiornato (stati acceso / spento). Riceverà lo stato aggiornato e tutte le sue informazioni nel messaggio emesso.\n\nSe desidera maggiori informazioni su questo nodo, sui comandi disponibili e sui valori di uscita, ci faccia clic una volta nel suo flusso e vada all'icona del libro di Node-RED (angolo in alto a destra).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "582491190441b474",
+        "type": "debug",
+        "z": "1a2adcb38abf1fae",
+        "name": "Informazioni",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "96b1ec749d4f581e",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "Richiedere lo stato attuale",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "55d321791151829f",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Stato",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c4eb78aea62ca9ef",
+        "type": "hue-group",
+        "z": "1a2adcb38abf1fae",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "582491190441b474"
+            ]
+        ]
+    },
+    {
+        "id": "72f0eaebbcff66f4",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "Accendere / spegnere il gruppo",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "84a299579d0e83a7",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Accendere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "0795d803305a0c71",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Spegnere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "45e5a4f07a6497b9",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "Riprodurre effetti sul gruppo",
+        "info": "",
+        "x": 130,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "0f24eb95ee91f2a2",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Allarme rosso per 3 secondi",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"on\":true,\"alert\":3,\"color\":\"red\"}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 620,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-warning"
+    },
+    {
+        "id": "df076d875af8787e",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Scorrere tutti i colori per 5 secondi",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorloop\":5,\"brightness\":100}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 660,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-scene.svg"
+    },
+    {
+        "id": "09fedd5b3aec9d1f",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "Modificare il colore delle luci",
+        "info": "",
+        "x": 120,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "a3133df478c4fbbe",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Colore rosso tramite il nome",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"color\":\"red\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 760,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "9d98982717553707",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Colore verde tramite HEX",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"hex\":\"#00FF00\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 800,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "e8b7d54674e8709a",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Colore blu tramite RGB",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"rgb\":[0,0,255]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 840,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "6f2c944547ed6400",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "Modificare la temperatura di colore delle luci",
+        "info": "",
+        "x": 160,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "621920caa58c668b",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Temperatura di colore fredda",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"cold\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1100,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "2ffae67dbb7855fc",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Temperatura di colore normale",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"normal\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1140,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "5f730d012fe0bcd2",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Temperatura di colore calda",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"warm\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1180,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "e558ebbf9f15be64",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Temperatura di colore molto calda",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"hot\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1220,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "3fcaaf5bafcd3503",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Temperatura normale tramite valore esatto",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":240,\"brightness\":100}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1260,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "e5b739862db862f3",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Automatico (in base all'ora attuale)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"auto\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1060,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "ebdb41289862a489",
+        "type": "comment",
+        "z": "1a2adcb38abf1fae",
+        "name": "Modificare la luminosità delle luci",
+        "info": "",
+        "x": 140,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "42f7001095eb0cce",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Impostare al 100 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":100}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 480,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "f176fa2116b31f90",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Impostare al 25 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":25}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 440,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "87c92714633f9ced",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Alternare acceso/spento",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "font-awesome/fa-dot-circle-o"
+    },
+    {
+        "id": "8998984516e22ab8",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Colore casuale",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"color\":\"random\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 960,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red/swap.svg"
+    },
+    {
+        "id": "496fb8958d369e3a",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Colore del tema Node-RED tramite XY",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"xyColor\":{\"x\":0.7401,\"y\":0.2718}}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "fc02c26309f20b7b",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Colore dominante da un URL di immagine",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"image\":\"https://user-images.githubusercontent.com/5302050/148616400-b7e7b35d-c779-4b6d-baff-c91ac2980d8f.jpg\"}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 920,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "a8e4ba95bb76913f",
+        "type": "inject",
+        "z": "1a2adcb38abf1fae",
+        "name": "Luminosità automatica",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":\"auto\"}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 520,
+        "wires": [
+            [
+                "c4eb78aea62ca9ef"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-magic.svg"
+    }
+]

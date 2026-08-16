@@ -1,0 +1,31 @@
+<script type="text/markdown" data-help-name="hue-bridge">
+Se connecte à un Philips Hue Bridge.
+
+### Nom
+
+Vous pouvez attribuer au bridge un autre nom interne ou conserver le nom par défaut.
+
+### IP et port du bridge
+
+Saisissez manuellement l'adresse IP du Hue Bridge ou appuyez sur le bouton pour afficher tous les bridges disponibles localement (une configuration IP statique sur le Hue Bridge est recommandée). Vous pouvez également définir un autre port pour le bridge en ajoutant deux-points à l'adresse IP.
+
+### Clé API
+
+Saisissez manuellement la clé API du Hue Bridge ou appuyez sur le bouton pour créer une nouvelle clé. Si vous souhaitez créer une nouvelle clé, vous devez appuyer sur le bouton physique du bridge dans un délai de 20 secondes pour terminer la procédure.
+
+### Processus
+
+La valeur « Processus » détermine le nombre de commandes parallèles que HueMagic est autorisé à envoyer simultanément au bridge. Selon la documentation officielle du Philips Hue Bridge, il ne faut pas envoyer plus de 10 commandes par seconde, sans quoi le bridge risque de ne pas pouvoir traiter les requêtes assez vite et de renvoyer des erreurs.
+
+Si davantage de commandes sont envoyées simultanément que la valeur définie ici, HueMagic les exécutera l'une après l'autre dès que le débit le permettra de nouveau.
+
+Réglez cette valeur en dessous de 10 (p. ex. 4 à 7) si vous envoyez également des commandes au bridge en dehors de HueMagic, afin de respecter le débit de commandes par seconde recommandé par Philips Hue.
+
+### Mises à jour automatiques du micrologiciel
+
+HueMagic vérifie régulièrement la disponibilité de mises à jour du micrologiciel Philips Hue et les installe automatiquement lorsqu'elles existent. Vous pouvez désactiver ce comportement en cochant la case correspondante.
+
+### Désactiver les notifications
+
+Si vous activez ce réglage, tous les nœuds rattachés à ce bridge ne recevront plus de messages de statut automatiques.
+</script>

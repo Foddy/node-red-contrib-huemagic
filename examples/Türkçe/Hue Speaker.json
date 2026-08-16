@@ -1,0 +1,274 @@
+[
+    {
+        "id": "a71f3c58d0e94b26",
+        "type": "tab",
+        "label": "Hue Speaker (example)",
+        "disabled": false,
+        "info": "«Hue Speaker» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "c1a4e07b6d3f8215",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "«Hue Hoparlör» düğümüne tıklayın ve listeden hem bridge'inizi hem de bir hoparlör seçin. Henüz bir bridge kurmadıysanız, düğümün yapılandırmasını tamamlayabilmeniz için önce bir bridge kurmanız istenir.\n\nDüğüm bridge'inize ve hoparlöre bağlandığında ve değişiklikleri Node-RED'de dağıttığınızda, düğüm komutlarınızı alıp yürütebilir. «Hue Hoparlör» düğümü ayrıca hoparlör bir sesi başlattığında veya bitirdiğinde otomatik olarak bir mesaj verir. Güncellenen durumu ve tüm bilgilerini yayınlanan mesajda alırsınız.\n\nCihazınızın gerçekte hangi sesleri bildiği msg.info.sounds altında listelenir. Bridge'in en son çalınan sesi bildirdiğini ve bunu ancak çalma bittikten epey sonra sıfırladığını unutmayın.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında daha fazla bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe)."
+    },
+    {
+        "id": "d2b5f18c7e4a9306",
+        "type": "debug",
+        "z": "a71f3c58d0e94b26",
+        "name": "Bilgi",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3c6028d8f5b0417",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Güncel durumu sorgula",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4d7139e90a6c1528",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Durum",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6f935b12c8e3740",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Kapı zilini çal",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7a046c23d9f4851a",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Klasik kapı zili",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":\"ding_dong_classic\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell"
+    },
+    {
+        "id": "i8b157d34ea05962b",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "%50 ses düzeyinde kapı zili",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":{\"sound\":\"westminster_classic\",\"volume\":50}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell-o"
+    },
+    {
+        "id": "c9c268e45fb16a73",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Siren olarak kullan",
+        "x": 120,
+        "y": 360,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iad379f56a0c27b84",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "10 saniye boyunca alarm",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":{\"sound\":\"siren\",\"volume\":100,\"duration\":10}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "ibe48a067b1d38c95",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Alarmı durdur",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-stop"
+    },
+    {
+        "id": "ccf59b178c2e49a6",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Hoparlörü sustur",
+        "x": 120,
+        "y": 500,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "id6a0c289d3f5ab07",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Sustur",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-off"
+    },
+    {
+        "id": "ie7b1d39ae406bc18",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Sesi aç",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-up"
+    },
+    {
+        "id": "s5e824af01b7d2639",
+        "type": "hue-speaker",
+        "z": "a71f3c58d0e94b26",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2b5f18c7e4a9306"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

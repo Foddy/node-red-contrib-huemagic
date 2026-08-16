@@ -1,0 +1,150 @@
+[
+    {
+        "id": "7bca3b4f.9070fc",
+        "type": "tab",
+        "label": "Hue Rules (example)",
+        "disabled": false,
+        "info": "Beispielhafte Verwendung des „Hue Rules“-Nodes"
+    },
+    {
+        "id": "a6ec7e31e3edf26b",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "ERSTE SCHRITTE (doppelklicke mich)",
+        "info": "Klicken Sie auf den „Hue Regel“-Node und wählen Sie sowohl Ihre Bridge als auch eine Regel aus der Liste aus. Sofern Sie noch keine Bridge eingerichtet haben, werden Sie gebeten, eine einzurichten, bevor Sie die Konfiguration des Nodes abschließen können.\n\nSobald der Node mit Ihrer Bridge verbunden ist und Sie die Änderungen in Node-RED deployt haben, kann der Node Ihre Befehle empfangen und ausführen. Den aktualisierten Status und alle Informationen zur Regel erhalten Sie in der ausgegebenen Nachricht.\n\nWenn Sie mehr Informationen zu diesem Node, den möglichen Befehlen und Ausgabewerten erhalten möchten, klicken Sie ihn in Ihrem Flow einmal an und navigieren Sie zum Buch-Symbol von Node-RED (obere rechte Ecke).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "863710a19fb12c5e",
+        "type": "debug",
+        "z": "7bca3b4f.9070fc",
+        "name": "Information",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3f358fa89e66d78",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Aktuellen Status abrufen",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "403636a610280894",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "0fab9398dcc9c797",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Regel aktivieren / deaktivieren",
+        "info": "",
+        "x": 130,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "40f06e621e0643f0",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Aktivieren",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "bde15ecaf96f1323",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Deaktivieren",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "7bc8bf9290a86c68",
+        "type": "hue-rules",
+        "z": "7bca3b4f.9070fc",
+        "skipevents": false,
+        "initevents": false,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "863710a19fb12c5e"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,68 @@
+<script type="text/markdown" data-help-name="hue-magic">
+Le nœud « Hue Magic » peut appliquer des animations complexes et personnalisées à des lumières et des groupes.
+
+### Configuration
+
+Donnez d'abord un nom au nœud afin de pouvoir identifier clairement votre animation dans l'interface Node-RED. Vous avez ensuite le choix entre les options « Boucle » et « Restaurer ». Sélectionnez l'option boucle si vous souhaitez que votre animation s'exécute indéfiniment sur une lumière ou un groupe jusqu'à ce que vous l'arrêtiez manuellement. Si vous souhaitez restaurer l'état précédent de la ressource cible (lumière / groupe) une fois l'animation terminée, cochez l'option « Restaurer ». Sinon, la dernière image de l'animation reste appliquée à la ressource concernée.
+
+Vous pouvez ensuite choisir parmi les animations prêtes à l'emploi de HueMagic. Cliquez sur l'animation souhaitée pour la définir.
+
+### Lancer / arrêter l'animation
+
+Pour lancer ou arrêter une animation, transmettez au nœud un objet ayant le contenu suivant :
+
+: payload (boolean): `true` lance l'animation, `false` l'arrête
+
+### Animations personnalisées
+
+Si vous transmettez votre propre animation au nœud, l'animation prédéfinie sélectionnée (le cas échéant) est temporairement remplacée par la vôtre. Les animations HueMagic personnalisées sont une séquence de commandes regroupées dans un tableau. Chaque élément du tableau constitue une étape, sachant qu'une étape peut elle-même comporter plusieurs images (effets de transition).
+
+Créez un `array` contenant les différentes étapes de l'animation sous forme d'objet et transmettez-le au nœud HueMagic dans `msg.payload.steps`.
+
+: delay (int): Nombre de millisecondes à attendre avant l'exécution de cette étape
+: animation (object): L'objet contient la ou les actions à exécuter lors de cette étape. Paramètres identiques à ceux des nœuds « Hue Lumière » et « Hue Groupe »
+
+### Exemple d'animation personnalisée
+
+Cet exemple montre à quoi pourrait ressembler une animation simple. Lors de la première étape, le délai de 500 millisecondes est respecté. La couleur de la lumière passe ensuite lentement au rouge sur une seconde. Dès que la lumière est entièrement passée au rouge, la deuxième étape est exécutée, elle aussi avec un délai de 500 millisecondes. Pour finir, la couleur passe au bleu.
+
+Si vous avez réglé l'animation en boucle, ce processus se répète indéfiniment jusqu'à ce que vous arrêtiez l'animation manuellement ou redéployiez le nœud.
+
+Transmettez l'objet suivant dans `msg.payload` pour lancer l'animation d'exemple.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
+            }
+        ]
+    }
+
+### Commandes spéciales
+
+Il est parfois judicieux de jouer une animation de manière désordonnée, p. ex. pour imiter le feu de façon plus réaliste. Pour jouer les différentes étapes de manière aléatoire, vous pouvez transmettre la commande suivante dans `msg.payload.specials` :
+
+: randomOrder (boolean | any): `true` active la lecture aléatoire des différentes étapes de l'animation
+
+### Conseils et remarques
+
+Ce nœud n'émet aucun message de statut. Reliez la sortie du nœud à un groupe plutôt qu'à des lumières individuelles si vous souhaitez animer plusieurs lumières en même temps avec la même animation. Les aperçus des animations prêtes à l'emploi sont des simulations et peuvent différer légèrement (rythme, couleurs) de l'animation réelle sur une ressource.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -4,7 +4,7 @@
         <input type="text" id="node-input-name" data-i18n="[placeholder]hue-rules.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
-        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <label for="node-input-bridge"><i class="fa fa-server"></i> <span data-i18n="hue-rules.config.bridge"></span></label>
         <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
@@ -19,15 +19,21 @@
         </div>
     </div>
     <div class="form-row" style="margin-top: 30px">
-        <div style="display: inline-flex; width: calc(100% - 105px)">
-            <input type="checkbox" id="node-input-skipevents" style="flex: 15px;">
-            <span data-i18n="hue-rules.config.skipevents-node" style="width: 100%; margin-left: 10px;"></span>
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-rules.config.skipevents-node" style="flex: 1; margin-left: 8px;"></span>
         </div>
     </div>
     <div class="form-row">
-        <div style="display: inline-flex; width: calc(100% - 105px)">
-            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
-            <span data-i18n="hue-rules.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-rules.config.sendinitevents-node" style="flex: 1; margin-left: 8px;"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-onlycommands" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-rules.config.onlycommands-node" style="flex: 1; margin-left: 8px;"></span>
         </div>
     </div>
 </script>
@@ -41,10 +47,11 @@
             bridge: { type: "hue-bridge", required: true },
             ruleid: { value:"", required: false },
             skipevents: { value: false },
-            initevents: { value: false }
+            initevents: { value: false },
+            onlycommands: { value: false }
         },
         align: 'left',
-        icon: "hue-rules.png",
+        icon: "hue-rules.svg",
         inputs: 1,
         outputs: 1,
         label: function() {

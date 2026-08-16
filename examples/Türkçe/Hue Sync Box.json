@@ -1,0 +1,378 @@
+[
+    {
+        "id": "c93b5e7af2ab6d48",
+        "type": "tab",
+        "label": "Hue Sync Box (example)",
+        "disabled": false,
+        "info": "«Hue Sync Box» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "c1c6029d8e5f2317",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "«Hue Sync Box» düğümüne tıklayın ve sync box cihazınızı kurun. Cihaz Hue Bridge'inize bağlı değildir; kendi yerel API'sini konuşur ve bu yüzden kendi erişim belirteciyle kendi yapılandırmasına ihtiyaç duyar.\n\nSync box cihazınızın IP adresini girin ve erişim belirteci alanının yanındaki düğmeye tıklayın. Ardından sync box üzerindeki düğmeyi LED yeşil yanıp sönene kadar basılı tutun. HueMagic cihazı bir dakika boyunca sorgular ve yanıt verir vermez belirteci kaydeder.\n\nSync box durumunu kendiliğinden göndermediği için HueMagic birkaç saniyede bir sorar. Bunun ne sıklıkta olacağını sync box yapılandırmasında değiştirebilirsiniz.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında daha fazla bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe)."
+    },
+    {
+        "id": "d2d713ae9f603428",
+        "type": "debug",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Bilgi",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3e824bf0a714539",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Güncel durumu sorgula",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4f935c01b825664a",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Durum",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c5a146d12c936750",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Sync box'ı aç / kapat",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i6b257e23d047861b",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Aç",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i7c368f34e158972c",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Kapat",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i8d479045f269a83d",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Eşitlemeyi aç/kapat",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "c9e58a156037b94e",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Bir eşitleme modu seç",
+        "x": 120,
+        "y": 400,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iaf69b267148ac05f",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Video",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"video\",\"intensity\":\"high\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-film"
+    },
+    {
+        "id": "iba7ac378259bd160",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Oyun",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"game\",\"intensity\":\"intense\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-gamepad"
+    },
+    {
+        "id": "icb8bd489360ce271",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Müzik",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"music\",\"intensity\":\"moderate\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-music"
+    },
+    {
+        "id": "idc9ce59a471df382",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Yalnızca doğrudan aktarım",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"passthrough\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-television"
+    },
+    {
+        "id": "cedadf6ab582e0493",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Parlaklık ve giriş",
+        "x": 120,
+        "y": 620,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "ifebea7bc693f1504",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Parlaklık %70",
+        "x": 110,
+        "y": 660,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":70}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "i0fcfb8cd7a402615",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "%20 kıs",
+        "x": 110,
+        "y": 700,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":20}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "i10d0c9de8b513726",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "HDMI 2'ye geç",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":2}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-plug"
+    },
+    {
+        "id": "s6a046b12c935d75b",
+        "type": "hue-syncbox",
+        "z": "c93b5e7af2ab6d48",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2d713ae9f603428"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

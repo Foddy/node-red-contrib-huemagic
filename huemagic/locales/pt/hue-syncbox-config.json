@@ -1,0 +1,25 @@
+{
+	"hue-syncbox-config": {
+		"config": {
+			"name": "Nome",
+			"syncbox-ip": "IP da Sync Box",
+			"token": "Token de acesso",
+			"pollinterval": "Atualização (s)",
+			"missing-ip": "Falta o IP da Hue Sync Box…",
+			"connecting": "A ligar à sync box…",
+			"invalid": "Lamentamos. A Hue Sync Box selecionada não é válida: ",
+			"error-select-first": "Introduza o IP da sua Hue Sync Box antes de criar um novo token!",
+			"waiting": "à espera do botão…",
+			"new-user-press": "Mantenha premido o botão da sua Hue Sync Box até o LED piscar a verde!",
+			"retry": "Não foi detetada qualquer pressão do botão. Tente novamente…",
+			"success": "Token de acesso criado com sucesso!"
+		},
+		"node": {
+			"title": "Hue Sync Box",
+			"initializing": "A inicializar a sync box (__syncbox__)…",
+			"connected": "Ligado à sync box",
+			"request-error": "Erro ao pedir informações à sync box (__error__)",
+			"statusmsg": "Estado consultado com sucesso…"
+		}
+	}
+}

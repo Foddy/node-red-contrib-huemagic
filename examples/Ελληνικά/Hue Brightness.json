@@ -1,0 +1,150 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Brightness (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Brightness»"
+    },
+    {
+        "id": "bc4daa7a.ddc16",
+        "type": "hue-brightness",
+        "z": "d081bb24.81a8d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "4cf0eb6d2a66fd14"
+            ]
+        ]
+    },
+    {
+        "id": "6a8f3df98e7625b8",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "info": "Πατήστε τον κόμβο «Hue Φωτεινότητα» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και έναν αισθητήρα. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΜόλις ο κόμβος συνδεθεί με το bridge σας και τον αισθητήρα και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος μπορεί να λαμβάνει και να εκτελεί τις εντολές σας. Ο κόμβος «Hue Φωτεινότητα» εκπέμπει επιπλέον αυτόματα ένα μήνυμα κάθε φορά που ενημερώνεται η κατάσταση του αισθητήρα στο bridge (καταγράφηκε νέα στάθμη φωτός). Την ενημερωμένη κατάσταση και όλες τις πληροφορίες της τη λαμβάνετε στο μήνυμα που εκπέμπεται.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "4cf0eb6d2a66fd14",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Πληροφορίες",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "433f55c9fedd4e3b",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88b02ac839431cc1",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Κατάσταση",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "bd060e6399f15f95",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Άναμμα / σβήσιμο της συσκευής",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "15c9417b8ed13b49",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Άναμμα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "89e7bcee38350561",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Σβήσιμο",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    }
+]

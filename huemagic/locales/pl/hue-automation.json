@@ -1,0 +1,33 @@
+{
+	"hue-automation": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"input-name": "Nazwa automatyzacji",
+			"searching": "Wyszukiwanie automatyzacji…",
+			"none-found": "Nie znaleziono żadnej automatyzacji!",
+			"automation": "Automatyzacja"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"init": "inicjalizacja…",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Automatyzacja",
+			"enabled": "włączona",
+			"disabled": "wyłączona",
+			"errored": "błąd",
+			"input": "włącz / wyłącz",
+			"output": "automatyzacja",
+			"error-no-id": "Podaj prawidłowy identyfikator: automatyzacja.",
+			"error-not-available": "Automatyzacja nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy."
+		}
+	}
+}

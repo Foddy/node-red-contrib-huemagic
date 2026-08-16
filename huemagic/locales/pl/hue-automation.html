@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-automation">
+Węzeł „Hue Automatyzacja” włącza i wyłącza automatyzacje utworzone w aplikacji Philips Hue.
+
+### Konfiguracja
+
+Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć wszystkie dostępne automatyzacje. Jeśli znasz już identyfikator automatyzacji, możesz go też wpisać ręcznie. Możesz nadać automatyzacji własną nazwę wewnętrzną albo zachować nazwę domyślną. Opcjonalnie możesz wyłączyć wszystkie automatyczne komunikaty stanu tego węzła ustawieniem „Pomijaj komunikaty węzła”. Węzeł przestanie wtedy wysyłać aktualizacje. Możesz też zdecydować, aby komunikat inicjalizacji węzła nie był pomijany przy starcie Node-RED. Po włączeniu tego ustawienia po każdym wdrożeniu otrzymasz komunikat stanu wybranej automatyzacji. Jeśli wolisz, aby węzeł milczał, dopóki czegoś do niego nie wyślesz, włącz „Zgłaszaj tylko po poleceniu”. Węzeł zignoruje wtedy zmiany z aplikacji lub z przełącznika i odpowie wyłącznie na Twoje polecenia.
+
+Jeśli nie wybierzesz automatyzacji i użyjesz konfiguracji węzła w ten sposób, węzeł działa w tzw. „trybie uniwersalnym”. W tym trybie węzeł odbiera i wysyła wszystkie komunikaty stanu tego samego typu. Ustawienia w trybie uniwersalnym możesz też zastosować do konkretnej automatyzacji, przekazując jej identyfikator jako ciąg znaków w `msg.topic` razem z ustawieniami.
+
+### Włączanie / wyłączanie automatyzacji
+
+Wyłączona automatyzacja pozostaje na bridge i można ją w każdej chwili ponownie włączyć. Przekaż w tym celu obiekt o następującej zawartości:
+
+: payload (boolean): `true` włącza automatyzację, `false` ją wyłącza
+: enabled (boolean): Jak wyżej, jeśli wolisz przekazać obiekt
+: toggle (boolean | any): Przełącza między stanem włączonym a wyłączonym, zależnie od poprzedniego stanu
+
+### Komunikaty stanu węzła
+
+Gdy tylko automatyzacja się zmieni, węzeł zwraca następujący komunikat stanu:
+
+#### Obiekt stanu w `msg.payload`
+
+: enabled (boolean): Wskazuje, czy automatyzacja jest włączona
+: running (boolean): `true`, gdy bridge faktycznie wykonuje automatyzację
+: status (string | boolean): Bieżący stan. Może przyjmować wartości `initializing`, `running`, `disabled` lub `errored`
+: lastError (string | boolean): Ostatni błąd zgłoszony przez bridge albo `false`
+: updated (string): Czas ostatniej aktualizacji zasobu przez HueMagic (ISO 8601)
+
+#### Informacje o automatyzacji w `msg.info`
+
+: id (string): Wskazuje identyfikator automatyzacji
+: idV1 (string | boolean): Wskazuje stary identyfikator automatyzacji
+: name (string | boolean): Nazwa nadana automatyzacji w aplikacji Philips Hue
+: type (string): Typ zasobu (zawsze `automation`)
+: script (string | boolean): Identyfikator skryptu zachowania stojącego za automatyzacją
+
+#### Konfiguracja w `msg.configuration`
+
+Zawiera ustawienia automatyzacji w postaci zapisanej przez aplikację Philips Hue. Struktura zależy od typu automatyzacji i jest przekazywana bez zmian.
+
+#### Zmiany stanu w `msg.updated`
+
+Wymienia w postaci obiektu poszczególne parametry, które zmieniły się względem poprzedniego stanu automatyzacji. Jeśli nie zarejestrowano żadnych zmian, obiekt jest pusty.
+
+#### Poprzedni stan automatyzacji w `msg.lastState`
+
+Zawiera pełny obiekt stanu (patrz wartości wyjściowe powyżej) sprzed ostatniej zarejestrowanej zmiany. Jeśli HueMagic nie zarejestrował jeszcze poprzedniego stanu, zwracane jest `false`.
+
+#### Ostatnie polecenie w `msg.command` (opcjonalnie)
+
+Jeśli stan węzła zmienił się w wyniku określonego polecenia, wysyłane jest również całe wykonane polecenie. W przeciwnym razie węzeł nie wysyła tego obiektu.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

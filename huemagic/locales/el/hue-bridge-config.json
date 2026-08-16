@@ -1,0 +1,40 @@
+{
+	"hue-bridge-config": {
+		"config": {
+			"name": "Όνομα",
+			"apikey": "Κλειδί API",
+			"missing-ip": "Λείπει η IP του Hue Bridge…",
+			"disable-events": "Απενεργοποίηση συμβάντων",
+			"disable-events-info": "Απενεργοποίηση των συμβάντων σε όλους τους κόμβους",
+			"searching": "Αναζήτηση για Hue Bridge…",
+			"none-found": "Δεν βρέθηκε κανένα Hue Bridge!",
+			"unknown-error": "Κάτι πήγε στραβά. Δοκιμάστε ξανά.",
+			"invalid": "Λυπούμαστε. Το επιλεγμένο Hue Bridge δεν είναι έγκυρο: ",
+			"error-select-first": "Επιλέξτε το Hue Bridge σας πριν δημιουργήσετε νέο χρήστη!",
+			"waiting": "αναμονή για το κουμπί σύνδεσης…",
+			"new-user-press": "Πατήστε τώρα το κουμπί στο Hue Bridge σας για να δημιουργηθεί νέος χρήστης!",
+			"retry": "Δεν εντοπίστηκε πάτημα κουμπιού. Δοκιμάστε ξανά…",
+			"success": "Ο χρήστης δημιουργήθηκε με επιτυχία!",
+			"connecting": "Σύνδεση με το bridge…",
+			"autoupdates": "Ενεργοποίηση αυτόματων ενημερώσεων υλικολογισμικού",
+			"bridge-ip": "IP του bridge",
+			"worker": "Διεργασίες"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"statusmsg": "Η κατάσταση ανακτήθηκε με επιτυχία…",
+			"initializing": "Αρχικοποίηση του bridge (__bridge__)…",
+			"connected": "Συνδέθηκε με το bridge",
+			"processing": "Επεξεργασία των πόρων του bridge…",
+			"initial-emit": "Αρχική αποστολή των καταστάσεων των πόρων…",
+			"keep-updated": "Οι κόμβοι διατηρούνται ενημερωμένοι…",
+			"subscribing": "Εγγραφή στα συμβάντα του bridge…",
+			"unsubscribing": "Κατάργηση εγγραφής από τα συμβάντα του bridge…",
+			"no-legacy-api": "Το bridge δεν αποκρίνεται στο παλιό API, η λειτουργία συνεχίζεται χωρίς τις ρυθμίσεις του…",
+			"request-error": "Σφάλμα κατά την ανάκτηση πληροφοριών από το bridge (__error__)",
+			"connection-lost": "Χάθηκε η σύνδεση με το bridge (__reason__). Νέα προσπάθεια σε __seconds__ δευτερόλεπτα…",
+			"resources-changed": "Οι πόροι στο bridge άλλαξαν. Επαναφόρτωση…",
+			"not-connected": "Το bridge δεν είναι συνδεδεμένο."
+		}
+	}
+}

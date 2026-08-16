@@ -1,0 +1,150 @@
+[
+    {
+        "id": "073fb607f8039ef2",
+        "type": "tab",
+        "label": "Hue Motion (example)",
+        "disabled": false,
+        "info": "«Hue Motion» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "3ba8c03bba2a097d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "info": "«Hue Hareket» düğümüne tıklayın ve listeden hem bridge'inizi hem de bir sensör seçin. Henüz bir bridge kurmadıysanız, düğümün yapılandırmasını tamamlayabilmeniz için önce bir bridge kurmanız istenir.\n\nDüğüm bridge'inize ve sensöre bağlandığında ve değişiklikleri Node-RED'de dağıttığınızda, düğüm komutlarınızı alıp yürütebilir. «Hue Hareket» düğümü ayrıca sensörün bridge üzerindeki durumu her güncellendiğinde otomatik olarak bir mesaj verir (bir hareket kaydedildi). Güncellenen durumu ve tüm bilgilerini yayınlanan mesajda alırsınız.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında daha fazla bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "bce07ce0ad34cdf5",
+        "type": "debug",
+        "z": "073fb607f8039ef2",
+        "name": "Bilgi",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "23deb12245fdbc7c",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Güncel durumu sorgula",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0b68e8b6eeeb0ed5",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Durum",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "fe83e4d605d6b41d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Cihazı aç / kapat",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "87fc103f2b958513",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Aç",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e2668753efecb01a",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Kapat",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "1a1e1a628faa15dc",
+        "type": "hue-motion",
+        "z": "073fb607f8039ef2",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "bce07ce0ad34cdf5"
+            ]
+        ]
+    }
+]

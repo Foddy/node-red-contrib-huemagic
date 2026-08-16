@@ -1,0 +1,86 @@
+<script type="text/markdown" data-help-name="hue-syncbox">
+The "Hue Sync Box" node controls a Philips Hue Play HDMI Sync Box and reports what it is currently doing.
+
+### Setup
+
+The sync box is not connected to your Hue Bridge but speaks its own local API, so it needs its own configuration. Enter the IP address of your sync box and click the button next to the access token field. Then press and hold the button on the sync box until its LED blinks green — HueMagic keeps asking the box for a minute and stores the token as soon as it answers.
+
+Since the sync box does not push its state, HueMagic asks it regularly. You can set how often in the configuration, the default is every 10 seconds. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you would rather have the node stay silent until you send it something, activate "Only report after a command". It then ignores changes from the app or a switch and only answers your own commands.
+
+### Get status
+
+Outputs the current status of the sync box as soon as a `msg.payload` object with the following content has been transferred to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
+
+: status (boolean): Returns the current status of the sync box
+
+### Turn on / off (simple)
+
+To quickly switch the sync box on or off, pass an object with the following content to the node. Switching it on returns to the sync mode that was used last.
+
+: payload (boolean): `true` starts syncing, `false` puts the box into power save
+
+### Sync box commands (extended)
+
+Transfer the following parameters to an `msg.payload` object to control the sync box in more detail:
+
+: mode (string): One of `powersave`, `passthrough`, `video`, `game`, `music` or `ambient`
+: sync (boolean): `true` starts the synchronisation, `false` stops it
+: toggle (boolean | any): Toggles the synchronisation, depending on the previous state
+: passthrough (boolean): `true` passes the picture through to your TV without syncing
+: intensity (string): How strongly the lights follow the picture. One of `subtle`, `moderate`, `high` or `intense`
+: brightness (int): Percentage value of the brightness (0-100)
+: brightnessLevel (int): Numerical value of the brightness as the box counts it (0-200, where 100 is the baseline)
+: incrementBrightness (int | boolean): Specifies by how many percent the sync box should be made brighter or `true` for 10% steps
+: decrementBrightness (int | boolean): Specifies by how many percent the sync box should be made darker or `true` for 10% steps
+: input (string | int): The HDMI input to show, either `input1` to `input4` or simply `1` to `4`
+: entertainmentArea (string): The entertainment area the box should drive, e.g. `groups/13`
+
+### Status messages from the node
+
+Whenever the state of the sync box changes, the following status message is returned by the node:
+
+#### Status object under `msg.payload`
+
+: on (boolean): `false` while the box is in power save
+: syncing (boolean): `true` while the lights follow the picture
+: passthrough (boolean): `true` while the box passes the picture through
+: mode (string): The currently active mode
+: lastSyncMode (string): The sync mode that was used last
+: intensity (string | boolean): Intensity of the currently active mode
+: brightness (int | boolean): Brightness in percent
+: brightnessLevel (int | boolean): Brightness as the box counts it (0-200)
+: input (string | boolean): The HDMI input that is currently shown
+: inputs (object): All four HDMI inputs with their `name`, `type`, `status` (`unplugged`, `plugged`, `linked` or `unknown`) and whether they are `active`
+: entertainmentArea (string | boolean): The entertainment area the box drives
+: updated (string): Time of the last update of the resource by HueMagic (ISO 8601)
+
+#### Information about the sync box under `msg.info`
+
+: id (string | boolean): The unique ID of the sync box
+: name (string | boolean): The currently set name of the sync box
+: type (string): The type of the device (always `syncbox`)
+: ipAddress (string | boolean): The IP address the box reports for itself
+: softwareVersion (string | boolean): The current firmware of the sync box
+: apiLevel (int | boolean): The API level of the sync box
+: ledMode (int | boolean): The currently set LED mode
+: wifi (object | boolean): Contains `ssid` and `strength` of the wireless connection
+: model (object): Contains the model information of the sync box under `id`, `manufacturer` and `name`
+
+#### Status changes under `msg.updated`
+
+Lists individual parameters in the form of an object that have changed compared to the last state of the sync box. If no changes have been registered, this object is empty.
+
+#### Last status of the sync box under `msg.lastState`
+
+Contains the complete status object (see output values above) of the last status before the last registered change. If the last state of HueMagic has not yet been registered, it will output `false`.
+
+#### Last command under `msg.command` (optional)
+
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+
+### Examples from HueMagic
+
+HueMagic provides some sample configurations for this node. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

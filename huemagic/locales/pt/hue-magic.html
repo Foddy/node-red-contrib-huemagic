@@ -1,0 +1,68 @@
+<script type="text/markdown" data-help-name="hue-magic">
+O nó «Hue Magic» pode aplicar animações complexas e personalizadas a luzes e grupos.
+
+### Configuração
+
+Comece por dar um nome ao nó para poder identificar claramente a sua animação na interface do Node-RED. Depois pode escolher entre as opções «Repetição» e «Restaurar». Selecione a opção de repetição se quiser que a sua animação seja executada indefinidamente numa luz ou grupo até a parar manualmente. Se quiser restaurar o estado anterior do recurso de destino (luz / grupo) após o fim da animação, assinale a opção «Restaurar». Caso contrário, o último fotograma da animação permanece no respetivo recurso.
+
+Mais abaixo pode escolher entre as animações já preparadas do HueMagic. Clique na animação pretendida para a definir.
+
+### Iniciar / parar a animação
+
+Para reproduzir ou parar uma animação, transmita ao nó um objeto com o seguinte conteúdo:
+
+: payload (boolean): `true` inicia a animação, `false` para-a
+
+### Animações personalizadas
+
+Se transmitir a sua própria animação ao nó, a animação predefinida selecionada (se existir) é temporariamente substituída pela sua. As animações próprias do HueMagic são uma sequência de comandos agrupados numa matriz. Cada elemento da matriz constitui um passo, sendo que um passo também pode ser composto por vários fotogramas (efeitos de transição).
+
+Crie um `array` com os vários passos da animação sob a forma de objeto e transmita-o ao nó HueMagic em `msg.payload.steps`.
+
+: delay (int): Número de milissegundos a aguardar até este passo ser executado
+: animation (object): O objeto contém a ação ou ações a executar neste passo. Parâmetros idênticos aos dos nós «Hue Luz» e «Hue Grupo»
+
+### Exemplo de uma animação personalizada
+
+Este exemplo mostra o aspeto que uma animação simples pode ter. No primeiro passo aguarda-se o atraso de 500 milissegundos. Em seguida, a cor da luz muda lentamente para vermelho ao longo de um segundo. Assim que a luz fica completamente vermelha, é executado o segundo passo, que tem igualmente um atraso de 500 milissegundos. Por fim, a cor muda para azul.
+
+Se tiver definido a animação em repetição, este processo repete-se indefinidamente até parar a animação manualmente ou voltar a implementar o nó.
+
+Transmita o objeto seguinte em `msg.payload` para reproduzir a animação de exemplo.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
+            }
+        ]
+    }
+
+### Comandos especiais
+
+Por vezes faz sentido reproduzir uma animação de forma desordenada, p. ex. para imitar o fogo de maneira mais realista. Para reproduzir os vários passos aleatoriamente, pode transmitir o seguinte comando em `msg.payload.specials`:
+
+: randomOrder (boolean | any): `true` ativa a reprodução aleatória dos vários passos da animação
+
+### Dicas e indicações
+
+Este nó não emite mensagens de estado. Ligue a saída do nó a um grupo em vez de a luzes individuais se quiser animar várias luzes ao mesmo tempo com a mesma animação. As pré-visualizações das animações já preparadas são simulações e podem diferir ligeiramente (tempos, cores) da animação real num recurso.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Name",
+			"input-name": "Name des Lautsprechers",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"onlycommands-node": "Nur nach einem Befehl melden",
+			"searching": "Suche nach Lautsprechern…",
+			"none-found": "Keine Lautsprecher gefunden!",
+			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+			"speaker": "Lautsprecher",
+			"bridge": "Bridge",
+			"universalevents": "Universelle Ereignisse",
+			"universalevents-node": "Empfängt alle Nachrichten von anderen Nodes des gleichen Typs (nur im Universalmodus)"
+		},
+		"node": {
+			"title": "Hue Lautsprecher",
+			"not-configured": "nicht konfiguriert",
+			"not-reachable": "nicht erreichbar",
+			"silent": "still",
+			"muted": "stummgeschaltet",
+			"playing-alarm": "Alarm (__sound__)",
+			"playing-chime": "Klingelton (__sound__)",
+			"playing-alert": "Hinweiston (__sound__)",
+			"universal": "Universalmodus",
+			"input": "Ton abspielen / Statusabfrage",
+			"output": "Lautsprecher",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"error-no-id": "Bitte geben Sie eine gültige Lautsprecher-ID an.",
+			"error-not-available": "Der Lautsprecher ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
+			"error-no-channel": "Dieser Lautsprecher kennt keinen __channel__-Ton.",
+			"error-invalid-sound": "Ungültiger __channel__-Ton. Erlaubt sind: __sounds__",
+			"error-invalid-volume": "Ungültige Lautstärke. Es sind nur Werte von 0 - 100 erlaubt."
+		}
+	}
+}

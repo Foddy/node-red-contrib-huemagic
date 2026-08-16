@@ -1,0 +1,893 @@
+[
+    {
+        "id": "bfc496b5dc528777",
+        "type": "tab",
+        "label": "Hue Light (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Light»"
+    },
+    {
+        "id": "fd1b0ea2e9b0c530",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "info": "Πατήστε τον κόμβο «Hue Φως» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και ένα φως. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΜόλις ο κόμβος συνδεθεί με το bridge σας και το φως και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος μπορεί να λαμβάνει και να εκτελεί τις εντολές σας. Ο κόμβος «Hue Φως» στέλνει επιπλέον αυτόματα ένα μήνυμα μόλις ενημερωθεί η κατάσταση του φωτός στο bridge. Την ενημερωμένη κατάσταση και όλες τις πληροφορίες της τη λαμβάνετε στο μήνυμα που εκπέμπεται.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "2af2dc166c3bb8f2",
+        "type": "debug",
+        "z": "bfc496b5dc528777",
+        "name": "Πληροφορίες",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "eaadbf2396415deb",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b1aab91f47400d0a",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Κατάσταση",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "78b75b84ed839cfd",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "Άναμμα / σβήσιμο του φωτός",
+        "info": "",
+        "x": 110,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "6bcf026ef5794bcd",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Άναμμα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "c24ad6204076c4cb",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Σβήσιμο",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "3bf60cb5d6cd549a",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "Αναπαραγωγή εφέ στο φως",
+        "info": "",
+        "x": 120,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "bc3258d179d76888",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Κόκκινη ειδοποίηση για 3 δευτερόλεπτα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"on\":true,\"alert\":3,\"color\":\"red\"}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 700,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-warning"
+    },
+    {
+        "id": "7829a2ce62655ecf",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Εναλλαγή όλων των χρωμάτων για 5 δευτερόλεπτα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorloop\":5,\"brightness\":100}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 740,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-scene.svg"
+    },
+    {
+        "id": "b024d72eb9b7776c",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "Αλλαγή χρώματος του φωτός",
+        "info": "",
+        "x": 130,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "3b804f60a04c3a7b",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Κόκκινο χρώμα μέσω ονόματος",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"color\":\"red\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 840,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "b2f8f62480275d8a",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Πράσινο χρώμα μέσω HEX",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"hex\":\"#00FF00\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 880,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "6f19d2c69ee5753c",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Μπλε χρώμα μέσω RGB",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"rgb\":[0,0,255]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 920,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "f15b96643d181980",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "Αλλαγή θερμοκρασίας χρώματος του φωτός",
+        "info": "",
+        "x": 170,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "e2f4f9c624637c41",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ψυχρή θερμοκρασία χρώματος",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"cold\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1380,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "a0fb4dee0110b1b4",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Κανονική θερμοκρασία χρώματος",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"normal\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1420,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "0c72f77de7b888a9",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Θερμή θερμοκρασία χρώματος",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"warm\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1460,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "bf88a3c2c20c5206",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Πολύ θερμή θερμοκρασία χρώματος",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"hot\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1500,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "968d22b4ae536233",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Κανονική θερμοκρασία με ακριβή τιμή",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":240,\"brightness\":100}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1540,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "7321a6f9e0121315",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Αυτόματα (με βάση την τρέχουσα ώρα)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemp\":\"auto\",\"brightness\":100}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1340,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-temperature.svg"
+    },
+    {
+        "id": "1b68cc5d584de2f2",
+        "type": "comment",
+        "z": "bfc496b5dc528777",
+        "name": "Αλλαγή φωτεινότητας του φωτός",
+        "info": "",
+        "x": 140,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "c6bdf85c484f37c2",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ρύθμιση στο 100 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":100}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 480,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "60cbd0cf886f9213",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ρύθμιση στο 25 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":25}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 440,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "f2f9d1903643268b",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Εναλλαγή ανάμματος/σβησίματος",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-dot-circle-o"
+    },
+    {
+        "id": "54accf85a04c2304",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Τυχαίο χρώμα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"color\":\"random\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 1240,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red/swap.svg"
+    },
+    {
+        "id": "5647ce83310616b2",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Χρώμα θέματος Node-RED μέσω XY",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"xyColor\":{\"x\":0.7401,\"y\":0.2718}}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 960,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "af76f17f661aa0a5",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Κυρίαρχο χρώμα από URL εικόνας",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"image\":\"https://user-images.githubusercontent.com/5302050/148616400-b7e7b35d-c779-4b6d-baff-c91ac2980d8f.jpg\"}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 1000,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "736b63eb9b5c3731",
+        "type": "hue-light",
+        "z": "bfc496b5dc528777",
+        "colornamer": true,
+        "skipevents": false,
+        "initevents": false,
+        "x": 600,
+        "y": 160,
+        "wires": [
+            [
+                "2af2dc166c3bb8f2"
+            ]
+        ]
+    },
+    {
+        "id": "55973d3aa06fc9e6",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Αύξηση φωτεινότητας κατά 50 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"incrementBrightness\":50}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 520,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-plus-square"
+    },
+    {
+        "id": "b97b12cf862e3eae",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Μείωση φωτεινότητας κατά 25 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":25}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 560,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-minus-square"
+    },
+    {
+        "id": "73599da840b5c18f",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Αύξηση θερμοκρασίας χρώματος κατά 50",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"incrementColorTemp\":50}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1580,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-plus-square"
+    },
+    {
+        "id": "b7f6d89717fcee28",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Μείωση θερμοκρασίας χρώματος κατά 50",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementColorTemp\":50}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1620,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "font-awesome/fa-minus-square"
+    },
+    {
+        "id": "97b9b1051bdee695",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Αύξηση κορεσμού κατά 50 %",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"saturation\":90}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 1040,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "567501938ec6efe1",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ορισμός διαβάθμισης από δύο χρώματα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"gradient\":{\"hex\":[\"#03adfc\",\"#fc037b\"]}}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 1200,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "ea044d3b72784ff7",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ανάμειξη τρέχοντος χρώματος με κόκκινο (HEX)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mixColor\":{\"hex\":\"#ff0000\"}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1080,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "2b12d720883fa1c5",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ανάμειξη τρέχοντος χρώματος με μπλε (RGB)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mixColor\":{\"rgb\":[0,0,255]}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1160,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "2bae389d87f650c8",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Ανάμειξη τρέχοντος χρώματος με 70 % πράσινο (όνομα + αναλογία)",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mixColor\":{\"color\":\"green\",\"amount\":70}}",
+        "payloadType": "json",
+        "x": 250,
+        "y": 1120,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-group.svg"
+    },
+    {
+        "id": "2187049b0e0584b3",
+        "type": "inject",
+        "z": "bfc496b5dc528777",
+        "name": "Αυτόματη φωτεινότητα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":\"auto\"}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 600,
+        "wires": [
+            [
+                "736b63eb9b5c3731"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-magic.svg"
+    }
+]

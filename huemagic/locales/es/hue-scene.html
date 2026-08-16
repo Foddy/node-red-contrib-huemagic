@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+El nodo «Hue Escena» puede reanudar escenas guardadas en el bridge y aplicarlas a determinados grupos.
+
+### Configuración
+
+Seleccione el Hue Bridge preconfigurado y haga clic en el botón de búsqueda para encontrar todas las escenas disponibles. Las escenas se ordenan primero por habitación o zona y después por su nombre, de modo que las escenas de una misma habitación siempre quedan juntas en la lista. Si ya conoce el ID de la escena, también puede introducirlo aquí manualmente. Como alternativa, puede asignar internamente un nombre a la escena o utilizar su nombre predefinido.
+
+### Activar una escena
+
+Puede activar una escena predefinida pasando un objeto con el siguiente contenido:
+
+: payload (boolean): Activa una escena preconfigurada
+: transitionTime (float): Tiempo de transición de la escena en segundos. Si se pasa `0`, la escena se aplica de inmediato. Si pasa `3`, las luces se funden hacia la escena en los siguientes 3 segundos. El bridge acepta hasta 6000 segundos
+: brightness (float): Brillo de toda la escena en porcentaje (`0` – `100`), de modo que puede activar una misma escena más clara o más tenue según la hora del día
+
+> [!NOTE]
+> Ambos ajustes solo están disponibles para escenas normales. Una escena inteligente se rige por los horarios que haya definido para ella en la app de Philips Hue.
+
+### Activar una escena en modo universal
+
+Si utiliza este nodo en el llamado «modo universal» y no ha configurado ninguna escena en el nodo, también puede transferir al nodo la escena que desee como comando. Para ello, pase un objeto `msg.payload` con el siguiente contenido:
+
+: scene (string): ID de la escena que se debe activar en el bridge
+
+### Activar una escena en determinados grupos
+
+Conecte la salida de este nodo a uno o varios grupos para aplicar una escena a grupos concretos. Como alternativa, puede hacerlo de forma «dinámica» pasando al nodo un objeto `msg.payload` con el siguiente contenido:
+
+: group (string | array [string,…]): ID del grupo o un array con los ID de varios grupos para limitar la escena a esos grupos
+
+### Más información sobre el nodo
+
+Este nodo no emite mensajes de estado.
+
+> [!IMPORTANT]
+> Solo puede aplicar escenas a grupos si estos ya están vinculados a la escena correspondiente en el bridge. De lo contrario no se aplicará nada.
+
+### Ejemplos de HueMagic
+
+HueMagic pone a su disposición algunas configuraciones de ejemplo para este nodo. Para importar un ejemplo completo en su interfaz de Node-RED, haga clic en el icono de menú de Node-RED, seleccione «Importar» y navegue hasta «Ejemplos» en la barra lateral de la ventana emergente. A continuación, seleccione la carpeta HueMagic y el nodo que desee para importar un flujo de ejemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

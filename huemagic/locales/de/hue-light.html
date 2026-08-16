@@ -3,7 +3,7 @@ Der „Hue Licht“-Node kann mit der Bridge verbundene Lichter steuern und ihre
 
 ### Einrichtung
 
-Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Lichter zu finden. Wenn Sie die ID von einem Licht bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Sie können intern entweder einen neuen Namen für das Licht vergeben oder den vordefinierten Namen wählen. Optional können Sie auch alle automatischen Statusmeldungen dieses Nodes deaktivieren, indem Sie die Einstellung „Ignoriere die Mitteilungen des Nodes“ anklicken. Der Node wird anschließend keine Geräteupdates mehr ausgeben. Alternativ können Sie auch auswählen, ob die Initialisierungsnachricht des Nodes beim Start von Node-RED nicht unterdrückt werden soll. Wenn Sie diese Einstellung aktivieren, erhalten Sie nach jedem Deploy eine Statusmeldung des aktuell ausgewählten Lichts.
+Wählen Sie die vorkonfigurierte Hue Bridge und klicken Sie auf die Suchschaltfläche, um alle verfügbaren Lichter zu finden. Wenn Sie die ID von einem Licht bereits kennen, können Sie sie auch manuell an dieser Stelle eintragen. Sie können intern entweder einen neuen Namen für das Licht vergeben oder den vordefinierten Namen wählen. Optional können Sie auch alle automatischen Statusmeldungen dieses Nodes deaktivieren, indem Sie die Einstellung „Ignoriere die Mitteilungen des Nodes“ anklicken. Der Node wird anschließend keine Geräteupdates mehr ausgeben. Alternativ können Sie auch auswählen, ob die Initialisierungsnachricht des Nodes beim Start von Node-RED nicht unterdrückt werden soll. Wenn Sie diese Einstellung aktivieren, erhalten Sie nach jedem Deploy eine Statusmeldung des aktuell ausgewählten Lichts. Wenn der Node lieber still bleiben soll, bis Sie ihm etwas schicken, aktivieren Sie „Nur nach einem Befehl melden“. Er ignoriert dann Änderungen aus der App oder von einem Schalter und antwortet nur auf Ihre eigenen Befehle.
 
 Wenn Sie die Einstellung „Aktiviere Farbnamen“ aktivieren, wird der Node bei jeder Statusmeldung versuchen, die aktuell eingerichtete Lichtfarbe zu beschreiben. Sie erhalten dann also einen zusätzlichen Parameter mit der englischen Beschreibung der aktuell eingestellten Farbe in der Ausgabe.
 
@@ -26,7 +26,7 @@ Um ein Licht im einfachen Modus schnell ein- oder auszuschalten, übergeben Sie 
 Neben dem einfachen Ein- und Ausschalten, stehen Ihnen auch viele weitere Optionen zur Steuerung des Lichts zur Verfügung. Alle Nodes in HueMagic können mit additiven Befehlen gesteuert werden. Das heißt, dass Sie zunächst eine Einstellung übergeben können und in einem späteren Befehl eine weitere Einstellung, ohne, dass die vorherige Einstellung damit verworfen wird. Übergeben Sie folgende Parameter in ein `msg.payload`-Objekt, um umfangreichere Einstellungen am Licht vorzunehmen:
 
 : on (boolean) : `true` schaltet das Licht ein, `false` schaltet es aus
-: toggle (boolean | any) : Wechselt zwischen Ain- und Ausschalten, je nachdem, wie der vorherige Zustand der Lichts war
+: toggle (boolean | any) : Wechselt zwischen Ein- und Ausschalten, je nachdem, wie der vorherige Zustand der Lichts war
 : brightness (int | string) : Prozentualer Wert der Lichthelligkeit (0-100) oder ein String mit dem Wert `auto`, um die Helligkeit automatisch auf Basis der aktuellen Uhrzeit einzustellen
 : brightnessLevel (int) : Nummerischer Wert der Lichthelligkeit (0-254)
 : incrementBrightness (int | boolean) : Gibt an, um wie viel Prozent das Licht heller gemacht werden soll oder `true`, um das Licht in 10%-Schritten heller zu machen
@@ -35,9 +35,9 @@ Neben dem einfachen Ein- und Ausschalten, stehen Ihnen auch viele weitere Option
 : hex (string) : Farbwert in Hexadezimal in Form eines Strings
 : rgb (array[0,0,0]) : Farbwert im RGB-Format in Form eines Arrays
 : xyColor (object{x[float], y[float]}) : Farbwert im XY-Farbformat in Form eines Objekts
-: gradient (object{hex[…]}) : Ein Objekt mit einem unterstützem Farbobjekt (z. B. `hex`, `rgb`, …) und mehreren Farben, um einen Gradienten auf unterstützte Lichter einzustellen
+: gradient (object{hex[…]}) : Ein Objekt mit einem unterstützten Farbobjekt (z. B. `hex`, `rgb`, …) und mehreren Farben, um einen Gradienten auf unterstützte Lichter einzustellen
 : mixColor (object) : Eine Farbe, die mit der aktuellen Lichtfarbe gemischt werden soll. Kann `color`, `hex`, `rgb` oder `xyColor` Objekte annehmen und optional `amount` (int), um das Mischverhältnis in Prozent anzugeben
-: image (string) : Pfad eines Bildes (lokal oder im Web) um die aktuelle Farbe des Lichts auf die Durschschnittsfarbe des Bildes einzustellen
+: image (string) : Pfad eines Bildes (lokal oder im Web) um die aktuelle Farbe des Lichts auf die Durchschnittsfarbe des Bildes einzustellen
 : saturation (int) : Prozentualer Wert der Sättigung der aktuellen Farbe (beta)
 : colorTemp (int | string) : Wert zwischen 153 und 500, um die Farbtemperatur des Lichts einzustellen oder die Werte `cold`, `normal`, `warm`, `hot` und `auto` – wobei `auto` die Farbtemperatur auf Basis der aktuellen Uhrzeit ausmacht
 : incrementColorTemp (int | boolean) : Wert um wie viel die Farbtemperatur wärmer werden soll oder `true`, um in 50er-Schritten die Farbtemperatur wärmer zu machen
@@ -56,7 +56,7 @@ Sobald eine Änderung an den Lichteinstellungen festgestellt wurde (egal ob übe
 : brightness (int | boolean) : Aktuelle Helligkeit in Prozent oder `false`, wenn das Licht keine Helligkeitseinstellung unterstützt
 : brightnessLevel (int | boolean) : Aktuelle Helligkeit von 0-254 oder `false`, wenn das Licht keine Helligkeitseinstellung unterstützt
 : reachable (boolean | string) : `true` wenn das Licht mit der Bridge verbunden ist, `unknown` wenn der Verbindungsstatus abweicht
-: connectionStatus (string) : Der aktuelle Verbindugsstatus mit der Bridge in Form eines Strings. Kann `connected`, `disconnected`, `connectivity_issue` oder `unidirectional_incoming` als Wert beinhalten
+: connectionStatus (string) : Der aktuelle Verbindungsstatus mit der Bridge in Form eines Strings. Kann `connected`, `disconnected`, `connectivity_issue` oder `unidirectional_incoming` als Wert beinhalten
 : rgb (array[int,int,int] | optional) : Aktuelle Lichtfarbe in Form eines RGB-Wertes, wenn das Licht Farben darstellen kann
 : hex (string | optional) : Aktuelle Lichtfarbe in Form eines Hexadezimal-Wertes, wenn das Licht Farben darstellen kann
 : xyColor (object{x[float], y[float]} | optional) : Aktuelle Lichtfarbe in Form eines XY-Wertes, wenn das Licht Farben darstellen kann
@@ -93,5 +93,5 @@ Sofern der Status des Nodes sich über einen bestimmten Befehl geändert hat, wi
 
 HueMagic stellt einige Beispielkonfigurationen zu diesem Node zur Verfügung. Um ein fertiges Beispiel in Ihrer Node-RED-Oberfläche zu importieren, klicken Sie auf das Menü-Icon von Node-RED, wählen Sie dann „Import“ und navigieren Sie in der Sidebar des Popups auf „Beispiele“. Wählen Sie anschließend den HueMagic-Ordner aus und Ihren gewünschten Node, um einen Beispielflow zu importieren.
 
-![examples](https://user-images.githubusercontent.com/5302050/148681840-2275c15a-7c0c-4a37-b817-199608e571d2.gif)
+![examples](hue/assets/huemagic-examples.gif)
 </script>

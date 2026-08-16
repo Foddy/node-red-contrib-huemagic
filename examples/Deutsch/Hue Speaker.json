@@ -1,0 +1,274 @@
+[
+    {
+        "id": "a71f3c58d0e94b26",
+        "type": "tab",
+        "label": "Hue Speaker (example)",
+        "disabled": false,
+        "info": "Beispielhafte Verwendung des „Hue Speaker“-Nodes"
+    },
+    {
+        "id": "c1a4e07b6d3f8215",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "ERSTE SCHRITTE (doppelklicke mich)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Klicken Sie auf den „Hue Lautsprecher“-Node und wählen Sie sowohl Ihre Bridge als auch einen Lautsprecher aus der Liste aus. Sofern Sie noch keine Bridge eingerichtet haben, werden Sie gebeten, eine einzurichten, bevor Sie die Konfiguration des Nodes abschließen können.\n\nSobald der Node mit Ihrer Bridge und dem Lautsprecher verbunden ist und Sie die Änderungen in Node-RED deployt haben, kann der Node Ihre Befehle empfangen und ausführen. Der „Hue Lautsprecher“-Node gibt außerdem jedes Mal automatisch eine Nachricht aus, sobald der Lautsprecher einen Ton startet oder beendet. Den aktualisierten Status und alle seine Informationen erhalten Sie in der ausgegebenen Nachricht.\n\nWelche Töne Ihr Gerät tatsächlich kennt, steht unter msg.info.sounds. Bitte beachten Sie, dass die Bridge den zuletzt gespielten Ton meldet und ihn erst deutlich nach dem Ende der Wiedergabe zurücksetzt.\n\nWenn Sie mehr Informationen zu diesem Node, den möglichen Befehlen und Ausgabewerten erhalten möchten, klicken Sie ihn in Ihrem Flow einmal an und navigieren Sie zum Buch-Symbol von Node-RED (obere rechte Ecke)."
+    },
+    {
+        "id": "d2b5f18c7e4a9306",
+        "type": "debug",
+        "z": "a71f3c58d0e94b26",
+        "name": "Information",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3c6028d8f5b0417",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Aktuellen Status abrufen",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4d7139e90a6c1528",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Status",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6f935b12c8e3740",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Türklingel läuten",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7a046c23d9f4851a",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Klassischer Klingelton",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":\"ding_dong_classic\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell"
+    },
+    {
+        "id": "i8b157d34ea05962b",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Klingelton mit 50 % Lautstärke",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":{\"sound\":\"westminster_classic\",\"volume\":50}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell-o"
+    },
+    {
+        "id": "c9c268e45fb16a73",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Als Sirene verwenden",
+        "x": 120,
+        "y": 360,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iad379f56a0c27b84",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Alarm für 10 Sekunden",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":{\"sound\":\"siren\",\"volume\":100,\"duration\":10}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "ibe48a067b1d38c95",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Alarm stoppen",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-stop"
+    },
+    {
+        "id": "ccf59b178c2e49a6",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Lautsprecher stummschalten",
+        "x": 120,
+        "y": 500,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "id6a0c289d3f5ab07",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Stummschalten",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-off"
+    },
+    {
+        "id": "ie7b1d39ae406bc18",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Stummschaltung aufheben",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-up"
+    },
+    {
+        "id": "s5e824af01b7d2639",
+        "type": "hue-speaker",
+        "z": "a71f3c58d0e94b26",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2b5f18c7e4a9306"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

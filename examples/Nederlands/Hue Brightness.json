@@ -1,0 +1,150 @@
+[
+    {
+        "id": "d081bb24.81a8d",
+        "type": "tab",
+        "label": "Hue Brightness (example)",
+        "disabled": false,
+        "info": "Voorbeeld van het gebruik van de node \"Hue Brightness\""
+    },
+    {
+        "id": "bc4daa7a.ddc16",
+        "type": "hue-brightness",
+        "z": "d081bb24.81a8d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "4cf0eb6d2a66fd14"
+            ]
+        ]
+    },
+    {
+        "id": "6a8f3df98e7625b8",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "EERSTE STAPPEN (dubbelklik hier)",
+        "info": "Klik op de node \"Hue Lichtsterkte\" en kies uit de lijst zowel uw bridge als een sensor. Hebt u nog geen bridge ingesteld, dan wordt u gevraagd er eerst een in te stellen voordat u de configuratie van de node kunt afronden.\n\nZodra de node met uw bridge en de sensor is verbonden en u de wijzigingen in Node-RED hebt gedeployed, kan de node uw commando's ontvangen en uitvoeren. De node \"Hue Lichtsterkte\" geeft daarnaast telkens automatisch een bericht uit zodra de status van de sensor op de bridge is bijgewerkt (een nieuw lichtniveau is geregistreerd). De bijgewerkte status en alle informatie ontvangt u in het uitgegeven bericht.\n\nWilt u meer informatie over deze node, de mogelijke commando's en uitvoerwaarden, klik er dan één keer op in uw flow en ga naar het boekpictogram van Node-RED (rechtsboven).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "4cf0eb6d2a66fd14",
+        "type": "debug",
+        "z": "d081bb24.81a8d",
+        "name": "Informatie",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "433f55c9fedd4e3b",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Huidige status opvragen",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "88b02ac839431cc1",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "bd060e6399f15f95",
+        "type": "comment",
+        "z": "d081bb24.81a8d",
+        "name": "Apparaat aan-/uitzetten",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "15c9417b8ed13b49",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Aanzetten",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "89e7bcee38350561",
+        "type": "inject",
+        "z": "d081bb24.81a8d",
+        "name": "Uitzetten",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "bc4daa7a.ddc16"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    }
+]

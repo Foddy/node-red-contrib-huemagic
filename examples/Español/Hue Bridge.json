@@ -1,0 +1,256 @@
+[
+    {
+        "id": "bf04a073.be4428",
+        "type": "tab",
+        "label": "Hue Bridge (example)",
+        "disabled": false,
+        "info": "Ejemplo de uso del nodo «Hue Bridge»"
+    },
+    {
+        "id": "bacc56ae.a92d1",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "TouchLink",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"touchLink\":true}",
+        "payloadType": "json",
+        "x": 120,
+        "y": 260,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-hand-o-right"
+    },
+    {
+        "id": "effb4d48.e09bb8",
+        "type": "debug",
+        "z": "bf04a073.be4428",
+        "name": "Información",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "ea4668e7.fac4f",
+        "type": "hue-bridge-node",
+        "z": "bf04a073.be4428",
+        "autoupdates": true,
+        "skipglobalevents": false,
+        "initevents": false,
+        "x": 550,
+        "y": 160,
+        "wires": [
+            [
+                "effb4d48.e09bb8"
+            ]
+        ]
+    },
+    {
+        "id": "15e5be4.550a0c2",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Cambiar el nombre del bridge",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-toggle-on"
+    },
+    {
+        "id": "808fb3ba34d8d872",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Cambiar los ajustes del bridge",
+        "info": "",
+        "x": 130,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "6a2d7cbb05fc38a8",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Pulsar el botón del bridge de forma remota",
+        "info": "",
+        "x": 140,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a1d6fdeca2c9c014",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Consultar recursos concretos del bridge",
+        "info": "",
+        "x": 150,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "5829dc7c634e6674",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Consultar todas las luces",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"light\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-light.svg"
+    },
+    {
+        "id": "09d15741c0c484b7",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Consultar todos los sensores de movimiento",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"motion\"}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-motion.svg"
+    },
+    {
+        "id": "fec4a7abbeecac4b",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Consultar todos los sensores de movimiento y luces",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":[\"motion\", \"light\"]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 540,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-clone"
+    },
+    {
+        "id": "35bf62bc11c94830",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "PRIMEROS PASOS (haz doble clic)",
+        "info": "Haga clic en el nodo «Hue Bridge» y seleccione su bridge. Si aún no ha configurado ningún bridge, se le pedirá que configure uno antes de poder terminar la configuración del nodo.\n\nEn cuanto el nodo esté conectado a su bridge y haya desplegado los cambios en Node-RED, el estado del nodo debería cambiar a «connected». Después, el nodo podrá recibir y ejecutar sus comandos. El nodo «Hue Bridge» emite además automáticamente un mensaje cada vez que se actualiza el estado de un recurso concreto en el bridge. El estado actualizado y toda su información los encontrará en la propiedad «updated» del mensaje emitido.\n\nAdemás, puede consultar en cualquier momento el estado actual del nodo en la interfaz de Node-RED haciendo clic en el botón del nodo situado junto al icono.\n\nSi desea obtener más información sobre este nodo, los comandos posibles y los valores de salida, haga clic una vez sobre él en su flujo y vaya al icono del libro de Node-RED (esquina superior derecha).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "150fa3da0eea6bce",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Consultar el estado actual",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "474d44e13140d4a8",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Estado",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    }
+]

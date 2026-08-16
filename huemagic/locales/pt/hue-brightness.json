@@ -1,0 +1,37 @@
+{
+	"hue-brightness": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignorar as mensagens do nó",
+			"sendinitevents-node": "Não suprimir o evento de inicialização",
+			"onlycommands-node": "Comunicar apenas após um comando",
+			"unknown-error": "Algo correu mal. Tente novamente.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universais",
+			"universalevents-node": "Recebe todas as mensagens de outros nós do mesmo tipo (apenas no modo universal)",
+			"input-name": "Nome do sensor de luminosidade",
+			"searching": "A procurar sensores…",
+			"none-found": "Nenhum sensor de luminosidade encontrado!",
+			"sensor": "Sensor",
+			"all": "Todos os grupos / luzes",
+			"darkthreshold": "Escuro abaixo de"
+		},
+		"node": {
+			"not-configured": "não configurado",
+			"deactivated": "desativado",
+			"init": "a inicializar…",
+			"not-reachable": "inacessível",
+			"universal": "modo universal",
+			"command": "a executar comando…",
+			"statusmsg": "Estado consultado com sucesso…",
+			"title": "Hue Luminosidade",
+			"lux": "__lux__ lux",
+			"lux-dark": "__lux__ lux (escuro)",
+			"lux-daylight": "__lux__ lux (luz do dia)",
+			"input": "consulta de estado",
+			"output": "luminosidade (alterada)",
+			"error-no-id": "Indique um ID de sensor válido.",
+			"error-not-available": "O sensor ainda não está disponível. Aguarde até que o HueMagic tenha estabelecido a ligação com o bridge ou verifique se o ID do recurso indicado na configuração é válido."
+		}
+	}
+}

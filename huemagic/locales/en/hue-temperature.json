@@ -1,0 +1,33 @@
+{
+	"hue-temperature": {
+		"config": {
+			"name": "Name",
+			"sensor": "Sensor",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"onlycommands-node": "Only report after a command",
+			"input-name": "Sensor name",
+			"searching": "searching temperature sensors…",
+			"none-found": "No temperature sensors found.",
+			"unknown-error": "Something went wrong. Please retry.",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)",
+			"bridge": "Bridge",
+			"offset": "Offset"
+		},
+		"node": {
+			"title": "Hue Temperature",
+			"not-configured": "not configured",
+			"init": "initializing…",
+			"not-reachable": "not reachable!",
+			"input": "status query",
+			"output": "temperature (changed)",
+			"universal": "universal mode",
+			"command": "executing command…",
+			"deactivated": "deactivated",
+			"statusmsg": "Status queried successfully…",
+			"error-no-id": "Please submit a valid sensor ID.",
+			"error-not-available": "The sensor is not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid."
+		}
+	}
+}

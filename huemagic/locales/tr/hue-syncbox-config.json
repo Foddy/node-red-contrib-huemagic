@@ -1,0 +1,25 @@
+{
+	"hue-syncbox-config": {
+		"config": {
+			"name": "Ad",
+			"syncbox-ip": "Sync Box IP adresi",
+			"token": "Erişim belirteci",
+			"pollinterval": "Yenileme (sn)",
+			"missing-ip": "Hue Sync Box IP adresi eksik…",
+			"connecting": "Sync box ile bağlantı kuruluyor…",
+			"invalid": "Üzgünüz. Seçtiğiniz Hue Sync Box geçersiz: ",
+			"error-select-first": "Yeni bir belirteç oluşturmadan önce Hue Sync Box cihazınızın IP adresini girin!",
+			"waiting": "düğmeye basılması bekleniyor…",
+			"new-user-press": "Hue Sync Box cihazınızdaki düğmeyi LED yeşil yanıp sönene kadar basılı tutun!",
+			"retry": "Düğmeye basılmadı. Lütfen tekrar deneyin…",
+			"success": "Erişim belirteci başarıyla oluşturuldu!"
+		},
+		"node": {
+			"title": "Hue Sync Box",
+			"initializing": "Sync box başlatılıyor (__syncbox__)…",
+			"connected": "Sync box ile bağlantı kuruldu",
+			"request-error": "Sync box'tan bilgi istenirken hata oluştu (__error__)",
+			"statusmsg": "Durum başarıyla sorgulandı…"
+		}
+	}
+}

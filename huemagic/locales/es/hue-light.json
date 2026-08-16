@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Nombre",
+			"skipevents-node": "Omitir los mensajes del nodo",
+			"sendinitevents-node": "No suprimir el evento de inicialización",
+			"onlycommands-node": "Informar solo tras un comando",
+			"unknown-error": "Algo ha salido mal. Inténtelo de nuevo.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universales",
+			"universalevents-node": "Recibe todos los mensajes de otros nodos del mismo tipo (solo en modo universal)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Activar los nombres de color",
+			"input-name": "Nombre de la luz",
+			"searching": "Buscando luces…",
+			"none-found": "¡No se ha encontrado ninguna luz!",
+			"light": "Luz"
+		},
+		"node": {
+			"not-configured": "sin configurar",
+			"init": "inicializando…",
+			"not-reachable": "no accesible",
+			"universal": "modo universal",
+			"command": "ejecutando comando…",
+			"statusmsg": "Estado consultado correctamente…",
+			"title": "Hue Luz",
+			"turned-on": "encendida",
+			"turned-on-percent": "encendida (__percent__ %)",
+			"turned-off": "apagada",
+			"error-no-id": "No se ha definido ningún ID de luz. Consulte la documentación.",
+			"error-input": "error de entrada",
+			"error-invalid-temp": "Temperatura de color no válida. Solo se permite de 153 a 500.",
+			"input": "encender / apagar",
+			"output": "estado",
+			"error-not-available": "La luz aún no está disponible. Espere hasta que HueMagic haya establecido la conexión con el bridge o compruebe si el ID del recurso indicado en la configuración es válido.",
+			"error-invalid-brightness": "Ajuste de brillo no válido. Solo se permite de 0 a 100 por ciento.",
+			"error-invalid-brightness-level": "Ajuste de brillo no válido. Solo se permite de 0 a 254.",
+			"error-invalid-sat": "Ajuste de saturación no válido. Solo se permite de 0 a 100.",
+			"error-no-colorloop": "El efecto colorloop no está disponible para esta luz.",
+			"error-invalid-effect": "Efecto no válido. Esta luz admite: __effects__",
+			"error-invalid-powerup": "Ajuste de encendido no válido. Los preajustes permitidos son: __presets__"
+		}
+	}
+}

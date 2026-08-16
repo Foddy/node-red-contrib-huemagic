@@ -1,0 +1,32 @@
+{
+	"hue-scene": {
+		"config": {
+			"name": "Nome",
+			"input-name": "Nome della scena",
+			"skipevents-node": "Ignora i messaggi del nodo",
+			"sendinitevents-node": "Non sopprimere l'evento di inizializzazione",
+			"searching": "Ricerca di scene…",
+			"none-found": "Nessuna scena trovata!",
+			"unknown-error": "Qualcosa è andato storto. Riprovi.",
+			"scene": "Scena",
+			"group": "Gruppo",
+			"group-none-found": "Nessun gruppo trovato!",
+			"group-searching": "Ricerca di gruppi…",
+			"groups-all": "Tutti i gruppi / le luci",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Scena",
+			"not-configured": "non configurato",
+			"recalled": "scena attivata",
+			"recalled-on-group": "scena attivata sul gruppo",
+			"no-id": "Nessun ID scena.",
+			"input": "attiva la scena",
+			"output": "gruppo/i di destinazione",
+			"command": "esecuzione del comando…",
+			"statusmsg": "Attivazione della scena…",
+			"error-not-available": "La scena non è ancora disponibile. Attenda che HueMagic abbia stabilito la connessione con il bridge oppure verifichi se l'ID della risorsa indicato nella configurazione è valido.",
+			"error-invalid-brightness": "Impostazione di luminosità non valida. Sono consentiti solo valori da 0 a 100 percento."
+		}
+	}
+}

@@ -1,0 +1,86 @@
+<script type="text/markdown" data-help-name="hue-syncbox">
+De node "Hue Sync Box" bedient een Philips Hue Play HDMI Sync Box en meldt wat die op dat moment doet.
+
+### Instellen
+
+De sync box is niet met uw Hue Bridge verbonden maar spreekt zijn eigen lokale API en heeft daarom een eigen configuratie nodig. Voer het IP-adres van uw sync box in en klik op de knop naast het veld voor het toegangstoken. Houd daarna de knop op de sync box ingedrukt totdat de led groen knippert — HueMagic blijft het apparaat een minuut lang bevragen en slaat het token op zodra het antwoordt.
+
+Omdat de sync box zijn status niet uit zichzelf verstuurt, vraagt HueMagic er regelmatig naar. Hoe vaak dat gebeurt stelt u in de configuratie in; standaard is dat elke 10 seconden. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+### Status opvragen
+
+Geeft de huidige status van de sync box uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: status (boolean): Geeft de huidige status van de sync box terug
+
+### Aan-/uitzetten (eenvoudig)
+
+Geef de node een object met de volgende inhoud mee om de sync box snel aan of uit te zetten. Bij het inschakelen wordt de laatst gebruikte synchronisatiemodus hervat.
+
+: payload (boolean): `true` start het synchroniseren, `false` zet het apparaat in energiebesparing
+
+### Sync box-commando's (uitgebreid)
+
+Geef de volgende parameters in een `msg.payload`-object mee om de sync box gedetailleerder te bedienen:
+
+: mode (string): Een van `powersave`, `passthrough`, `video`, `game`, `music` of `ambient`
+: sync (boolean): `true` start de synchronisatie, `false` stopt die
+: toggle (boolean | any): Schakelt de synchronisatie om, afhankelijk van de vorige toestand
+: passthrough (boolean): `true` geeft het beeld door aan uw tv zonder te synchroniseren
+: intensity (string): Hoe sterk de lampen het beeld volgen. Een van `subtle`, `moderate`, `high` of `intense`
+: brightness (int): Procentuele waarde van de helderheid (0-100)
+: brightnessLevel (int): Numerieke waarde van de helderheid zoals het apparaat die telt (0-200, waarbij 100 de basiswaarde is)
+: incrementBrightness (int | boolean): Geeft aan met hoeveel procent de sync box helderder moet worden, of `true` voor stappen van 10 %
+: decrementBrightness (int | boolean): Geeft aan met hoeveel procent de sync box donkerder moet worden, of `true` voor stappen van 10 %
+: input (string | int): De HDMI-ingang die getoond moet worden, `input1` tot `input4` of gewoon `1` tot `4`
+: entertainmentArea (string): Het entertainmentgebied dat het apparaat moet aansturen, bijv. `groups/13`
+
+### Statusberichten van de node
+
+Telkens als de toestand van de sync box verandert, geeft de node het volgende statusbericht terug:
+
+#### Statusobject onder `msg.payload`
+
+: on (boolean): `false` zolang het apparaat in energiebesparing staat
+: syncing (boolean): `true` zolang de lampen het beeld volgen
+: passthrough (boolean): `true` zolang het apparaat het beeld doorgeeft
+: mode (string): De momenteel actieve modus
+: lastSyncMode (string): De laatst gebruikte synchronisatiemodus
+: intensity (string | boolean): Intensiteit van de momenteel actieve modus
+: brightness (int | boolean): Helderheid in procent
+: brightnessLevel (int | boolean): Helderheid zoals het apparaat die telt (0-200)
+: input (string | boolean): De HDMI-ingang die momenteel wordt getoond
+: inputs (object): Alle vier HDMI-ingangen met hun `name`, `type`, `status` (`unplugged`, `plugged`, `linked` of `unknown`) en of ze `active` zijn
+: entertainmentArea (string | boolean): Het entertainmentgebied dat het apparaat aanstuurt
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+
+#### Informatie over de sync box onder `msg.info`
+
+: id (string | boolean): Het unieke ID van de sync box
+: name (string | boolean): De momenteel ingestelde naam van de sync box
+: type (string): Het type van het apparaat (altijd `syncbox`)
+: ipAddress (string | boolean): Het IP-adres dat het apparaat voor zichzelf meldt
+: softwareVersion (string | boolean): De huidige firmware van de sync box
+: apiLevel (int | boolean): Het API-niveau van de sync box
+: ledMode (int | boolean): De momenteel ingestelde led-modus
+: wifi (object | boolean): Bevat `ssid` en `strength` van de draadloze verbinding
+: model (object): Bevat de modelinformatie van de sync box onder `id`, `manufacturer` en `name`
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de sync box zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de sync box onder `msg.lastState`
+
+Bevat het volledige statusobject (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatst geregistreerde wijziging. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+Le nœud « Hue Scène » peut rappeler des scènes enregistrées dans le bridge et les appliquer à certains groupes.
+
+### Configuration
+
+Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche pour trouver toutes les scènes disponibles. Les scènes sont d'abord triées par pièce ou zone, puis par nom, de sorte que les scènes d'une même pièce restent toujours regroupées dans la liste. Si vous connaissez déjà l'ID de la scène, vous pouvez également le saisir ici manuellement. Vous pouvez aussi attribuer en interne un nom à la scène ou conserver son nom prédéfini.
+
+### Activer une scène
+
+Vous pouvez activer une scène prédéfinie en transmettant un objet ayant le contenu suivant :
+
+: payload (boolean): Active une scène préconfigurée
+: transitionTime (float): Temps de transition de la scène en secondes. Si `0` est transmis, la scène est appliquée immédiatement. Si vous transmettez `3`, les lumières fondent vers la scène en 3 secondes. Le bridge accepte jusqu'à 6000 secondes
+: brightness (float): Luminosité de l'ensemble de la scène en pourcentage (`0` – `100`), ce qui vous permet de rappeler une même scène plus claire ou plus tamisée selon l'heure de la journée
+
+> [!NOTE]
+> Ces deux réglages ne sont disponibles que pour les scènes normales. Une scène intelligente suit les horaires que vous avez définis pour elle dans l'application Philips Hue.
+
+### Activer une scène en mode universel
+
+Si vous utilisez ce nœud dans ce que l'on appelle le « mode universel » et que vous n'avez défini aucune scène dans la configuration du nœud, vous pouvez également transmettre au nœud la scène souhaitée sous forme de commande. Pour cela, transmettez un objet `msg.payload` ayant le contenu suivant :
+
+: scene (string): ID de la scène à activer sur le bridge
+
+### Activer une scène sur certains groupes
+
+Reliez la sortie de ce nœud à un ou plusieurs groupes pour appliquer une scène à des groupes précis. Vous pouvez également le faire « dynamiquement » en transmettant au nœud un objet `msg.payload` ayant le contenu suivant :
+
+: group (string | array [string,…]): ID du groupe ou tableau contenant les ID de plusieurs groupes afin de limiter la scène à ces groupes
+
+### Informations complémentaires sur le nœud
+
+Ce nœud n'émet aucun message de statut.
+
+> [!IMPORTANT]
+> Vous ne pouvez appliquer des scènes à des groupes que si ceux-ci sont déjà liés à la scène correspondante sur le bridge. Sinon, rien ne sera appliqué.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

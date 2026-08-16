@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+The "Hue Speaker" node can play the sounds of a Hue Secure chime and use it as an indoor siren.
+
+### Setup
+
+Select the pre-configured Hue Bridge and click the search button to find all the available speakers. If you already know the ID of the speaker, you can also enter it here manually. You can either assign a new name for the speaker internally or choose the predefined name of the speaker. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". The node will then no longer issue device updates. Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you activate this setting, you will receive a status message for the currently selected speaker after each deployment. If you would rather have the node stay silent until you send it something, activate "Only report after a command". It then ignores changes from the app or a switch and only answers your own commands.
+
+If you do not select a speaker and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type. You can also apply settings in universal mode to a specific speaker by transferring the corresponding speaker ID as a string in `msg.topic` together with your settings.
+
+### Get status
+
+Outputs the current status of the speaker as soon as a `msg.payload` object with the following content has been transferred to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
+
+: status (boolean): Returns the current status of the speaker
+
+### Play a sound
+
+A speaker knows three separate channels. The `chime` is the doorbell sound, the `alarm` is the siren and the `alert` is a short notification. Which sounds a device actually knows is listed under `msg.info.sounds`. Transfer the following parameters to an `msg.payload` object:
+
+: chime (string | object | boolean): Name of the doorbell sound, `false` stops it again
+: alarm (string | object | boolean): Name of the siren sound, `false` stops it again
+: alert (string | object | boolean): Name of the notification sound, `false` stops it again
+: mute (boolean): `true` mutes the speaker, `false` unmutes it again
+
+Instead of a plain sound name you can also pass an object to control volume and duration:
+
+: sound (string): Name of the sound, e.g. `ding_dong_classic` or `siren`
+: volume (int): Volume in percent (0-100)
+: duration (float): Playback time in seconds
+
+### Status messages from the node
+
+As soon as the speaker starts or stops playing, the following status message is returned by the node.
+
+> [!NOTE]
+> The bridge reports the sound that was played last and only clears it well after playback has finished, so these values lag a little behind the audio.
+
+#### Status object under `msg.payload`
+
+: reachable (boolean | string): `true` if the speaker is connected to the bridge, `unknown` if the connection status deviates
+: connectionStatus (string): The current connection status with the bridge in the form of a string. Can contain `connected`, `disconnected`, `connectivity_issue` or `unidirectional_incoming` as a value
+: playing (boolean): `true` while the speaker is playing any sound
+: chime (string | boolean): Name of the doorbell sound that is playing or `false`
+: alarm (string | boolean): Name of the siren sound that is playing or `false`
+: alert (string | boolean): Name of the notification sound that is playing or `false`
+: muted (boolean): Indicates whether the speaker is muted
+: updated (string): Time of the last update of the resource by HueMagic (ISO 8601)
+
+#### Information about the speaker under `msg.info`
+
+: id (string): Indicates the new ID of the speaker
+: idV1 (string | boolean): Indicates the old ID of the speaker
+: uniqueId (string): The unique ID of the speaker
+: deviceId (string): The unique ID of the device
+: name (string): The currently set name of the speaker
+: type (string): The type of the device (always `speaker`)
+: softwareVersion (string): The current firmware of the speaker
+: battery (float | boolean): The current battery level of the speaker, `false` when there is no battery
+: batteryState (string | boolean): The current status of the battery level. Can contain `normal`, `low` or `critical` as a value, `false` when there is no battery
+: sounds (object): Contains the sounds this device knows under `chime`, `alarm` and `alert`
+: model (object): Contains the model information of the speaker under `id`, `manufacturer`, `name`, `type` and `certified`
+
+#### Status changes under `msg.updated`
+
+Lists individual parameters in the form of an object that have changed compared to the last state of the speaker. If no changes have been registered, this object is empty.
+
+#### Last status of the speaker under `msg.lastState`
+
+Contains the complete status object (see output values above) of the last status before the last registered change. If the last state of HueMagic has not yet been registered, it will output `false`.
+
+#### Last command under `msg.command` (optional)
+
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+
+### Examples from HueMagic
+
+HueMagic provides some sample configurations for this node. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

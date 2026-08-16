@@ -1,0 +1,68 @@
+<script type="text/markdown" data-help-name="hue-magic">
+Il nodo «Hue Magic» può applicare animazioni complesse e personalizzate a luci e gruppi.
+
+### Configurazione
+
+Assegni prima un nome al nodo per poter identificare chiaramente la sua animazione nell'interfaccia di Node-RED. Può poi scegliere tra le opzioni «Ciclo» e «Ripristina». Selezioni l'opzione ciclo se desidera che l'animazione venga eseguita all'infinito su una luce o un gruppo finché non la interrompe manualmente. Se desidera ripristinare lo stato precedente della risorsa di destinazione (luce / gruppo) al termine dell'animazione, spunti l'opzione «Ripristina». In caso contrario, l'ultimo fotogramma dell'animazione rimane sulla rispettiva risorsa.
+
+Più sotto può scegliere tra le animazioni già pronte di HueMagic. Faccia clic sull'animazione desiderata per impostarla.
+
+### Avviare / arrestare l'animazione
+
+Per riprodurre o arrestare un'animazione, trasmetta al nodo un oggetto con il seguente contenuto:
+
+: payload (boolean): `true` avvia l'animazione, `false` la arresta
+
+### Animazioni personalizzate
+
+Se trasmette al nodo una propria animazione, l'animazione predefinita selezionata (se impostata) viene temporaneamente sostituita dalla sua. Le animazioni personalizzate di HueMagic sono una sequenza di comandi raggruppati in un array. Ogni elemento dell'array costituisce un passo, e un passo può essere a sua volta composto da più fotogrammi (effetti di transizione).
+
+Crei un `array` con i singoli passi dell'animazione sotto forma di oggetto e lo trasmetta al nodo HueMagic in `msg.payload.steps`.
+
+: delay (int): Numero di millisecondi da attendere prima dell'esecuzione di questo passo
+: animation (object): L'oggetto contiene l'azione o le azioni da eseguire in questo passo. Parametri identici a quelli dei nodi «Hue Luce» e «Hue Gruppo»
+
+### Esempio di animazione personalizzata
+
+Questo esempio mostra come potrebbe essere una semplice animazione. Nel primo passo viene atteso il ritardo di 500 millisecondi. Il colore della luce passa poi lentamente al rosso nell'arco di un secondo. Non appena la luce è completamente rossa, viene eseguito il secondo passo, anch'esso con un ritardo di 500 millisecondi. Infine il colore passa al blu.
+
+Se ha impostato l'animazione in ciclo, questo processo si ripete all'infinito finché non arresta manualmente l'animazione o non esegue di nuovo il deploy del nodo.
+
+Trasmetta il seguente oggetto in `msg.payload` per riprodurre l'animazione di esempio.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
+            }
+        ]
+    }
+
+### Comandi speciali
+
+A volte ha senso riprodurre un'animazione in modo disordinato, ad es. per imitare il fuoco in maniera più realistica. Per riprodurre i singoli passi in ordine casuale, può trasmettere il seguente comando in `msg.payload.specials`:
+
+: randomOrder (boolean | any): `true` attiva la riproduzione casuale dei singoli passi dell'animazione
+
+### Consigli e note
+
+Questo nodo non emette messaggi di stato. Colleghi l'uscita del nodo a un gruppo anziché a singole luci se desidera animare più luci contemporaneamente con la stessa animazione. Le anteprime delle animazioni già pronte sono simulazioni e possono differire leggermente (tempi, colori) dall'animazione reale su una risorsa.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

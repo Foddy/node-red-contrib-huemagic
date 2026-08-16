@@ -52,6 +52,8 @@ module.exports = function(RED)
 				if(forceReload === true)
 				{
 					// REFRESH INFORMATION
+					scope.lastBridgeInformation = null;
+
 					bridge.getBridgeInformation(true)
 					.then(function(updated)
 					{
@@ -60,7 +62,8 @@ module.exports = function(RED)
 					.then(function(bridgeInformation)
 					{
 						resolve(bridgeInformation);
-					});
+					})
+					.catch(function(error) { reject(error); });
 				}
 				else if(scope.lastBridgeInformation !== null)
 				{
@@ -70,8 +73,15 @@ module.exports = function(RED)
 				else
 				{
 					let bridgeInformation = bridge.get("bridge", "bridge", { autoupdate: ((bridge.config.autoupdates && bridge.config.autoupdates == true) || typeof bridge.config.autoupdates == 'undefined') });
-					scope.lastBridgeInformation = Object.assign({}, bridgeInformation);
 
+					// NOT CONNECTED YET? -> NOTHING TO CACHE AND NOTHING TO SEND
+					if(!bridgeInformation)
+					{
+						reject(RED._("hue-bridge.node.error-not-available"));
+						return false;
+					}
+
+					scope.lastBridgeInformation = Object.assign({}, bridgeInformation);
 					resolve(bridgeInformation);
 				}
 			});
@@ -79,7 +89,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("bridge", "globalResourceUpdates", async function(info)
+		this.unsubscribe = bridge.subscribe("bridge", "globalResourceUpdates", async function(info)
 		{
 			let currentState = bridge.get(info.updatedType, info.id);
 
@@ -117,7 +127,8 @@ module.exports = function(RED)
 
 						// RESET LAST COMMAND
 						scope.lastCommand = null;
-					});
+					})
+					.catch(function(error) { scope.debug(error); });
 				}
 			}
 
@@ -296,8 +307,22 @@ module.exports = function(RED)
 					// RESET LAST COMMAND
 					scope.lastCommand = null;
 				}
+			})
+			.catch(function(error)
+			{
+				scope.error(error, msg);
+				scope.status({fill: "red", shape: "ring", text: "hue-bridge.node.connecting"});
+				if(done) { done(); }
 			});
 		});
+
+		//
+		// CLOSE NODE / DETACH FROM THE BRIDGE
+		this.on('close', function()
+		{
+			if(scope.unsubscribe) { scope.unsubscribe(); }
+		});
+
 	}
 
 	RED.nodes.registerType("hue-bridge-node", HueBridgeNode);

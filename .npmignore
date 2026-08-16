@@ -1,0 +1,10 @@
+/.github
+/.vscode
+/test
+/docs
+/node_modules
+/package-lock.json
+/yarn.lock
+*.log
+*.tgz
+.DS_Store

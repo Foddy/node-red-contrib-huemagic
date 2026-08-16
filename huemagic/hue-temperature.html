@@ -4,7 +4,7 @@
         <input type="text" id="node-input-name" data-i18n="[placeholder]hue-temperature.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
-        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <label for="node-input-bridge"><i class="fa fa-server"></i> <span data-i18n="hue-temperature.config.bridge"></span></label>
         <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
@@ -18,16 +18,26 @@
             </button>
         </div>
     </div>
+    <div class="form-row">
+        <label for="node-input-offset"><i class="fa fa-sliders"></i> <span data-i18n="hue-temperature.config.offset"></span></label>
+        <input type="number" id="node-input-offset" placeholder="0" step="0.1" style="width: calc(100% - 105px)">
+    </div>
     <div class="form-row" style="margin-top: 30px">
-        <div style="display: inline-flex; width: calc(100% - 105px)">
-            <input type="checkbox" id="node-input-skipevents" style="flex: 15px;">
-            <span data-i18n="hue-temperature.config.skipevents-node" style="width: 100%; margin-left: 10px;"></span>
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-skipevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-temperature.config.skipevents-node" style="flex: 1; margin-left: 8px;"></span>
         </div>
     </div>
     <div class="form-row">
-        <div style="display: inline-flex; width: calc(100% - 105px)">
-            <input type="checkbox" id="node-input-initevents" style="flex: 15px;">
-            <span data-i18n="hue-temperature.config.sendinitevents-node" style="width: 100%; margin-left: 10px;"></span>
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-initevents" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-temperature.config.sendinitevents-node" style="flex: 1; margin-left: 8px;"></span>
+        </div>
+    </div>
+    <div class="form-row">
+        <div style="display: inline-flex; align-items: center; width: calc(100% - 105px)">
+            <input type="checkbox" id="node-input-onlycommands" style="flex: 0 0 auto; width: auto; margin: 0;">
+            <span data-i18n="hue-temperature.config.onlycommands-node" style="flex: 1; margin-left: 8px;"></span>
         </div>
     </div>
 </script>
@@ -40,13 +50,15 @@
             name: { value:"" },
             bridge: { type: "hue-bridge", required: true },
             sensorid: { value:"", required: false },
+            offset: { value: 0, validate: function(v) { return (v === "" || !isNaN(v)); } },
             skipevents: { value: false },
-            initevents: { value: false }
+            initevents: { value: false },
+            onlycommands: { value: false }
         },
         inputs: 1,
         outputs: 1,
         align: 'left',
-        icon: "hue-temperature.png",
+        icon: "hue-temperature.svg",
         label: function() {
             return this.name || this._("hue-temperature.node.title");
         },

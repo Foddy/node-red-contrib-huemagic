@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+De node "Hue Luidspreker" kan de geluiden van een Hue Secure-deurbel afspelen en die als binnensirene gebruiken.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare luidsprekers te vinden. Als u het ID van de luidspreker al kent, kunt u het hier ook handmatig invoeren. U kunt de luidspreker intern een nieuwe naam geven of de vooraf ingestelde naam gebruiken. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". De node geeft dan geen apparaatupdates meer uit. U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Als u deze instelling activeert, ontvangt u na elke deploy een statusbericht van de geselecteerde luidspreker. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+Als u geen luidspreker selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type. U kunt in de universele modus ook instellingen op een specifieke luidspreker toepassen door het bijbehorende luidspreker-ID als tekenreeks in `msg.topic` samen met uw instellingen mee te geven.
+
+### Status opvragen
+
+Geeft de huidige status van de luidspreker uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: status (boolean): Geeft de huidige status van de luidspreker terug
+
+### Een geluid afspelen
+
+Een luidspreker kent drie afzonderlijke kanalen. `chime` is het deurbelgeluid, `alarm` is de sirene en `alert` is een korte melding. Welke geluiden een apparaat werkelijk kent, staat onder `msg.info.sounds`. Geef de volgende parameters in een `msg.payload`-object mee:
+
+: chime (string | object | boolean): Naam van het deurbelgeluid; `false` stopt het weer
+: alarm (string | object | boolean): Naam van het sirenegeluid; `false` stopt het weer
+: alert (string | object | boolean): Naam van het meldingsgeluid; `false` stopt het weer
+: mute (boolean): `true` dempt de luidspreker, `false` heft de demping weer op
+
+In plaats van alleen een geluidsnaam kunt u ook een object meegeven om volume en duur te regelen:
+
+: sound (string): Naam van het geluid, bijv. `ding_dong_classic` of `siren`
+: volume (int): Volume in procent (0-100)
+: duration (float): Afspeelduur in seconden
+
+### Statusberichten van de node
+
+Zodra de luidspreker begint of stopt met afspelen, geeft de node het volgende statusbericht terug.
+
+> [!NOTE]
+> De bridge meldt het laatst afgespeelde geluid en wist het pas ruim na afloop van de weergave, waardoor deze waarden iets achterlopen op het geluid.
+
+#### Statusobject onder `msg.payload`
+
+: reachable (boolean | string): `true` als de luidspreker met de bridge is verbonden, `unknown` als de verbindingsstatus afwijkt
+: connectionStatus (string): De huidige verbindingsstatus met de bridge als tekenreeks. Kan `connected`, `disconnected`, `connectivity_issue` of `unidirectional_incoming` als waarde bevatten
+: playing (boolean): `true` zolang de luidspreker enig geluid afspeelt
+: chime (string | boolean): Naam van het deurbelgeluid dat wordt afgespeeld of `false`
+: alarm (string | boolean): Naam van het sirenegeluid dat wordt afgespeeld of `false`
+: alert (string | boolean): Naam van het meldingsgeluid dat wordt afgespeeld of `false`
+: muted (boolean): Geeft aan of de luidspreker gedempt is
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+
+#### Informatie over de luidspreker onder `msg.info`
+
+: id (string): Geeft het nieuwe ID van de luidspreker aan
+: idV1 (string | boolean): Geeft het oude ID van de luidspreker aan
+: uniqueId (string): Het unieke ID van de luidspreker
+: deviceId (string): Het unieke ID van het apparaat
+: name (string): De momenteel ingestelde naam van de luidspreker
+: type (string): Het type van het apparaat (altijd `speaker`)
+: softwareVersion (string): De huidige firmware van de luidspreker
+: battery (float | boolean): Het huidige batterijniveau van de luidspreker, `false` als er geen batterij is
+: batteryState (string | boolean): De huidige status van het batterijniveau. Kan `normal`, `low` of `critical` als waarde bevatten, of `false` als er geen batterij is
+: sounds (object): Bevat de geluiden die dit apparaat kent onder `chime`, `alarm` en `alert`
+: model (object): Bevat de modelinformatie van de luidspreker onder `id`, `manufacturer`, `name`, `type` en `certified`
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de luidspreker zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de luidspreker onder `msg.lastState`
+
+Bevat het volledige statusobject (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatst geregistreerde wijziging. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

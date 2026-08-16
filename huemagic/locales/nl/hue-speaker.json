@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"input-name": "Naam van de luidspreker",
+			"searching": "Luidsprekers zoeken…",
+			"none-found": "Geen luidsprekers gevonden!",
+			"speaker": "Luidspreker"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"not-reachable": "niet bereikbaar",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Luidspreker",
+			"silent": "stil",
+			"muted": "gedempt",
+			"playing-alarm": "alarm (__sound__)",
+			"playing-chime": "deurbel (__sound__)",
+			"playing-alert": "waarschuwing (__sound__)",
+			"input": "geluid afspelen / status",
+			"output": "luidspreker",
+			"error-no-id": "Geef een geldig luidspreker-ID op.",
+			"error-not-available": "De luidspreker is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is.",
+			"error-no-channel": "Deze luidspreker heeft geen geluid van het type __channel__.",
+			"error-invalid-sound": "Ongeldig __channel__-geluid. Toegestaan zijn: __sounds__",
+			"error-invalid-volume": "Ongeldige volume-instelling. Alleen 0 tot 100 is toegestaan."
+		}
+	}
+}

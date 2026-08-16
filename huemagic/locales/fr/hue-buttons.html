@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-buttons">
+Le nœud « Hue Boutons » reçoit les événements de commutation des périphériques d'entrée reliés au bridge.
+
+### Configuration
+
+Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche pour trouver tous les interrupteurs et boutons disponibles. Si vous connaissez déjà l'ID de l'interrupteur ou du bouton, vous pouvez également le saisir ici manuellement. Vous pouvez attribuer en interne un nouveau nom à l'appareil ou conserver son nom prédéfini. En option, vous pouvez désactiver tous les messages de statut automatiques de ce nœud à l'aide du réglage « Ignorer les messages du nœud ». Le nœud n'émettra alors plus d'événements de commutation. Vous pouvez également choisir que le message d'initialisation du nœud ne soit pas supprimé au démarrage de Node-RED. Si vous activez ce réglage, vous recevrez un message de statut de l'interrupteur ou du bouton sélectionné après chaque déploiement. Si vous préférez que le nœud reste silencieux jusqu'à ce que vous lui envoyiez quelque chose, activez « Signaler uniquement après une commande ». Il ignorera alors les changements provenant de l'application ou d'un interrupteur et ne répondra qu'à vos propres commandes.
+
+Si vous ne sélectionnez aucun interrupteur ou bouton et utilisez la configuration du nœud de cette manière, le nœud fonctionne dans ce que l'on appelle le « mode universel ». Dans ce mode, le nœud reçoit et émet tous les messages de statut du même type.
+
+### Interroger le statut
+
+Émet le statut actuel de l'interrupteur ou du bouton dès qu'un objet `msg.payload` ayant le contenu suivant est transmis au nœud. Vous pouvez également appuyer sur le bouton dans l'interface Node-RED sans avoir à transmettre au préalable un message au nœud.
+
+: status (boolean): Renvoie le statut actuel de l'interrupteur ou du bouton
+
+### Messages de statut du nœud
+
+Dès qu'une touche est actionnée, le nœud renvoie le message de statut suivant :
+
+#### Objet de statut dans `msg.payload`
+
+: reachable (boolean | string): `true` si l'interrupteur ou le bouton est connecté au bridge, `unknown` si le statut de connexion diverge
+: connectionStatus (string): Le statut de connexion actuel avec le bridge sous forme de chaîne. Peut contenir `connected`, `disconnected`, `connectivity_issue` ou `unidirectional_incoming` comme valeur
+: button (int | boolean): ID numérique de la touche actionnée en dernier ou `false` si aucune touche n'a été actionnée
+: action (string | boolean): `false` si aucune touche n'a été actionnée, ou `initial_press`, `repeat`, `short_release`, `long_press`, `long_release` ou `double_short_release` sous forme de chaîne
+: rotation (object | boolean): `false` si l'appareil n'a pas de molette ou n'a pas été tourné ; sinon un objet avec `action` (`start` ou `repeat`), `direction` (`clock_wise` ou `counter_clock_wise`), `clockwise` (booléen), `steps` (1000 pas correspondent à un tour complet), `degrees` et `duration` en millisecondes
+: updated (string): Heure de la dernière mise à jour de la ressource par HueMagic (ISO 8601)
+
+#### Informations sur l'interrupteur ou le bouton dans `msg.info`
+
+: id (string): Indique le nouvel ID de l'interrupteur ou du bouton
+: idV1 (string | boolean): Indique l'ancien ID de l'interrupteur ou du bouton
+: uniqueId (string): L'ID unique de l'interrupteur ou du bouton
+: deviceId (string): L'ID unique de l'appareil
+: name (string): Le nom actuellement attribué à l'interrupteur ou au bouton
+: type (string): Le type de l'interrupteur ou du bouton (toujours `button`)
+: softwareVersion (string): Le micrologiciel actuel de l'interrupteur ou du bouton
+: battery (float | boolean): Le niveau de batterie actuel de l'interrupteur ou du bouton, `false` s'il n'y a pas de batterie
+: batteryState (string | boolean): Le statut actuel du niveau de batterie. Peut contenir `normal`, `low` ou `critical` comme valeur, `false` s'il n'y a pas de batterie
+: model (object): Contient les informations de modèle de l'interrupteur ou du bouton dans `id`, `manufacturer`, `name`, `type` et `certified`
+
+#### Changements d'état dans `msg.updated`
+
+Énumère sous forme d'objet les paramètres qui ont changé par rapport au dernier état de l'interrupteur ou du bouton. Si aucun changement n'a été enregistré, cet objet est vide.
+
+#### Dernier état de l'interrupteur ou du bouton dans `msg.lastState`
+
+Contient l'objet de statut complet (voir les valeurs de sortie ci-dessus) du dernier état avant le dernier changement enregistré. Si HueMagic n'a pas encore enregistré le dernier état, `false` est émis.
+
+#### Dernière commande dans `msg.command` (facultatif)
+
+Si le statut du nœud a changé suite à une commande particulière, la commande complète qui a été exécutée est également émise. Sinon, cet objet n'est pas émis par le nœud.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -1,0 +1,88 @@
+[
+    {
+        "id": "d5d4a606.0f05",
+        "type": "tab",
+        "label": "Hue Buttons (example)",
+        "disabled": false,
+        "info": "«Hue Buttons» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "b650df5fecbbc08d",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "info": "«Hue Düğmeler» düğümüne tıklayın ve listeden hem bridge'inizi hem de bir cihaz seçin. Henüz bir bridge kurmadıysanız, düğümün yapılandırmasını tamamlayabilmeniz için önce bir bridge kurmanız istenir.\n\nDüğüm bridge'inize ve cihaza bağlandığında ve değişiklikleri Node-RED'de dağıttığınızda, cihazın bridge üzerindeki durumu güncellendiğinde (tuşa basıldı) düğüm otomatik olarak bir mesaj verir. Güncellenen durumu ve tüm bilgilerini yayınlanan mesajda alırsınız.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında daha fazla bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "79f1f61985718e40",
+        "type": "debug",
+        "z": "d5d4a606.0f05",
+        "name": "Bilgi",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "9b5c4dce9c98015c",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "Güncel durumu sorgula",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "74f3cdad2b625d5c",
+        "type": "inject",
+        "z": "d5d4a606.0f05",
+        "name": "Durum",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "664e68b0b62d7e4e"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "664e68b0b62d7e4e",
+        "type": "hue-buttons",
+        "z": "d5d4a606.0f05",
+        "skipevents": false,
+        "initevents": false,
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "79f1f61985718e40"
+            ]
+        ]
+    }
+]

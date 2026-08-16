@@ -1,0 +1,97 @@
+<script type="text/markdown" data-help-name="hue-light">
+Il nodo «Hue Luce» può controllare le luci collegate al bridge e ricevere i loro messaggi di stato.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutte le luci disponibili. Se conosce già l'ID di una luce, può anche inserirlo qui manualmente. Può assegnare internamente un nuovo nome alla luce oppure mantenere quello predefinito. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». Il nodo non emetterà più aggiornamenti del dispositivo. In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Attivando questa impostazione riceverà un messaggio di stato della luce selezionata dopo ogni deploy. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+Se attiva l'impostazione «Attiva la denominazione dei colori», il nodo proverà a descrivere il colore di luce impostato per ogni messaggio di stato. Riceverà quindi in uscita un parametro aggiuntivo con la descrizione in inglese del colore attuale.
+
+Se non seleziona alcuna luce e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo. Può anche applicare impostazioni in modalità universale a una luce specifica trasmettendo il relativo ID come stringa in `msg.topic` insieme alle sue impostazioni.
+
+### Richiedere lo stato
+
+Emette lo stato attuale della luce non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.
+
+: status (boolean): Restituisce lo stato attuale della luce
+
+### Accendere / spegnere la luce (modalità semplice)
+
+Per accendere o spegnere rapidamente una luce in modalità semplice, trasmetta al nodo un oggetto con il seguente contenuto:
+
+: payload (boolean): `true` accende la luce, `false` la spegne
+
+### Comandi luce (esteso)
+
+Oltre al semplice accendere e spegnere, sono disponibili molte altre opzioni per controllare la luce. Tutti i nodi di HueMagic possono essere controllati con comandi additivi. Ciò significa che può trasmettere prima un'impostazione e poi un'altra in un comando successivo senza annullare quella precedente. Trasmetta i seguenti parametri in un oggetto `msg.payload` per effettuare impostazioni più estese sulla luce:
+
+: on (boolean): `true` accende la luce, `false` la spegne
+: toggle (boolean | any): Alterna tra accensione e spegnimento, a seconda dello stato precedente della luce
+: brightness (int | string): Valore percentuale della luminosità della luce (0-100) oppure una stringa con il valore `auto` per impostare automaticamente la luminosità in base all'ora attuale
+: brightnessLevel (int): Valore numerico della luminosità della luce (0-254)
+: incrementBrightness (int | boolean): Indica di quanti punti percentuali schiarire la luce, oppure `true` per schiarirla a passi del 10 %
+: decrementBrightness (int | boolean): Indica di quanti punti percentuali scurire la luce, oppure `true` per scurirla a passi del 10 %
+: color (string): `random` per impostare un colore casuale oppure un nome di colore in inglese (ad es. `red`)
+: hex (string): Valore di colore esadecimale sotto forma di stringa
+: rgb (array [0,0,0]): Valore di colore in formato RGB sotto forma di array
+: xyColor (object {x [float], y [float]}): Valore di colore nel formato XY sotto forma di oggetto
+: gradient (object {hex […]}): Un oggetto con un oggetto colore supportato (ad es. `hex`, `rgb`, …) e più colori per impostare un gradiente sulle luci compatibili
+: mixColor (object): Un colore da miscelare con il colore di luce attuale. Accetta oggetti `color`, `hex`, `rgb` o `xyColor` e facoltativamente `amount` (int) per indicare la proporzione di miscelazione in percentuale
+: image (string): Percorso di un'immagine (locale o sul web) per impostare il colore attuale della luce sul colore medio dell'immagine
+: saturation (int): Percentuale di saturazione del colore attuale (beta)
+: colorTemp (int | string): Valore compreso tra 153 e 500 per impostare la temperatura di colore della luce, oppure i valori `cold`, `normal`, `warm`, `hot` e `auto`, dove `auto` imposta la temperatura di colore in base all'ora attuale
+: incrementColorTemp (int | boolean): Valore di quanto la temperatura di colore debba diventare più calda, oppure `true` per renderla più calda a passi di 50
+: decrementColorTemp (int | boolean): Valore di quanto la temperatura di colore debba diventare più fredda, oppure `true` per renderla più fredda a passi di 50
+: transitionTime (float): Tempo di transizione dell'impostazione attuale in secondi. Se si indica `0`, la luce passa subito all'impostazione desiderata. Se si indica `3`, la luce passa all'impostazione desiderata con una leggera transizione nei 3 secondi successivi
+: colorloop (float): Riproduce un'animazione «colorloop» per la durata indicata in secondi e poi ripristina lo stato originale della luce
+: alert (float): Riproduce un'animazione «alert» per la durata indicata in secondi e poi ripristina lo stato originale della luce
+
+### Messaggi di stato del nodo
+
+Non appena viene rilevata una modifica alle impostazioni della luce (sia tramite Node-RED sia dall'esterno), il nodo restituisce il seguente messaggio di stato:
+
+#### Oggetto di stato in `msg.payload`
+
+: on (boolean): Stato della luce, dove `true` significa accesa e `false` spenta
+: brightness (int | boolean): Luminosità attuale in percentuale oppure `false` se la luce non supporta la regolazione della luminosità
+: brightnessLevel (int | boolean): Luminosità attuale da 0 a 254 oppure `false` se la luce non supporta la regolazione della luminosità
+: reachable (boolean | string): `true` se la luce è collegata al bridge, `unknown` se lo stato della connessione è diverso
+: connectionStatus (string): Lo stato attuale della connessione con il bridge sotto forma di stringa. Può contenere `connected`, `disconnected`, `connectivity_issue` o `unidirectional_incoming` come valore
+: rgb (array [int, int, int] | optional): Colore di luce attuale sotto forma di valore RGB, se la luce può visualizzare colori
+: hex (string | optional): Colore di luce attuale sotto forma di valore esadecimale, se la luce può visualizzare colori
+: xyColor (object {x [float], y [float]} | optional): Colore di luce attuale sotto forma di valore XY, se la luce può visualizzare colori
+: color (string | optional): Nome attuale del colore in inglese, se la luce può visualizzare colori ed è stata attivata la relativa impostazione del nodo
+: gradient (object | optional): Impostazione del gradiente attuale con tutte le unità di colore disponibili sotto forma di array, se la luce supporta i gradienti, dove `colors` restituisce i colori, `numColors` il numero di colori impostati nel gradiente e `totalColors` il numero massimo di colori che la risorsa può supportare nel gradiente
+: colorTemp (int | boolean | optional): Temperatura di colore attuale della luce, se la luce può visualizzare temperature di colore ed è stata impostata una temperatura
+: colorTempName (string | optional): Temperatura di colore attuale della luce sotto forma di stringa descrittiva con i valori `cold`, `normal`, `warm` o `hot`, se la luce può visualizzare temperature di colore ed è stata impostata una temperatura. In caso contrario viene emesso `unknown`
+: updated (string): Momento dell'ultimo aggiornamento della risorsa da parte di HueMagic (ISO 8601)
+
+#### Informazioni sulla luce in `msg.info`
+
+: id (string): Indica il nuovo ID della luce
+: idV1 (string | boolean): Indica il vecchio ID della luce
+: uniqueId (string): L'ID univoco della luce
+: deviceId (string): L'ID univoco del dispositivo
+: name (string): Il nome attualmente assegnato alla luce
+: type (string): Il tipo di luce (sempre `light`)
+: softwareVersion (string): Il firmware attuale della luce
+: model (object): Contiene le informazioni sul modello della luce in `id`, `manufacturer`, `name`, `type`, `certified`, `friendsOfHue`, `colorGamut` e `colorGamutType`
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato della luce. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato della luce in `msg.lastState`
+
+Contiene l'oggetto di stato completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -1,0 +1,64 @@
+<script type="text/markdown" data-help-name="hue-motion">
+Le nœud « Hue Mouvement » peut enregistrer et signaler les mouvements détectés par un capteur adapté relié au bridge.
+
+### Configuration
+
+Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche pour trouver tous les capteurs disponibles. Si vous connaissez déjà l'ID du capteur, vous pouvez également le saisir ici manuellement. Vous pouvez attribuer en interne un nouveau nom au capteur ou conserver son nom prédéfini. En option, vous pouvez désactiver tous les messages de statut automatiques de ce nœud à l'aide du réglage « Ignorer les messages du nœud ». Le nœud n'émettra alors plus de mises à jour d'appareil. Vous pouvez également choisir que le message d'initialisation du nœud ne soit pas supprimé au démarrage de Node-RED. Si vous activez ce réglage, vous recevrez un message de statut du capteur sélectionné après chaque déploiement. Si vous préférez que le nœud reste silencieux jusqu'à ce que vous lui envoyiez quelque chose, activez « Signaler uniquement après une commande ». Il ignorera alors les changements provenant de l'application ou d'un interrupteur et ne répondra qu'à vos propres commandes.
+
+Si vous ne sélectionnez aucun capteur et utilisez la configuration du nœud de cette manière, le nœud fonctionne dans ce que l'on appelle le « mode universel ». Dans ce mode, le nœud reçoit et émet tous les messages de statut du même type. Vous pouvez également appliquer des réglages en mode universel à un capteur précis en transmettant l'ID du capteur correspondant sous forme de chaîne dans `msg.topic` avec vos réglages.
+
+### Interroger le statut
+
+Émet le statut actuel du capteur dès qu'un objet `msg.payload` ayant le contenu suivant est transmis au nœud. Vous pouvez également appuyer sur le bouton dans l'interface Node-RED sans avoir à transmettre au préalable un message au nœud.
+
+: status (boolean): Renvoie le statut actuel du capteur
+
+### Activer / désactiver le capteur
+
+Si nécessaire, le capteur peut être activé et désactivé à distance. Une fois désactivé, il n'enregistre plus aucun mouvement et n'en émet donc plus. Pour cela, transmettez un objet ayant le contenu suivant :
+
+: payload (boolean): `true` active le capteur, `false` le désactive
+
+### Messages de statut du nœud
+
+Dès que le capteur enregistre un mouvement, le nœud renvoie le message de statut suivant :
+
+#### Objet de statut dans `msg.payload`
+
+: active (boolean): Indique si le capteur est activé ou désactivé
+: reachable (boolean | string): `true` si le capteur est connecté au bridge, `unknown` si le statut de connexion diverge
+: connectionStatus (string): Le statut de connexion actuel avec le bridge sous forme de chaîne. Peut contenir `connected`, `disconnected`, `connectivity_issue` ou `unidirectional_incoming` comme valeur
+: motion (boolean): Indique si un mouvement a été enregistré
+: updated (string): Heure de la dernière mise à jour de la ressource par HueMagic (ISO 8601)
+
+#### Informations sur le capteur dans `msg.info`
+
+: id (string): Indique le nouvel ID du capteur
+: idV1 (string | boolean): Indique l'ancien ID du capteur
+: uniqueId (string): L'ID unique du capteur
+: deviceId (string): L'ID unique de l'appareil
+: name (string): Le nom actuellement attribué au capteur
+: type (string): Le type du capteur (toujours `motion`)
+: softwareVersion (string): Le micrologiciel actuel du capteur
+: battery (float): Le niveau de batterie actuel du capteur
+: batteryState (string): Le statut actuel du niveau de batterie. Peut contenir `normal`, `low` ou `critical` comme valeur
+: model (object): Contient les informations de modèle du capteur dans `id`, `manufacturer`, `name`, `type` et `certified`
+
+#### Changements d'état dans `msg.updated`
+
+Énumère sous forme d'objet les paramètres qui ont changé par rapport au dernier état du capteur. Si aucun changement n'a été enregistré, cet objet est vide.
+
+#### Dernier état du capteur dans `msg.lastState`
+
+Contient l'objet de statut complet (voir les valeurs de sortie ci-dessus) du dernier état avant le dernier changement enregistré. Si HueMagic n'a pas encore enregistré le dernier état, `false` est émis.
+
+#### Dernière commande dans `msg.command` (facultatif)
+
+Si le statut du nœud a changé suite à une commande particulière, la commande complète qui a été exécutée est également émise. Sinon, cet objet n'est pas émis par le nœud.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

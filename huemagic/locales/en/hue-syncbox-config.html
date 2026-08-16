@@ -1,0 +1,19 @@
+<script type="text/markdown" data-help-name="hue-syncbox-config">
+Connects to a Philips Hue Play HDMI Sync Box.
+
+### Name
+
+You can either assign an alternative, internal name for the sync box or keep the default name.
+
+### Sync Box IP
+
+The IP address of your sync box in your local network. As soon as you have entered it, HueMagic tries to read the name of the box and fills it in for you.
+
+### Access Token
+
+The sync box is not part of your Hue Bridge and needs its own token. Click the button next to the field and then press and hold the button on the sync box until its LED blinks green. HueMagic keeps asking the box for a minute and stores the token as soon as it answers.
+
+### Refresh
+
+The sync box does not push its state, so HueMagic asks it regularly. This setting defines how many seconds lie between two requests. The default of 10 seconds is a good compromise between a responsive status and network traffic — do not set it lower than you actually need.
+</script>

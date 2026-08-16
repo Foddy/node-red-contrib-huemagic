@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+O nó «Hue Altifalante» pode reproduzir os sons de uma campainha Hue Secure e utilizá-la como sirene de interior.
+
+### Configuração
+
+Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para encontrar todos os altifalantes disponíveis. Se já souber o ID do altifalante, também o pode introduzir aqui manualmente. Pode atribuir internamente um novo nome ao altifalante ou manter o nome predefinido. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». O nó deixará de emitir atualizações do dispositivo. Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se ativar esta definição, receberá uma mensagem de estado do altifalante selecionado após cada implementação. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+Se não selecionar nenhum altifalante e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo. Também pode aplicar definições no modo universal a um altifalante específico, transmitindo o respetivo ID como cadeia de carateres em `msg.topic` juntamente com as suas definições.
+
+### Consultar o estado
+
+Emite o estado atual do altifalante assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: status (boolean): Devolve o estado atual do altifalante
+
+### Reproduzir um som
+
+Um altifalante conhece três canais distintos. `chime` é o som da campainha, `alarm` é a sirene e `alert` é uma notificação curta. Os sons que um aparelho conhece efetivamente são listados em `msg.info.sounds`. Transmita os seguintes parâmetros num objeto `msg.payload`:
+
+: chime (string | object | boolean): Nome do som da campainha; `false` para-o novamente
+: alarm (string | object | boolean): Nome do som da sirene; `false` para-o novamente
+: alert (string | object | boolean): Nome do som de notificação; `false` para-o novamente
+: mute (boolean): `true` silencia o altifalante, `false` volta a ativar o som
+
+Em vez de um simples nome de som, também pode transmitir um objeto para controlar o volume e a duração:
+
+: sound (string): Nome do som, p. ex. `ding_dong_classic` ou `siren`
+: volume (int): Volume em percentagem (0-100)
+: duration (float): Tempo de reprodução em segundos
+
+### Mensagens de estado do nó
+
+Assim que o altifalante começa ou deixa de reproduzir, o nó devolve a seguinte mensagem de estado.
+
+> [!NOTE]
+> O bridge comunica o último som reproduzido e só o repõe bastante depois de terminada a reprodução, pelo que estes valores ficam ligeiramente atrasados em relação ao áudio.
+
+#### Objeto de estado em `msg.payload`
+
+: reachable (boolean | string): `true` se o altifalante estiver ligado ao bridge, `unknown` se o estado da ligação divergir
+: connectionStatus (string): O estado atual da ligação com o bridge sob a forma de uma cadeia de carateres. Pode conter `connected`, `disconnected`, `connectivity_issue` ou `unidirectional_incoming` como valor
+: playing (boolean): `true` enquanto o altifalante estiver a reproduzir algum som
+: chime (string | boolean): Nome do som de campainha em reprodução ou `false`
+: alarm (string | boolean): Nome do som de sirene em reprodução ou `false`
+: alert (string | boolean): Nome do som de notificação em reprodução ou `false`
+: muted (boolean): Indica se o altifalante está silenciado
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+
+#### Informações sobre o altifalante em `msg.info`
+
+: id (string): Indica o novo ID do altifalante
+: idV1 (string | boolean): Indica o ID antigo do altifalante
+: uniqueId (string): O ID único do altifalante
+: deviceId (string): O ID único do dispositivo
+: name (string): O nome atualmente atribuído ao altifalante
+: type (string): O tipo do dispositivo (sempre `speaker`)
+: softwareVersion (string): O firmware atual do altifalante
+: battery (float | boolean): O nível atual da bateria do altifalante, `false` quando não existe bateria
+: batteryState (string | boolean): O estado atual do nível da bateria. Pode conter `normal`, `low` ou `critical` como valor, ou `false` quando não existe bateria
+: sounds (object): Contém os sons que este aparelho conhece em `chime`, `alarm` e `alert`
+: model (object): Contém as informações de modelo do altifalante em `id`, `manufacturer`, `name`, `type` e `certified`
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado do altifalante. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado do altifalante em `msg.lastState`
+
+Contém o objeto de estado completo (ver os valores de saída acima) do último estado antes da última alteração registada. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

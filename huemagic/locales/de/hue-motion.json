@@ -1,19 +1,20 @@
 {
-	"hue-motion":
-	{
-		"config":
-		{
+	"hue-motion": {
+		"config": {
 			"name": "Name",
 			"input-name": "Name des Sensors",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
 			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"onlycommands-node": "Nur nach einem Befehl melden",
 			"searching": "Suche nach Bewegungssensoren…",
 			"none-found": "Keine Bewegungssensoren gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"sensor": "Sensor"
+			"sensor": "Sensor",
+			"universalevents": "Universelle Ereignisse",
+			"universalevents-node": "Empfängt alle Nachrichten von anderen Nodes des gleichen Typs (nur im Universalmodus)",
+			"bridge": "Bridge"
 		},
-		"node":
-		{
+		"node": {
 			"title": "Hue Bewegungssensor",
 			"not-configured": "nicht konfiguriert",
 			"not-reachable": "nicht erreichbar",
@@ -25,7 +26,11 @@
 			"output": "erkannte Bewegung",
 			"universal": "Universalmodus",
 			"command": "führt Befehl aus…",
-			"statusmsg": "Status erfolgreich abgefragt…"
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"error-no-id": "Bitte geben Sie eine gültige Sensor-ID an.",
+			"error-not-available": "Der Sensor ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
+			"error-no-sensitivity": "Diese Bewegungsquelle hat keine einstellbare Empfindlichkeit.",
+			"error-invalid-sensitivity": "Ungültige Empfindlichkeit. Es sind nur Werte von 0 - __max__ erlaubt."
 		}
 	}
 }

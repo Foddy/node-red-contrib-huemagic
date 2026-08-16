@@ -13,9 +13,10 @@ function mergeDeep(...objects)
             const pVal = prev[key];
             const oVal = obj[key];
 
-            if(Array.isArray(pVal) && Array.isArray(oVal))
+            // AN UPDATE REPLACES A LIST, IT NEVER APPENDS TO IT
+            if(Array.isArray(oVal))
             {
-                prev[key] = pVal.concat(...oVal);
+                prev[key] = oVal;
             }
             else if (isObject(pVal) && isObject(oVal))
             {

@@ -1,0 +1,378 @@
+[
+    {
+        "id": "c93b5e7af2ab6d48",
+        "type": "tab",
+        "label": "Hue Sync Box (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Sync Box»"
+    },
+    {
+        "id": "c1c6029d8e5f2317",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Πατήστε τον κόμβο «Hue Sync Box» και ρυθμίστε το sync box σας. Η συσκευή δεν είναι συνδεδεμένη με το Hue Bridge σας αλλά μιλά το δικό της τοπικό API, οπότε χρειάζεται δικές της ρυθμίσεις με δικό της διακριτικό πρόσβασης.\n\nΚαταχωρίστε τη διεύθυνση IP του sync box σας και πατήστε το κουμπί δίπλα στο πεδίο του διακριτικού πρόσβασης. Έπειτα κρατήστε πατημένο το κουμπί στο sync box μέχρι να αναβοσβήσει πράσινη η λυχνία. Το HueMagic ρωτά τη συσκευή επί ένα λεπτό και αποθηκεύει το διακριτικό μόλις εκείνη απαντήσει.\n\nΕπειδή το sync box δεν στέλνει από μόνο του την κατάστασή του, το HueMagic τη ζητά κάθε λίγα δευτερόλεπτα. Πόσο συχνά γίνεται αυτό μπορείτε να το αλλάξετε στις ρυθμίσεις του sync box.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία)."
+    },
+    {
+        "id": "d2d713ae9f603428",
+        "type": "debug",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Πληροφορίες",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3e824bf0a714539",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4f935c01b825664a",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Κατάσταση",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c5a146d12c936750",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Άναμμα / σβήσιμο του sync box",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i6b257e23d047861b",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Άναμμα",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i7c368f34e158972c",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Σβήσιμο",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i8d479045f269a83d",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Εναλλαγή συγχρονισμού",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "c9e58a156037b94e",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Επιλογή λειτουργίας συγχρονισμού",
+        "x": 120,
+        "y": 400,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iaf69b267148ac05f",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Βίντεο",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"video\",\"intensity\":\"high\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-film"
+    },
+    {
+        "id": "iba7ac378259bd160",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Παιχνίδι",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"game\",\"intensity\":\"intense\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-gamepad"
+    },
+    {
+        "id": "icb8bd489360ce271",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Μουσική",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"music\",\"intensity\":\"moderate\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-music"
+    },
+    {
+        "id": "idc9ce59a471df382",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Μόνο απευθείας διέλευση",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"passthrough\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-television"
+    },
+    {
+        "id": "cedadf6ab582e0493",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Φωτεινότητα και είσοδος",
+        "x": 120,
+        "y": 620,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "ifebea7bc693f1504",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Φωτεινότητα 70 %",
+        "x": 110,
+        "y": 660,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":70}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "i0fcfb8cd7a402615",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Χαμήλωμα κατά 20 %",
+        "x": 110,
+        "y": 700,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":20}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "i10d0c9de8b513726",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Εναλλαγή σε HDMI 2",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":2}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-plug"
+    },
+    {
+        "id": "s6a046b12c935d75b",
+        "type": "hue-syncbox",
+        "z": "c93b5e7af2ab6d48",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2d713ae9f603428"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

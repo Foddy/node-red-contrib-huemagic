@@ -1,0 +1,33 @@
+{
+	"hue-temperature": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"input-name": "Naam van de sensor",
+			"searching": "temperatuursensoren zoeken…",
+			"none-found": "Geen temperatuursensoren gevonden.",
+			"sensor": "Sensor",
+			"offset": "Correctie"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"init": "initialiseren…",
+			"not-reachable": "niet bereikbaar",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"deactivated": "gedeactiveerd",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Temperatuur",
+			"input": "statusopvraging",
+			"output": "temperatuur (gewijzigd)",
+			"error-no-id": "Geef een geldig sensor-ID op.",
+			"error-not-available": "De sensor is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is."
+		}
+	}
+}

@@ -1,0 +1,150 @@
+[
+    {
+        "id": "7bca3b4f.9070fc",
+        "type": "tab",
+        "label": "Hue Rules (example)",
+        "disabled": false,
+        "info": "Exemple d'utilisation du nœud « Hue Rules »"
+    },
+    {
+        "id": "a6ec7e31e3edf26b",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "PREMIERS PAS (double-cliquez ici)",
+        "info": "Cliquez sur le nœud « Hue Règle » et sélectionnez dans la liste à la fois votre bridge et une règle. Si vous n'avez pas encore configuré de bridge, il vous sera demandé d'en configurer un avant de pouvoir terminer la configuration du nœud.\n\nDès que le nœud est relié à votre bridge et que vous avez déployé les modifications dans Node-RED, le nœud peut recevoir et exécuter vos commandes. Vous recevrez le statut actualisé et toutes les informations sur la règle dans le message émis.\n\nSi vous souhaitez obtenir davantage d'informations sur ce nœud, les commandes possibles et les valeurs de sortie, cliquez une fois dessus dans votre flux et accédez à l'icône du livre de Node-RED (coin supérieur droit).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "863710a19fb12c5e",
+        "type": "debug",
+        "z": "7bca3b4f.9070fc",
+        "name": "Informations",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3f358fa89e66d78",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Interroger le statut actuel",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "403636a610280894",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Statut",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "0fab9398dcc9c797",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Activer / désactiver la règle",
+        "info": "",
+        "x": 130,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "40f06e621e0643f0",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Activer",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "bde15ecaf96f1323",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Désactiver",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "7bc8bf9290a86c68",
+        "type": "hue-rules",
+        "z": "7bca3b4f.9070fc",
+        "skipevents": false,
+        "initevents": false,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "863710a19fb12c5e"
+            ]
+        ]
+    }
+]

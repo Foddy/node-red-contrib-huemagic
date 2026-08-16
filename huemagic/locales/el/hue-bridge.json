@@ -1,0 +1,26 @@
+{
+	"hue-bridge": {
+		"config": {
+			"name": "Όνομα",
+			"input-name": "Όνομα του Hue Bridge",
+			"skipglobalevents-info": "Παράβλεψη των καθολικών ενημερώσεων και μηνυμάτων συσκευών σε αυτόν τον κόμβο",
+			"sendinitevents-node": "Να μην αποκρύπτεται το μήνυμα αρχικοποίησης",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"not-configured": "μη ρυθμισμένο",
+			"connecting": "σύνδεση…",
+			"connected": "συνδεδεμένο",
+			"starting-tl": "εκκίνηση TouchLink…",
+			"started-tl": "Το TouchLink ξεκίνησε…",
+			"f-resources": "ανάκτηση πόρων…",
+			"updating-settings": "ενημέρωση ρυθμίσεων…",
+			"settings-updated": "οι ρυθμίσεις ενημερώθηκαν",
+			"input": "ρυθμίσεις / ανάκτηση",
+			"output": "πληροφορίες bridge",
+			"statusmsg": "Η κατάσταση ανακτήθηκε με επιτυχία…",
+			"error-not-available": "Το bridge δεν είναι ακόμη διαθέσιμο. Περιμένετε έως ότου το HueMagic συνδεθεί με το bridge."
+		}
+	}
+}

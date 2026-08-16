@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+Il nodo «Hue Scena» può richiamare scene salvate nel bridge e applicarle a determinati gruppi.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutte le scene disponibili. Le scene vengono ordinate prima per stanza o zona e poi per nome, così le scene di una stessa stanza restano sempre vicine nell'elenco. Se conosce già l'ID della scena, può anche inserirlo qui manualmente. In alternativa può assegnare internamente un nome alla scena oppure mantenere quello predefinito.
+
+### Attivare una scena
+
+Può attivare una scena predefinita trasmettendo un oggetto con il seguente contenuto:
+
+: payload (boolean): Attiva una scena preconfigurata
+: transitionTime (float): Tempo di transizione della scena in secondi. Se viene trasmesso `0`, la scena viene applicata immediatamente. Se trasmette `3`, le luci passano alla scena in dissolvenza nei 3 secondi successivi. Il bridge accetta fino a 6000 secondi
+: brightness (float): Luminosità dell'intera scena in percentuale (`0` – `100`), così può richiamare una stessa scena più chiara o più soffusa a seconda dell'ora del giorno
+
+> [!NOTE]
+> Entrambe le impostazioni sono disponibili solo per le scene normali. Una scena smart segue gli orari che ha definito per essa nell'app Philips Hue.
+
+### Attivare una scena in modalità universale
+
+Se utilizza questo nodo nella cosiddetta «modalità universale» e non ha impostato alcuna scena nella configurazione del nodo, può anche trasmettere al nodo la scena desiderata come comando. A tal fine, trasmetta un oggetto `msg.payload` con il seguente contenuto:
+
+: scene (string): ID della scena da attivare sul bridge
+
+### Attivare una scena su determinati gruppi
+
+Colleghi l'uscita di questo nodo a uno o più gruppi per applicare una scena a gruppi specifici. In alternativa può farlo «dinamicamente» trasmettendo al nodo un oggetto `msg.payload` con il seguente contenuto:
+
+: group (string | array [string,…]): ID del gruppo o un array con gli ID di più gruppi per limitare la scena a tali gruppi
+
+### Ulteriori informazioni sul nodo
+
+Questo nodo non emette messaggi di stato.
+
+> [!IMPORTANT]
+> Può applicare le scene ai gruppi solo se questi sono già collegati alla rispettiva scena sul bridge. In caso contrario non verrà applicato nulla.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

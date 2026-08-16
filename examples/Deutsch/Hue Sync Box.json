@@ -1,0 +1,378 @@
+[
+    {
+        "id": "c93b5e7af2ab6d48",
+        "type": "tab",
+        "label": "Hue Sync Box (example)",
+        "disabled": false,
+        "info": "Beispielhafte Verwendung des „Hue Sync Box“-Nodes"
+    },
+    {
+        "id": "c1c6029d8e5f2317",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "ERSTE SCHRITTE (doppelklicke mich)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Klicken Sie auf den „Hue Sync Box“-Node und richten Sie Ihre Sync Box ein. Die Box ist nicht mit Ihrer Hue Bridge verbunden, sondern spricht ihre eigene lokale API und benötigt daher eine eigene Konfiguration mit einem eigenen Zugriffstoken.\n\nGeben Sie die IP-Adresse Ihrer Sync Box ein und klicken Sie auf die Schaltfläche neben dem Feld für das Zugriffstoken. Halten Sie anschließend die Taste an der Sync Box gedrückt, bis die LED grün blinkt. HueMagic fragt die Box eine Minute lang und speichert das Token, sobald sie antwortet.\n\nDa die Sync Box ihren Zustand nicht von selbst sendet, fragt HueMagic sie alle paar Sekunden ab. Wie oft das geschieht, können Sie in der Konfiguration der Sync Box ändern.\n\nWenn Sie mehr Informationen zu diesem Node, den möglichen Befehlen und Ausgabewerten erhalten möchten, klicken Sie ihn in Ihrem Flow einmal an und navigieren Sie zum Buch-Symbol von Node-RED (obere rechte Ecke)."
+    },
+    {
+        "id": "d2d713ae9f603428",
+        "type": "debug",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Information",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3e824bf0a714539",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Aktuellen Status abrufen",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4f935c01b825664a",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Status",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c5a146d12c936750",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Sync Box ein- / ausschalten",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i6b257e23d047861b",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Einschalten",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "i7c368f34e158972c",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Ausschalten",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "i8d479045f269a83d",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Synchronisation umschalten",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggle\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exchange"
+    },
+    {
+        "id": "c9e58a156037b94e",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Sync-Modus wählen",
+        "x": 120,
+        "y": 400,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iaf69b267148ac05f",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Video",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"video\",\"intensity\":\"high\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-film"
+    },
+    {
+        "id": "iba7ac378259bd160",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Spiel",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"game\",\"intensity\":\"intense\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-gamepad"
+    },
+    {
+        "id": "icb8bd489360ce271",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Musik",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"music\",\"intensity\":\"moderate\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-music"
+    },
+    {
+        "id": "idc9ce59a471df382",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Nur durchreichen",
+        "x": 110,
+        "y": 560,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mode\":\"passthrough\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-television"
+    },
+    {
+        "id": "cedadf6ab582e0493",
+        "type": "comment",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Helligkeit und Eingang",
+        "x": 120,
+        "y": 620,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "ifebea7bc693f1504",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Helligkeit 70 %",
+        "x": 110,
+        "y": 660,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":70}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-sun-o"
+    },
+    {
+        "id": "i0fcfb8cd7a402615",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Um 20 % dimmen",
+        "x": 110,
+        "y": 700,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"decrementBrightness\":20}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-moon-o"
+    },
+    {
+        "id": "i10d0c9de8b513726",
+        "type": "inject",
+        "z": "c93b5e7af2ab6d48",
+        "name": "Auf HDMI 2 umschalten",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "s6a046b12c935d75b"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":2}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-plug"
+    },
+    {
+        "id": "s6a046b12c935d75b",
+        "type": "hue-syncbox",
+        "z": "c93b5e7af2ab6d48",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2d713ae9f603428"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

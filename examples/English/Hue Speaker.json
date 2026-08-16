@@ -1,0 +1,274 @@
+[
+    {
+        "id": "a71f3c58d0e94b26",
+        "type": "tab",
+        "label": "Hue Speaker (example)",
+        "disabled": false,
+        "info": "Example use of the Hue Speaker node"
+    },
+    {
+        "id": "c1a4e07b6d3f8215",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "FIRST STEPS (double click me)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Click on the \"Hue Speaker\" node and select both your bridge and a speaker from the list. If you have not yet set up a bridge, you will be asked to set one up before you can finish configuring the node.\n\nAs soon as the node is connected to your bridge and the speaker and you have deployed the changes in Node-RED, the node can receive and execute your commands. The \"Hue Speaker\" node automatically outputs a message each time as soon as the speaker starts or stops playing a sound. You will receive the updated status and all of its information in the message that is issued.\n\nWhich sounds your device actually knows is listed under msg.info.sounds. Please note that the bridge reports the sound that was played last and only clears it well after playback has finished.\n\nIf you would like to receive more information about this node, the possible commands and output values, then click on it once in your flow and navigate to the Node-RED book icon (top right corner)."
+    },
+    {
+        "id": "d2b5f18c7e4a9306",
+        "type": "debug",
+        "z": "a71f3c58d0e94b26",
+        "name": "Information",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3c6028d8f5b0417",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Get the current status",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4d7139e90a6c1528",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Status",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6f935b12c8e3740",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Ring the doorbell",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7a046c23d9f4851a",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Classic chime",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":\"ding_dong_classic\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell"
+    },
+    {
+        "id": "i8b157d34ea05962b",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Chime at 50%",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":{\"sound\":\"westminster_classic\",\"volume\":50}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell-o"
+    },
+    {
+        "id": "c9c268e45fb16a73",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Use it as a siren",
+        "x": 120,
+        "y": 360,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iad379f56a0c27b84",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Alarm for 10 seconds",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":{\"sound\":\"siren\",\"volume\":100,\"duration\":10}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "ibe48a067b1d38c95",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Stop the alarm",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-stop"
+    },
+    {
+        "id": "ccf59b178c2e49a6",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Mute the speaker",
+        "x": 120,
+        "y": 500,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "id6a0c289d3f5ab07",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Mute",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-off"
+    },
+    {
+        "id": "ie7b1d39ae406bc18",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Unmute",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-up"
+    },
+    {
+        "id": "s5e824af01b7d2639",
+        "type": "hue-speaker",
+        "z": "a71f3c58d0e94b26",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2b5f18c7e4a9306"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

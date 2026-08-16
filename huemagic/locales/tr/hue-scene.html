@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+«Hue Sahne» düğümü, bridge'de kayıtlı sahneleri yeniden çağırabilir ve belirli gruplara uygulayabilir.
+
+### Kurulum
+
+Önceden yapılandırılmış Hue Bridge'i seçin ve mevcut tüm sahneleri bulmak için arama düğmesine tıklayın. Sahneler önce odaya ya da bölgeye, sonra adlarına göre sıralanır; böylece bir odanın sahneleri listede her zaman bir arada kalır. Sahnenin kimliğini zaten biliyorsanız, buraya elle de girebilirsiniz. Alternatif olarak sahneye dahili bir ad verebilir veya önceden tanımlı adı kullanabilirsiniz.
+
+### Sahneyi etkinleştirme
+
+Önceden tanımlı bir sahneyi, aşağıdaki içeriğe sahip bir nesne göndererek etkinleştirebilirsiniz:
+
+: payload (boolean): Önceden yapılandırılmış bir sahneyi etkinleştirir
+: transitionTime (float): Sahnenin geçiş süresi (saniye). `0` gönderilirse sahne hemen uygulanır. `3` gönderirseniz ışıklar sonraki 3 saniye içinde sahneye geçiş yapar. Bridge en fazla 6000 saniyeyi kabul eder
+: brightness (float): Tüm sahnenin yüzde cinsinden parlaklığı (`0` – `100`); böylece aynı sahneyi günün saatine göre daha parlak ya da daha kısık çağırabilirsiniz
+
+> [!NOTE]
+> Her iki ayar da yalnızca normal sahneler için kullanılabilir. Akıllı bir sahne, Philips Hue uygulamasında onun için tanımladığınız saatlere uyar.
+
+### Evrensel modda sahne etkinleştirme
+
+Bu düğümü «evrensel mod» adı verilen modda kullanıyorsanız ve düğüm yapılandırmasında bir sahne belirlemediyseniz, istediğiniz sahneyi düğüme komut olarak da gönderebilirsiniz. Bunun için aşağıdaki içeriğe sahip bir `msg.payload` nesnesi gönderin:
+
+: scene (string): Bridge üzerinde etkinleştirilecek sahnenin kimliği
+
+### Sahneyi belirli gruplarda etkinleştirme
+
+Bir sahneyi belirli gruplara uygulamak için bu düğümün çıkışını bir veya birden çok gruba bağlayın. Alternatif olarak bunu «dinamik» biçimde, düğüme aşağıdaki içeriğe sahip bir `msg.payload` nesnesi göndererek de yapabilirsiniz:
+
+: group (string | array [string,…]): Sahneyi bu gruplarla sınırlamak için grubun kimliği veya birden çok grubun kimliklerini içeren bir dizi
+
+### Düğüm hakkında daha fazla bilgi
+
+Bu düğüm durum mesajı yayınlamaz.
+
+> [!IMPORTANT]
+> Sahneleri gruplara yalnızca bu gruplar bridge üzerinde ilgili sahneyle zaten ilişkiliyse uygulayabilirsiniz. Aksi hâlde hiçbir şey uygulanmaz.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -37,7 +37,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("rule", config.ruleid, function(info)
+		this.unsubscribe = bridge.subscribe("rule", config.ruleid, function(info)
 		{
 			let currentState = bridge.get("rule", info.id);
 
@@ -58,7 +58,7 @@ module.exports = function(RED)
 				}
 
 				// SEND MESSAGE
-				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
 				{
 					// SET LAST COMMAND
 					if(scope.lastCommand !== null)
@@ -94,14 +94,14 @@ module.exports = function(RED)
 			const tempRuleID = (!config.ruleid && typeof msg.topic != 'undefined' && isNaN(msg.topic) == false) ? msg.topic : config.ruleid;
 			if(!tempRuleID)
 			{
-				scope.error("Please submit a valid rule ID.");
+				scope.error(RED._("hue-rules.node.error-no-id"), msg);
 				return false;
 			}
 
 			let currentState = bridge.get("rule", "rule_" + tempRuleID);
 			if(!currentState)
 			{
-				scope.error("The rule in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
+				scope.error(RED._("hue-rules.node.error-not-available"), msg);
 				return false;
 			}
 
@@ -154,6 +154,14 @@ module.exports = function(RED)
 				if(done) {done();}
 			}
 		});
+
+		//
+		// CLOSE NODE / DETACH FROM THE BRIDGE
+		this.on('close', function()
+		{
+			if(scope.unsubscribe) { scope.unsubscribe(); }
+		});
+
 	}
 
 	RED.nodes.registerType("hue-rules", HueRules);

@@ -1,0 +1,96 @@
+<script type="text/markdown" data-help-name="hue-bridge-node">
+O nó «Hue Bridge» é um nó universal que pode emitir todas as definições do bridge e as mensagens de estado dos restantes nós.
+
+### Configuração
+
+Selecione primeiro o Hue Bridge pretendido. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as atualizações e mensagens globais dos dispositivos neste nó». O nó deixará de emitir atualizações do dispositivo.
+
+Em alternativa, pode escolher que as mensagens de inicialização de todos os nós não sejam suprimidas no arranque do Node-RED. Se ativar esta definição, receberá após cada implementação uma mensagem de estado de todos os recursos ligados ao bridge.
+
+### Consultar definições e estado
+
+Emite o estado e as definições atuais do bridge assim que a seguinte mensagem for enviada ao nó. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: payload (boolean): Devolve o estado atual do bridge
+
+### Iniciar uma análise TouchLink
+
+Com uma «análise TouchLink» pode emparelhar dispositivos novos ou antigos com o bridge (p. ex. após uma reposição). Para tal, transmita o objeto `msg.payload` com o seguinte conteúdo:
+
+: touchLink (boolean): Emparelha dispositivos antigos ou novos com o bridge
+
+### Consultar todos os dispositivos e recursos
+
+Com o comando «fetch» pode obter uma lista de determinados dispositivos atualmente ligados ao bridge. Para tal, transmita o objeto `msg.payload` com o seguinte conteúdo:
+
+: fetch (string | array [string, ...]): Aceita `light`, `group`, `button`, `motion`, `temperature`, `light_level` ou `rule` como valor(es)
+
+### Alterar as definições do Hue Bridge
+
+Com o comando seguinte pode alterar determinadas definições no bridge. Transmita ao nó o objeto `msg.payload.settings` com as seguintes opções de definição:
+
+> [!WARNING]
+> A alteração das definições de rede exige a reconfiguração do bridge no HueMagic.
+
+: name (string): Altera o nome do bridge e tem de conter entre 4 e 16 carateres
+: zigbeeChannel (int): Altera o canal ZigBee atual (`11`, `15`, `20`, `25` ou `0`)
+: ipAddress (string): Altera o endereço IP nas definições de rede
+: dhcpEnabled (boolean): `true` ativa o DHCP nas definições de rede, `false` desativa-o
+: netmask (string): Altera a máscara de rede nas definições de rede
+: gateway (string): Define o gateway nas definições de rede
+: proxyAddress (string): Define um endereço de proxy nas definições de rede
+: proxyPort (string | int): Define a porta do proxy nas definições de rede
+: timeZone (string): Altera o fuso horário atualmente definido no bridge
+
+### Mensagens de estado do nó
+
+As mensagens de estado do nó «Hue Bridge» são dinâmicas. Embora sigam um determinado padrão, a sua saída pode variar consoante a ação que acabou de ser executada no nó.
+
+#### Objeto de estado em `msg.payload`
+
+: id (string): ID único do Hue Bridge
+: name (string): Nome atualmente atribuído
+: factoryNew (boolean): Indica se o bridge é totalmente novo
+: replacesBridgeId (string | boolean): Devolve o ID do bridge antigo (se tiver sido efetuada uma migração) ou `false`
+: dataStoreVersion (string): Versão do repositório de dados
+: starterKitId (string | boolean): Nome do kit inicial criado na fábrica ou `false`
+: softwareVersion (string): Versão de software do bridge
+: apiVersion (string): Versão da API do bridge
+: zigbeeChannel (int): Canal ZigBee atualmente utilizado
+: macAddress (string): Endereço MAC do bridge
+: ipAddress (string): Endereço IP do bridge
+: dhcpEnabled (boolean): Indica se o DHCP está ativado
+: netmask (string): Máscara de rede do bridge
+: gateway (string): Gateway do bridge
+: proxyAddress (string | boolean): Endereço de proxy atualmente utilizado ou `false`
+: proxyPort (string): Porta de proxy atualmente utilizada
+: utcTime (string): Hora UTC no bridge
+: timeZone (string): Fuso horário atualmente definido no bridge
+: localTime (string): Fuso horário local
+: portalServicesEnabled (boolean): Indica se os serviços do portal estão ativados
+: portalConnected (boolean): Indica se o bridge está ligado ao portal
+: linkButtonEnabled (boolean): Indica se o botão de ligação está ativado
+: touchlinkEnabled (boolean): Indica se o TouchLink está ativado
+: autoUpdatesEnabled (boolean): Indica se o HueMagic procurará atualizações automaticamente
+: users (array [object, ...]): Lista de todos os utilizadores no bridge (matriz de objetos)
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+: model (object): Contém as informações de modelo do bridge em `id`, `manufacturer` e `name`
+
+#### Resultados de «fetch» em `msg.results` (opcional)
+
+Se o comando «fetch» tiver sido utilizado no nó, o bridge emite os resultados correspondentes no objeto `msg.results`. O objeto contém os grupos de recursos consultados, que por sua vez contêm todos os recursos correspondentes sob a forma de matriz.
+
+#### Mensagens de estado globais em `msg.updated` (opcional)
+
+Salvo se desativado, o nó emite uma mensagem de estado atualizada para cada recurso do bridge. A mensagem de estado em `msg.updated` segue o padrão do respetivo recurso e varia consoante o tipo de dispositivo que foi atualizado por último.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

@@ -1,0 +1,150 @@
+[
+    {
+        "id": "7bca3b4f.9070fc",
+        "type": "tab",
+        "label": "Hue Rules (example)",
+        "disabled": false,
+        "info": "Przykładowe użycie węzła „Hue Rules”"
+    },
+    {
+        "id": "a6ec7e31e3edf26b",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "PIERWSZE KROKI (kliknij dwukrotnie)",
+        "info": "Kliknij węzeł „Hue Reguła” i wybierz z listy zarówno swój bridge, jak i regułę. Jeśli nie masz jeszcze skonfigurowanego bridge, zostaniesz poproszony o jego konfigurację, zanim dokończysz ustawienia węzła.\n\nGdy węzeł będzie połączony z Twoim bridge, a zmiany zostaną wdrożone w Node-RED, węzeł będzie mógł odbierać i wykonywać Twoje polecenia. Zaktualizowany stan wraz ze wszystkimi informacjami o regule otrzymasz w wysyłanym komunikacie.\n\nJeśli chcesz uzyskać więcej informacji o tym węźle, dostępnych poleceniach i wartościach wyjściowych, kliknij go raz w swoim przepływie i przejdź do ikony książki Node-RED (prawy górny róg).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "863710a19fb12c5e",
+        "type": "debug",
+        "z": "7bca3b4f.9070fc",
+        "name": "Informacja",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3f358fa89e66d78",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Odczytaj bieżący stan",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "403636a610280894",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Stan",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "0fab9398dcc9c797",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Włącz / wyłącz regułę",
+        "info": "",
+        "x": 130,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "40f06e621e0643f0",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Włącz",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "bde15ecaf96f1323",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Wyłącz",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "7bc8bf9290a86c68",
+        "type": "hue-rules",
+        "z": "7bca3b4f.9070fc",
+        "skipevents": false,
+        "initevents": false,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "863710a19fb12c5e"
+            ]
+        ]
+    }
+]

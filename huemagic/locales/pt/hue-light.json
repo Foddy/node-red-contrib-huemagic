@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignorar as mensagens do nó",
+			"sendinitevents-node": "Não suprimir o evento de inicialização",
+			"onlycommands-node": "Comunicar apenas após um comando",
+			"unknown-error": "Algo correu mal. Tente novamente.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universais",
+			"universalevents-node": "Recebe todas as mensagens de outros nós do mesmo tipo (apenas no modo universal)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Ativar a denominação das cores",
+			"input-name": "Nome da luz",
+			"searching": "A procurar luzes…",
+			"none-found": "Nenhuma luz encontrada!",
+			"light": "Luz"
+		},
+		"node": {
+			"not-configured": "não configurado",
+			"init": "a inicializar…",
+			"not-reachable": "inacessível",
+			"universal": "modo universal",
+			"command": "a executar comando…",
+			"statusmsg": "Estado consultado com sucesso…",
+			"title": "Hue Luz",
+			"turned-on": "acesa",
+			"turned-on-percent": "acesa (__percent__ %)",
+			"turned-off": "apagada",
+			"error-no-id": "Nenhum ID de luz definido. Consulte a documentação.",
+			"error-input": "erro de entrada",
+			"error-invalid-temp": "Temperatura de cor inválida. Apenas são permitidos valores de 153 a 500.",
+			"input": "ligar / desligar",
+			"output": "estado",
+			"error-not-available": "A luz ainda não está disponível. Aguarde até que o HueMagic tenha estabelecido a ligação com o bridge ou verifique se o ID do recurso indicado na configuração é válido.",
+			"error-invalid-brightness": "Definição de brilho inválida. Apenas são permitidos valores de 0 a 100 por cento.",
+			"error-invalid-brightness-level": "Definição de brilho inválida. Apenas são permitidos valores de 0 a 254.",
+			"error-invalid-sat": "Definição de saturação inválida. Apenas são permitidos valores de 0 a 100.",
+			"error-no-colorloop": "O efeito colorloop não está disponível para esta luz.",
+			"error-invalid-effect": "Efeito inválido. Esta luz suporta: __effects__",
+			"error-invalid-powerup": "Definição de arranque inválida. As predefinições permitidas são: __presets__"
+		}
+	}
+}

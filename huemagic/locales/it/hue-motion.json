@@ -1,0 +1,36 @@
+{
+	"hue-motion": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignora i messaggi del nodo",
+			"sendinitevents-node": "Non sopprimere l'evento di inizializzazione",
+			"onlycommands-node": "Segnala solo dopo un comando",
+			"unknown-error": "Qualcosa è andato storto. Riprovi.",
+			"bridge": "Bridge",
+			"universalevents": "Eventi universali",
+			"universalevents-node": "Riceve tutti i messaggi dagli altri nodi dello stesso tipo (solo in modalità universale)",
+			"input-name": "Nome del sensore",
+			"searching": "Ricerca di sensori di movimento…",
+			"none-found": "Nessun sensore di movimento trovato!",
+			"sensor": "Sensore"
+		},
+		"node": {
+			"not-configured": "non configurato",
+			"not-reachable": "non raggiungibile",
+			"activated": "attivato",
+			"deactivated": "disattivato",
+			"universal": "modalità universale",
+			"command": "esecuzione del comando…",
+			"statusmsg": "Stato interrogato correttamente…",
+			"title": "Hue Movimento",
+			"motion": "movimento rilevato",
+			"no-motion": "nessun movimento",
+			"input": "attiva / disattiva / stato",
+			"output": "movimento rilevato",
+			"error-no-id": "Indichi un ID sensore valido.",
+			"error-not-available": "Il sensore non è ancora disponibile. Attenda che HueMagic abbia stabilito la connessione con il bridge oppure verifichi se l'ID della risorsa indicato nella configurazione è valido.",
+			"error-no-sensitivity": "Questa sorgente di movimento non ha una sensibilità regolabile.",
+			"error-invalid-sensitivity": "Sensibilità non valida. Sono consentiti solo valori da 0 a __max__."
+		}
+	}
+}

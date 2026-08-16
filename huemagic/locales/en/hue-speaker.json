@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Name",
+			"input-name": "Speaker name",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"onlycommands-node": "Only report after a command",
+			"searching": "Searching speakers…",
+			"none-found": "No speakers found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"speaker": "Speaker",
+			"bridge": "Bridge",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)"
+		},
+		"node": {
+			"title": "Hue Speaker",
+			"not-configured": "not configured",
+			"not-reachable": "not reachable",
+			"silent": "silent",
+			"muted": "muted",
+			"playing-alarm": "alarm (__sound__)",
+			"playing-chime": "chime (__sound__)",
+			"playing-alert": "alert (__sound__)",
+			"universal": "universal mode",
+			"input": "play sound / status",
+			"output": "speaker",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…",
+			"error-no-id": "Please submit a valid speaker ID.",
+			"error-not-available": "The speaker is not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.",
+			"error-no-channel": "This speaker has no __channel__ sound.",
+			"error-invalid-sound": "Invalid __channel__ sound. Allowed are: __sounds__",
+			"error-invalid-volume": "Invalid volume setting. Only 0 - 100 allowed."
+		}
+	}
+}

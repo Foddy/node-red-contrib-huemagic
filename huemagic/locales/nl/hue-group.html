@@ -1,0 +1,87 @@
+<script type="text/markdown" data-help-name="hue-group">
+De node "Hue Groep" kan meerdere lampen achter een groep op de bridge tegelijk aansturen.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare groepen te vinden. Als u het ID van een groep al kent, kunt u het hier ook handmatig invoeren. U kunt de groep intern een nieuwe naam geven of de vooraf ingestelde naam gebruiken. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". De node geeft dan geen updates meer uit. U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Als u deze instelling activeert, ontvangt u na elke deploy een statusbericht van de geselecteerde groep. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+Als u geen groep selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type. U kunt in de universele modus ook instellingen op een specifieke groep toepassen door het bijbehorende groeps-ID als tekenreeks in `msg.topic` samen met uw instellingen mee te geven.
+
+### Status opvragen
+
+Geeft de huidige status van de groep uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: status (boolean): Geeft de huidige status van de groep terug
+
+### Aan-/uitzetten (eenvoudig)
+
+Geef de node een object met de volgende inhoud mee om een hele groep in de eenvoudige modus snel aan of uit te zetten.
+
+: payload (boolean): `true` schakelt de hele groep in, `false` schakelt haar uit
+
+### Groepscommando's (uitgebreid)
+
+Naast het simpelweg aan- en uitzetten zijn er nog veel meer mogelijkheden om de groep aan te sturen. Alle nodes in HueMagic kunnen met additieve commando's worden bediend. Dat betekent dat u eerst de ene instelling en later in een volgend commando de andere kunt meegeven zonder de vorige instelling te verwerpen. Geef de volgende parameters in een `msg.payload`-object mee om uitgebreidere instellingen op de groep te doen:
+
+: on (boolean): `true` schakelt de gehele groep in, `false` schakelt haar uit
+: toggle (boolean | any): Wisselt tussen aan- en uitzetten, afhankelijk van de vorige status van de groep
+: brightness (int | string): Procentuele waarde van de lichthelderheid (0-100) of een tekenreeks met de waarde `auto` om de helderheid automatisch op basis van het huidige tijdstip in te stellen
+: brightnessLevel (int): Numerieke waarde van de lichthelderheid (0-254)
+: incrementBrightness (int): Procentuele waarde van een relatieve helderheidswijziging. Het geldige bereik loopt van -100 % tot +100 %. Positieve waarden verhogen de helderheid. Standaard is +10 %
+: decrementBrightness (int): Procentuele waarde van een relatieve helderheidswijziging. Het geldige bereik loopt van -100 % tot +100 %. Positieve waarden verlagen de helderheid. Standaard is +10 %
+: color (string): `random` voor een willekeurige kleur of een Engelse kleurnaam (bijv. `red`)
+: hex (string): Kleurwaarde in hexadecimaal als tekenreeks
+: rgb (array [0,0,0]): Kleurwaarde in RGB-formaat als array
+: xyColor (object {x [float], y [float]}): Kleurwaarde in het XY-kleurformaat als object
+: image (string): Pad van een afbeelding (lokaal of op het web) om de huidige kleur van de groep op de gemiddelde kleur van de afbeelding in te stellen
+: colorTemp (int | string): Waarde tussen 153 en 500 om de kleurtemperatuur van de groep in te stellen, of de waarden `cold`, `normal`, `warm`, `hot` en `auto`, waarbij `auto` de kleurtemperatuur op basis van het huidige tijdstip bepaalt
+: transitionTime (float): Overgangstijd van de huidige instelling in seconden. Bij `0` gaat de groep direct naar de gewenste instelling. Geeft u `3` mee, dan gaat de groep met een lichte overgang in de volgende 3 seconden naar de gewenste instelling
+: colorloop (float): Speelt gedurende het gekozen aantal seconden een "colorloop"-animatie af en keert daarna terug naar de oorspronkelijke toestand van de groep
+: alert (float): Speelt gedurende het gekozen aantal seconden een "alert"-animatie af en keert daarna terug naar de oorspronkelijke toestand van de groep
+
+### Statusberichten van de node
+
+Wordt er een wijziging in de groep vastgesteld, dan geeft de node het volgende statusbericht terug.
+
+> [!NOTE]
+> De groep geeft alleen statusberichten uit wanneer de laatste lamp wordt uitgeschakeld of wanneer de eerste lamp wordt ingeschakeld (als alle lampen daarvoor uit waren).
+
+In tegenstelling tot de node "Hue Lamp" hebt u hier veel minder statusinformatie tot uw beschikking, omdat een groep veel verschillende apparaattypes met waarden kan bevatten die niet samengevoegd kunnen worden.
+
+#### Statusobject onder `msg.payload`
+
+: on (boolean): Toestand van de groep, waarbij `true` voor aan en `false` voor uit staat
+: brightness (float | boolean): Helderheid van de groep in procent of `false` als de groep niet gedimd kan worden
+: brightnessLevel (int | boolean): Helderheid van de groep als numerieke waarde (0-254) of `false` als de groep niet gedimd kan worden
+: rgb (array [0,0,0]): Huidige kleur van de groep in RGB-formaat (alleen indien beschikbaar)
+: hex (string): Huidige kleur van de groep in hexadecimaal formaat (alleen indien beschikbaar)
+: xyColor (object {x [float], y [float]}): Huidige kleur van de groep in het XY-kleurformaat (alleen indien beschikbaar)
+: colorTemp (int): Momenteel ingestelde kleurtemperatuur van de groep (alleen indien beschikbaar)
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+
+#### Informatie over de groep onder `msg.info`
+
+: id (string): Geeft het nieuwe ID van de groep aan
+: idV1 (string | boolean): Geeft het oude ID van de groep aan
+: name (string): De momenteel ingestelde naam van de groep
+: resources (object) : Bevat alle apparaten en bronnen achter de groep
+: type (string): Het type van de groep (altijd `group`)
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de groep zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de lamp onder `msg.lastState`
+
+Bevat het volledige statusobject (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatste wijziging. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

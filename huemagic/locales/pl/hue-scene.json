@@ -1,0 +1,32 @@
+{
+	"hue-scene": {
+		"config": {
+			"name": "Nazwa",
+			"input-name": "Nazwa sceny",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"searching": "Wyszukiwanie scen…",
+			"none-found": "Nie znaleziono żadnej sceny!",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"scene": "Scena",
+			"group": "Grupa",
+			"group-none-found": "Nie znaleziono żadnej grupy!",
+			"group-searching": "Wyszukiwanie grup…",
+			"groups-all": "Wszystkie grupy / światła",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Scena",
+			"not-configured": "nieskonfigurowany",
+			"recalled": "scena włączona",
+			"recalled-on-group": "scena włączona w grupie",
+			"no-id": "Brak identyfikatora sceny.",
+			"input": "włącz scenę",
+			"output": "grupa docelowa",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Włączanie sceny…",
+			"error-not-available": "Scena nie jest jeszcze dostępna. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy.",
+			"error-invalid-brightness": "Nieprawidłowe ustawienie jasności. Dozwolone są tylko wartości od 0 do 100 procent."
+		}
+	}
+}

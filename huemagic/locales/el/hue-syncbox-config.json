@@ -1,0 +1,25 @@
+{
+	"hue-syncbox-config": {
+		"config": {
+			"name": "Όνομα",
+			"syncbox-ip": "IP του Sync Box",
+			"token": "Διακριτικό πρόσβασης",
+			"pollinterval": "Ανανέωση (δευτ.)",
+			"missing-ip": "Λείπει η IP του Hue Sync Box…",
+			"connecting": "Σύνδεση με το sync box…",
+			"invalid": "Λυπούμαστε. Το επιλεγμένο Hue Sync Box δεν είναι έγκυρο: ",
+			"error-select-first": "Καταχωρίστε την IP του Hue Sync Box σας πριν δημιουργήσετε νέο διακριτικό!",
+			"waiting": "αναμονή για το πάτημα του κουμπιού…",
+			"new-user-press": "Κρατήστε πατημένο το κουμπί στο Hue Sync Box μέχρι να αναβοσβήσει πράσινη η λυχνία!",
+			"retry": "Δεν εντοπίστηκε πάτημα κουμπιού. Δοκιμάστε ξανά…",
+			"success": "Το διακριτικό πρόσβασης δημιουργήθηκε με επιτυχία!"
+		},
+		"node": {
+			"title": "Hue Sync Box",
+			"initializing": "Αρχικοποίηση του sync box (__syncbox__)…",
+			"connected": "Συνδέθηκε με το sync box",
+			"request-error": "Σφάλμα κατά την ανάκτηση πληροφοριών από το sync box (__error__)",
+			"statusmsg": "Η κατάσταση ανακτήθηκε με επιτυχία…"
+		}
+	}
+}

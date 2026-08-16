@@ -4,7 +4,7 @@
         <input type="text" id="node-input-name" data-i18n="[placeholder]hue-scene.config.input-name" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
-        <label for="node-input-bridge"><i class="fa fa-server"></i> Bridge</label>
+        <label for="node-input-bridge"><i class="fa fa-server"></i> <span data-i18n="hue-scene.config.bridge"></span></label>
         <input type="text" id="node-input-bridge" style="width: calc(100% - 105px)">
     </div>
     <div class="form-row">
@@ -30,7 +30,7 @@
             sceneid: { value: null }
         },
         align: 'left',
-        icon: "hue-scene.png",
+        icon: "hue-scene.svg",
         inputs: 1,
         outputs: 1,
         label: function() {
@@ -97,7 +97,11 @@
                 $.get('hue/resources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "scene" })
                 .done( function(data) {
                     var allResources = JSON.parse(data);
-                    allResources = sortResourcesBy('name', allResources);
+                    allResources = allResources.sort(function(a, b) {
+                        // GROUP FIRST, SO THE SCENES OF A ROOM STAY TOGETHER
+                        const byGroup = (a.group || "").localeCompare(b.group || "");
+                        return (byGroup !== 0) ? byGroup : (a.name || "").localeCompare(b.name || "");
+                    });
                     if(allResources.length <= 0)
                     {
                         notification.close();
@@ -108,7 +112,7 @@
                     // SET OPTIONS
                     allResources.forEach(function(resource)
                     {
-                        sceneOptions[resource.id] = { value: resource.id, label: resource.name + " ("+resource.group+")" };
+                        sceneOptions[resource.id] = { value: resource.id, label: resource.group + " – " + resource.name };
                     });
 
                     // SELECT CURRENT VALUE
@@ -145,7 +149,7 @@
 
                 if(currentSelectedOptionValue !== false)
                 {
-                    $('#node-input-name').val(currentSelectedOptionValue.split(" (")[0]);
+                    $('#node-input-name').val(currentSelectedOptionValue.split(" – ").pop());
                 }
             });
 

@@ -1,0 +1,33 @@
+{
+	"hue-automation": {
+		"config": {
+			"name": "Nombre",
+			"skipevents-node": "Omitir los mensajes del nodo",
+			"sendinitevents-node": "No suprimir el evento de inicialización",
+			"onlycommands-node": "Informar solo tras un comando",
+			"unknown-error": "Algo ha salido mal. Inténtelo de nuevo.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universales",
+			"universalevents-node": "Recibe todos los mensajes de otros nodos del mismo tipo (solo en modo universal)",
+			"input-name": "Nombre de la automatización",
+			"searching": "Buscando automatizaciones…",
+			"none-found": "¡No se ha encontrado ninguna automatización!",
+			"automation": "Automatización"
+		},
+		"node": {
+			"not-configured": "sin configurar",
+			"init": "inicializando…",
+			"universal": "modo universal",
+			"command": "ejecutando comando…",
+			"statusmsg": "Estado consultado correctamente…",
+			"title": "Hue Automatización",
+			"enabled": "activada",
+			"disabled": "desactivada",
+			"errored": "error",
+			"input": "activar / desactivar",
+			"output": "automatización",
+			"error-no-id": "Indique un ID de automatización válido.",
+			"error-not-available": "La automatización aún no está disponible. Espere hasta que HueMagic haya establecido la conexión con el bridge o compruebe si el ID del recurso indicado en la configuración es válido."
+		}
+	}
+}

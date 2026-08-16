@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"input-name": "Naam van de knop",
+			"searching": "Hue Buttons zoeken…",
+			"none-found": "Geen Hue Button gevonden!",
+			"button": "Knop"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Knoppen",
+			"waiting": "wachten…",
+			"button-on": "On",
+			"action-pressed": "ingedrukt",
+			"action-holded": "vastgehouden",
+			"action-shortreleased": "kort losgelaten",
+			"action-longreleased": "losgelaten na vasthouden",
+			"action-repeated": "herhaald",
+			"action-doublepressed": "dubbel ingedrukt",
+			"dial-clockwise": "Draaiknop ↻ __degrees__°",
+			"dial-counterclockwise": "Draaiknop ↺ __degrees__°",
+			"button-status": "Knop nr. __button__ (__action__)",
+			"input": "statusopvraging",
+			"output": "ingedrukte knop",
+			"error-no-id": "Geef een geldig schakelaar-ID op.",
+			"error-not-available": "De schakelaar is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is.",
+			"error-no-switchmode": "Dit apparaat heeft geen instelbare schakelaarmodus.",
+			"error-invalid-switchmode": "Ongeldige schakelaarmodus. Dit apparaat ondersteunt: __modes__"
+		}
+	}
+}

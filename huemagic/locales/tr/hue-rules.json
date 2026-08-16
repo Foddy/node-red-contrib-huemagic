@@ -1,0 +1,30 @@
+{
+	"hue-rules": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"input-name": "Kural adı",
+			"searching": "Kurallar aranıyor…",
+			"none-found": "Hiç kural bulunamadı!",
+			"rule": "Kural"
+		},
+		"node": {
+			"init": "başlatılıyor…",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Kural",
+			"no-rule": "kural seçilmedi",
+			"enabled": "etkin",
+			"disabled": "devre dışı",
+			"output": "kural (çalıştırıldı)",
+			"input": "etkinleştir / devre dışı bırak",
+			"error-no-id": "Lütfen geçerli bir kural kimliği girin.",
+			"error-not-available": "Kural henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin."
+		}
+	}
+}

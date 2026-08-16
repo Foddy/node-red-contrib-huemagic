@@ -47,7 +47,7 @@ module.exports = function(RED)
 
 		//
 		// SUBSCRIBE TO UPDATES FROM THE BRIDGE
-		bridge.subscribe("group", config.groupid, function(info)
+		this.unsubscribe = bridge.subscribe("group", config.groupid, function(info)
 		{
 			let currentState = bridge.get("group", info.id, { colornames: config.colornamer ? true : false });
 
@@ -63,18 +63,22 @@ module.exports = function(RED)
 						scope.applyCommands({}, null, null);
 					}
 
-					if(currentState.payload.on === true)
+					if(currentState.payload.on !== true)
 					{
-						scope.status({fill: "yellow", shape: "dot", text: "hue-group.node.turned-on"});
+						scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
+					}
+					else if(currentState.payload.brightness !== false)
+					{
+						scope.status({fill: "yellow", shape: "dot", text: RED._("hue-group.node.turned-on") + RED._("hue-group.node.brightness", { percent: Math.round(currentState.payload.brightness) })});
 					}
 					else
 					{
-						scope.status({fill: "grey", shape: "dot", text: "hue-group.node.all-off"});
+						scope.status({fill: "yellow", shape: "dot", text: "hue-group.node.turned-on"});
 					}
 				}
 
 				// SEND MESSAGE
-				if(!config.skipevents && (config.initevents || info.suppressMessage == false))
+				if(!config.skipevents && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
 				{
 					// SET LAST COMMAND
 					if(scope.lastCommand !== null)
@@ -96,7 +100,7 @@ module.exports = function(RED)
 		this.on('input', function(msg, send, done) { scope.applyCommands(msg, send, done); });
 
 		//
-		// APPLY COMMANDS (API v1 because CLIP/v2 does not yet support all features)
+		// APPLY COMMANDS (CLIP/v2, only the colorloop effect still needs the legacy API)
 		this.applyCommands = async function(msg, send = null, done = null)
 		{
 			// SET SEND
@@ -108,19 +112,19 @@ module.exports = function(RED)
 			// CREATE PATCH
 			let patchObject = {};
 
-			// DEFINE SENSOR ID & CURRENT STATE
+			// DEFINE GROUP ID
 			const tempGroupID = (!config.groupid && typeof msg.topic != 'undefined' && bridge.validResourceID.test(msg.topic) === true) ? msg.topic : config.groupid;
-			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
-			if(!currentState)
+			if(!tempGroupID)
 			{
-				scope.error("The group in not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.");
+				scope.error(RED._("hue-group.node.error-no-id"), msg);
 				return false;
 			}
 
-			// CHECK IF LIGHT ID IS SET
-			if(!tempGroupID)
+			// GET CURRENT STATE
+			let currentState = bridge.get("group", tempGroupID, { colornames: config.colornamer ? true : false });
+			if(!currentState)
 			{
-				scope.error(RED._("hue-group.node.error-no-id"));
+				scope.error(RED._("hue-group.node.error-not-available"), msg);
 				return false;
 			}
 
@@ -150,9 +154,15 @@ module.exports = function(RED)
 				return true;
 			}
 
-			// COLORLOOP EFFECT
+			// COLORLOOP EFFECT (CLIP/v2 HAS NO EQUIVALENT, SO THIS STAYS ON THE LEGACY API)
 			if(typeof msg.payload != 'undefined' && typeof msg.payload.colorloop != 'undefined' && msg.payload.colorloop > 0)
 			{
+				if(!currentState.info.idV1)
+				{
+					scope.error(RED._("hue-group.node.error-no-colorloop"), msg);
+					return false;
+				}
+
 				patchObject = {
 					"on": true,
 					"effect": "colorloop",
@@ -202,31 +212,14 @@ module.exports = function(RED)
 			// ALERT EFFECT
 			if(typeof msg.payload != 'undefined' && typeof msg.payload.alert != 'undefined' && msg.payload.alert > 0)
 			{
-				// SAVE PREVIOUS STATE
-				scope.context().set('groupPreviousState', currentState);
+				// THE BRIDGE BLINKS AND RESTORES THE PREVIOUS STATE ON ITS OWN
+				let duration = Math.round(parseFloat(msg.payload.alert)) * 1000;
+				duration = (duration > 65534000) ? 65534000 : duration;
 
-				// TURN ON LIGHT
-				if(currentState.payload.on === false)
-				{
-					patchObject["on"] = true;
-				}
+				let signaling = { signal: "on_off", duration: duration };
+				let XYAlertColor = false;
 
-				// SET BRIGHTNESS
-				if(!msg.payload.brightness && currentState.payload.brightness != 100)
-				{
-					patchObject["bri"] = 254;
-				}
-				else if(msg.payload.brightness)
-				{
-					patchObject["bri"] = Math.round((254/100)*msg.payload.brightness);
-				}
-
-				// SET TRANSITION
-				patchObject["transitiontime"] = 0;
-
-				// CAN CHANGE COLOR?
-				let XYAlertColor = {};
-
+				// BLINK IN A SPECIFIC COLOR?
 				if(typeof msg.payload.rgb != 'undefined')
 				{
 					XYAlertColor = colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2] );
@@ -238,31 +231,18 @@ module.exports = function(RED)
 				}
 				else if(typeof msg.payload.color != 'undefined')
 				{
-					if(new RegExp("random|any|whatever").test(msg.payload.color))
+					const colorHex = new RegExp("random|any|whatever").test(msg.payload.color) ? colorUtils.randomHexColor() : colorUtils.colornames(msg.payload.color);
+					if(colorHex)
 					{
-						const randomColor = colorUtils.randomHexColor();
-						let rgbFromHex = colorUtils.hexRgb(rgbFromHex);
+						let rgbFromHex = colorUtils.hexRgb(colorHex);
 						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
 					}
-					else
-					{
-						var colorHex = colorUtils.colornames(msg.payload.color);
-						if(colorHex)
-						{
-							let rgbFromHex = colorUtils.hexRgb(colorHex);
-							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
-						}
-					}
 				}
-				else
+
+				if(XYAlertColor)
 				{
-					XYAlertColor = colorUtils.rgbToXy(255, 0, 0 );
+					signaling = { signal: "on_off_color", duration: duration, colors: [{ xy: XYAlertColor }] };
 				}
-
-				patchObject["xy"] = [XYAlertColor.x, XYAlertColor.y];
-
-				// SET ALERT EFFECT
-				patchObject["alert"] = "lselect";
 
 				// PATCH!
 				async.retry({
@@ -274,43 +254,15 @@ module.exports = function(RED)
 				},
 				function(callback, results)
 				{
-					// 1. TURN ON THE LIGHT BULB
-					bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
-					.then(function(status)
+					bridge.patch("grouped_light", tempGroupID, { signaling: signaling })
+					.catch(function(errors)
 					{
-						setTimeout(function()
-						{
-							const tempPreviousState = scope.context().get('groupPreviousState');
-							var tempPreviousStatePatch = {};
-
-							tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
-							if(tempPreviousState.payload.xyColor)
-							{
-								tempPreviousStatePatch.xy = [tempPreviousState.payload.xyColor.x, tempPreviousState.payload.xyColor.y];
-							}
-							else if(tempPreviousState.payload.colorTemp)
-							{
-								tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
-							}
-
-							bridge.patch("group", currentState.info.idV1 + "/action", tempPreviousStatePatch, 1)
-							.then(function(status)
-							{
-								return bridge.patch("group", currentState.info.idV1 + "/action", { on: false }, 1);
-							})
-							.then(function(status) {
-								if(tempPreviousState.payload.on === true)
-								{
-									bridge.patch("group", currentState.info.idV1, { on: true }, 1);
-								}
-							});
-						}, parseInt(msg.payload.alert) * 1000);
-
-						callback(null, true);
+						// OLDER BRIDGES ONLY KNOW THE (15 SECONDS LONG) BREATHE EFFECT
+						if(errors.status !== 400) { throw errors; }
+						return bridge.patch("grouped_light", tempGroupID, { alert: { action: "breathe" } });
 					})
-					.catch(function(errors) {
-						callback(errors, null);
-					});
+					.then(function() { callback(null, true); })
+					.catch(function(errors) { callback(errors, null); });
 				},
 				function(errors, success)
 				{
@@ -335,16 +287,27 @@ module.exports = function(RED)
 			else if(typeof msg.animation != 'undefined' && msg.animation.status == false && msg.animation.restore == true)
 			{
 				const tempPreviousState = scope.context().get('groupPreviousState');
-				var tempPreviousStatePatch = {};
+				if(!tempPreviousState)
+				{
+					if(done) { done(); }
+					return false;
+				}
 
-				tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+				// RESTORE IN ONE SINGLE PATCH ON THE GROUP, OTHERWISE THE LIGHTS FLICKER
+				var tempPreviousStatePatch = { on: { on: tempPreviousState.payload.on } };
+
+				if(typeof tempPreviousState.payload.brightness != 'undefined' && tempPreviousState.payload.brightness !== false)
+				{
+					tempPreviousStatePatch.dimming = { brightness: tempPreviousState.payload.brightness };
+				}
+
 				if(tempPreviousState.payload.xyColor)
 				{
-					tempPreviousStatePatch.xy = [tempPreviousState.payload.xyColor.x, tempPreviousState.payload.xyColor.y];
+					tempPreviousStatePatch.color = { xy: tempPreviousState.payload.xyColor };
 				}
 				else if(tempPreviousState.payload.colorTemp)
 				{
-					tempPreviousStatePatch.ct = tempPreviousState.payload.colorTemp;
+					tempPreviousStatePatch.color_temperature = { mirek: tempPreviousState.payload.colorTemp };
 				}
 
 				// PATCH!
@@ -357,30 +320,15 @@ module.exports = function(RED)
 				},
 				function(callback, results)
 				{
-					bridge.patch("light", currentState.info.lightIds[l], tempPreviousStatePatch).
-					then(function(status)
-					{
-						if(tempPreviousState.payload.on === false)
-						{
-							bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
-							.then(function() { callback(null, true); });
-						}
-						else
-						{
-							bridge.patch("light", currentState.info.lightIds[l], { on: { on: false } })
-							.then(function(status) {
-								callback(null, true);
-								return bridge.patch("light", currentState.info.lightIds[l], { on: { on: true } });
-							});
-						}
-					})
+					bridge.patch("grouped_light", tempGroupID, tempPreviousStatePatch)
+					.then(function() { callback(null, true); })
 					.catch(function(errors) { callback(errors, null); });
 				},
 				function(errors, success)
 				{
 					if(errors)
 					{
-						scope.error(errors);
+						scope.error(errors, msg);
 					}
 					else if(done)
 					{
@@ -391,28 +339,22 @@ module.exports = function(RED)
 			// EXTENDED COMMANDS
 			else
 			{
-				// SET LIGHT STATE SIMPLE MODE
+				// SET LIGHT STATE SIMPLE MODE (ALWAYS SENT, THE CACHED STATE MAY BE OUTDATED)
 				if(msg.payload === true||msg.payload === false)
 				{
-					if(msg.payload !== currentState.payload.on)
-					{
-						patchObject["on"] = msg.payload;
-					}
+					patchObject["on"] = { on: msg.payload };
 				}
 
 				// SET LIGHT STATE
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.on != 'undefined' && (msg.payload.on === true || msg.payload.on === false))
 				{
-					if(msg.payload.on !== currentState.payload.on)
-					{
-						patchObject["on"] = msg.payload.on;
-					}
+					patchObject["on"] = { on: msg.payload.on };
 				}
 
 				// TOGGLE ON / OFF
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.toggle != 'undefined')
 				{
-					patchObject["on"] = !currentState.payload.on;
+					patchObject["on"] = { on: !currentState.payload.on };
 				}
 
 				// SET BRIGHTNESS
@@ -427,22 +369,22 @@ module.exports = function(RED)
 						autoBrightness = (autoBrightness < 20) ? 20 : autoBrightness;
 
 						// SET CALCULATED BRIGHTNESS
-						patchObject["bri"] = Math.round((254/100)*autoBrightness);
+						patchObject["dimming"] = { brightness: autoBrightness };
 					}
 					else
 					{
 						if(msg.payload.brightness > 100 || msg.payload.brightness < 0)
 						{
-							scope.error("Invalid brightness setting. Only 0 - 100 percent allowed");
+							scope.error(RED._("hue-group.node.error-invalid-brightness"), msg);
 							return false;
 						}
 						else if(msg.payload.brightness == 0)
 						{
-							patchObject["on"] = false;
+							patchObject["on"] = { on: false };
 						}
 						else
 						{
-							patchObject["bri"] = Math.round((254/100)*msg.payload.brightness);
+							patchObject["dimming"] = { brightness: msg.payload.brightness };
 						}
 					}
 				}
@@ -450,87 +392,72 @@ module.exports = function(RED)
 				{
 					if(msg.payload.brightnessLevel > 254 || msg.payload.brightnessLevel < 0)
 					{
-						scope.error("Invalid brightness setting. Only 0 - 254 allowed");
+						scope.error(RED._("hue-group.node.error-invalid-brightness-level"), msg);
 						return false;
 					}
-					else if(msg.payload.brightness == 0)
+					else if(msg.payload.brightnessLevel == 0)
 					{
-						patchObject["on"] = false;
+						patchObject["on"] = { on: false };
 					}
 					else
 					{
-						patchObject["bri"] = msg.payload.brightnessLevel;
+						patchObject["dimming"] = { brightness: Math.round((100/254)*msg.payload.brightnessLevel) };
 					}
 				}
 				else if(typeof msg.payload != 'undefined' && typeof msg.payload.incrementBrightness != 'undefined')
 				{
-					let incrementBy = (isNaN(msg.payload.incrementBrightness)) ? 10 : msg.payload.incrementBrightness;
+					let incrementBy = (isNaN(msg.payload.incrementBrightness)) ? 10 : parseFloat(msg.payload.incrementBrightness);
 
 					if ((incrementBy > 100) || (incrementBy < -100))
 					{
-						scope.error("Invalid incrementBrightness setting. Only -100% to 100% allowed");
+						scope.error(RED._("hue-group.node.error-invalid-increment"), msg);
 						return false;
 					}
 
-					patchObject["bri_inc"] = Math.round((254/100)*incrementBy);
+					patchObject["dimming_delta"] = { action: (incrementBy < 0) ? "down" : "up", brightness_delta: Math.abs(incrementBy) };
 				}
 				else if(typeof msg.payload != 'undefined' && typeof msg.payload.decrementBrightness != 'undefined')
 				{
-					let decrementBy = (isNaN(msg.payload.decrementBrightness)) ? 10 : msg.payload.decrementBrightness;
+					let decrementBy = (isNaN(msg.payload.decrementBrightness)) ? 10 : parseFloat(msg.payload.decrementBrightness);
 
 					if ((decrementBy > 100) || (decrementBy < -100))
 					{
-						scope.error("Invalid decrementBrightness setting. Only -100% to 100% allowed");
+						scope.error(RED._("hue-group.node.error-invalid-decrement"), msg);
 						return false;
 					}
 
-					patchObject["bri_inc"] = Math.round((-254/100)*decrementBy);
+					patchObject["dimming_delta"] = { action: (decrementBy < 0) ? "up" : "down", brightness_delta: Math.abs(decrementBy) };
 				}
 
 				// SET HUMAN READABLE COLOR OR RANDOM
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.color != 'undefined')
 				{
-					let XYAlertColor = {};
+					const colorHex = new RegExp("random|any|whatever").test(msg.payload.color) ? colorUtils.randomHexColor() : colorUtils.colornames(msg.payload.color);
 
-					if(new RegExp("random|any|whatever").test(msg.payload.color))
+					if(colorHex)
 					{
-						const randomColor = colorUtils.randomHexColor();
-						let rgbFromHex = colorUtils.hexRgb(randomColor);
-						XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
+						let rgbFromHex = colorUtils.hexRgb(colorHex);
+						patchObject["color"] = { xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2]) };
 					}
-					else
-					{
-						var colorHex = colorUtils.colornames(msg.payload.color);
-						if(colorHex)
-						{
-							let rgbFromHex = colorUtils.hexRgb(colorHex);
-							XYAlertColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2] );
-						}
-					}
-
-					patchObject["xy"] = [XYAlertColor.x, XYAlertColor.y];
 				}
 
 				// SET HEX COLOR
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.hex != 'undefined')
 				{
 					let rgbFromHex = colorUtils.hexRgb((msg.payload.hex).toString());
-					let xyColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2])
-
-					patchObject["xy"] = [xyColor.x, xyColor.y];
+					patchObject["color"] = { xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2]) };
 				}
 
 				// SET RGB COLOR
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.rgb != 'undefined' && msg.payload.rgb.length === 3)
 				{
-					let xyColor = colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2] )
-					patchObject["xy"] = [xyColor.x, xyColor.y];
+					patchObject["color"] = { xy: colorUtils.rgbToXy(msg.payload.rgb[0], msg.payload.rgb[1], msg.payload.rgb[2]) };
 				}
 
 				// SET XY COLOR
 				if(typeof msg.payload != 'undefined' && typeof msg.payload.xyColor != 'undefined')
 				{
-					patchObject["xy"] = [msg.payload.xyColor.x, msg.payload.xyColor.y];
+					patchObject["color"] = { xy: { x: msg.payload.xyColor.x, y: msg.payload.xyColor.y } };
 				}
 
 				// SET COLOR TEMPERATURE
@@ -542,34 +469,34 @@ module.exports = function(RED)
 						let colorTemp = parseInt(msg.payload.colorTemp);
 						if(colorTemp >= 153 && colorTemp <= 500)
 						{
-							patchObject["ct"] = colorTemp;
+							patchObject["color_temperature"] = { mirek: colorTemp };
 						}
 						else
 						{
-							scope.error("Invalid color temprature. Only 153 - 500 allowed");
+							scope.error(RED._("hue-group.node.error-invalid-temp"), msg);
 							return false;
 						}
 					}
 					else if(msg.payload.colorTemp == "cold")
 					{
-						patchObject["ct"] = 153;
+						patchObject["color_temperature"] = { mirek: 153 };
 					}
 					else if(msg.payload.colorTemp == "normal")
 					{
-						patchObject["ct"] = 240;
+						patchObject["color_temperature"] = { mirek: 240 };
 					}
 					else if(msg.payload.colorTemp == "warm")
 					{
-						patchObject["ct"] = 400;
+						patchObject["color_temperature"] = { mirek: 400 };
 					}
 					else if(msg.payload.colorTemp == "hot")
 					{
-						patchObject["ct"] = 500;
+						patchObject["color_temperature"] = { mirek: 500 };
 					}
 					else
 					{
 						// SET TEMPERATURE
-						patchObject["ct"] = colorUtils.colorTemperature();
+						patchObject["color_temperature"] = { mirek: colorUtils.colorTemperature() };
 					}
 				}
 
@@ -580,7 +507,7 @@ module.exports = function(RED)
 					targetTransitionTime = (targetTransitionTime > 6000000) ? 6000000 : targetTransitionTime;
 					targetTransitionTime = (targetTransitionTime < 0) ? 0 : targetTransitionTime;
 
-					patchObject["transitiontime"] = targetTransitionTime/100;
+					patchObject["dynamics"] = { duration: targetTransitionTime };
 				}
 
 				// SET DOMINANT COLORS FROM IMAGE
@@ -591,22 +518,25 @@ module.exports = function(RED)
 					{
 						var colorsHEX = colors.map(color => color.hex());
 						let rgbFromHex = colorUtils.hexRgb(colorsHEX[0]);
-						let xyColor = colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2]);
 
-						patchObject["xy"] = [xyColor.x, xyColor.y];
+						patchObject["color"] = { xy: colorUtils.rgbToXy(rgbFromHex[0], rgbFromHex[1], rgbFromHex[2]) };
 					}
 				}
+
+				// THE BRIDGE ONLY ACCEPTS ONE OF BOTH
+				if(patchObject["color"] && patchObject["color_temperature"]) { delete patchObject["color_temperature"]; }
 
 				//
 				// SHOULD PATCH?
 				if(Object.values(patchObject).length > 0)
 				{
-					// IS FOR LATER?
+					// IS FOR LATER? (ONLY IF THE COMMAND ITSELF DOES NOT SWITCH THE GROUP)
 					if(currentState.payload.on === false)
 					{
-						if(!patchObject["on"])
+						if(typeof patchObject["on"] == 'undefined')
 						{
 							scope.futurePatchState = merge.deep(scope.futurePatchState, patchObject);
+							if(done) { done(); }
 							return false;
 						}
 					}
@@ -621,7 +551,7 @@ module.exports = function(RED)
 					},
 					function(callback, results)
 					{
-						bridge.patch("group", currentState.info.idV1 + "/action", patchObject, 1)
+						bridge.patch("grouped_light", tempGroupID, patchObject)
 						.then(function() { callback(null, true); })
 						.catch(function(errors) { callback(errors, null); });
 					},
@@ -654,6 +584,14 @@ module.exports = function(RED)
 				}
 			}
 		}
+
+		//
+		// CLOSE NODE / DETACH FROM THE BRIDGE
+		this.on('close', function()
+		{
+			if(scope.unsubscribe) { scope.unsubscribe(); }
+		});
+
 	}
 
 	RED.nodes.registerType("hue-group", HueGroup);

@@ -1,0 +1,274 @@
+[
+    {
+        "id": "a71f3c58d0e94b26",
+        "type": "tab",
+        "label": "Hue Speaker (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Speaker»"
+    },
+    {
+        "id": "c1a4e07b6d3f8215",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "info": "Πατήστε τον κόμβο «Hue Ηχείο» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και ένα ηχείο. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΜόλις ο κόμβος συνδεθεί με το bridge σας και το ηχείο και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος μπορεί να λαμβάνει και να εκτελεί τις εντολές σας. Ο κόμβος «Hue Ηχείο» εκπέμπει επιπλέον αυτόματα ένα μήνυμα κάθε φορά που το ηχείο ξεκινά ή σταματά έναν ήχο. Την ενημερωμένη κατάσταση και όλες τις πληροφορίες της τη λαμβάνετε στο μήνυμα που εκπέμπεται.\n\nΠοιους ήχους γνωρίζει πραγματικά η συσκευή σας αναγράφεται στο msg.info.sounds. Λάβετε υπόψη ότι το bridge αναφέρει τον ήχο που παίχτηκε τελευταίος και τον μηδενίζει αρκετά μετά το τέλος της αναπαραγωγής.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία)."
+    },
+    {
+        "id": "d2b5f18c7e4a9306",
+        "type": "debug",
+        "z": "a71f3c58d0e94b26",
+        "name": "Πληροφορίες",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3c6028d8f5b0417",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "x": 120,
+        "y": 120,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i4d7139e90a6c1528",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Κατάσταση",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "c6f935b12c8e3740",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Χτύπημα του κουδουνιού",
+        "x": 120,
+        "y": 220,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "i7a046c23d9f4851a",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Κλασικό κουδούνι",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":\"ding_dong_classic\"}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell"
+    },
+    {
+        "id": "i8b157d34ea05962b",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Κουδούνι στο 50 % της έντασης",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"chime\":{\"sound\":\"westminster_classic\",\"volume\":50}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-bell-o"
+    },
+    {
+        "id": "c9c268e45fb16a73",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Χρήση ως σειρήνα",
+        "x": 120,
+        "y": 360,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "iad379f56a0c27b84",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Συναγερμός για 10 δευτερόλεπτα",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":{\"sound\":\"siren\",\"volume\":100,\"duration\":10}}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-exclamation-triangle"
+    },
+    {
+        "id": "ibe48a067b1d38c95",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Διακοπή του συναγερμού",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"alarm\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-stop"
+    },
+    {
+        "id": "ccf59b178c2e49a6",
+        "type": "comment",
+        "z": "a71f3c58d0e94b26",
+        "name": "Σίγαση του ηχείου",
+        "x": 120,
+        "y": 500,
+        "wires": [],
+        "info": ""
+    },
+    {
+        "id": "id6a0c289d3f5ab07",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Σίγαση",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":true}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-off"
+    },
+    {
+        "id": "ie7b1d39ae406bc18",
+        "type": "inject",
+        "z": "a71f3c58d0e94b26",
+        "name": "Κατάργηση σίγασης",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "s5e824af01b7d2639"
+            ]
+        ],
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"mute\":false}",
+        "payloadType": "json",
+        "icon": "font-awesome/fa-volume-up"
+    },
+    {
+        "id": "s5e824af01b7d2639",
+        "type": "hue-speaker",
+        "z": "a71f3c58d0e94b26",
+        "name": "",
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "d2b5f18c7e4a9306"
+            ]
+        ],
+        "skipevents": false,
+        "initevents": false
+    }
+]

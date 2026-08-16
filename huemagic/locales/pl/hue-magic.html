@@ -1,0 +1,68 @@
+<script type="text/markdown" data-help-name="hue-magic">
+Węzeł „Hue Magic” stosuje złożone i własne animacje do świateł oraz grup.
+
+### Konfiguracja
+
+Najpierw nadaj węzłowi nazwę, aby jednoznacznie rozpoznawać swoją animację w interfejsie Node-RED. Następnie masz do wyboru opcje „Pętla” i „Przywróć”. Wybierz opcję pętli, jeśli chcesz, aby animacja działała na świetle lub grupie bez końca, dopóki nie zatrzymasz jej ręcznie. Jeśli po zakończeniu animacji chcesz przywrócić poprzedni stan zasobu docelowego (światła lub grupy), zaznacz opcję „Przywróć”. W przeciwnym razie na zasobie pozostanie ostatnia klatka animacji.
+
+Poniżej możesz wybrać jedną z gotowych animacji HueMagic. Kliknij wybraną animację, aby ją ustawić.
+
+### Uruchamianie / zatrzymywanie animacji
+
+Aby uruchomić lub zatrzymać animację, przekaż do węzła obiekt o następującej zawartości:
+
+: payload (boolean): `true` uruchamia animację, `false` ją zatrzymuje
+
+### Własne animacje
+
+Jeśli przekażesz do węzła własną animację, wybrana wcześniej animacja predefiniowana (o ile jest ustawiona) zostanie tymczasowo zastąpiona Twoją. Własne animacje HueMagic to sekwencja poleceń zebranych w tablicy. Każdy element tablicy tworzy krok, przy czym krok może się składać z kilku klatek (efektów przejścia).
+
+Utwórz tablicę (`array`) z poszczególnymi krokami animacji w postaci obiektów i przekaż ją do węzła HueMagic w `msg.payload.steps`.
+
+: delay (int): Liczba milisekund oczekiwania do wykonania tego kroku
+: animation (object): Obiekt zawiera akcję lub akcje do wykonania w tym kroku. Parametry są takie same jak w węzłach „Hue Światło” i „Hue Grupa”
+
+### Przykład własnej animacji
+
+Ten przykład pokazuje, jak może wyglądać prosta animacja. W pierwszym kroku odczekiwane jest opóźnienie 500 milisekund. Następnie kolor światła powoli zmienia się na czerwony w ciągu jednej sekundy. Gdy światło jest już całkowicie czerwone, wykonywany jest drugi krok, również z opóźnieniem 500 milisekund. Na koniec kolor zmienia się na niebieski.
+
+Jeśli ustawisz animację w pętli, proces powtarza się bez końca, dopóki nie zatrzymasz animacji ręcznie albo nie wdrożysz węzła ponownie.
+
+Przekaż w `msg.payload` następujący obiekt, aby odtworzyć przykładową animację.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
+            }
+        ]
+    }
+
+### Polecenia specjalne
+
+Czasem warto odtwarzać animację w losowej kolejności, np. aby realistyczniej naśladować ogień. Aby odtwarzać poszczególne kroki losowo, przekaż w `msg.payload.specials` następujące polecenie:
+
+: randomOrder (boolean | any): `true` włącza losowe odtwarzanie poszczególnych kroków animacji
+
+### Wskazówki i uwagi
+
+Ten węzeł nie wysyła komunikatów stanu. Jeśli chcesz animować kilka świateł jednocześnie tą samą animacją, połącz wyjście węzła z grupą, a nie z pojedynczymi światłami. Podglądy gotowych animacji są symulacjami i mogą się nieznacznie różnić (czasy, kolory) od rzeczywistej animacji na zasobie.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

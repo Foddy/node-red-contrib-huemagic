@@ -1,8 +1,6 @@
 {
-	"hue-scene":
-	{
-		"config":
-		{
+	"hue-scene": {
+		"config": {
 			"name": "Name",
 			"input-name": "Name der Szene",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
@@ -14,10 +12,10 @@
 			"group": "Gruppe",
 			"group-none-found": "Keine Gruppen gefunden!",
 			"group-searching": "Suche nach Gruppen…",
-			"groups-all": "Alle Gruppen / Lichter"
+			"groups-all": "Alle Gruppen / Lichter",
+			"bridge": "Bridge"
 		},
-		"node":
-		{
+		"node": {
 			"title": "Hue Szene",
 			"not-configured": "nicht konfiguriert",
 			"recalled": "Szene wiederhergestellt",
@@ -26,7 +24,9 @@
 			"input": "aktiviere Szene",
 			"output": "Zielgruppe(n)",
 			"command": "führt Befehl aus…",
-			"statusmsg": "Szene wird wiederhergestellt…"
+			"statusmsg": "Szene wird wiederhergestellt…",
+			"error-not-available": "Die Szene ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
+			"error-invalid-brightness": "Ungültige Helligkeitsangabe. Es sind nur 0 - 100 Prozent erlaubt."
 		}
 	}
 }

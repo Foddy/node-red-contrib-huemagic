@@ -1,0 +1,69 @@
+<script type="text/markdown" data-help-name="hue-temperature">
+Węzeł „Hue Temperatura” odczytuje i zgłasza bieżącą temperaturę otoczenia z odpowiedniego czujnika podłączonego do bridge.
+
+### Konfiguracja
+
+Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć wszystkie dostępne czujniki. Jeśli znasz już identyfikator czujnika, możesz go też wpisać ręcznie. Możesz nadać czujnikowi własną nazwę wewnętrzną albo zachować nazwę domyślną. Opcjonalnie możesz wyłączyć wszystkie automatyczne komunikaty stanu tego węzła ustawieniem „Pomijaj komunikaty węzła”. Węzeł przestanie wtedy wysyłać aktualizacje urządzenia. Możesz też zdecydować, aby komunikat inicjalizacji węzła nie był pomijany przy starcie Node-RED. Po włączeniu tego ustawienia po każdym wdrożeniu otrzymasz komunikat stanu wybranego czujnika. Jeśli wolisz, aby węzeł milczał, dopóki czegoś do niego nie wyślesz, włącz „Zgłaszaj tylko po poleceniu”. Węzeł zignoruje wtedy zmiany z aplikacji lub z przełącznika i odpowie wyłącznie na Twoje polecenia.
+
+Czujniki ruchu montuje się zwykle w rogu pomieszczenia i przez własną elektronikę często mierzą nieco za wysoką temperaturę. Ustawieniem „Korekta” możesz skalibrować czujnik bez okrężnych dróg: wpisana tu wartość (np. `-1.5`) jest dodawana do każdego pomiaru, zanim węzeł go zwróci. Korekta obowiązuje jednocześnie dla wszystkich jednostek temperatury.
+
+Jeśli nie wybierzesz czujnika i użyjesz konfiguracji węzła w ten sposób, węzeł działa w tzw. „trybie uniwersalnym”. W tym trybie węzeł odbiera i wysyła wszystkie komunikaty stanu tego samego typu. Ustawienia w trybie uniwersalnym możesz też zastosować do konkretnego czujnika, przekazując jego identyfikator jako ciąg znaków w `msg.topic` razem z ustawieniami.
+
+### Odczyt stanu
+
+Zwraca bieżący stan czujnika, gdy tylko do węzła zostanie przekazany obiekt `msg.payload` o następującej zawartości. Możesz też nacisnąć przycisk w interfejsie Node-RED, bez wcześniejszego wysyłania komunikatu do węzła.
+
+: status (boolean): Zwraca bieżący stan czujnika
+
+### Włączanie / wyłączanie czujnika
+
+W razie potrzeby czujnik można włączać i wyłączać zdalnie. Wyłączony czujnik nie rejestruje już zmian temperatury i w związku z tym ich nie zgłasza. Przekaż w tym celu obiekt o następującej zawartości:
+
+: payload (boolean): `true` włącza czujnik, `false` go wyłącza
+
+### Komunikaty stanu węzła
+
+Gdy tylko czujnik zarejestruje zmianę temperatury, węzeł zwraca następujący komunikat stanu:
+
+#### Obiekt stanu w `msg.payload`
+
+: active (boolean): Wskazuje, czy czujnik jest włączony, czy wyłączony
+: reachable (boolean | string): `true`, jeśli czujnik jest połączony z bridge, `unknown`, jeśli stan połączenia jest inny
+: connectionStatus (string): Bieżący stan połączenia z bridge w postaci ciągu znaków. Może przyjmować wartości `connected`, `disconnected`, `connectivity_issue` lub `unidirectional_incoming`
+: celsius (float): Wskazuje bieżącą temperaturę otoczenia w °C (stopnie Celsjusza)
+: fahrenheit (float): Wskazuje bieżącą temperaturę otoczenia w °F (stopnie Fahrenheita)
+: temperatureIs (string): Opisuje bieżącą temperaturę wartościami `very cold`, `cold`, `slightly cold`, `comfortable`, `slightly warm`, `warm`, `hot` lub `very hot`
+: deviceValue (float): Pierwotna wartość temperatury z czujnika
+: updated (string): Czas ostatniej aktualizacji zasobu przez HueMagic (ISO 8601)
+
+#### Informacje o czujniku w `msg.info`
+
+: id (string): Wskazuje nowy identyfikator czujnika
+: idV1 (string | boolean): Wskazuje stary identyfikator czujnika
+: uniqueId (string): Unikatowy identyfikator czujnika
+: deviceId (string): Unikatowy identyfikator urządzenia
+: name (string): Aktualnie ustawiona nazwa czujnika
+: type (string): Typ czujnika (zawsze `temperature`)
+: softwareVersion (string): Bieżące oprogramowanie układowe czujnika
+: battery (float): Bieżący poziom naładowania baterii czujnika
+: batteryState (string): Bieżący stan poziomu baterii. Może przyjmować wartości `normal`, `low` lub `critical`
+: model (object): Zawiera informacje o modelu czujnika w polach `id`, `manufacturer`, `name`, `type` i `certified`
+
+#### Zmiany stanu w `msg.updated`
+
+Wymienia w postaci obiektu poszczególne parametry, które zmieniły się względem poprzedniego stanu czujnika. Jeśli nie zarejestrowano żadnych zmian, obiekt jest pusty.
+
+#### Poprzedni stan czujnika w `msg.lastState`
+
+Zawiera pełny obiekt stanu (patrz wartości wyjściowe powyżej) sprzed ostatniej zarejestrowanej zmiany. Jeśli HueMagic nie zarejestrował jeszcze poprzedniego stanu, zwracane jest `false`.
+
+#### Ostatnie polecenie w `msg.command` (opcjonalnie)
+
+Jeśli stan węzła zmienił się w wyniku określonego polecenia, wysyłane jest również całe wykonane polecenie. W przeciwnym razie węzeł nie wysyła tego obiektu.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

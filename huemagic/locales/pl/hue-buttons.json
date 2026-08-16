@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"input-name": "Nazwa przycisku",
+			"searching": "Wyszukiwanie Hue Buttons…",
+			"none-found": "Nie znaleziono żadnego Hue Button!",
+			"button": "Przycisk"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Przyciski",
+			"waiting": "oczekiwanie…",
+			"button-on": "On",
+			"action-pressed": "naciśnięty",
+			"action-holded": "przytrzymany",
+			"action-shortreleased": "krótko zwolniony",
+			"action-longreleased": "zwolniony po przytrzymaniu",
+			"action-repeated": "powtórzony",
+			"action-doublepressed": "naciśnięty dwukrotnie",
+			"dial-clockwise": "Pokrętło ↻ __degrees__°",
+			"dial-counterclockwise": "Pokrętło ↺ __degrees__°",
+			"button-status": "Przycisk nr __button__ (__action__)",
+			"input": "zapytanie o stan",
+			"output": "naciśnięty przycisk",
+			"error-no-id": "Podaj prawidłowy identyfikator: przełącznik.",
+			"error-not-available": "Przełącznik nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy.",
+			"error-no-switchmode": "To urządzenie nie ma konfigurowalnego trybu przełącznika.",
+			"error-invalid-switchmode": "Nieprawidłowy tryb przełącznika. To urządzenie obsługuje: __modes__"
+		}
+	}
+}

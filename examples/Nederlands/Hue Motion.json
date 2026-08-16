@@ -1,0 +1,150 @@
+[
+    {
+        "id": "073fb607f8039ef2",
+        "type": "tab",
+        "label": "Hue Motion (example)",
+        "disabled": false,
+        "info": "Voorbeeld van het gebruik van de node \"Hue Motion\""
+    },
+    {
+        "id": "3ba8c03bba2a097d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "EERSTE STAPPEN (dubbelklik hier)",
+        "info": "Klik op de node \"Hue Beweging\" en kies uit de lijst zowel uw bridge als een sensor. Hebt u nog geen bridge ingesteld, dan wordt u gevraagd er eerst een in te stellen voordat u de configuratie van de node kunt afronden.\n\nZodra de node met uw bridge en de sensor is verbonden en u de wijzigingen in Node-RED hebt gedeployed, kan de node uw commando's ontvangen en uitvoeren. De node \"Hue Beweging\" geeft daarnaast telkens automatisch een bericht uit zodra de status van de sensor op de bridge is bijgewerkt (er is een beweging geregistreerd). De bijgewerkte status en alle informatie ontvangt u in het uitgegeven bericht.\n\nWilt u meer informatie over deze node, de mogelijke commando's en uitvoerwaarden, klik er dan één keer op in uw flow en ga naar het boekpictogram van Node-RED (rechtsboven).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "bce07ce0ad34cdf5",
+        "type": "debug",
+        "z": "073fb607f8039ef2",
+        "name": "Informatie",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "23deb12245fdbc7c",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Huidige status opvragen",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0b68e8b6eeeb0ed5",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Status",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "fe83e4d605d6b41d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Apparaat aan-/uitzetten",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "87fc103f2b958513",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Aanzetten",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e2668753efecb01a",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Uitzetten",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "1a1e1a628faa15dc",
+        "type": "hue-motion",
+        "z": "073fb607f8039ef2",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "bce07ce0ad34cdf5"
+            ]
+        ]
+    }
+]

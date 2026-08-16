@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignora i messaggi del nodo",
+			"sendinitevents-node": "Non sopprimere l'evento di inizializzazione",
+			"onlycommands-node": "Segnala solo dopo un comando",
+			"unknown-error": "Qualcosa è andato storto. Riprovi.",
+			"bridge": "Bridge",
+			"universalevents": "Eventi universali",
+			"universalevents-node": "Riceve tutti i messaggi dagli altri nodi dello stesso tipo (solo in modalità universale)",
+			"input-name": "Nome del pulsante",
+			"searching": "Ricerca di Hue Buttons…",
+			"none-found": "Nessun Hue Button trovato!",
+			"button": "Pulsante"
+		},
+		"node": {
+			"not-configured": "non configurato",
+			"universal": "modalità universale",
+			"command": "esecuzione del comando…",
+			"statusmsg": "Stato interrogato correttamente…",
+			"title": "Hue Pulsanti",
+			"waiting": "in attesa…",
+			"button-on": "On",
+			"action-pressed": "premuto",
+			"action-holded": "tenuto premuto",
+			"action-shortreleased": "rilasciato brevemente",
+			"action-longreleased": "rilasciato dopo pressione prolungata",
+			"action-repeated": "ripetuto",
+			"action-doublepressed": "premuto due volte",
+			"dial-clockwise": "Rotella ↻ __degrees__°",
+			"dial-counterclockwise": "Rotella ↺ __degrees__°",
+			"button-status": "Pulsante n. __button__ (__action__)",
+			"input": "richiesta di stato",
+			"output": "pulsante premuto",
+			"error-no-id": "Indichi un ID interruttore valido.",
+			"error-not-available": "L'interruttore non è ancora disponibile. Attenda che HueMagic abbia stabilito la connessione con il bridge oppure verifichi se l'ID della risorsa indicato nella configurazione è valido.",
+			"error-no-switchmode": "Questo dispositivo non ha una modalità interruttore configurabile.",
+			"error-invalid-switchmode": "Modalità interruttore non valida. Questo dispositivo supporta: __modes__"
+		}
+	}
+}

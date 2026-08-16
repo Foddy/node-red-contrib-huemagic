@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignorar as mensagens do nó",
+			"sendinitevents-node": "Não suprimir o evento de inicialização",
+			"onlycommands-node": "Comunicar apenas após um comando",
+			"unknown-error": "Algo correu mal. Tente novamente.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universais",
+			"universalevents-node": "Recebe todas as mensagens de outros nós do mesmo tipo (apenas no modo universal)",
+			"input-name": "Nome do botão",
+			"searching": "A procurar Hue Buttons…",
+			"none-found": "Nenhum Hue Button encontrado!",
+			"button": "Botão"
+		},
+		"node": {
+			"not-configured": "não configurado",
+			"universal": "modo universal",
+			"command": "a executar comando…",
+			"statusmsg": "Estado consultado com sucesso…",
+			"title": "Hue Botões",
+			"waiting": "a aguardar…",
+			"button-on": "On",
+			"action-pressed": "premido",
+			"action-holded": "mantido premido",
+			"action-shortreleased": "solto brevemente",
+			"action-longreleased": "solto após ser mantido",
+			"action-repeated": "repetido",
+			"action-doublepressed": "premido duas vezes",
+			"dial-clockwise": "Roda ↻ __degrees__°",
+			"dial-counterclockwise": "Roda ↺ __degrees__°",
+			"button-status": "Botão n.º __button__ (__action__)",
+			"input": "consulta de estado",
+			"output": "botão premido",
+			"error-no-id": "Indique um ID de interruptor válido.",
+			"error-not-available": "O interruptor ainda não está disponível. Aguarde até que o HueMagic tenha estabelecido a ligação com o bridge ou verifique se o ID do recurso indicado na configuração é válido.",
+			"error-no-switchmode": "Este dispositivo não tem um modo de interruptor configurável.",
+			"error-invalid-switchmode": "Modo de interruptor inválido. Este dispositivo suporta: __modes__"
+		}
+	}
+}

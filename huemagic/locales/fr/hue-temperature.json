@@ -1,0 +1,33 @@
+{
+	"hue-temperature": {
+		"config": {
+			"name": "Nom",
+			"skipevents-node": "Ignorer les messages du nœud",
+			"sendinitevents-node": "Ne pas supprimer l'événement d'initialisation",
+			"onlycommands-node": "Signaler uniquement après une commande",
+			"unknown-error": "Une erreur est survenue. Veuillez réessayer.",
+			"bridge": "Bridge",
+			"universalevents": "Événements universels",
+			"universalevents-node": "Reçoit tous les messages des autres nœuds du même type (uniquement en mode universel)",
+			"input-name": "Nom du capteur",
+			"searching": "recherche de capteurs de température…",
+			"none-found": "Aucun capteur de température trouvé.",
+			"sensor": "Capteur",
+			"offset": "Correction"
+		},
+		"node": {
+			"not-configured": "non configuré",
+			"init": "initialisation…",
+			"not-reachable": "non joignable",
+			"universal": "mode universel",
+			"command": "exécution de la commande…",
+			"deactivated": "désactivé",
+			"statusmsg": "Statut interrogé avec succès…",
+			"title": "Hue Température",
+			"input": "interrogation du statut",
+			"output": "température (modifiée)",
+			"error-no-id": "Veuillez indiquer un ID de capteur valide.",
+			"error-not-available": "Le capteur n'est pas encore disponible. Veuillez attendre que HueMagic ait établi la connexion avec le bridge ou vérifiez si l'ID de ressource indiqué dans la configuration est valide."
+		}
+	}
+}

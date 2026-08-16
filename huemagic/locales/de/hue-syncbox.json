@@ -1,0 +1,30 @@
+{
+	"hue-syncbox": {
+		"config": {
+			"name": "Name",
+			"input-name": "Name der Sync Box",
+			"syncbox": "Sync Box",
+			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
+			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"onlycommands-node": "Nur nach einem Befehl melden"
+		},
+		"node": {
+			"title": "Hue Sync Box",
+			"not-configured": "nicht konfiguriert",
+			"connecting": "verbinde…",
+			"powersave": "ausgeschaltet",
+			"passthrough": "Durchschleifen",
+			"syncing": "__mode__ (__intensity__)",
+			"input": "Sync Box steuern",
+			"output": "Sync Box",
+			"command": "führt Befehl aus…",
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"error-not-available": "Die Sync Box ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung aufgebaut hat.",
+			"error-invalid-mode": "Ungültiger Modus. Erlaubt sind: __modes__",
+			"error-invalid-intensity": "Ungültige Intensität. Erlaubt sind: __intensities__",
+			"error-invalid-brightness": "Ungültige Helligkeitsangabe. Es sind nur 0 - 100 Prozent erlaubt.",
+			"error-invalid-brightness-level": "Ungültige Helligkeitsangabe. Es sind nur Werte von 0 - 200 erlaubt.",
+			"error-invalid-input": "Ungültiger HDMI-Eingang. Erlaubt sind nur input1 - input4."
+		}
+	}
+}

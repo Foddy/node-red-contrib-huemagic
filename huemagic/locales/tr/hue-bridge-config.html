@@ -1,0 +1,31 @@
+<script type="text/markdown" data-help-name="hue-bridge">
+Bir Philips Hue Bridge'e bağlanır.
+
+### Ad
+
+Bridge'e dahili olarak farklı bir ad verebilir veya varsayılan adı koruyabilirsiniz.
+
+### Bridge IP adresi ve bağlantı noktası
+
+Hue Bridge IP adresini elle girin veya yerel ağdaki tüm bridge'leri listelemek için düğmeye basın (Hue Bridge üzerinde statik IP yapılandırması önerilir). İsteğe bağlı olarak IP adresine iki nokta üst üste ekleyerek bridge için farklı bir bağlantı noktası da tanımlayabilirsiniz.
+
+### API anahtarı
+
+Hue Bridge API anahtarını elle girin veya yeni bir anahtar oluşturmak için düğmeye basın. Yeni bir anahtar oluşturmak istiyorsanız, işlemi tamamlamak için 20 saniye içinde bridge'in fiziksel düğmesine basmanız gerekir.
+
+### İş parçacığı
+
+«İş parçacığı» değeri, HueMagic'in bridge'e aynı anda gönderebileceği paralel komut sayısını belirler. Philips Hue Bridge'in resmî belgelerine göre saniyede 10'dan fazla komut gönderilmemelidir; aksi hâlde bridge istekleri yeterince hızlı işleyemeyip hata verebilir.
+
+Aynı anda burada ayarlanan değerden fazla komut gönderilirse, HueMagic komutları aktarım yeniden mümkün olduğunda sırayla yürütür.
+
+HueMagic dışından da bridge'e komut gönderiyorsanız, Philips Hue'nun önerdiği saniye başına komut sayısına uymak için bu değeri 10'un altına (ör. 4 ile 7 arası) ayarlayın.
+
+### Otomatik ürün yazılımı güncellemeleri
+
+HueMagic düzenli aralıklarla Philips Hue ürün yazılımı güncellemelerini denetler ve mevcut olduklarında otomatik olarak kurar. İlgili onay kutusunu işaretleyerek bu davranışı devre dışı bırakabilirsiniz.
+
+### Bildirimleri devre dışı bırakma
+
+Bu ayarı etkinleştirirseniz, bu bridge'e bağlı tüm düğümler artık otomatik durum mesajı almaz.
+</script>

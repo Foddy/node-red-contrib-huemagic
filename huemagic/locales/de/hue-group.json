@@ -1,22 +1,23 @@
 {
-	"hue-group":
-	{
-		"config":
-		{
+	"hue-group": {
+		"config": {
 			"name": "Name",
 			"input-name": "Name der Gruppe",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
 			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"onlycommands-node": "Nur nach einem Befehl melden",
 			"searching": "Suche nach Gruppen…",
 			"none-found": "Keine Gruppen gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
 			"group": "Gruppe",
 			"colornamer": "Farbnamen",
 			"colornamer-info": "Aktiviere Farbnamen",
-			"all": "Alle Gruppen / Lichter"
+			"all": "Alle Gruppen / Lichter",
+			"universalevents": "Universelle Ereignisse",
+			"universalevents-node": "Empfängt alle Nachrichten von anderen Nodes des gleichen Typs (nur im Universalmodus)",
+			"bridge": "Bridge"
 		},
-		"node":
-		{
+		"node": {
 			"title": "Hue Gruppe",
 			"not-configured": "nicht konfiguriert",
 			"init": "initialisiere…",
@@ -33,7 +34,13 @@
 			"input": "Ein- / Ausschalten",
 			"output": "Status",
 			"command": "führt Befehl aus…",
-			"statusmsg": "Status erfolgreich abgefragt…"
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"error-not-available": "Die Gruppe ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
+			"error-invalid-brightness": "Ungültige Helligkeitsangabe. Es sind nur 0 - 100 Prozent erlaubt.",
+			"error-invalid-brightness-level": "Ungültige Helligkeitsangabe. Es sind nur Werte von 0 - 254 erlaubt.",
+			"error-invalid-increment": "Ungültige Angabe für incrementBrightness. Es sind nur -100% bis 100% erlaubt.",
+			"error-invalid-decrement": "Ungültige Angabe für decrementBrightness. Es sind nur -100% bis 100% erlaubt.",
+			"error-no-colorloop": "Der Colorloop-Effekt steht für diese Gruppe nicht zur Verfügung."
 		}
 	}
 }

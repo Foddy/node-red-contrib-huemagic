@@ -1,0 +1,68 @@
+<script type="text/markdown" data-help-name="hue-magic">
+De node "Hue Magic" kan complexe en eigen animaties op lampen en groepen toepassen.
+
+### Instellen
+
+Geef de node eerst een naam zodat u uw animatie in de Node-RED-interface duidelijk kunt herkennen. Daarna hebt u de keuze tussen de opties "Herhalen" en "Herstellen". Kies de herhaaloptie als u wilt dat uw animatie eindeloos op een lamp of groep loopt totdat u haar handmatig stopt. Wilt u de vorige toestand van de doelbron (lamp / groep) na afloop van de animatie herstellen, vink dan de optie "Herstellen" aan. Anders blijft het laatste beeld van de animatie op de betreffende bron staan.
+
+Hieronder kunt u kiezen uit kant-en-klare animaties van HueMagic. Klik op de gewenste animatie om die in te stellen.
+
+### Animatie starten / stoppen
+
+Geef de node een object met de volgende inhoud mee om een animatie af te spelen of te stoppen:
+
+: payload (boolean): `true` start de animatie, `false` stopt de animatie
+
+### Eigen animaties
+
+Geeft u een eigen animatie aan de node door, dan wordt de vooraf geselecteerde animatie (indien ingesteld) tijdelijk door de uwe vervangen. Eigen HueMagic-animaties zijn een reeks commando's die in een array zijn samengevoegd. Elk array-element vormt een stap, waarbij een stap ook uit meerdere beelden (overgangseffecten) kan bestaan.
+
+Maak een `array` met de afzonderlijke animatiestappen in de vorm van een object en geef die aan de HueMagic-node door onder `msg.payload.steps`.
+
+: delay (int): Aantal milliseconden dat wordt gewacht tot deze stap wordt uitgevoerd
+: animation (object): Het object bevat de actie(s) die in deze stap moeten worden uitgevoerd. Dezelfde parameters als bij de nodes "Hue Lamp" en "Hue Groep"
+
+### Voorbeeld van een eigen animatie
+
+Dit voorbeeld laat zien hoe een eenvoudige animatie eruit kan zien. In de eerste stap wordt de vertraging van 500 milliseconden afgewacht. Daarna verandert de kleur van de lamp in de loop van één seconde langzaam naar rood. Zodra de lamp volledig rood is, wordt de tweede stap uitgevoerd, die eveneens een vertraging van 500 milliseconden heeft. Ten slotte verandert de kleur naar blauw.
+
+Hebt u de animatie op herhalen gezet, dan wordt dit proces eindeloos herhaald totdat u de animatie handmatig stopt of de node opnieuw deployt.
+
+Geef het volgende object in `msg.payload` mee om de voorbeeldanimatie af te spelen.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
+            }
+        ]
+    }
+
+### Speciale commando's
+
+Soms is het zinvol om een animatie ongeordend af te spelen, bijv. als vuur realistischer moet worden nagebootst. Om de afzonderlijke stappen willekeurig af te spelen, kunt u het volgende commando in `msg.payload.specials` meegeven:
+
+: randomOrder (boolean | any): `true` activeert het willekeurig afspelen van de afzonderlijke animatiestappen
+
+### Tips en aanwijzingen
+
+Deze node geeft geen statusberichten uit. Verbind de uitgang van de node met een groep in plaats van met afzonderlijke lampen als u meerdere lampen tegelijk met dezelfde animatie wilt aansturen. De voorbeelden van de kant-en-klare animaties zijn simulaties en kunnen licht afwijken (timing, kleuren) van de werkelijke animatie op een bron.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

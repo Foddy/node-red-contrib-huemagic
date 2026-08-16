@@ -1,0 +1,46 @@
+{
+	"hue-group": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignora i messaggi del nodo",
+			"sendinitevents-node": "Non sopprimere l'evento di inizializzazione",
+			"onlycommands-node": "Segnala solo dopo un comando",
+			"unknown-error": "Qualcosa è andato storto. Riprovi.",
+			"bridge": "Bridge",
+			"universalevents": "Eventi universali",
+			"universalevents-node": "Riceve tutti i messaggi dagli altri nodi dello stesso tipo (solo in modalità universale)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Attiva la denominazione dei colori",
+			"input-name": "Nome del gruppo",
+			"searching": "Ricerca di gruppi…",
+			"none-found": "Nessun gruppo trovato!",
+			"group": "Gruppo",
+			"all": "Tutti i gruppi / le luci"
+		},
+		"node": {
+			"not-configured": "non configurato",
+			"init": "inizializzazione…",
+			"universal": "modalità universale",
+			"command": "esecuzione del comando…",
+			"statusmsg": "Stato interrogato correttamente…",
+			"title": "Hue Gruppo",
+			"brightness": " (__percent__ %)",
+			"all-on": "tutte le luci accese",
+			"all-off": "tutte le luci spente",
+			"some-on": "alcune luci accese",
+			"turned-on": "acceso",
+			"error-input": "errore di immissione",
+			"error-no-id": "Nessun ID gruppo indicato.",
+			"error-invalid-sat": "Impostazione di saturazione non valida. Sono consentiti solo valori da 0 a 254.",
+			"error-invalid-temp": "Temperatura di colore non valida. Sono consentiti solo valori da 153 a 500.",
+			"input": "accendi / spegni",
+			"output": "stato",
+			"error-not-available": "Il gruppo non è ancora disponibile. Attenda che HueMagic abbia stabilito la connessione con il bridge oppure verifichi se l'ID della risorsa indicato nella configurazione è valido.",
+			"error-invalid-brightness": "Impostazione di luminosità non valida. Sono consentiti solo valori da 0 a 100 percento.",
+			"error-invalid-brightness-level": "Impostazione di luminosità non valida. Sono consentiti solo valori da 0 a 254.",
+			"error-invalid-increment": "Impostazione incrementBrightness non valida. Sono consentiti solo valori da -100 % a 100 %.",
+			"error-invalid-decrement": "Impostazione decrementBrightness non valida. Sono consentiti solo valori da -100 % a 100 %.",
+			"error-no-colorloop": "L'effetto colorloop non è disponibile per questo gruppo."
+		}
+	}
+}

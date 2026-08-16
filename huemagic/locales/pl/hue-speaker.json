@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"input-name": "Nazwa głośnika",
+			"searching": "Wyszukiwanie głośników…",
+			"none-found": "Nie znaleziono żadnego głośnika!",
+			"speaker": "Głośnik"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"not-reachable": "nieosiągalny",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Głośnik",
+			"silent": "cisza",
+			"muted": "wyciszony",
+			"playing-alarm": "alarm (__sound__)",
+			"playing-chime": "dzwonek (__sound__)",
+			"playing-alert": "ostrzeżenie (__sound__)",
+			"input": "odtwórz dźwięk / stan",
+			"output": "głośnik",
+			"error-no-id": "Podaj prawidłowy identyfikator: głośnik.",
+			"error-not-available": "Głośnik nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy.",
+			"error-no-channel": "Ten głośnik nie ma dźwięku typu __channel__.",
+			"error-invalid-sound": "Nieprawidłowy dźwięk __channel__. Dozwolone są: __sounds__",
+			"error-invalid-volume": "Nieprawidłowe ustawienie głośności. Dozwolone są tylko wartości od 0 do 100."
+		}
+	}
+}

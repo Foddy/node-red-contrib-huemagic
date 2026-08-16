@@ -1,0 +1,150 @@
+[
+    {
+        "id": "073fb607f8039ef2",
+        "type": "tab",
+        "label": "Hue Motion (example)",
+        "disabled": false,
+        "info": "Exemple d'utilisation du nœud « Hue Motion »"
+    },
+    {
+        "id": "3ba8c03bba2a097d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "PREMIERS PAS (double-cliquez ici)",
+        "info": "Cliquez sur le nœud « Hue Mouvement » et sélectionnez dans la liste à la fois votre bridge et un capteur. Si vous n'avez pas encore configuré de bridge, il vous sera demandé d'en configurer un avant de pouvoir terminer la configuration du nœud.\n\nDès que le nœud est relié à votre bridge et le capteur et que vous avez déployé les modifications dans Node-RED, le nœud peut recevoir et exécuter vos commandes. Le nœud « Hue Mouvement » émet en outre automatiquement un message chaque fois que le statut du capteur sur le bridge est actualisé (un mouvement a été enregistré). Vous recevrez le statut actualisé et toutes ses informations dans le message émis.\n\nSi vous souhaitez obtenir davantage d'informations sur ce nœud, les commandes possibles et les valeurs de sortie, cliquez une fois dessus dans votre flux et accédez à l'icône du livre de Node-RED (coin supérieur droit).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "bce07ce0ad34cdf5",
+        "type": "debug",
+        "z": "073fb607f8039ef2",
+        "name": "Informations",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "23deb12245fdbc7c",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Interroger le statut actuel",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0b68e8b6eeeb0ed5",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Statut",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "fe83e4d605d6b41d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Allumer / éteindre l'appareil",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "87fc103f2b958513",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Allumer",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e2668753efecb01a",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Éteindre",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "1a1e1a628faa15dc",
+        "type": "hue-motion",
+        "z": "073fb607f8039ef2",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "bce07ce0ad34cdf5"
+            ]
+        ]
+    }
+]

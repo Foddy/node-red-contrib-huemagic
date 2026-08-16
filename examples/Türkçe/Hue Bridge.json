@@ -1,0 +1,256 @@
+[
+    {
+        "id": "bf04a073.be4428",
+        "type": "tab",
+        "label": "Hue Bridge (example)",
+        "disabled": false,
+        "info": "«Hue Bridge» düğümünün örnek kullanımı"
+    },
+    {
+        "id": "bacc56ae.a92d1",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "TouchLink",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"touchLink\":true}",
+        "payloadType": "json",
+        "x": 120,
+        "y": 260,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-hand-o-right"
+    },
+    {
+        "id": "effb4d48.e09bb8",
+        "type": "debug",
+        "z": "bf04a073.be4428",
+        "name": "Bilgi",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "ea4668e7.fac4f",
+        "type": "hue-bridge-node",
+        "z": "bf04a073.be4428",
+        "autoupdates": true,
+        "skipglobalevents": false,
+        "initevents": false,
+        "x": 550,
+        "y": 160,
+        "wires": [
+            [
+                "effb4d48.e09bb8"
+            ]
+        ]
+    },
+    {
+        "id": "15e5be4.550a0c2",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Bridge adını değiştir",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+                "vt": "json"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"settings\":{\"name\":\"HueMagic Bridge\"}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-toggle-on"
+    },
+    {
+        "id": "808fb3ba34d8d872",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Bridge ayarlarını değiştir",
+        "info": "",
+        "x": 130,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "6a2d7cbb05fc38a8",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Bridge düğmesine uzaktan bas",
+        "info": "",
+        "x": 140,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a1d6fdeca2c9c014",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Belirli bridge kaynaklarını getir",
+        "info": "",
+        "x": 150,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "5829dc7c634e6674",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Tüm ışıkları getir",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"light\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-light.svg"
+    },
+    {
+        "id": "09d15741c0c484b7",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Tüm hareket sensörlerini getir",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":\"motion\"}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red-contrib-huemagic/hue-motion.svg"
+    },
+    {
+        "id": "fec4a7abbeecac4b",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Tüm hareket sensörlerini ve ışıkları getir",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fetch\":[\"motion\", \"light\"]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 540,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "font-awesome/fa-clone"
+    },
+    {
+        "id": "35bf62bc11c94830",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "İLK ADIMLAR (çift tıklayın)",
+        "info": "«Hue Bridge» düğümüne tıklayın ve bridge'inizi seçin. Henüz bir bridge kurmadıysanız, düğümün yapılandırmasını tamamlayabilmeniz için önce bir bridge kurmanız istenir.\n\nDüğüm bridge'inize bağlandığında ve değişiklikleri Node-RED'de dağıttığınızda, düğümün durumu «connected» olarak değişmelidir. Düğüm bundan sonra komutlarınızı alıp yürütebilir. «Hue Bridge» düğümü ayrıca bridge üzerindeki belirli bir kaynağın durumu her güncellendiğinde otomatik olarak bir mesaj verir. Güncellenen durumu ve tüm bilgilerini yayınlanan mesajın «updated» özelliğinde bulursunuz.\n\nDüğümün güncel durumunu ayrıca istediğiniz zaman Node-RED arayüzünde, simgenin yanındaki düğüm düğmesine tıklayarak sorgulayabilirsiniz.\n\nBu düğüm, olası komutlar ve çıktı değerleri hakkında ayrıntılı bilgi almak isterseniz, akışınızda düğüme bir kez tıklayın ve Node-RED'in kitap simgesine gidin (sağ üst köşe).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "150fa3da0eea6bce",
+        "type": "comment",
+        "z": "bf04a073.be4428",
+        "name": "Güncel durumu sorgula",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "474d44e13140d4a8",
+        "type": "inject",
+        "z": "bf04a073.be4428",
+        "name": "Durum",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "ea4668e7.fac4f"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    }
+]

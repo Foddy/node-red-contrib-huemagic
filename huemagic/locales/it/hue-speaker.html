@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+Il nodo «Hue Altoparlante» può riprodurre i suoni di un campanello Hue Secure e utilizzarlo come sirena da interni.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutti gli altoparlanti disponibili. Se conosce già l'ID dell'altoparlante, può anche inserirlo qui manualmente. Può assegnare internamente un nuovo nome all'altoparlante oppure mantenere quello predefinito. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». Il nodo non emetterà più aggiornamenti del dispositivo. In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Attivando questa impostazione riceverà un messaggio di stato dell'altoparlante selezionato dopo ogni deploy. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+Se non seleziona alcun altoparlante e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo. Può anche applicare impostazioni in modalità universale a un altoparlante specifico trasmettendo il relativo ID come stringa in `msg.topic` insieme alle sue impostazioni.
+
+### Richiedere lo stato
+
+Emette lo stato attuale dell'altoparlante non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.
+
+: status (boolean): Restituisce lo stato attuale dell'altoparlante
+
+### Riprodurre un suono
+
+Un altoparlante conosce tre canali separati. `chime` è il suono del campanello, `alarm` è la sirena e `alert` è una breve notifica. I suoni effettivamente conosciuti da un dispositivo sono elencati in `msg.info.sounds`. Trasmetta i seguenti parametri in un oggetto `msg.payload`:
+
+: chime (string | object | boolean): Nome del suono del campanello; `false` lo interrompe di nuovo
+: alarm (string | object | boolean): Nome del suono della sirena; `false` lo interrompe di nuovo
+: alert (string | object | boolean): Nome del suono di notifica; `false` lo interrompe di nuovo
+: mute (boolean): `true` disattiva l'audio dell'altoparlante, `false` lo riattiva
+
+Al posto del semplice nome del suono può anche trasmettere un oggetto per controllare volume e durata:
+
+: sound (string): Nome del suono, ad es. `ding_dong_classic` o `siren`
+: volume (int): Volume in percentuale (0-100)
+: duration (float): Durata di riproduzione in secondi
+
+### Messaggi di stato del nodo
+
+Non appena l'altoparlante inizia o smette di riprodurre, il nodo restituisce il seguente messaggio di stato.
+
+> [!NOTE]
+> Il bridge segnala l'ultimo suono riprodotto e lo azzera solo molto dopo la fine della riproduzione, quindi questi valori sono leggermente in ritardo rispetto all'audio.
+
+#### Oggetto di stato in `msg.payload`
+
+: reachable (boolean | string): `true` se l'altoparlante è collegato al bridge, `unknown` se lo stato della connessione è diverso
+: connectionStatus (string): Lo stato attuale della connessione con il bridge sotto forma di stringa. Può contenere `connected`, `disconnected`, `connectivity_issue` o `unidirectional_incoming` come valore
+: playing (boolean): `true` mentre l'altoparlante riproduce un suono qualsiasi
+: chime (string | boolean): Nome del suono del campanello in riproduzione o `false`
+: alarm (string | boolean): Nome del suono della sirena in riproduzione o `false`
+: alert (string | boolean): Nome del suono di notifica in riproduzione o `false`
+: muted (boolean): Indica se l'audio dell'altoparlante è disattivato
+: updated (string): Momento dell'ultimo aggiornamento della risorsa da parte di HueMagic (ISO 8601)
+
+#### Informazioni sull'altoparlante in `msg.info`
+
+: id (string): Indica il nuovo ID dell'altoparlante
+: idV1 (string | boolean): Indica il vecchio ID dell'altoparlante
+: uniqueId (string): L'ID univoco dell'altoparlante
+: deviceId (string): L'ID univoco del dispositivo
+: name (string): Il nome attualmente assegnato all'altoparlante
+: type (string): Il tipo di dispositivo (sempre `speaker`)
+: softwareVersion (string): Il firmware attuale dell'altoparlante
+: battery (float | boolean): Il livello attuale della batteria dell'altoparlante, `false` se non è presente alcuna batteria
+: batteryState (string | boolean): Lo stato attuale del livello della batteria. Può contenere `normal`, `low` o `critical` come valore, `false` se non è presente alcuna batteria
+: sounds (object): Contiene i suoni conosciuti da questo dispositivo in `chime`, `alarm` e `alert`
+: model (object): Contiene le informazioni sul modello dell'altoparlante in `id`, `manufacturer`, `name`, `type` e `certified`
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato dell'altoparlante. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato dell'altoparlante in `msg.lastState`
+
+Contiene l'oggetto di stato completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica registrata. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

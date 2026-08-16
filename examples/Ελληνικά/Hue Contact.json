@@ -1,0 +1,150 @@
+[
+    {
+        "id": "b41c7d2ea9f30c15",
+        "type": "tab",
+        "label": "Hue Contact (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Contact»"
+    },
+    {
+        "id": "6d2f0b9a4c8e1573",
+        "type": "comment",
+        "z": "b41c7d2ea9f30c15",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "info": "Πατήστε τον κόμβο «Hue Επαφή» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και έναν αισθητήρα. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΜόλις ο κόμβος συνδεθεί με το bridge σας και τον αισθητήρα και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος μπορεί να λαμβάνει και να εκτελεί τις εντολές σας. Ο κόμβος «Hue Επαφή» εκπέμπει επιπλέον αυτόματα ένα μήνυμα κάθε φορά που η επαφή του αισθητήρα στο bridge ανοίγει ή κλείνει. Την ενημερωμένη κατάσταση και όλες τις πληροφορίες της τη λαμβάνετε στο μήνυμα που εκπέμπεται.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "0a7e35c1bd694f28",
+        "type": "debug",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Πληροφορίες",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "3c8b17d0e5a94261",
+        "type": "comment",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f59a2c7b8d031e46",
+        "type": "inject",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Κατάσταση",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "9e4d6a13f70c25b8"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "7b3e09fca1d54628",
+        "type": "comment",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Άναμμα / σβήσιμο της συσκευής",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "2f6c8b510ae9d374",
+        "type": "inject",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Άναμμα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "9e4d6a13f70c25b8"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "8d51042fbe37c9a6",
+        "type": "inject",
+        "z": "b41c7d2ea9f30c15",
+        "name": "Σβήσιμο",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "9e4d6a13f70c25b8"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "9e4d6a13f70c25b8",
+        "type": "hue-contact",
+        "z": "b41c7d2ea9f30c15",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "0a7e35c1bd694f28"
+            ]
+        ]
+    }
+]

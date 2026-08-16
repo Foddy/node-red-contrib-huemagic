@@ -1,0 +1,150 @@
+[
+    {
+        "id": "7bca3b4f.9070fc",
+        "type": "tab",
+        "label": "Hue Rules (example)",
+        "disabled": false,
+        "info": "Esempio di utilizzo del nodo «Hue Rules»"
+    },
+    {
+        "id": "a6ec7e31e3edf26b",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "PRIMI PASSI (fai doppio clic)",
+        "info": "Faccia clic sul nodo «Hue Regola» e selezioni dall'elenco sia il suo bridge sia una regola. Se non ha ancora configurato un bridge, le verrà chiesto di configurarne uno prima di poter completare la configurazione del nodo.\n\nNon appena il nodo è collegato al suo bridge e ha eseguito il deploy delle modifiche in Node-RED, il nodo può ricevere ed eseguire i suoi comandi. Riceverà lo stato aggiornato e tutte le informazioni sulla regola nel messaggio emesso.\n\nSe desidera maggiori informazioni su questo nodo, sui comandi disponibili e sui valori di uscita, ci faccia clic una volta nel suo flusso e vada all'icona del libro di Node-RED (angolo in alto a destra).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "863710a19fb12c5e",
+        "type": "debug",
+        "z": "7bca3b4f.9070fc",
+        "name": "Informazioni",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "c3f358fa89e66d78",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Richiedere lo stato attuale",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "403636a610280894",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Stato",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "0fab9398dcc9c797",
+        "type": "comment",
+        "z": "7bca3b4f.9070fc",
+        "name": "Attivare / disattivare la regola",
+        "info": "",
+        "x": 130,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "40f06e621e0643f0",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Attivare",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "bde15ecaf96f1323",
+        "type": "inject",
+        "z": "7bca3b4f.9070fc",
+        "name": "Disattivare",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "7bc8bf9290a86c68"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "7bc8bf9290a86c68",
+        "type": "hue-rules",
+        "z": "7bca3b4f.9070fc",
+        "skipevents": false,
+        "initevents": false,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "863710a19fb12c5e"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Nom",
+			"skipevents-node": "Ignorer les messages du nœud",
+			"sendinitevents-node": "Ne pas supprimer l'événement d'initialisation",
+			"onlycommands-node": "Signaler uniquement après une commande",
+			"unknown-error": "Une erreur est survenue. Veuillez réessayer.",
+			"bridge": "Bridge",
+			"universalevents": "Événements universels",
+			"universalevents-node": "Reçoit tous les messages des autres nœuds du même type (uniquement en mode universel)",
+			"input-name": "Nom du haut-parleur",
+			"searching": "Recherche de haut-parleurs…",
+			"none-found": "Aucun haut-parleur trouvé !",
+			"speaker": "Haut-parleur"
+		},
+		"node": {
+			"not-configured": "non configuré",
+			"not-reachable": "non joignable",
+			"universal": "mode universel",
+			"command": "exécution de la commande…",
+			"statusmsg": "Statut interrogé avec succès…",
+			"title": "Hue Haut-parleur",
+			"silent": "silencieux",
+			"muted": "muet",
+			"playing-alarm": "alarme (__sound__)",
+			"playing-chime": "carillon (__sound__)",
+			"playing-alert": "alerte (__sound__)",
+			"input": "jouer un son / statut",
+			"output": "haut-parleur",
+			"error-no-id": "Veuillez indiquer un ID de haut-parleur valide.",
+			"error-not-available": "Le haut-parleur n'est pas encore disponible. Veuillez attendre que HueMagic ait établi la connexion avec le bridge ou vérifiez si l'ID de ressource indiqué dans la configuration est valide.",
+			"error-no-channel": "Ce haut-parleur n'a pas de son de type __channel__.",
+			"error-invalid-sound": "Son __channel__ non valide. Sons autorisés : __sounds__",
+			"error-invalid-volume": "Réglage de volume non valide. Seules les valeurs de 0 à 100 sont autorisées."
+		}
+	}
+}

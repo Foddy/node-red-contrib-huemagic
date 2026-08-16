@@ -1,0 +1,26 @@
+{
+	"hue-bridge": {
+		"config": {
+			"name": "Nombre",
+			"input-name": "Nombre del Hue Bridge",
+			"skipglobalevents-info": "Omitir las actualizaciones y los mensajes globales de los dispositivos en este nodo",
+			"sendinitevents-node": "No suprimir el evento de inicialización",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"not-configured": "sin configurar",
+			"connecting": "conectando…",
+			"connected": "conectado",
+			"starting-tl": "iniciando TouchLink…",
+			"started-tl": "TouchLink iniciado…",
+			"f-resources": "obteniendo recursos…",
+			"updating-settings": "actualizando los ajustes…",
+			"settings-updated": "ajustes actualizados",
+			"input": "ajustes / consulta",
+			"output": "información del bridge",
+			"statusmsg": "Estado consultado correctamente…",
+			"error-not-available": "El bridge aún no está disponible. Espere hasta que HueMagic haya establecido la conexión con el bridge."
+		}
+	}
+}

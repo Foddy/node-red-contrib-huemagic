@@ -1,0 +1,69 @@
+<script type="text/markdown" data-help-name="hue-rules">
+Le nœud « Hue Règle » peut activer ou désactiver les règles enregistrées dans le bridge et consulter leurs réglages.
+
+### Configuration
+
+Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche pour trouver toutes les règles disponibles. Si vous connaissez déjà l'ID de la règle, vous pouvez également le saisir ici manuellement. Vous pouvez aussi attribuer un nouveau nom ou conserver le nom prédéfini de la règle. En option, vous pouvez désactiver tous les messages de statut automatiques de ce nœud à l'aide du réglage « Ignorer les messages du nœud ». Le nœud n'émettra alors plus de mises à jour. Vous pouvez également choisir que le message d'initialisation du nœud ne soit pas supprimé au démarrage de Node-RED. Si vous préférez que le nœud reste silencieux jusqu'à ce que vous lui envoyiez quelque chose, activez « Signaler uniquement après une commande ». Il ignorera alors les changements provenant de l'application ou d'un interrupteur et ne répondra qu'à vos propres commandes.
+
+Si vous ne sélectionnez aucune règle et utilisez la configuration du nœud de cette manière, le nœud fonctionne dans ce que l'on appelle le « mode universel ». Dans ce mode, le nœud reçoit et émet tous les messages de statut du même type. Vous pouvez également appliquer des réglages en mode universel à une règle précise en transmettant l'ID de la règle correspondante sous forme de chaîne dans `msg.topic` avec vos réglages.
+
+### Interroger les propriétés et réglages
+
+Émet les propriétés actuelles de la règle dès qu'un objet `msg.payload` ayant le contenu suivant est transmis au nœud. Vous pouvez également appuyer sur le bouton dans l'interface Node-RED sans avoir à transmettre au préalable un message au nœud.
+
+: status (boolean): Renvoie le statut actuel de la règle
+
+### Activer / désactiver la règle
+
+La règle peut être activée et désactivée si nécessaire. Une fois désactivée, elle ne s'exécutera plus dans le bridge jusqu'à ce que vous la réactiviez. Pour cela, transmettez un objet ayant le contenu suivant :
+
+: payload (boolean): `true` active la règle, `false` la désactive
+
+### Messages de statut du nœud
+
+Dès que le statut (activée / désactivée) d'une règle change, le nœud renvoie le message de statut suivant :
+
+#### Objet de statut dans `msg.payload`
+
+: enabled (boolean): Indique si la règle est activée ou désactivée
+: triggered (string): Heure de la dernière exécution (ISO 8601)
+
+#### Informations sur la règle dans `msg.info`
+
+: id (string): L'ID unique de la règle
+: created (string): Date de création de la règle (ISO 8601)
+: name (string): Nom de la règle sur le bridge
+: timesTriggered (int): Nombre de fois où la règle a été exécutée sur le bridge
+: owner (string): ID du propriétaire de cette règle
+: status (string): Statut de la règle sous forme de chaîne
+
+#### Conditions de la règle dans `msg.conditions` (tableau)
+
+: address (string): Chemin vers un attribut d'un capteur
+: operator (string): Opérateur
+: value (string): La valeur à vérifier
+
+#### Actions de la règle dans `msg.actions` (tableau)
+
+: address (string): L'adresse de destination de la ressource
+: method (string): La méthode de la requête
+: body (object): L'action à exécuter
+
+#### Changements d'état dans `msg.updated`
+
+Énumère sous forme d'objet les paramètres qui ont changé par rapport au dernier état de la règle. Si aucun changement n'a été enregistré, cet objet est vide.
+
+#### Dernier état de la règle dans `msg.lastState`
+
+Contient l'objet complet (voir les valeurs de sortie ci-dessus) du dernier état avant le dernier changement enregistré de la règle. Si HueMagic n'a pas encore enregistré le dernier état, `false` est émis.
+
+#### Dernière commande dans `msg.command` (facultatif)
+
+Si le statut du nœud a changé suite à une commande particulière, la commande complète qui a été exécutée est également émise. Sinon, cet objet n'est pas émis par le nœud.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

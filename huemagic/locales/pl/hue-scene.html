@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+Węzeł „Hue Scena” przywraca sceny zapisane w bridge i stosuje je do wybranych grup.
+
+### Konfiguracja
+
+Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć wszystkie dostępne sceny. Sceny są sortowane najpierw według pomieszczenia lub strefy, a następnie według nazwy, dzięki czemu sceny jednego pomieszczenia zawsze pozostają razem na liście. Jeśli znasz już identyfikator sceny, możesz go też wpisać ręcznie. Możesz też nadać scenie własną nazwę wewnętrzną albo zachować nazwę domyślną.
+
+### Włączanie sceny
+
+Zdefiniowaną scenę możesz włączyć, przekazując obiekt o następującej zawartości:
+
+: payload (boolean): Włącza skonfigurowaną scenę
+: transitionTime (float): Czas przejścia sceny w sekundach. Po przekazaniu `0` scena zostanie zastosowana natychmiast. Po przekazaniu `3` światła przejdą do sceny w ciągu następnych 3 sekund. Bridge akceptuje do 6000 sekund
+: brightness (float): Jasność całej sceny w procentach (`0` – `100`), dzięki czemu tę samą scenę możesz włączyć jaśniej lub ciemniej zależnie od pory dnia
+
+> [!NOTE]
+> Oba ustawienia są dostępne tylko dla zwykłych scen. Scena inteligentna kieruje się godzinami zdefiniowanymi dla niej w aplikacji Philips Hue.
+
+### Włączanie sceny w trybie uniwersalnym
+
+Jeśli używasz tego węzła w tzw. „trybie uniwersalnym” i nie ustawiłeś sceny w jego konfiguracji, żądaną scenę możesz przekazać do węzła jako polecenie. Przekaż w tym celu obiekt `msg.payload` o następującej zawartości:
+
+: scene (string): Identyfikator sceny, która ma zostać włączona na bridge
+
+### Włączanie sceny w wybranych grupach
+
+Połącz wyjście tego węzła z jedną lub kilkoma grupami, aby zastosować scenę do konkretnych grup. Możesz to zrobić także „dynamicznie”, przekazując do węzła obiekt `msg.payload` o następującej zawartości:
+
+: group (string | array [string,…]): Identyfikator grupy albo tablica identyfikatorów kilku grup, aby ograniczyć scenę do tych grup
+
+### Więcej informacji o węźle
+
+Ten węzeł nie wysyła komunikatów stanu.
+
+> [!IMPORTANT]
+> Sceny można stosować do grup tylko wtedy, gdy grupy są już powiązane z daną sceną na bridge. W przeciwnym razie nic nie zostanie zastosowane.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

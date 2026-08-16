@@ -1,0 +1,69 @@
+<script type="text/markdown" data-help-name="hue-rules">
+De node "Hue Regel" kan in de bridge opgeslagen regels in- of uitschakelen en hun instellingen opvragen.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare regels te vinden. Als u het ID van de regel al kent, kunt u het hier ook handmatig invoeren. U kunt de regel ook een nieuwe naam geven of de vooraf ingestelde naam gebruiken. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". De node geeft dan geen updates meer uit. U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+Als u geen regel selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type. U kunt in de universele modus ook instellingen op een specifieke regel toepassen door het bijbehorende regel-ID als tekenreeks in `msg.topic` samen met uw instellingen mee te geven.
+
+### Eigenschappen en instellingen opvragen
+
+Geeft de huidige eigenschappen van de regel uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: status (boolean): Geeft de huidige status van de regel terug
+
+### Regel in-/uitschakelen
+
+De regel kan indien nodig in- en uitgeschakeld worden. Is de regel uitgeschakeld, dan draait ze niet meer in de bridge totdat u haar weer inschakelt. Geef hiervoor een object met de volgende inhoud mee:
+
+: payload (boolean): `true` schakelt de regel in, `false` schakelt haar uit
+
+### Statusberichten van de node
+
+Zodra de status (in- of uitgeschakeld) van een regel verandert, geeft de node het volgende statusbericht terug:
+
+#### Statusobject onder `msg.payload`
+
+: enabled (boolean): Geeft aan of de regel in- of uitgeschakeld is
+: triggered (string): Tijdstip van de laatste uitvoering (ISO 8601)
+
+#### Informatie over de regel onder `msg.info`
+
+: id (string): Het unieke ID van de regel
+: created (string): Aanmaakdatum van de regel (ISO 8601)
+: name (string): Naam van de regel op de bridge
+: timesTriggered (int): Aantal keren dat de regel op de bridge is uitgevoerd
+: owner (string): ID van de eigenaar van deze regel
+: status (string): Status van de regel als tekenreeks
+
+#### Regelvoorwaarden onder `msg.conditions` (array)
+
+: address (string): Pad naar een attribuut van een sensor
+: operator (string): Operator
+: value (string): De te controleren waarde
+
+#### Regelacties onder `msg.actions` (array)
+
+: address (string): Het doeladres van de bron
+: method (string): De aanvraagmethode
+: body (object): De uit te voeren actie
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de regel zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de regel onder `msg.lastState`
+
+Bevat het volledige object (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatst geregistreerde wijziging van de regel. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

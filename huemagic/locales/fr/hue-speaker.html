@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+Le nœud « Hue Haut-parleur » peut jouer les sons d'un carillon Hue Secure et l'utiliser comme sirène d'intérieur.
+
+### Configuration
+
+Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche pour trouver tous les haut-parleurs disponibles. Si vous connaissez déjà l'ID du haut-parleur, vous pouvez également le saisir ici manuellement. Vous pouvez attribuer en interne un nouveau nom au haut-parleur ou conserver son nom prédéfini. En option, vous pouvez désactiver tous les messages de statut automatiques de ce nœud à l'aide du réglage « Ignorer les messages du nœud ». Le nœud n'émettra alors plus de mises à jour d'appareil. Vous pouvez également choisir que le message d'initialisation du nœud ne soit pas supprimé au démarrage de Node-RED. Si vous activez ce réglage, vous recevrez un message de statut du haut-parleur sélectionné après chaque déploiement. Si vous préférez que le nœud reste silencieux jusqu'à ce que vous lui envoyiez quelque chose, activez « Signaler uniquement après une commande ». Il ignorera alors les changements provenant de l'application ou d'un interrupteur et ne répondra qu'à vos propres commandes.
+
+Si vous ne sélectionnez aucun haut-parleur et utilisez la configuration du nœud de cette manière, le nœud fonctionne dans ce que l'on appelle le « mode universel ». Dans ce mode, le nœud reçoit et émet tous les messages de statut du même type. Vous pouvez également appliquer des réglages en mode universel à un haut-parleur précis en transmettant l'ID du haut-parleur correspondant sous forme de chaîne dans `msg.topic` avec vos réglages.
+
+### Interroger le statut
+
+Émet le statut actuel du haut-parleur dès qu'un objet `msg.payload` ayant le contenu suivant est transmis au nœud. Vous pouvez également appuyer sur le bouton dans l'interface Node-RED sans avoir à transmettre au préalable un message au nœud.
+
+: status (boolean): Renvoie le statut actuel du haut-parleur
+
+### Jouer un son
+
+Un haut-parleur connaît trois canaux distincts. `chime` est le son de la sonnette, `alarm` la sirène et `alert` une courte notification. Les sons réellement connus d'un appareil sont listés sous `msg.info.sounds`. Transmettez les paramètres suivants dans un objet `msg.payload` :
+
+: chime (string | object | boolean): Nom du son de la sonnette ; `false` l'arrête à nouveau
+: alarm (string | object | boolean): Nom du son de la sirène ; `false` l'arrête à nouveau
+: alert (string | object | boolean): Nom du son de notification ; `false` l'arrête à nouveau
+: mute (boolean): `true` met le haut-parleur en sourdine, `false` réactive le son
+
+Au lieu d'un simple nom de son, vous pouvez également transmettre un objet pour contrôler le volume et la durée :
+
+: sound (string): Nom du son, p. ex. `ding_dong_classic` ou `siren`
+: volume (int): Volume en pourcentage (0-100)
+: duration (float): Durée de lecture en secondes
+
+### Messages de statut du nœud
+
+Dès que le haut-parleur commence ou cesse de jouer, le nœud renvoie le message de statut suivant.
+
+> [!NOTE]
+> Le bridge signale le dernier son joué et ne le réinitialise que bien après la fin de la lecture ; ces valeurs sont donc légèrement en retard sur l'audio.
+
+#### Objet de statut dans `msg.payload`
+
+: reachable (boolean | string): `true` si le haut-parleur est connecté au bridge, `unknown` si le statut de connexion diverge
+: connectionStatus (string): Le statut de connexion actuel avec le bridge sous forme de chaîne. Peut contenir `connected`, `disconnected`, `connectivity_issue` ou `unidirectional_incoming` comme valeur
+: playing (boolean): `true` tant que le haut-parleur joue un son quelconque
+: chime (string | boolean): Nom du son de sonnette en cours de lecture ou `false`
+: alarm (string | boolean): Nom du son de sirène en cours de lecture ou `false`
+: alert (string | boolean): Nom du son de notification en cours de lecture ou `false`
+: muted (boolean): Indique si le haut-parleur est en sourdine
+: updated (string): Heure de la dernière mise à jour de la ressource par HueMagic (ISO 8601)
+
+#### Informations sur le haut-parleur dans `msg.info`
+
+: id (string): Indique le nouvel ID du haut-parleur
+: idV1 (string | boolean): Indique l'ancien ID du haut-parleur
+: uniqueId (string): L'ID unique du haut-parleur
+: deviceId (string): L'ID unique de l'appareil
+: name (string): Le nom actuellement attribué au haut-parleur
+: type (string): Le type de l'appareil (toujours `speaker`)
+: softwareVersion (string): Le micrologiciel actuel du haut-parleur
+: battery (float | boolean): Le niveau de batterie actuel du haut-parleur, `false` s'il n'y a pas de batterie
+: batteryState (string | boolean): Le statut actuel du niveau de batterie. Peut contenir `normal`, `low` ou `critical` comme valeur, `false` s'il n'y a pas de batterie
+: sounds (object): Contient les sons connus de cet appareil dans `chime`, `alarm` et `alert`
+: model (object): Contient les informations de modèle du haut-parleur dans `id`, `manufacturer`, `name`, `type` et `certified`
+
+#### Changements d'état dans `msg.updated`
+
+Énumère sous forme d'objet les paramètres qui ont changé par rapport au dernier état du haut-parleur. Si aucun changement n'a été enregistré, cet objet est vide.
+
+#### Dernier état du haut-parleur dans `msg.lastState`
+
+Contient l'objet de statut complet (voir les valeurs de sortie ci-dessus) du dernier état avant le dernier changement enregistré. Si HueMagic n'a pas encore enregistré le dernier état, `false` est émis.
+
+#### Dernière commande dans `msg.command` (facultatif)
+
+Si le statut du nœud a changé suite à une commande particulière, la commande complète qui a été exécutée est également émise. Sinon, cet objet n'est pas émis par le nœud.
+
+### Exemples de HueMagic
+
+HueMagic met à disposition quelques exemples de configuration pour ce nœud. Pour importer un exemple complet dans votre interface Node-RED, cliquez sur l'icône de menu de Node-RED, sélectionnez « Importer » puis naviguez vers « Exemples » dans la barre latérale de la fenêtre. Sélectionnez ensuite le dossier HueMagic et le nœud souhaité pour importer un flux d'exemple.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

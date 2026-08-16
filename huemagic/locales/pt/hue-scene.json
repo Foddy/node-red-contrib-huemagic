@@ -1,0 +1,32 @@
+{
+	"hue-scene": {
+		"config": {
+			"name": "Nome",
+			"input-name": "Nome da cena",
+			"skipevents-node": "Ignorar as mensagens do nó",
+			"sendinitevents-node": "Não suprimir o evento de inicialização",
+			"searching": "A procurar cenas…",
+			"none-found": "Nenhuma cena encontrada!",
+			"unknown-error": "Algo correu mal. Tente novamente.",
+			"scene": "Cena",
+			"group": "Grupo",
+			"group-none-found": "Nenhum grupo encontrado!",
+			"group-searching": "A procurar grupos…",
+			"groups-all": "Todos os grupos / luzes",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Cena",
+			"not-configured": "não configurado",
+			"recalled": "cena ativada",
+			"recalled-on-group": "cena ativada no grupo",
+			"no-id": "Sem ID de cena.",
+			"input": "ativar cena",
+			"output": "grupo(s) de destino",
+			"command": "a executar comando…",
+			"statusmsg": "A ativar a cena…",
+			"error-not-available": "A cena ainda não está disponível. Aguarde até que o HueMagic tenha estabelecido a ligação com o bridge ou verifique se o ID do recurso indicado na configuração é válido.",
+			"error-invalid-brightness": "Definição de brilho inválida. Apenas são permitidos valores de 0 a 100 por cento."
+		}
+	}
+}

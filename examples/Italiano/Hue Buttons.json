@@ -1,0 +1,88 @@
+[
+    {
+        "id": "d5d4a606.0f05",
+        "type": "tab",
+        "label": "Hue Buttons (example)",
+        "disabled": false,
+        "info": "Esempio di utilizzo del nodo «Hue Buttons»"
+    },
+    {
+        "id": "b650df5fecbbc08d",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "PRIMI PASSI (fai doppio clic)",
+        "info": "Faccia clic sul nodo «Hue Pulsanti» e selezioni dall'elenco sia il suo bridge sia un dispositivo. Se non ha ancora configurato un bridge, le verrà chiesto di configurarne uno prima di poter completare la configurazione del nodo.\n\nNon appena il nodo è collegato al suo bridge e al dispositivo e ha eseguito il deploy delle modifiche in Node-RED, il nodo emette automaticamente un messaggio quando lo stato del dispositivo sul bridge viene aggiornato (tasto premuto). Riceverà lo stato aggiornato e tutte le sue informazioni nel messaggio emesso.\n\nSe desidera maggiori informazioni su questo nodo, sui comandi disponibili e sui valori di uscita, ci faccia clic una volta nel suo flusso e vada all'icona del libro di Node-RED (angolo in alto a destra).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "79f1f61985718e40",
+        "type": "debug",
+        "z": "d5d4a606.0f05",
+        "name": "Informazioni",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "9b5c4dce9c98015c",
+        "type": "comment",
+        "z": "d5d4a606.0f05",
+        "name": "Richiedere lo stato attuale",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "74f3cdad2b625d5c",
+        "type": "inject",
+        "z": "d5d4a606.0f05",
+        "name": "Stato",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "664e68b0b62d7e4e"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "664e68b0b62d7e4e",
+        "type": "hue-buttons",
+        "z": "d5d4a606.0f05",
+        "skipevents": false,
+        "initevents": false,
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "79f1f61985718e40"
+            ]
+        ]
+    }
+]

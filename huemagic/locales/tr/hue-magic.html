@@ -1,0 +1,68 @@
+<script type="text/markdown" data-help-name="hue-magic">
+«Hue Magic» düğümü, ışıklara ve gruplara karmaşık ve özel animasyonlar uygulayabilir.
+
+### Kurulum
+
+Animasyonunuzu Node-RED arayüzünde net biçimde ayırt edebilmek için önce düğüme bir ad verin. Ardından «Döngü» ve «Geri yükle» seçenekleri arasında seçim yapabilirsiniz. Animasyonun bir ışık veya grup üzerinde siz elle durdurana kadar sonsuz çalışmasını istiyorsanız döngü seçeneğini seçin. Animasyon bittikten sonra hedef kaynağın (ışık / grup) önceki durumunu geri yüklemek istiyorsanız «Geri yükle» seçeneğini işaretleyin. Aksi hâlde animasyonun son karesi ilgili kaynakta kalır.
+
+Aşağıda HueMagic'in hazır animasyonları arasından seçim yapabilirsiniz. İstediğiniz animasyona tıklayarak onu ayarlayın.
+
+### Animasyonu başlatma / durdurma
+
+Bir animasyonu oynatmak veya durdurmak için düğüme aşağıdaki içeriğe sahip bir nesne gönderin:
+
+: payload (boolean): `true` animasyonu başlatır, `false` durdurur
+
+### Özel animasyonlar
+
+Düğüme kendi animasyonunuzu gönderirseniz, önceden seçilmiş hazır animasyon (ayarlıysa) geçici olarak sizinkiyle değiştirilir. Kendi HueMagic animasyonlarınız, bir dizide toplanmış komut dizisidir. Her dizi öğesi bir adım oluşturur; bir adım birden çok kareden (geçiş efektlerinden) de oluşabilir.
+
+Animasyon adımlarını nesne biçiminde içeren bir `array` oluşturun ve bunu HueMagic düğümüne `msg.payload.steps` altında gönderin.
+
+: delay (int): Bu adım gerçekleştirilene kadar beklenecek milisaniye sayısı
+: animation (object): Nesne, bu adımda gerçekleştirilecek eylemi veya eylemleri içerir. Parametreler «Hue Işık» ve «Hue Grup» düğümleriyle aynıdır
+
+### Özel bir animasyon örneği
+
+Bu örnek, basit bir animasyonun nasıl görünebileceğini gösterir. İlk adımda 500 milisaniyelik gecikme beklenir. Ardından ışığın rengi bir saniye içinde yavaşça kırmızıya döner. Işık tamamen kırmızı olduğunda, yine 500 milisaniyelik gecikmesi olan ikinci adım gerçekleştirilir. Son olarak renk maviye döner.
+
+Animasyonu döngüye ayarladıysanız, siz animasyonu elle durdurana veya düğümü yeniden dağıtana kadar bu süreç sonsuz tekrarlanır.
+
+Örnek animasyonu oynatmak için `msg.payload` içinde aşağıdaki nesneyi gönderin.
+
+    {
+        "animate": true,
+        "steps": [
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#FF0000",
+                    "transitionTime": 1
+                }
+            },
+            {
+                "delay": 500,
+                "animation": {
+                    "hex": "#0000FF",
+                    "transitionTime": 1
+                }
+            }
+        ]
+    }
+
+### Özel komutlar
+
+Bazen bir animasyonu düzensiz oynatmak mantıklıdır; ör. ateşin daha gerçekçi taklit edilmesi gerektiğinde. Adımları rastgele oynatmak için `msg.payload.specials` içinde şu komutu gönderebilirsiniz:
+
+: randomOrder (boolean | any): `true`, animasyon adımlarının rastgele oynatılmasını etkinleştirir
+
+### İpuçları ve notlar
+
+Bu düğüm durum mesajı yayınlamaz. Aynı animasyonla birden çok ışığı aynı anda canlandırmak istiyorsanız, düğümün çıkışını tek tek ışıklar yerine bir gruba bağlayın. Hazır animasyonların önizlemeleri birer benzetimdir ve bir kaynaktaki gerçek animasyondan (zamanlama, renkler) biraz farklı olabilir.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

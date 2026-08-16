@@ -1,0 +1,26 @@
+{
+	"hue-bridge": {
+		"config": {
+			"name": "Ad",
+			"input-name": "Hue Bridge adı",
+			"skipglobalevents-info": "Bu düğümde genel cihaz güncellemelerini ve mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Bridge",
+			"not-configured": "yapılandırılmadı",
+			"connecting": "bağlanılıyor…",
+			"connected": "bağlandı",
+			"starting-tl": "TouchLink başlatılıyor…",
+			"started-tl": "TouchLink başlatıldı…",
+			"f-resources": "kaynaklar alınıyor…",
+			"updating-settings": "ayarlar güncelleniyor…",
+			"settings-updated": "ayarlar güncellendi",
+			"input": "ayarlar / sorgu",
+			"output": "bridge bilgileri",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"error-not-available": "Bridge henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin."
+		}
+	}
+}

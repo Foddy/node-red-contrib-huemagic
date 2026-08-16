@@ -1,0 +1,36 @@
+{
+	"hue-motion": {
+		"config": {
+			"name": "Name",
+			"input-name": "Sensor name",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"onlycommands-node": "Only report after a command",
+			"searching": "Searching motion sensors…",
+			"none-found": "No motion sensors found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"sensor": "Sensor",
+			"universalevents": "Universal Events",
+			"universalevents-node": "Receives all messages from other nodes of the same type (only in universal mode)",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Motion",
+			"not-configured": "not configured",
+			"not-reachable": "not reachable",
+			"motion": "motion detected",
+			"no-motion": "no motion",
+			"activated": "activated",
+			"deactivated": "deactivated",
+			"input": "activate / deactivate / status",
+			"output": "motion detected",
+			"universal": "universal mode",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…",
+			"error-no-id": "Please submit a valid sensor ID.",
+			"error-not-available": "The sensor is not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid.",
+			"error-no-sensitivity": "This motion source has no adjustable sensitivity.",
+			"error-invalid-sensitivity": "Invalid sensitivity. Only 0 - __max__ allowed."
+		}
+	}
+}

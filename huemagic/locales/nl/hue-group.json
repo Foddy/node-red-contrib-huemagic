@@ -1,0 +1,46 @@
+{
+	"hue-group": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Kleurbenaming activeren",
+			"input-name": "Naam van de groep",
+			"searching": "Groepen zoeken…",
+			"none-found": "Geen groepen gevonden!",
+			"group": "Groep",
+			"all": "Alle groepen / lampen"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"init": "initialiseren…",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Groep",
+			"brightness": " (__percent__ %)",
+			"all-on": "alle lampen aan",
+			"all-off": "alle lampen uit",
+			"some-on": "enkele lampen aan",
+			"turned-on": "aan",
+			"error-input": "invoerfout",
+			"error-no-id": "Geen groeps-ID opgegeven.",
+			"error-invalid-sat": "Ongeldige verzadigingsinstelling. Alleen 0 tot 254 is toegestaan.",
+			"error-invalid-temp": "Ongeldige kleurtemperatuur. Alleen 153 tot 500 is toegestaan.",
+			"input": "aan-/uitzetten",
+			"output": "status",
+			"error-not-available": "De groep is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is.",
+			"error-invalid-brightness": "Ongeldige helderheidsinstelling. Alleen 0 tot 100 procent is toegestaan.",
+			"error-invalid-brightness-level": "Ongeldige helderheidsinstelling. Alleen 0 tot 254 is toegestaan.",
+			"error-invalid-increment": "Ongeldige incrementBrightness-instelling. Alleen -100 % tot 100 % is toegestaan.",
+			"error-invalid-decrement": "Ongeldige decrementBrightness-instelling. Alleen -100 % tot 100 % is toegestaan.",
+			"error-no-colorloop": "Het colorloop-effect is niet beschikbaar voor deze groep."
+		}
+	}
+}

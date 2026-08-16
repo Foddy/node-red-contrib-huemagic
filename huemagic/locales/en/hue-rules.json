@@ -1,0 +1,30 @@
+{
+	"hue-rules": {
+		"config": {
+			"name": "Name",
+			"input-name": "Rule name",
+			"skipevents-node": "Skip events from node",
+			"sendinitevents-node": "Do not suppress initialization event",
+			"onlycommands-node": "Only report after a command",
+			"searching": "Searching rules…",
+			"none-found": "No rules found!",
+			"unknown-error": "Something went wrong. Please retry.",
+			"rule": "Rule",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Rule",
+			"no-rule": "no rule selected",
+			"init": "initializing…",
+			"enabled": "enabled",
+			"disabled": "disabled",
+			"output": "rule (triggered)",
+			"input": "enable / disable",
+			"universal": "universal mode",
+			"command": "executing command…",
+			"statusmsg": "Status queried successfully…",
+			"error-no-id": "Please submit a valid rule ID.",
+			"error-not-available": "The rule is not yet available. Please wait until HueMagic has established a connection with the bridge or check whether the resource ID in the configuration is valid."
+		}
+	}
+}

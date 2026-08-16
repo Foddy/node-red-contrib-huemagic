@@ -1,0 +1,42 @@
+{
+	"hue-buttons": {
+		"config": {
+			"name": "Ad",
+			"skipevents-node": "Düğümün mesajlarını yoksay",
+			"sendinitevents-node": "Başlatma olayını bastırma",
+			"onlycommands-node": "Yalnızca bir komuttan sonra bildir",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"bridge": "Bridge",
+			"universalevents": "Evrensel olaylar",
+			"universalevents-node": "Aynı türdeki diğer düğümlerin tüm mesajlarını alır (yalnızca evrensel modda)",
+			"input-name": "Düğme adı",
+			"searching": "Hue Buttons aranıyor…",
+			"none-found": "Hiç Hue Button bulunamadı!",
+			"button": "Düğme"
+		},
+		"node": {
+			"not-configured": "yapılandırılmadı",
+			"universal": "evrensel mod",
+			"command": "komut yürütülüyor…",
+			"statusmsg": "Durum başarıyla sorgulandı…",
+			"title": "Hue Düğmeler",
+			"waiting": "bekleniyor…",
+			"button-on": "On",
+			"action-pressed": "basıldı",
+			"action-holded": "basılı tutuldu",
+			"action-shortreleased": "kısa bırakıldı",
+			"action-longreleased": "uzun basıştan sonra bırakıldı",
+			"action-repeated": "tekrarlandı",
+			"action-doublepressed": "çift basıldı",
+			"dial-clockwise": "Çevirme ↻ __degrees__°",
+			"dial-counterclockwise": "Çevirme ↺ __degrees__°",
+			"button-status": "Düğme #__button__ (__action__)",
+			"input": "durum sorgusu",
+			"output": "basılan düğme",
+			"error-no-id": "Lütfen geçerli bir anahtar kimliği girin.",
+			"error-not-available": "Anahtar henüz kullanılabilir değil. HueMagic bridge ile bağlantı kurana kadar bekleyin veya yapılandırmadaki kaynak kimliğinin geçerli olup olmadığını kontrol edin.",
+			"error-no-switchmode": "Bu cihazın yapılandırılabilir bir anahtar modu yok.",
+			"error-invalid-switchmode": "Geçersiz anahtar modu. Bu cihaz şunları destekler: __modes__"
+		}
+	}
+}

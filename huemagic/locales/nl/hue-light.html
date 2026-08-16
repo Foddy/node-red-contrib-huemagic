@@ -1,0 +1,97 @@
+<script type="text/markdown" data-help-name="hue-light">
+De node "Hue Lamp" kan lampen die met de bridge zijn verbonden aansturen en hun statusberichten ontvangen.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare lampen te vinden. Als u het ID van een lamp al kent, kunt u het hier ook handmatig invoeren. U kunt de lamp intern een nieuwe naam geven of de vooraf ingestelde naam gebruiken. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". De node geeft dan geen apparaatupdates meer uit. U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Als u deze instelling activeert, ontvangt u na elke deploy een statusbericht van de geselecteerde lamp. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+Als u de instelling "Kleurbenaming activeren" inschakelt, probeert de node bij elk statusbericht de ingestelde lichtkleur te beschrijven. U ontvangt dan in de uitvoer een extra parameter met de Engelse omschrijving van de huidige kleur.
+
+Als u geen lamp selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type. U kunt in de universele modus ook instellingen op een specifieke lamp toepassen door het bijbehorende lamp-ID als tekenreeks in `msg.topic` samen met uw instellingen mee te geven.
+
+### Status opvragen
+
+Geeft de huidige status van de lamp uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: status (boolean): Geeft de huidige status van de lamp terug
+
+### Lamp aan-/uitzetten (eenvoudig)
+
+Geef de node een object met de volgende inhoud mee om een lamp in de eenvoudige modus snel aan of uit te zetten:
+
+: payload (boolean): `true` schakelt de lamp in, `false` schakelt haar uit
+
+### Lampcommando's (uitgebreid)
+
+Naast het simpelweg aan- en uitzetten zijn er nog veel meer mogelijkheden om de lamp aan te sturen. Alle nodes in HueMagic kunnen met additieve commando's worden bediend. Dat betekent dat u eerst de ene instelling en later in een volgend commando de andere kunt meegeven zonder de vorige instelling te verwerpen. Geef de volgende parameters in een `msg.payload`-object mee om uitgebreidere instellingen op de lamp te doen:
+
+: on (boolean): `true` schakelt de lamp in, `false` schakelt haar uit
+: toggle (boolean | any): Wisselt tussen aan- en uitzetten, afhankelijk van de vorige status van de lamp
+: brightness (int | string): Procentuele waarde van de lichthelderheid (0-100) of een tekenreeks met de waarde `auto` om de helderheid automatisch op basis van het huidige tijdstip in te stellen
+: brightnessLevel (int): Numerieke waarde van de lichthelderheid (0-254)
+: incrementBrightness (int | boolean): Geeft aan met hoeveel procent de lamp helderder moet worden, of `true` om de lamp in stappen van 10 % helderder te maken
+: decrementBrightness (int | boolean): Geeft aan met hoeveel procent de lamp donkerder moet worden, of `true` om de lamp in stappen van 10 % donkerder te maken
+: color (string): `random` voor een willekeurige kleur of een Engelse kleurnaam (bijv. `red`)
+: hex (string): Kleurwaarde in hexadecimaal als tekenreeks
+: rgb (array [0,0,0]): Kleurwaarde in RGB-formaat als array
+: xyColor (object {x [float], y [float]}): Kleurwaarde in het XY-kleurformaat als object
+: gradient (object {hex […]}): Een object met een ondersteund kleurobject (bijv. `hex`, `rgb`, …) en meerdere kleuren om een gradiënt op ondersteunde lampen in te stellen
+: mixColor (object): Een kleur die met de huidige lichtkleur wordt gemengd. Accepteert `color`-, `hex`-, `rgb`- of `xyColor`-objecten en optioneel `amount` (int) om de mengverhouding in procent aan te geven
+: image (string): Pad van een afbeelding (lokaal of op het web) om de huidige kleur van de lamp op de gemiddelde kleur van de afbeelding in te stellen
+: saturation (int): Percentage van de verzadiging van de huidige kleur (bèta)
+: colorTemp (int | string): Waarde tussen 153 en 500 om de kleurtemperatuur van de lamp in te stellen, of de waarden `cold`, `normal`, `warm`, `hot` en `auto`, waarbij `auto` de kleurtemperatuur op basis van het huidige tijdstip bepaalt
+: incrementColorTemp (int | boolean): Waarde waarmee de kleurtemperatuur warmer moet worden, of `true` om die in stappen van 50 warmer te maken
+: decrementColorTemp (int | boolean): Waarde waarmee de kleurtemperatuur kouder moet worden, of `true` om die in stappen van 50 kouder te maken
+: transitionTime (float): Overgangstijd van de huidige instelling in seconden. Bij `0` gaat de lamp direct naar de gewenste instelling. Bij `3` gaat de lamp met een lichte overgang in de volgende 3 seconden naar de gewenste instelling
+: colorloop (float): Speelt gedurende het gekozen aantal seconden een "colorloop"-animatie af en keert daarna terug naar de oorspronkelijke toestand van de lamp
+: alert (float): Speelt gedurende het gekozen aantal seconden een "alert"-animatie af en keert daarna terug naar de oorspronkelijke toestand van de lamp
+
+### Statusberichten van de node
+
+Zodra een wijziging in de lampinstellingen wordt vastgesteld (of dat nu via Node-RED of van buitenaf gebeurt), geeft de node het volgende statusbericht terug:
+
+#### Statusobject onder `msg.payload`
+
+: on (boolean): Toestand van de lamp, waarbij `true` voor aan en `false` voor uit staat
+: brightness (int | boolean): Huidige helderheid in procent of `false` als de lamp geen helderheidsinstelling ondersteunt
+: brightnessLevel (int | boolean): Huidige helderheid van 0-254 of `false` als de lamp geen helderheidsinstelling ondersteunt
+: reachable (boolean | string): `true` als de lamp met de bridge is verbonden, `unknown` als de verbindingsstatus afwijkt
+: connectionStatus (string): De huidige verbindingsstatus met de bridge als tekenreeks. Kan `connected`, `disconnected`, `connectivity_issue` of `unidirectional_incoming` als waarde bevatten
+: rgb (array [int, int, int] | optional): Huidige lichtkleur als RGB-waarde, als de lamp kleuren kan weergeven
+: hex (string | optional): Huidige lichtkleur als hexadecimale waarde, als de lamp kleuren kan weergeven
+: xyColor (object {x [float], y [float]} | optional): Huidige lichtkleur als XY-waarde, als de lamp kleuren kan weergeven
+: color (string | optional): Huidige kleurnaam in het Engels, als de lamp kleuren kan weergeven en de bijbehorende instelling van de node is geactiveerd
+: gradient (object | optional): Huidige gradiëntinstelling met alle beschikbare kleureenheden als array, als de lamp gradiënten ondersteunt, waarbij `colors` de kleuren geeft, `numColors` het aantal ingestelde kleuren in de gradiënt en `totalColors` het maximale aantal kleuren dat de bron in de gradiënt aankan
+: colorTemp (int | boolean | optional): Huidige kleurtemperatuur van de lamp, als de lamp kleurtemperaturen kan weergeven en er een is ingesteld
+: colorTempName (string | optional): Huidige kleurtemperatuur van de lamp als beschrijvende tekenreeks met de waarden `cold`, `normal`, `warm` of `hot`, als de lamp kleurtemperaturen kan weergeven en er een is ingesteld. Anders wordt `unknown` uitgegeven
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+
+#### Informatie over de lamp onder `msg.info`
+
+: id (string): Geeft het nieuwe ID van de lamp aan
+: idV1 (string | boolean): Geeft het oude ID van de lamp aan
+: uniqueId (string): Het unieke ID van de lamp
+: deviceId (string): Het unieke ID van het apparaat
+: name (string): De momenteel ingestelde naam van de lamp
+: type (string): Het type van de lamp (altijd `light`)
+: softwareVersion (string): De huidige firmware van de lamp
+: model (object): Bevat de modelinformatie van de lamp onder `id`, `manufacturer`, `name`, `type`, `certified`, `friendsOfHue`, `colorGamut` en `colorGamutType`
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de lamp zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de lamp onder `msg.lastState`
+
+Bevat het volledige statusobject (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatste wijziging. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

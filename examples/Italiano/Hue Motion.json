@@ -1,0 +1,150 @@
+[
+    {
+        "id": "073fb607f8039ef2",
+        "type": "tab",
+        "label": "Hue Motion (example)",
+        "disabled": false,
+        "info": "Esempio di utilizzo del nodo «Hue Motion»"
+    },
+    {
+        "id": "3ba8c03bba2a097d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "PRIMI PASSI (fai doppio clic)",
+        "info": "Faccia clic sul nodo «Hue Movimento» e selezioni dall'elenco sia il suo bridge sia un sensore. Se non ha ancora configurato un bridge, le verrà chiesto di configurarne uno prima di poter completare la configurazione del nodo.\n\nNon appena il nodo è collegato al suo bridge e il sensore e ha eseguito il deploy delle modifiche in Node-RED, il nodo può ricevere ed eseguire i suoi comandi. Il nodo «Hue Movimento» emette inoltre automaticamente un messaggio ogni volta che lo stato del sensore sul bridge viene aggiornato (è stato registrato un movimento). Riceverà lo stato aggiornato e tutte le sue informazioni nel messaggio emesso.\n\nSe desidera maggiori informazioni su questo nodo, sui comandi disponibili e sui valori di uscita, ci faccia clic una volta nel suo flusso e vada all'icona del libro di Node-RED (angolo in alto a destra).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "bce07ce0ad34cdf5",
+        "type": "debug",
+        "z": "073fb607f8039ef2",
+        "name": "Informazioni",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "23deb12245fdbc7c",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Richiedere lo stato attuale",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0b68e8b6eeeb0ed5",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Stato",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "fe83e4d605d6b41d",
+        "type": "comment",
+        "z": "073fb607f8039ef2",
+        "name": "Accendere / spegnere il dispositivo",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "87fc103f2b958513",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Accendere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e2668753efecb01a",
+        "type": "inject",
+        "z": "073fb607f8039ef2",
+        "name": "Spegnere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "1a1e1a628faa15dc"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "1a1e1a628faa15dc",
+        "type": "hue-motion",
+        "z": "073fb607f8039ef2",
+        "skipevents": false,
+        "initevents": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "bce07ce0ad34cdf5"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,70 @@
+<script type="text/markdown" data-help-name="hue-brightness">
+Il nodo «Hue Luminosità» può leggere il livello di luce attuale da un sensore adatto collegato al bridge.
+
+### Configurazione
+
+Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per trovare tutti i sensori disponibili. Se conosce già l'ID del sensore, può anche inserirlo qui manualmente. Può assegnare internamente un nuovo nome al sensore oppure mantenere quello predefinito. Facoltativamente può disattivare tutti i messaggi di stato automatici di questo nodo tramite l'impostazione «Ignora i messaggi del nodo». Il nodo non emetterà più aggiornamenti del dispositivo. In alternativa può scegliere che il messaggio di inizializzazione del nodo non venga soppresso all'avvio di Node-RED. Attivando questa impostazione riceverà un messaggio di stato del sensore selezionato dopo ogni deploy. Se preferisce che il nodo resti in silenzio finché non gli invia qualcosa, attivi «Segnala solo dopo un comando». In tal caso ignorerà le modifiche provenienti dall'app o da un interruttore e risponderà solo ai suoi comandi.
+
+L'impostazione «Buio sotto» determina a partire da quale livello di luce il nodo considera buia una stanza. Una stanza con una lampada luminosa richiede un valore completamente diverso rispetto a un corridoio senza finestre: inserisca semplicemente il numero di lux adatto al suo ambiente. I valori `dark` e `daylight` seguiranno quindi la sua impostazione anziché il valore predefinito di 90 lux.
+
+Se non seleziona alcun sensore e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo. Può anche applicare impostazioni in modalità universale a un sensore specifico trasmettendo il relativo ID sensore come stringa in `msg.topic` insieme alle sue impostazioni.
+
+### Richiedere lo stato
+
+Emette lo stato attuale del sensore non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.
+
+: status (boolean): Restituisce lo stato attuale del sensore
+
+### Accendere / spegnere il sensore
+
+Se necessario, il sensore può essere acceso e spento da remoto. Se il sensore è spento, non registra più alcuna variazione del livello di luce e di conseguenza non la emette. A tal fine, trasmetta un oggetto con il seguente contenuto:
+
+: payload (boolean): `true` accende il sensore, `false` lo spegne
+
+### Messaggi di stato del nodo
+
+Non appena il sensore rileva una variazione del livello di luce, viene restituito il seguente messaggio di stato:
+
+#### Oggetto di stato in `msg.payload`
+
+: active (boolean): Indica se il sensore è acceso o spento
+: reachable (boolean | string): `true` se il sensore è collegato al bridge, `unknown` se lo stato della connessione è diverso
+: connectionStatus (string): Lo stato attuale della connessione con il bridge sotto forma di stringa. Può contenere `connected`, `disconnected`, `connectivity_issue` o `unidirectional_incoming` come valore
+: lux (int): Indica il valore LUX reale del livello di luce
+: lightLevel (int): Indica l'intensità luminosa del sensore
+: dark (boolean): `true` se è stato rilevato buio
+: daylight (boolean): `true` se è stata rilevata luce diurna
+: darkThreshold (int): Il livello di luce in lux al di sotto del quale il nodo segnala il buio
+: updated (string): Momento dell'ultimo aggiornamento della risorsa da parte di HueMagic (ISO 8601)
+
+#### Informazioni sul sensore in `msg.info`
+
+: id (string): Indica il nuovo ID del sensore
+: idV1 (string | boolean): Indica il vecchio ID del sensore
+: uniqueId (string): L'ID univoco del sensore
+: deviceId (string): L'ID univoco del dispositivo
+: name (string): Il nome attualmente assegnato al sensore
+: type (string): Il tipo di sensore (sempre `light_level`)
+: softwareVersion (string): Il firmware attuale del sensore
+: battery (float): Il livello attuale della batteria del sensore
+: batteryState (string): Lo stato attuale del livello della batteria. Può contenere `normal`, `low` o `critical` come valore
+: model (object): Contiene le informazioni sul modello del sensore in `id`, `manufacturer`, `name`, `type` e `certified`
+
+#### Variazioni di stato in `msg.updated`
+
+Elenca sotto forma di oggetto i singoli parametri modificati rispetto all'ultimo stato del sensore. Se non è stata registrata alcuna modifica, questo oggetto è vuoto.
+
+#### Ultimo stato del sensore in `msg.lastState`
+
+Contiene l'oggetto di stato completo (vedi i valori di uscita sopra) dell'ultimo stato prima dell'ultima modifica registrata. Se HueMagic non ha ancora registrato l'ultimo stato, viene emesso `false`.
+
+#### Ultimo comando in `msg.command` (facoltativo)
+
+Se lo stato del nodo è cambiato a seguito di un determinato comando, viene emesso anche l'intero comando eseguito. In caso contrario, il nodo non emette questo oggetto.
+
+### Esempi di HueMagic
+
+HueMagic mette a disposizione alcune configurazioni di esempio per questo nodo. Per importare un esempio completo nella sua interfaccia Node-RED, faccia clic sull'icona del menu di Node-RED, selezioni «Importa» e navighi fino a «Esempi» nella barra laterale della finestra. Selezioni quindi la cartella HueMagic e il nodo desiderato per importare un flusso di esempio.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

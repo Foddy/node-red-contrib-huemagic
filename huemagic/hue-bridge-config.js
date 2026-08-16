@@ -20,7 +20,10 @@ module.exports = function(RED)
 			HueTemperatureMessage,
 			HueBrightnessMessage,
 			HueButtonsMessage,
-			HueRulesMessage
+			HueRulesMessage,
+			HueSpeakerMessage,
+			HueAutomationMessage,
+			servesType
 		} = require('./utils/messages');
 
 	function HueBridge(config)
@@ -34,11 +37,15 @@ module.exports = function(RED)
 		this.resourcesInGroups = {};
 		this.lastStates = {};
 		this.events = new events.EventEmitter();
+		this.events.setMaxListeners(0);
 		this.patchQueue = null;
 		this.timerWatchDog = null;
+		this.watchdogFailures = 0;
+		this.starting = false;
+		this.refetchTimeout = null;
 
-		// RESOURCE ID PATTERN
-		this.validResourceID = /[a-zA-Z0-9]/gi;
+		// RESOURCE ID PATTERN (NEVER GLOBAL, "test" WOULD BECOME STATEFUL)
+		this.validResourceID = /^[a-zA-Z0-9-]+$/i;
 
 		// FIRMWARE UPDATE TIMEOUT
 		this.firmwareUpdateTimeout = null;
@@ -49,52 +56,52 @@ module.exports = function(RED)
 		// PERIODICALLY CHECK WETHER BRIDGE IS CONNECTED
 		this.startWatchdog = function()
 		{
-			if (this.timerWatchDog !== null) clearTimeout(this.timerWatchDog);
-			this.timerWatchDog = setTimeout(function()
+			if(scope.timerWatchDog !== null) { clearTimeout(scope.timerWatchDog); }
+			if(scope.nodeActive === false) { return false; }
+
+			// THE BRIDGE SENDS NO KEEP-ALIVE ON THE EVENT STREAM, SO KEEP ASKING - JUST RARELY
+			scope.timerWatchDog = setTimeout(function()
 			{
-				try
+				API.request({ config: config, resource: "bridge" })
+				.then(function(bridgeInformation)
 				{
-					API.request({ config: config, resource: "/config", version: 1 })
-					.then(function(bridgeInformation)
+					scope.watchdogFailures = 0;
+					scope.startWatchdog();
+				})
+				.catch(function(error)
+				{
+					// BRIDGE IS OVERLOADED (429) OR BUSY (503) BUT STILL ALIVE
+					if(error.status === 429 || error.status === 503)
 					{
-						scope.startWatchdog();
-					})
-					.catch(function(error)
-					{
-						// scope.log("Error requesting info from the bridge. Reconnect in some secs. " + error.message);
-						// debug
-						if (error.status !== 429) {
-							scope.log("Error requesting info from the bridge. Reconnect in some secs. " + ((typeof(error.message) == 'undefined') ? JSON.stringify(error) : error.message));
-							// end debug
-							scope.start();
-						} else {
-							// Bridge did not respond because it is currently overloaded (=error 429), but it is still alive, so nothing to do / restart, just keep monitoring as normal
-							// scope.log("Bridge responded but was overloaded for now (ERR:429), no reconnection required for now.");
-							scope.startWatchdog();
-						}
-					});
-				} catch (error) {
-					// scope.log("Lost connection with the bridge. Reconnect in some secs. " + error.message);
-					// debug
-					scope.log("Lost connection with the bridge. Reconnect in some secs. " + ((typeof(error.message) == 'undefined') ? JSON.stringify(error) : error.message));
-					// end debug
-					scope.start();
-				}
-			}, 10000);
+						return scope.startWatchdog();
+					}
+
+					scope.watchdogFailures += 1;
+					scope.log(RED._("hue-bridge-config.node.request-error", { error: JSON.stringify(error.errors ? error.errors : error) }));
+
+					// ONLY RECONNECT AFTER THREE FAILED ATTEMPTS IN A ROW
+					if(scope.watchdogFailures >= 3) { scope.start(); }
+					else { scope.startWatchdog(); }
+				});
+			}, API.connected(config) ? 60000 : 15000);
 		}
 
 		// INITIALIZE
 		this.start = function()
 		{
-			scope.log("Initializing the bridge ("+config.bridge+")…");
+			if(scope.starting === true || scope.nodeActive === false) { return false; }
+			scope.starting = true;
+			scope.watchdogFailures = 0;
+
+			scope.log(RED._("hue-bridge-config.node.initializing", { bridge: config.bridge }));
 			API.init({ config: config })
 			.then(function(bridge) {
-				scope.log("Connected to bridge");
+				scope.log(RED._("hue-bridge-config.node.connected"));
 				return scope.getAllResources();
 			})
 			.then(function(allResources)
 			{
-				scope.log("Processing bridge resources…");
+				scope.log(RED._("hue-bridge-config.node.processing"));
 				return API.processResources(allResources);
 			})
 			.then(function(allResources)
@@ -103,11 +110,13 @@ module.exports = function(RED)
 				scope.resources = allResources;
 
 				// EMIT INITIAL STATES -> NODES
-				scope.log("Initial emit of resource states…");
+				scope.log(RED._("hue-bridge-config.node.initial-emit"));
 				return scope.emitInitialStates();
 			})
 			.then(function(emitted)
 			{
+				scope.starting = false;
+
 				// START REFRESHING STATES
 				scope.keepUpdated();
 
@@ -121,6 +130,7 @@ module.exports = function(RED)
 			.catch(function(error)
 			{
 				// RETRY AFTER 30 SECONDS
+				scope.starting = false;
 				scope.log(error);
 				if(scope.nodeActive == true) { setTimeout(function(){ scope.start(); }, 30000); }
 			});
@@ -162,8 +172,13 @@ module.exports = function(RED)
 			{
 				var allResources = [];
 
-				// GET BRIDGE INFORMATION
+				// GET BRIDGE INFORMATION (LEGACY API / MAY BE UNAVAILABLE)
 				scope.getBridgeInformation()
+				.catch(function(error)
+				{
+					scope.log(RED._("hue-bridge-config.node.no-legacy-api"));
+					return { id: "bridge", id_v1: "/config", updated: dayjs().format() };
+				})
 				.then(function(bridgeInformation)
 				{
 					// PUSH TO RESOURCES
@@ -177,13 +192,16 @@ module.exports = function(RED)
 					// MERGE RESOURCES
 					allResources = allResources.concat(v2Resources);
 
-					// GET RULES (LEGACY API)
-					return API.request({ config: config, resource: "/rules", version: 1 });
+					// GET RULES (LEGACY API / MAY BE UNAVAILABLE)
+					return API.request({ config: config, resource: "/rules", version: 1 }).catch(function(error) { return {}; });
 				})
 				.then(function(rules)
 				{
 					for (var [id, rule] of Object.entries(rules))
 					{
+						// SKIP ERROR RESPONSES OF THE LEGACY API
+						if(!rule || typeof rule !== 'object' || rule["error"]) { continue; }
+
 						// "RENAME" OWNER
 						rule["_owner"] = rule["owner"];
 						delete rule["owner"];
@@ -216,6 +234,7 @@ module.exports = function(RED)
 					// PUSH ALL STATES
 					for (const [id, resource] of Object.entries(scope.resources))
 					{
+						if(id === "_groupsOf") { continue; }
 						scope.pushUpdatedState(resource, resource.type, true);
 					}
 
@@ -229,7 +248,7 @@ module.exports = function(RED)
 		{
 			if(!config.disableupdates)
 			{
-				scope.log("Keeping nodes up-to-date…");
+				scope.log(RED._("hue-bridge-config.node.keep-updated"));
 
 				// REFRESH STATES (SSE)
 				this.refreshStatesSSE();
@@ -239,10 +258,16 @@ module.exports = function(RED)
 		// GET UPDATED STATES (SSE)
 		this.refreshStatesSSE = function()
 		{
-			scope.log("Subscribing to bridge events…");
-			API.subscribe(config, function(updates)
+			scope.log(RED._("hue-bridge-config.node.subscribing"));
+			API.subscribe(config, function(updates, eventType)
 			{
 				const currentDateTime = dayjs().format();
+
+				// DEVICE ADDED/REMOVED OR EVENTS MISSED? -> RE-READ ALL RESOURCES
+				if(eventType === "add" || eventType === "delete" || eventType === "reconnect")
+				{
+					return scope.refetchResources();
+				}
 
 				for(let resource of updates)
 				{
@@ -255,18 +280,19 @@ module.exports = function(RED)
 					if(resource["owner"])
 					{
 						let targetId = resource["owner"]["rid"];
+						const services = scope.resources[targetId] ? scope.resources[targetId]["services"] : false;
 
-						if(scope.resources[targetId])
+						if(services && services[type])
 						{
 							// GET PREVIOUS STATE
-							previousState = scope.resources[targetId]["services"][type][id];
+							previousState = services[type][id];
 
-							// IS BUTTON? -> REMOVE PREVIOUS STATES
-							if(type === "button")
+							// IS BUTTON OR DIAL? -> REMOVE PREVIOUS STATES
+							if(type === "button" || type === "relative_rotary")
 							{
-								for (const [oneButtonID, oneButton] of Object.entries(scope.resources[targetId]["services"]["button"]))
+								for (const [oneServiceID, oneService] of Object.entries(services[type]))
 								{
-									delete scope.resources[targetId]["services"]["button"][oneButtonID]["button"];
+									delete services[type][oneServiceID][type];
 								}
 							}
 						}
@@ -277,14 +303,8 @@ module.exports = function(RED)
 						previousState = scope.resources[id];
 					}
 
-					// NO PREVIOUS STATE?
-					if(!previousState) { return false; }
-
-					// IS LIGHT? -> REMOVE PREVIOUS GRADIENT COLORS
-					if(type === "light" && resource["gradient"])
-					{
-						delete previousState["gradient"];
-					}
+					// NO PREVIOUS STATE? -> UNKNOWN RESOURCE, CONTINUE WITH THE NEXT ONE
+					if(!previousState) { continue; }
 
 					// CHECK DIFFERENCES
 					const mergedState = merge.deep(previousState, resource);
@@ -312,23 +332,59 @@ module.exports = function(RED)
 						}
 					}
 				}
+			},
+			function(reason, seconds)
+			{
+				scope.log(RED._("hue-bridge-config.node.connection-lost", { reason: reason, seconds: seconds }));
 			});
+		}
+
+		// RE-READ ALL RESOURCES (DEVICE ADDED / REMOVED ON THE BRIDGE)
+		this.refetchResources = function()
+		{
+			if(scope.refetchTimeout !== null) { clearTimeout(scope.refetchTimeout); }
+			scope.refetchTimeout = setTimeout(function()
+			{
+				scope.refetchTimeout = null;
+				scope.log(RED._("hue-bridge-config.node.resources-changed"));
+
+				scope.getAllResources()
+				.then(function(allResources)
+				{
+					return API.processResources(allResources);
+				})
+				.then(function(allResources)
+				{
+					scope.resources = allResources;
+					return scope.emitInitialStates();
+				})
+				.catch(function(error) { scope.log(error); });
+			}, 5000);
 		}
 
 		// PUSH UPDATED STATE
 		this.pushUpdatedState = function(resource, updatedType, suppressMessage = false)
 		{
-			const msg = { id: resource.id, type: resource.type, updatedType: updatedType, services: resource["services"] ? Object.keys(resource["services"]) : [], suppressMessage: suppressMessage };
+			if(!resource || !resource.id) { return false; }
+
+			let services = resource["services"] ? Object.keys(resource["services"]) : [];
+
+			// ROOMS, ZONES AND THE BRIDGE HOME ARE ADDRESSED AS GROUPS
+			if(resource["type"] === "room" || resource["type"] === "zone" || resource["type"] === "bridge_home") { services.push("group"); }
+
+			const msg = { id: resource.id, type: resource.type, updatedType: updatedType, services: services, suppressMessage: suppressMessage };
 			this.events.emit(config.id + "_" + resource.id, msg);
 			this.events.emit(config.id + "_" + "globalResourceUpdates", msg);
 
 			// RESOURCE CONTAINS SERVICES? -> SERVICE IN GROUP? -> EMIT CHANGES TO GROUPS ALSO
-			if(this.resources["_groupsOf"][resource.id])
+			const groupsOfResource = this.resources["_groupsOf"] ? this.resources["_groupsOf"][resource.id] : false;
+
+			if(groupsOfResource)
 			{
-				for (var g = this.resources["_groupsOf"][resource.id].length - 1; g >= 0; g--)
+				for (var g = groupsOfResource.length - 1; g >= 0; g--)
 				{
-					const groupID = this.resources["_groupsOf"][resource.id][g];
-					const groupMessage = { id: groupID, type: "group", updatedType: updatedType, services: [], suppressMessage: suppressMessage };
+					const groupID = groupsOfResource[g];
+					const groupMessage = { id: groupID, type: "group", updatedType: updatedType, services: ["group"], suppressMessage: suppressMessage };
 
 					this.events.emit(config.id + "_" + groupID, groupMessage);
 					this.events.emit(config.id + "_" + "globalResourceUpdates", groupMessage);
@@ -347,7 +403,7 @@ module.exports = function(RED)
 				{
 					// RESOLVE LINKS
 					const targetResource = scope.resources[id];
-					const lastState = scope.lastStates[type+targetResource.id] ? Object.assign({}, scope.lastStates[type+targetResource.id]) : false;
+					const lastState = scope.lastStates[type+targetResource.id] ? structuredClone(scope.lastStates[type+targetResource.id]) : false;
 
 					if(type == "bridge")
 					{
@@ -369,7 +425,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -386,7 +442,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -402,7 +458,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -418,7 +474,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -434,7 +490,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -450,7 +506,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -466,7 +522,39 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
+							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
+							currentState.lastState = lastState;
+
+							return currentState;
+						} catch (error) {
+							return false;
+						}
+					}
+					else if(type == "speaker")
+					{
+						try {
+							const message = new HueSpeakerMessage(targetResource, options);
+
+							// GET & SAVE LAST STATE AND DIFFERENCES
+							let currentState = message.msg;
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
+							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
+							currentState.lastState = lastState;
+
+							return currentState;
+						} catch (error) {
+							return false;
+						}
+					}
+					else if(type == "automation")
+					{
+						try {
+							const message = new HueAutomationMessage(targetResource, options);
+
+							// GET & SAVE LAST STATE AND DIFFERENCES
+							let currentState = message.msg;
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -482,7 +570,7 @@ module.exports = function(RED)
 
 							// GET & SAVE LAST STATE AND DIFFERENCES
 							let currentState = message.msg;
-							scope.lastStates[type+targetResource.id] = Object.assign({}, currentState);
+							scope.lastStates[type+targetResource.id] = structuredClone(currentState);
 							currentState.updated = (lastState === false) ? {} : diff(lastState, currentState);
 							currentState.lastState = lastState;
 
@@ -510,13 +598,15 @@ module.exports = function(RED)
 				{
 					const isGroup = (resource["type"] == "room" || resource["type"] == "zone" || resource["type"] == "bridge_home");
 
-					// NORMAL DEVICES
-					if(!isGroup && resource["services"] && resource["services"][type])
+					// AUTOMATIONS ARE NOT DEVICES
+					if(type === "automation")
 					{
-						for (const [serviceID, targetDevice] of Object.entries(resource["services"][type]))
-						{
-							allFilteredResources[rootID] = scope.get(type, rootID);
-						}
+						if(resource["type"] === "behavior_instance") { allFilteredResources[rootID] = scope.get(type, rootID); }
+					}
+					// NORMAL DEVICES
+					else if(!isGroup && servesType(resource, type))
+					{
+						allFilteredResources[rootID] = scope.get(type, rootID);
 					}
 					// GROUPED RESOURCES
 					else if(isGroup && type === "group")
@@ -534,7 +624,7 @@ module.exports = function(RED)
 		{
 			return new Promise(function(resolve, reject)
 			{
-				if(!scope.patchQueue) { return false; }
+				if(!scope.patchQueue) { return reject({ status: "ECONNRESET", errors: RED._("hue-bridge-config.node.not-connected") }); }
 				scope.patchQueue.push({ type: type, id: id, patch: patch, version: version }, function (error, response)
 				{
 					if(error)
@@ -549,7 +639,22 @@ module.exports = function(RED)
 			});
 		}
 
-		// PATCH RESOURCE (WORKER) / 7 PROCESSES IN PARALLEL
+		// THE BRIDGE ACCEPTS ABOUT 10 LIGHT COMMANDS BUT ONLY 1 GROUP COMMAND PER SECOND
+		this.rateLimits = { light: 100, group: 1000 };
+		this.nextSlot = { light: 0, group: 0 };
+
+		// RESERVE THE NEXT FREE TIME SLOT / GIVE BACK HOW LONG TO WAIT FOR IT
+		this.reserveSlot = function(type)
+		{
+			const channel = (type === "group" || type === "grouped_light" || type === "scene" || type === "smart_scene") ? "group" : "light";
+			const now = Date.now();
+			const slot = Math.max(now, scope.nextSlot[channel]);
+
+			scope.nextSlot[channel] = slot + scope.rateLimits[channel];
+			return slot - now;
+		}
+
+		// PATCH RESOURCE (WORKER)
 		this.patchQueue = fastq(function({ type, id, patch, version }, callback)
 		{
 			// GET SERVICE ID
@@ -559,14 +664,17 @@ module.exports = function(RED)
 				id = targetResource.id;
 			}
 
-			// ACTION!
-			API.request({ config: config, method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
-			.then(function(response) {
-				callback(null, response);
-			})
-			.catch(function(error) {
-				callback(error, null);
-			});
+			// ACTION! (BUT NEVER FASTER THAN THE BRIDGE CAN TAKE IT)
+			setTimeout(function()
+			{
+				API.request({ config: config, method: "PUT", resource: (version === 2) ? (type+"/"+id) : id, data: patch, version: version })
+				.then(function(response) {
+					callback(null, response);
+				})
+				.catch(function(error) {
+					callback(error, null);
+				});
+			}, scope.reserveSlot(type));
 		}, config.worker ? parseInt(config.worker) : 10);
 
 		// RE-FETCH RULE (RECEIVES NO UPDATES VIA SSE)
@@ -616,23 +724,33 @@ module.exports = function(RED)
 			// PUSH WHITELIST
 			const messageWhitelist = {
 				"light": ["light", "zigbee_connectivity", "zgp_connectivity", "device"],
-				"motion": ["motion", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
+				"motion": ["motion", "camera_motion", "grouped_motion", "convenience_area_motion", "security_area_motion", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"contact": ["contact", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"temperature": ["temperature", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
-				"light_level": ["light_level", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
-				"button": ["button", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
+				"light_level": ["light_level", "grouped_light_level", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
+				"button": ["button", "bell_button", "relative_rotary", "switch_input_configuration", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
 				"group": ["group", "light", "grouped_light"],
+				"speaker": ["speaker", "zigbee_connectivity", "zgp_connectivity", "device_power", "device"],
+				"automation": ["behavior_instance"],
 				"rule": ["rule"]
 			};
+
+			let eventName;
+			let listener;
 
 			if(!id)
 			{
 				// UNIVERSAL MODE
-				this.events.on(config.id + "_" + "globalResourceUpdates", function(info)
+				eventName = config.id + "_" + "globalResourceUpdates";
+				listener = function(info)
 				{
 					if(type === "bridge")
 					{
 						callback(info);
+					}
+					else if(!messageWhitelist[type])
+					{
+						return false;
 					}
 					else if(info.services.includes(type) && messageWhitelist[type].includes(info.updatedType))
 					{
@@ -642,19 +760,27 @@ module.exports = function(RED)
 					{
 						callback(info);
 					}
-				});
+				};
 			}
 			else
 			{
 				// SPECIFIC RESOURCE MODE
-				this.events.on(config.id + "_" + id, function(info)
+				eventName = config.id + "_" + id;
+				listener = function(info)
 				{
+					if(type !== "bridge" && !messageWhitelist[type]) { return false; }
+
 					if(type === "bridge" || messageWhitelist[type].includes(info.updatedType))
 					{
 						callback(info);
 					}
-				});
+				};
 			}
+
+			scope.events.on(eventName, listener);
+
+			// THE CONFIG NODE OUTLIVES A REDEPLOY, SO EVERY NODE HAS TO DETACH ITSELF AGAIN
+			return function() { scope.events.removeListener(eventName, listener); };
 		}
 
 		// AUTO UPDATES?
@@ -704,14 +830,16 @@ module.exports = function(RED)
 			scope.nodeActive = false;
 
 			// UNSUBSCRIBE FROM BRIDGE EVENTS
-			scope.log("Unsubscribing from bridge events…");
+			scope.log(RED._("hue-bridge-config.node.unsubscribing"));
 			API.unsubscribe(config);
 
 			// UNSUBSCRIBE FROM "READY" EVENTS
 			scope.events.removeAllListeners();
 
-			// REMOVE FIRMWARE UPDATE TIMEOUT
+			// REMOVE ALL TIMEOUTS
 			if(scope.firmwareUpdateTimeout !== null) { clearTimeout(scope.firmwareUpdateTimeout); }
+			if(scope.timerWatchDog !== null) { clearTimeout(scope.timerWatchDog); }
+			if(scope.refetchTimeout !== null) { clearTimeout(scope.refetchTimeout); }
 
 			// KILL QUEUE
 			scope.patchQueue.kill();
@@ -722,7 +850,7 @@ module.exports = function(RED)
 
 	//
 	// DISCOVER HUE BRIDGES ON LOCAL NETWORK
-	RED.httpAdmin.get('/hue/bridges', async function(req, res, next)
+	RED.httpAdmin.get('/hue/bridges', RED.auth.needsPermission('hue-bridge.read'), async function(req, res, next)
 	{
 		axios({
 			"method": "GET",
@@ -730,6 +858,7 @@ module.exports = function(RED)
 			"headers": {
 				"Content-Type": "application/json; charset=utf-8"
 			},
+			"timeout": 10000,
 		})
 		.then(function(response)
 		{
@@ -737,20 +866,24 @@ module.exports = function(RED)
 			var bridges = {};
 			for (var i = response.data.length - 1; i >= 0; i--)
 			{
-				var ipAddress = response.data[i].internalipaddress;
-				bridges[ipAddress] = { ip: ipAddress, name: ipAddress };
+				// THE DISCOVERY SERVICE ALSO ANSWERS WITH A PORT SINCE THE BRIDGE PRO
+				const ipAddress = response.data[i].internalipaddress;
+				const port = response.data[i].port;
+				const target = (port && port !== 443) ? (ipAddress + ":" + port) : ipAddress;
+
+				bridges[target] = { ip: target, name: target };
 			}
 
 			res.end(JSON.stringify(Object.values(bridges)));
 		})
 		.catch(function(error) {
-			res.send(error);
+			res.status(500).send(JSON.stringify({ error: error.message }));
 		});
 	});
 
 	//
 	// GET BRIDGE NAME
-	RED.httpAdmin.get('/hue/name', function(req, res, next)
+	RED.httpAdmin.get('/hue/name', RED.auth.needsPermission('hue-bridge.read'), function(req, res, next)
 	{
 		if(!req.query.ip)
 		{
@@ -763,14 +896,14 @@ module.exports = function(RED)
 				res.end(bridge.name);
 			})
 			.catch(function(error) {
-				res.send(error);
+				res.status(500).send(error.message ? error.message : JSON.stringify(error));
 			});
 	    }
 	});
 
 	//
 	// REGISTER A HUE BRIDGE
-	RED.httpAdmin.get('/hue/register', function(req, rescope, next)
+	RED.httpAdmin.get('/hue/register', RED.auth.needsPermission('hue-bridge.read'), function(req, rescope, next)
 	{
 		if(!req.query.ip)
 		{
@@ -778,21 +911,27 @@ module.exports = function(RED)
 		}
 		else
 		{
+			// MODERN BRIDGES (AND THE BRIDGE PRO) NO LONGER ANSWER ON PLAIN HTTP
 			axios({
 				"method": "POST",
-				"url": "http://"+req.query.ip+"/api",
+				"url": "https://"+req.query.ip+"/api",
 				"httpsAgent": new https.Agent({ rejectUnauthorized: false }),
+				"proxy": false, // THE BRIDGE IS ON THE LOCAL NETWORK, NEVER GO THROUGH A PROXY
 				"headers": {
 					"Content-Type": "application/json; charset=utf-8"
 				},
+				"timeout": 10000,
 				"data": {
-					"devicetype": "HueMagic for Node-RED (" + Math.floor((Math.random() * 100) + 1) + ")"
+					"devicetype": "huemagic#node-red " + Math.floor((Math.random() * 100) + 1),
+					"generateclientkey": true
 				}
 			})
 			.then(function(response)
 			{
 				var bridge = response.data;
-				if(bridge[0].error)
+
+				// LINK BUTTON NOT PRESSED (ERROR TYPE 101) OR ANYTHING ELSE WENT WRONG
+				if(!Array.isArray(bridge) || !bridge[0] || bridge[0].error || !bridge[0].success)
 				{
 					rescope.end("error");
 				}
@@ -802,14 +941,14 @@ module.exports = function(RED)
 				}
 			})
 			.catch(function(error) {
-				rescope.status(500).send(error);
+				rescope.status(500).send(error.message ? error.message : JSON.stringify(error));
 			});
 		}
 	});
 
 	//
 	// DISCOVER RESOURCES
-	RED.httpAdmin.get('/hue/resources', function(req, res, next)
+	RED.httpAdmin.get('/hue/resources', RED.auth.needsPermission('hue-bridge.read'), function(req, res, next)
 	{
 		const targetType = req.query.type;
 
@@ -823,6 +962,9 @@ module.exports = function(RED)
 
 				for (var [id, rule] of Object.entries(rules))
 				{
+					// SKIP ERROR RESPONSES OF THE LEGACY API
+					if(!rule || typeof rule !== 'object' || rule["error"]) { continue; }
+
 					var oneDevice = {};
 					oneDevice.id = id;
 					oneDevice.name = rule.name;
@@ -857,18 +999,28 @@ module.exports = function(RED)
 				{
 					const isGroup = (resource["type"] == "room" || resource["type"] == "zone" || resource["type"] == "bridge_home");
 
-					// NORMAL DEVICES
-					if(!isGroup && resource["services"] && resource["services"][targetType])
+					// AUTOMATIONS OF THE HUE APP
+					if(targetType === "automation")
 					{
-						for (const [deviceID, targetDevice] of Object.entries(resource["services"][targetType]))
+						if(resource["type"] === "behavior_instance")
 						{
 							var oneDevice = {};
 							oneDevice.id = id;
-							oneDevice.name = resource.metadata ? resource.metadata.name : false;
-							oneDevice.model = resource.product_data ? resource.product_data.product_name : false;
+							oneDevice.name = (resource.metadata && resource.metadata.name) ? resource.metadata.name : id;
+							oneDevice.model = resource.script_id ? resource.script_id : false;
 
 							targetDevices[id] = oneDevice;
 						}
+					}
+					// NORMAL DEVICES
+					else if(!isGroup && servesType(resource, targetType))
+					{
+						var oneDevice = {};
+						oneDevice.id = id;
+						oneDevice.name = resource.metadata ? resource.metadata.name : (resource.name ? resource.name : false);
+						oneDevice.model = resource.product_data ? resource.product_data.product_name : false;
+
+						targetDevices[id] = oneDevice;
 					}
 					// GROUPED (LIGHT) RESOURCES
 					else if(isGroup && targetType === "group")
@@ -884,12 +1036,15 @@ module.exports = function(RED)
 						}
 					}
 					// SCENES
-					else if(targetType === "scene" && resource["type"] == "scene")
+					else if(targetType === "scene" && (resource["type"] == "scene" || resource["type"] == "smart_scene"))
 					{
+						// THE GROUP OF A SCENE MAY BE UNKNOWN OR ALREADY DELETED
+						const sceneGroup = (resource["group"] && processedResources[resource["group"]["rid"]]) ? processedResources[resource["group"]["rid"]] : false;
+
 						var oneDevice = {};
 						oneDevice.id = id;
 						oneDevice.name = resource.metadata ? resource.metadata.name : false;
-						oneDevice.group = processedResources[resource["group"]["rid"]].metadata.name;
+						oneDevice.group = (sceneGroup && sceneGroup.metadata) ? sceneGroup.metadata.name : "–";
 
 						targetDevices[id] = oneDevice;
 					}

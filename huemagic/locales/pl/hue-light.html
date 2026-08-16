@@ -1,0 +1,97 @@
+<script type="text/markdown" data-help-name="hue-light">
+Węzeł „Hue Światło” steruje światłami podłączonymi do bridge i odbiera ich komunikaty stanu.
+
+### Konfiguracja
+
+Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć wszystkie dostępne światła. Jeśli znasz już identyfikator światła, możesz go też wpisać ręcznie. Możesz nadać światłu własną nazwę wewnętrzną albo zachować nazwę domyślną. Opcjonalnie możesz wyłączyć wszystkie automatyczne komunikaty stanu tego węzła ustawieniem „Pomijaj komunikaty węzła”. Węzeł przestanie wtedy wysyłać aktualizacje urządzenia. Możesz też zdecydować, aby komunikat inicjalizacji węzła nie był pomijany przy starcie Node-RED. Po włączeniu tego ustawienia po każdym wdrożeniu otrzymasz komunikat stanu wybranego światła. Jeśli wolisz, aby węzeł milczał, dopóki czegoś do niego nie wyślesz, włącz „Zgłaszaj tylko po poleceniu”. Węzeł zignoruje wtedy zmiany z aplikacji lub z przełącznika i odpowie wyłącznie na Twoje polecenia.
+
+Po włączeniu ustawienia „Włącz nazywanie kolorów” węzeł przy każdym komunikacie stanu spróbuje opisać ustawiony kolor światła. Na wyjściu otrzymasz wtedy dodatkowy parametr z angielskim opisem bieżącego koloru.
+
+Jeśli nie wybierzesz światła i użyjesz konfiguracji węzła w ten sposób, węzeł działa w tzw. „trybie uniwersalnym”. W tym trybie węzeł odbiera i wysyła wszystkie komunikaty stanu tego samego typu. Ustawienia w trybie uniwersalnym możesz też zastosować do konkretnego światła, przekazując jego identyfikator jako ciąg znaków w `msg.topic` razem z ustawieniami.
+
+### Odczyt stanu
+
+Zwraca bieżący stan światła, gdy tylko do węzła zostanie przekazany obiekt `msg.payload` o następującej zawartości. Możesz też nacisnąć przycisk w interfejsie Node-RED, bez wcześniejszego wysyłania komunikatu do węzła.
+
+: status (boolean): Zwraca bieżący stan światła
+
+### Włączanie / wyłączanie światła (tryb prosty)
+
+Aby szybko włączyć lub wyłączyć światło w trybie prostym, przekaż do węzła obiekt o następującej zawartości:
+
+: payload (boolean): `true` włącza światło, `false` je wyłącza
+
+### Polecenia światła (rozszerzone)
+
+Oprócz zwykłego włączania i wyłączania dostępnych jest wiele innych opcji sterowania światłem. Wszystkie węzły HueMagic obsługują polecenia addytywne. Oznacza to, że możesz przekazać najpierw jedno ustawienie, a później w kolejnym poleceniu następne, nie odrzucając poprzedniego. Przekaż w obiekcie `msg.payload` następujące parametry, aby wykonać bardziej rozbudowane ustawienia światła:
+
+: on (boolean): `true` włącza światło, `false` je wyłącza
+: toggle (boolean | any): Przełącza między włączeniem a wyłączeniem, zależnie od poprzedniego stanu światła
+: brightness (int | string): Procentowa wartość jasności światła (0-100) albo ciąg znaków `auto`, aby jasność była ustawiana automatycznie na podstawie bieżącej godziny
+: brightnessLevel (int): Liczbowa wartość jasności światła (0-254)
+: incrementBrightness (int | boolean): Określa, o ile procent rozjaśnić światło, albo `true`, aby rozjaśniać je w krokach co 10 %
+: decrementBrightness (int | boolean): Określa, o ile procent przyciemnić światło, albo `true`, aby przyciemniać je w krokach co 10 %
+: color (string): `random`, aby ustawić losowy kolor, albo angielska nazwa koloru (np. `red`)
+: hex (string): Wartość koloru w zapisie szesnastkowym jako ciąg znaków
+: rgb (array [0,0,0]): Wartość koloru w formacie RGB jako tablica
+: xyColor (object {x [float], y [float]}): Wartość koloru w formacie XY jako obiekt
+: gradient (object {hex […]}): Obiekt zawierający obsługiwany obiekt koloru (np. `hex`, `rgb`, …) oraz kilka kolorów, aby ustawić gradient na obsługiwanych światłach
+: mixColor (object): Kolor mieszany z bieżącym kolorem światła. Przyjmuje obiekty `color`, `hex`, `rgb` lub `xyColor` oraz opcjonalnie `amount` (int) określające proporcję mieszania w procentach
+: image (string): Ścieżka obrazu (lokalnego lub w sieci), aby ustawić bieżący kolor światła na średni kolor obrazu
+: saturation (int): Procent nasycenia bieżącego koloru (beta)
+: colorTemp (int | string): Wartość od 153 do 500 ustawiająca temperaturę barwową światła albo wartości `cold`, `normal`, `warm`, `hot` i `auto`, przy czym `auto` dobiera temperaturę barwową na podstawie bieżącej godziny
+: incrementColorTemp (int | boolean): Wartość określająca, o ile temperatura barwowa ma być cieplejsza, albo `true`, aby ocieplać ją w krokach co 50
+: decrementColorTemp (int | boolean): Wartość określająca, o ile temperatura barwowa ma być chłodniejsza, albo `true`, aby ochładzać ją w krokach co 50
+: transitionTime (float): Czas przejścia bieżącego ustawienia w sekundach. Po podaniu `0` światło zmienia się natychmiast. Po podaniu `3` światło przechodzi do żądanego ustawienia z łagodnym przejściem w ciągu następnych 3 sekund
+: colorloop (float): Odtwarza animację „colorloop” przez wskazaną liczbę sekund, a następnie przywraca pierwotny stan światła
+: alert (float): Odtwarza animację „alert” przez wskazaną liczbę sekund, a następnie przywraca pierwotny stan światła
+
+### Komunikaty stanu węzła
+
+Gdy tylko zostanie wykryta zmiana ustawień światła (czy to przez Node-RED, czy z zewnątrz), węzeł zwraca następujący komunikat stanu:
+
+#### Obiekt stanu w `msg.payload`
+
+: on (boolean): Stan światła, gdzie `true` oznacza włączone, a `false` wyłączone
+: brightness (int | boolean): Bieżąca jasność w procentach albo `false`, jeśli światło nie obsługuje regulacji jasności
+: brightnessLevel (int | boolean): Bieżąca jasność w zakresie 0-254 albo `false`, jeśli światło nie obsługuje regulacji jasności
+: reachable (boolean | string): `true`, jeśli światło jest połączone z bridge, `unknown`, jeśli stan połączenia jest inny
+: connectionStatus (string): Bieżący stan połączenia z bridge w postaci ciągu znaków. Może przyjmować wartości `connected`, `disconnected`, `connectivity_issue` lub `unidirectional_incoming`
+: rgb (array [int, int, int] | optional): Bieżący kolor światła jako wartość RGB, jeśli światło potrafi wyświetlać kolory
+: hex (string | optional): Bieżący kolor światła jako wartość szesnastkowa, jeśli światło potrafi wyświetlać kolory
+: xyColor (object {x [float], y [float]} | optional): Bieżący kolor światła jako wartość XY, jeśli światło potrafi wyświetlać kolory
+: color (string | optional): Bieżąca nazwa koloru po angielsku, jeśli światło potrafi wyświetlać kolory i włączono odpowiednie ustawienie węzła
+: gradient (object | optional): Bieżące ustawienie gradientu ze wszystkimi dostępnymi jednostkami koloru w postaci tablicy, jeśli światło obsługuje gradienty; `colors` zwraca kolory, `numColors` liczbę ustawionych kolorów w gradiencie, a `totalColors` maksymalną liczbę kolorów, jaką zasób obsługuje w gradiencie
+: colorTemp (int | boolean | optional): Bieżąca temperatura barwowa światła, jeśli światło obsługuje temperatury barwowe i została ustawiona
+: colorTempName (string | optional): Bieżąca temperatura barwowa światła jako opisowy ciąg znaków o wartościach `cold`, `normal`, `warm` lub `hot`, jeśli światło obsługuje temperatury barwowe i została ustawiona. W przeciwnym razie zwracane jest `unknown`
+: updated (string): Czas ostatniej aktualizacji zasobu przez HueMagic (ISO 8601)
+
+#### Informacje o świetle w `msg.info`
+
+: id (string): Wskazuje nowy identyfikator światła
+: idV1 (string | boolean): Wskazuje stary identyfikator światła
+: uniqueId (string): Unikatowy identyfikator światła
+: deviceId (string): Unikatowy identyfikator urządzenia
+: name (string): Aktualnie ustawiona nazwa światła
+: type (string): Typ światła (zawsze `light`)
+: softwareVersion (string): Bieżące oprogramowanie układowe światła
+: model (object): Zawiera informacje o modelu światła w polach `id`, `manufacturer`, `name`, `type`, `certified`, `friendsOfHue`, `colorGamut` i `colorGamutType`
+
+#### Zmiany stanu w `msg.updated`
+
+Wymienia w postaci obiektu poszczególne parametry, które zmieniły się względem poprzedniego stanu światła. Jeśli nie zarejestrowano żadnych zmian, obiekt jest pusty.
+
+#### Poprzedni stan światła w `msg.lastState`
+
+Zawiera pełny obiekt stanu (patrz wartości wyjściowe powyżej) sprzed ostatniej zmiany. Jeśli HueMagic nie zarejestrował jeszcze poprzedniego stanu, zwracane jest `false`.
+
+#### Ostatnie polecenie w `msg.command` (opcjonalnie)
+
+Jeśli stan węzła zmienił się w wyniku określonego polecenia, wysyłane jest również całe wykonane polecenie. W przeciwnym razie węzeł nie wysyła tego obiektu.
+
+### Przykłady z HueMagic
+
+HueMagic udostępnia kilka przykładowych konfiguracji dla tego węzła. Aby zaimportować gotowy przykład do interfejsu Node-RED, kliknij ikonę menu Node-RED, wybierz „Import”, a następnie przejdź do „Examples” na pasku bocznym okna. Wybierz katalog HueMagic i żądany węzeł, aby zaimportować przykładowy przepływ.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

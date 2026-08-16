@@ -1,0 +1,30 @@
+{
+	"hue-rules": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"input-name": "Naam van de regel",
+			"searching": "Regels zoeken…",
+			"none-found": "Geen regels gevonden!",
+			"rule": "Regel"
+		},
+		"node": {
+			"init": "initialiseren…",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Regel",
+			"no-rule": "geen regel geselecteerd",
+			"enabled": "ingeschakeld",
+			"disabled": "uitgeschakeld",
+			"output": "regel (uitgevoerd)",
+			"input": "in-/uitschakelen",
+			"error-no-id": "Geef een geldig regel-ID op.",
+			"error-not-available": "De regel is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is."
+		}
+	}
+}

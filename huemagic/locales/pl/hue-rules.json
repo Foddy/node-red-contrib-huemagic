@@ -1,0 +1,30 @@
+{
+	"hue-rules": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"input-name": "Nazwa reguły",
+			"searching": "Wyszukiwanie reguł…",
+			"none-found": "Nie znaleziono żadnej reguły!",
+			"rule": "Reguła"
+		},
+		"node": {
+			"init": "inicjalizacja…",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Reguła",
+			"no-rule": "nie wybrano reguły",
+			"enabled": "włączona",
+			"disabled": "wyłączona",
+			"output": "reguła (wykonana)",
+			"input": "włącz / wyłącz",
+			"error-no-id": "Podaj prawidłowy identyfikator: reguła.",
+			"error-not-available": "Reguła nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy."
+		}
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"hue-scene": {
+		"config": {
+			"name": "Naam",
+			"input-name": "Naam van de scène",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"searching": "Scènes zoeken…",
+			"none-found": "Geen scènes gevonden!",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"scene": "Scène",
+			"group": "Groep",
+			"group-none-found": "Geen groepen gevonden!",
+			"group-searching": "Groepen zoeken…",
+			"groups-all": "Alle groepen / lampen",
+			"bridge": "Bridge"
+		},
+		"node": {
+			"title": "Hue Scène",
+			"not-configured": "niet geconfigureerd",
+			"recalled": "scène geactiveerd",
+			"recalled-on-group": "scène op de groep geactiveerd",
+			"no-id": "Geen scène-ID.",
+			"input": "scène activeren",
+			"output": "doelgroep(en)",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Scène activeren…",
+			"error-not-available": "De scène is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is.",
+			"error-invalid-brightness": "Ongeldige helderheidsinstelling. Alleen 0 tot 100 procent is toegestaan."
+		}
+	}
+}

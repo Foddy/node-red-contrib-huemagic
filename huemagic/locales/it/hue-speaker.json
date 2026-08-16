@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignora i messaggi del nodo",
+			"sendinitevents-node": "Non sopprimere l'evento di inizializzazione",
+			"onlycommands-node": "Segnala solo dopo un comando",
+			"unknown-error": "Qualcosa è andato storto. Riprovi.",
+			"bridge": "Bridge",
+			"universalevents": "Eventi universali",
+			"universalevents-node": "Riceve tutti i messaggi dagli altri nodi dello stesso tipo (solo in modalità universale)",
+			"input-name": "Nome dell'altoparlante",
+			"searching": "Ricerca di altoparlanti…",
+			"none-found": "Nessun altoparlante trovato!",
+			"speaker": "Altoparlante"
+		},
+		"node": {
+			"not-configured": "non configurato",
+			"not-reachable": "non raggiungibile",
+			"universal": "modalità universale",
+			"command": "esecuzione del comando…",
+			"statusmsg": "Stato interrogato correttamente…",
+			"title": "Hue Altoparlante",
+			"silent": "silenzioso",
+			"muted": "disattivato",
+			"playing-alarm": "allarme (__sound__)",
+			"playing-chime": "campanello (__sound__)",
+			"playing-alert": "avviso (__sound__)",
+			"input": "riproduci suono / stato",
+			"output": "altoparlante",
+			"error-no-id": "Indichi un ID altoparlante valido.",
+			"error-not-available": "L'altoparlante non è ancora disponibile. Attenda che HueMagic abbia stabilito la connessione con il bridge oppure verifichi se l'ID della risorsa indicato nella configurazione è valido.",
+			"error-no-channel": "Questo altoparlante non ha alcun suono di tipo __channel__.",
+			"error-invalid-sound": "Suono __channel__ non valido. Sono consentiti: __sounds__",
+			"error-invalid-volume": "Impostazione del volume non valida. Sono consentiti solo valori da 0 a 100."
+		}
+	}
+}

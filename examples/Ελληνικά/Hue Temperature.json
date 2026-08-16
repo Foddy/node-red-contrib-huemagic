@@ -1,0 +1,150 @@
+[
+    {
+        "id": "4e9f59149660a0d5",
+        "type": "tab",
+        "label": "Hue Temperature (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Temperature»"
+    },
+    {
+        "id": "3a0ce323d25bbb89",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "info": "Πατήστε τον κόμβο «Hue Θερμοκρασία» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και έναν αισθητήρα. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΜόλις ο κόμβος συνδεθεί με το bridge σας και τον αισθητήρα και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος μπορεί να λαμβάνει και να εκτελεί τις εντολές σας. Ο κόμβος «Hue Θερμοκρασία» εκπέμπει επιπλέον αυτόματα ένα μήνυμα μόλις ενημερωθεί η κατάσταση του αισθητήρα στο bridge (μεταβολή θερμοκρασίας). Την ενημερωμένη κατάσταση και όλες τις πληροφορίες της τη λαμβάνετε στο μήνυμα που εκπέμπεται.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "0ebb67a61954b5d7",
+        "type": "debug",
+        "z": "4e9f59149660a0d5",
+        "name": "Πληροφορίες",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "61bd0f6cab995030",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Ανάκτηση τρέχουσας κατάστασης",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "266a95ec791a4434",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Κατάσταση",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "64d6a759a6ee3c70",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Άναμμα / σβήσιμο της συσκευής",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ede50c625f3d6870",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Άναμμα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e8cf23462e2c1f9a",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Σβήσιμο",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "20a19938c9eb011c",
+        "type": "hue-temperature",
+        "z": "4e9f59149660a0d5",
+        "skipevents": false,
+        "initevents": false,
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "0ebb67a61954b5d7"
+            ]
+        ]
+    }
+]

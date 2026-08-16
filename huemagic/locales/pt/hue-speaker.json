@@ -1,0 +1,38 @@
+{
+	"hue-speaker": {
+		"config": {
+			"name": "Nome",
+			"skipevents-node": "Ignorar as mensagens do nó",
+			"sendinitevents-node": "Não suprimir o evento de inicialização",
+			"onlycommands-node": "Comunicar apenas após um comando",
+			"unknown-error": "Algo correu mal. Tente novamente.",
+			"bridge": "Bridge",
+			"universalevents": "Eventos universais",
+			"universalevents-node": "Recebe todas as mensagens de outros nós do mesmo tipo (apenas no modo universal)",
+			"input-name": "Nome do altifalante",
+			"searching": "A procurar altifalantes…",
+			"none-found": "Nenhum altifalante encontrado!",
+			"speaker": "Altifalante"
+		},
+		"node": {
+			"not-configured": "não configurado",
+			"not-reachable": "inacessível",
+			"universal": "modo universal",
+			"command": "a executar comando…",
+			"statusmsg": "Estado consultado com sucesso…",
+			"title": "Hue Altifalante",
+			"silent": "silencioso",
+			"muted": "sem som",
+			"playing-alarm": "alarme (__sound__)",
+			"playing-chime": "campainha (__sound__)",
+			"playing-alert": "aviso (__sound__)",
+			"input": "reproduzir som / estado",
+			"output": "altifalante",
+			"error-no-id": "Indique um ID de altifalante válido.",
+			"error-not-available": "O altifalante ainda não está disponível. Aguarde até que o HueMagic tenha estabelecido a ligação com o bridge ou verifique se o ID do recurso indicado na configuração é válido.",
+			"error-no-channel": "Este altifalante não tem qualquer som do tipo __channel__.",
+			"error-invalid-sound": "Som de __channel__ inválido. São permitidos: __sounds__",
+			"error-invalid-volume": "Definição de volume inválida. Apenas são permitidos valores de 0 a 100."
+		}
+	}
+}

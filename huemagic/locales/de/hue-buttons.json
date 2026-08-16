@@ -1,19 +1,20 @@
 {
-	"hue-buttons":
-	{
-		"config":
-		{
+	"hue-buttons": {
+		"config": {
 			"name": "Name",
 			"input-name": "Name des Buttons",
 			"skipevents-node": "Ignoriere die Mitteilungen des Nodes",
 			"sendinitevents-node": "Initialisierungsnachricht nicht unterdrücken",
+			"onlycommands-node": "Nur nach einem Befehl melden",
 			"searching": "Suche nach Hue Buttons…",
 			"none-found": "Kein Hue Button gefunden!",
 			"unknown-error": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
-			"button": "Button"
+			"button": "Button",
+			"universalevents": "Universelle Ereignisse",
+			"universalevents-node": "Empfängt alle Nachrichten von anderen Nodes des gleichen Typs (nur im Universalmodus)",
+			"bridge": "Bridge"
 		},
-		"node":
-		{
+		"node": {
 			"title": "Hue Buttons",
 			"not-configured": "nicht konfiguriert",
 			"waiting": "warte…",
@@ -22,7 +23,20 @@
 			"output": "gedrückte Taste",
 			"universal": "Universalmodus",
 			"command": "führt Befehl aus…",
-			"statusmsg": "Status erfolgreich abgefragt…"
+			"statusmsg": "Status erfolgreich abgefragt…",
+			"error-no-id": "Bitte geben Sie eine gültige Schalter-ID an.",
+			"error-not-available": "Der Schalter ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
+			"action-pressed": "gedrückt",
+			"action-holded": "gehalten",
+			"action-shortreleased": "kurz gedrückt",
+			"action-longreleased": "lang gedrückt",
+			"action-repeated": "wiederholt",
+			"action-doublepressed": "doppelt gedrückt",
+			"dial-clockwise": "Drehrad ↻ __degrees__°",
+			"dial-counterclockwise": "Drehrad ↺ __degrees__°",
+			"button-status": "Taste #__button__ (__action__)",
+			"error-no-switchmode": "Dieses Gerät hat keinen einstellbaren Schaltermodus.",
+			"error-invalid-switchmode": "Ungültiger Schaltermodus. Dieses Gerät unterstützt: __modes__"
 		}
 	}
 }

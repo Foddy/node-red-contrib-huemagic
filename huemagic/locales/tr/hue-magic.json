@@ -1,0 +1,26 @@
+{
+	"hue-magic": {
+		"config": {
+			"name": "Ad",
+			"input-name": "Animasyon adı",
+			"loop": "Döngü",
+			"loop-endless": "Sonsuz tekrarla",
+			"restore": "Geri yükle",
+			"restore-state": "Durdurduktan sonra önceki durumu geri yükle",
+			"animation": "Animasyon",
+			"unknown-error": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+			"seconds": "sn",
+			"minutes": "dk"
+		},
+		"node": {
+			"title": "Hue Magic",
+			"no-animation": "animasyon belirtilmedi",
+			"animating": "animasyon oynatılıyor…",
+			"stopped": "durduruldu",
+			"input": "animasyonu başlat / durdur",
+			"output": "ışık veya grup",
+			"command": "komut yürütülüyor…",
+			"playmsg": "Animasyon başlatıldı…"
+		}
+	}
+}

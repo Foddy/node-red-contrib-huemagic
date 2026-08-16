@@ -12,9 +12,11 @@ module.exports = function(RED)
 
 		// GET TARGET WIRED GROUPS
 		this.targetGroups = {};
-		for (var w = scope.wires[0].length - 1; w >= 0; w--)
+		const wiredNodes = (scope.wires && scope.wires[0]) ? scope.wires[0] : [];
+
+		for (var w = wiredNodes.length - 1; w >= 0; w--)
 		{
-			let oneWiredNode = RED.nodes.getNode(scope.wires[0][w]);
+			let oneWiredNode = RED.nodes.getNode(wiredNodes[w]);
 			if(oneWiredNode && oneWiredNode.type == "hue-group" && oneWiredNode.exportedConfig && oneWiredNode.exportedConfig.groupid && oneWiredNode.exportedConfig.groupid.length > 1)
 			{
 				this.targetGroups[oneWiredNode.exportedConfig.groupid] = true;
@@ -43,8 +45,7 @@ module.exports = function(RED)
 			// PREPARE TARGET GROUPS
 			let copyOfTargetGroups = Object.keys(scope.targetGroups);
 			if(typeof groupIDS == 'string') { copyOfTargetGroups.push(groupIDS); }
-			else if(typeof groupIDS == 'object') { copyOfTargetGroups.concat(groupIDS); }
-			else { return false; }
+			else if(Array.isArray(groupIDS)) { copyOfTargetGroups = copyOfTargetGroups.concat(groupIDS); }
 
 			// CREATE PATCH
 			let patchObject = {};
@@ -54,14 +55,23 @@ module.exports = function(RED)
 			{
 				// ERROR
 				this.status({fill: "red", shape: "ring", text: "hue-scene.node.no-id"});
-				scope.error("Scene ID not found");
+				scope.error(RED._("hue-scene.node.no-id"), msg);
+				return false;
+			}
+
+			// SCENE NOT (YET) KNOWN?
+			const targetScene = bridge.resources ? bridge.resources[sceneDef] : false;
+			if(!targetScene)
+			{
+				this.status({fill: "red", shape: "ring", text: "hue-scene.node.no-id"});
+				scope.error(RED._("hue-scene.node.error-not-available"), msg);
 				return false;
 			}
 
 			// RECALL ON GROUP? -> USE API v1
-			if(copyOfTargetGroups.length > 0)
+			if(copyOfTargetGroups.length > 0 && targetScene.id_v1)
 			{
-				let targetSceneID = bridge.resources[sceneDef].id_v1.replace("/scenes/", "");
+				let targetSceneID = targetScene.id_v1.replace("/scenes/", "");
 
 				// SEND STATUS
 				scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled-on-group"})
@@ -110,8 +120,34 @@ module.exports = function(RED)
 			}
 			else
 			{
-				// RECALL SCENE
-				patchObject["recall"] = { action: "active" };
+				// RECALL SCENE (SMART SCENES USE THEIR OWN RESOURCE AND ACTION)
+				const sceneType = (targetScene.type === "smart_scene") ? "smart_scene" : "scene";
+				patchObject["recall"] = { action: (sceneType === "smart_scene") ? "activate" : "active" };
+
+				// A NORMAL SCENE CAN ALSO FADE IN AND BE DIMMED WHILE IT IS RECALLED
+				if(sceneType === "scene")
+				{
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.transitionTime != 'undefined')
+					{
+						let duration = Math.round(parseFloat(msg.payload.transitionTime) * 1000);
+						duration = (duration > 6000000) ? 6000000 : ((duration < 0) ? 0 : duration);
+
+						patchObject["recall"]["duration"] = duration;
+					}
+
+					if(typeof msg.payload != 'undefined' && typeof msg.payload.brightness != 'undefined')
+					{
+						const brightness = parseFloat(msg.payload.brightness);
+
+						if(isNaN(brightness) || brightness < 0 || brightness > 100)
+						{
+							scope.error(RED._("hue-scene.node.error-invalid-brightness"), msg);
+							return false;
+						}
+
+						patchObject["recall"]["dimming"] = { brightness: brightness };
+					}
+				}
 
 				// CHANGE NODE UI STATE
 				scope.status({fill: "grey", shape: "ring", text: "hue-scene.node.command"});
@@ -126,7 +162,7 @@ module.exports = function(RED)
 				},
 				function(callback, results)
 				{
-					bridge.patch("scene", sceneDef, patchObject)
+					bridge.patch(sceneType, sceneDef, patchObject)
 					.then(function()
 					{
 						scope.status({fill: "blue", shape: "dot", text: "hue-scene.node.recalled"});

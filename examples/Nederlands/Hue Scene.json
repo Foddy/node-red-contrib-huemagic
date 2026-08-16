@@ -1,0 +1,178 @@
+[
+    {
+        "id": "16cd74edb3f2c03d",
+        "type": "tab",
+        "label": "Hue Scene (example)",
+        "disabled": false,
+        "info": "Voorbeeld van het gebruik van de node \"Hue Scene\""
+    },
+    {
+        "id": "ef6d38e72af773f7",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "EERSTE STAPPEN (dubbelklik hier)",
+        "info": "Klik op de node \"Hue Scène\" en kies uit de lijst zowel uw bridge als een scène. Hebt u nog geen bridge ingesteld, dan wordt u gevraagd er eerst een in te stellen voordat u de configuratie van de node kunt afronden.\n\nZodra de node met uw bridge is verbonden en u de wijzigingen in Node-RED hebt gedeployed, kan de node uw commando's ontvangen en uitvoeren. De node \"Hue Scène\" kan optioneel ook met een of meer groepen worden verbonden om een scène op een bepaalde groep uit te voeren.\n\nWilt u meer informatie over deze node, de mogelijke commando's en uitvoerwaarden, klik er dan één keer op in uw flow en ga naar het boekpictogram van Node-RED (rechtsboven).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "9212dea7c3727082",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Vooraf ingestelde scène op een vooraf ingestelde groep activeren",
+        "info": "",
+        "x": 200,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a42551dfa1115aa2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activeren",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "928cb8d82cdf8977"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "928cb8d82cdf8977",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f1b9a5cd1ebfe07",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Vooraf ingestelde scène op bepaalde groepen activeren",
+        "info": "",
+        "x": 190,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "fe2561642d86c7a2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activeren op de verbonden groep",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "fd51b418323a798b",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 260,
+        "wires": [
+            [
+                "d73af7394dd870e1"
+            ]
+        ]
+    },
+    {
+        "id": "d73af7394dd870e1",
+        "type": "hue-group",
+        "z": "16cd74edb3f2c03d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 770,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "91046bac5ac2b796",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activeren op de verbonden groep + een eigen groep",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":\"{ENTER_ADDITIONAL_GROUP_ID_HERE}\"}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 300,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "8afa0a3ca466788a",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activeren op de verbonden groep + eigen groepen",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":[\"{ENTER_GROUP_ID_NO1_HERE}\",\"{ENTER_GROUP_ID_NO2_HERE}\"]}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 340,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    }
+]

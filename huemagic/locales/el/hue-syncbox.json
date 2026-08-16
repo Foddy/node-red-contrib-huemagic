@@ -1,0 +1,30 @@
+{
+	"hue-syncbox": {
+		"config": {
+			"name": "Όνομα",
+			"skipevents-node": "Παράβλεψη των μηνυμάτων του κόμβου",
+			"sendinitevents-node": "Να μην αποκρύπτεται το μήνυμα αρχικοποίησης",
+			"onlycommands-node": "Αναφορά μόνο μετά από εντολή",
+			"input-name": "Όνομα του Sync Box",
+			"syncbox": "Sync Box"
+		},
+		"node": {
+			"not-configured": "μη ρυθμισμένο",
+			"command": "εκτέλεση εντολής…",
+			"statusmsg": "Η κατάσταση ανακτήθηκε με επιτυχία…",
+			"title": "Hue Sync Box",
+			"connecting": "σύνδεση…",
+			"powersave": "απενεργοποιημένο",
+			"passthrough": "απευθείας διέλευση",
+			"syncing": "__mode__ (__intensity__)",
+			"input": "έλεγχος του sync box",
+			"output": "sync box",
+			"error-not-available": "Το sync box δεν είναι ακόμη διαθέσιμο. Περιμένετε έως ότου το HueMagic συνδεθεί μαζί του.",
+			"error-invalid-mode": "Μη έγκυρη λειτουργία. Επιτρέπονται: __modes__",
+			"error-invalid-intensity": "Μη έγκυρη ένταση. Επιτρέπονται: __intensities__",
+			"error-invalid-brightness": "Μη έγκυρη ρύθμιση φωτεινότητας. Επιτρέπονται μόνο τιμές από 0 έως 100 τοις εκατό.",
+			"error-invalid-brightness-level": "Μη έγκυρη ρύθμιση φωτεινότητας. Επιτρέπονται μόνο τιμές από 0 έως 200.",
+			"error-invalid-input": "Μη έγκυρη είσοδος HDMI. Επιτρέπονται μόνο input1 έως input4."
+		}
+	}
+}

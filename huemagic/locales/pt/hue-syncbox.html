@@ -1,0 +1,86 @@
+<script type="text/markdown" data-help-name="hue-syncbox">
+O nó «Hue Sync Box» controla uma Philips Hue Play HDMI Sync Box e comunica o que esta está a fazer no momento.
+
+### Configuração
+
+A sync box não está ligada ao seu Hue Bridge, mas fala a sua própria API local, pelo que necessita de uma configuração própria. Introduza o endereço IP da sua sync box e clique no botão junto ao campo do token de acesso. Mantenha depois premido o botão da sync box até o LED piscar a verde — o HueMagic continua a interrogar o aparelho durante um minuto e guarda o token assim que este responder.
+
+Uma vez que a sync box não envia o seu estado por iniciativa própria, o HueMagic pergunta-lho regularmente. Pode definir a frequência na configuração; o valor predefinido é de 10 segundos. Opcionalmente, pode desativar todas as mensagens de estado automáticas deste nó através da definição «Ignorar as mensagens do nó». Em alternativa, pode escolher que a mensagem de inicialização do nó não seja suprimida no arranque do Node-RED. Se preferir que o nó permaneça em silêncio até lhe enviar algo, ative «Comunicar apenas após um comando». Nesse caso, ignora as alterações feitas na aplicação ou num interruptor e responde apenas aos seus próprios comandos.
+
+### Consultar o estado
+
+Emite o estado atual da sync box assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.
+
+: status (boolean): Devolve o estado atual da sync box
+
+### Ligar / desligar (modo simples)
+
+Para ligar ou desligar rapidamente a sync box, transmita ao nó um objeto com o seguinte conteúdo. Ao ligar, é retomado o último modo de sincronização utilizado.
+
+: payload (boolean): `true` inicia a sincronização, `false` coloca o aparelho em poupança de energia
+
+### Comandos da sync box (avançado)
+
+Transmita os seguintes parâmetros num objeto `msg.payload` para controlar a sync box de forma mais detalhada:
+
+: mode (string): Um de `powersave`, `passthrough`, `video`, `game`, `music` ou `ambient`
+: sync (boolean): `true` inicia a sincronização, `false` para-a
+: toggle (boolean | any): Alterna a sincronização consoante o estado anterior
+: passthrough (boolean): `true` encaminha a imagem para o seu televisor sem sincronizar
+: intensity (string): Com que intensidade as luzes seguem a imagem. Um de `subtle`, `moderate`, `high` ou `intense`
+: brightness (int): Valor percentual do brilho (0-100)
+: brightnessLevel (int): Valor numérico do brilho tal como o aparelho o conta (0-200, sendo 100 o valor de referência)
+: incrementBrightness (int | boolean): Indica em quantos pontos percentuais o brilho da sync box deve aumentar, ou `true` para passos de 10 %
+: decrementBrightness (int | boolean): Indica em quantos pontos percentuais o brilho da sync box deve diminuir, ou `true` para passos de 10 %
+: input (string | int): A entrada HDMI a apresentar, de `input1` a `input4` ou simplesmente de `1` a `4`
+: entertainmentArea (string): A área de entretenimento que o aparelho deve controlar, p. ex. `groups/13`
+
+### Mensagens de estado do nó
+
+Sempre que o estado da sync box muda, o nó devolve a seguinte mensagem de estado:
+
+#### Objeto de estado em `msg.payload`
+
+: on (boolean): `false` enquanto o aparelho estiver em poupança de energia
+: syncing (boolean): `true` enquanto as luzes seguirem a imagem
+: passthrough (boolean): `true` enquanto o aparelho encaminhar a imagem
+: mode (string): O modo atualmente ativo
+: lastSyncMode (string): O último modo de sincronização utilizado
+: intensity (string | boolean): Intensidade do modo atualmente ativo
+: brightness (int | boolean): Brilho em percentagem
+: brightnessLevel (int | boolean): Brilho tal como o aparelho o conta (0-200)
+: input (string | boolean): A entrada HDMI atualmente apresentada
+: inputs (object): As quatro entradas HDMI com o respetivo `name`, `type`, `status` (`unplugged`, `plugged`, `linked` ou `unknown`) e se estão `active`
+: entertainmentArea (string | boolean): A área de entretenimento controlada pelo aparelho
+: updated (string): Momento da última atualização do recurso pelo HueMagic (ISO 8601)
+
+#### Informações sobre a sync box em `msg.info`
+
+: id (string | boolean): O ID único da sync box
+: name (string | boolean): O nome atualmente atribuído à sync box
+: type (string): O tipo do dispositivo (sempre `syncbox`)
+: ipAddress (string | boolean): O endereço IP que o aparelho indica para si próprio
+: softwareVersion (string | boolean): O firmware atual da sync box
+: apiLevel (int | boolean): O nível de API da sync box
+: ledMode (int | boolean): O modo de LED atualmente definido
+: wifi (object | boolean): Contém `ssid` e `strength` da ligação sem fios
+: model (object): Contém as informações de modelo da sync box em `id`, `manufacturer` e `name`
+
+#### Alterações de estado em `msg.updated`
+
+Enumera sob a forma de um objeto os parâmetros que foram alterados em relação ao último estado da sync box. Se não tiverem sido registadas alterações, este objeto está vazio.
+
+#### Último estado da sync box em `msg.lastState`
+
+Contém o objeto de estado completo (ver os valores de saída acima) do último estado antes da última alteração registada. Se o HueMagic ainda não tiver registado o último estado, é emitido `false`.
+
+#### Último comando em `msg.command` (opcional)
+
+Se o estado do nó tiver sido alterado através de um determinado comando, é também emitido o comando completo que foi executado. Caso contrário, o nó não emite este objeto.
+
+### Exemplos do HueMagic
+
+O HueMagic disponibiliza algumas configurações de exemplo para este nó. Para importar um exemplo completo na sua interface Node-RED, clique no ícone de menu do Node-RED, selecione «Importar» e navegue até «Exemplos» na barra lateral da janela. Em seguida, selecione a pasta HueMagic e o nó pretendido para importar um fluxo de exemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

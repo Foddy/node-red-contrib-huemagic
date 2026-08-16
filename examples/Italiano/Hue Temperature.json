@@ -1,0 +1,150 @@
+[
+    {
+        "id": "4e9f59149660a0d5",
+        "type": "tab",
+        "label": "Hue Temperature (example)",
+        "disabled": false,
+        "info": "Esempio di utilizzo del nodo «Hue Temperature»"
+    },
+    {
+        "id": "3a0ce323d25bbb89",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "PRIMI PASSI (fai doppio clic)",
+        "info": "Faccia clic sul nodo «Hue Temperatura» e selezioni dall'elenco sia il suo bridge sia un sensore. Se non ha ancora configurato un bridge, le verrà chiesto di configurarne uno prima di poter completare la configurazione del nodo.\n\nNon appena il nodo è collegato al suo bridge e il sensore e ha eseguito il deploy delle modifiche in Node-RED, il nodo può ricevere ed eseguire i suoi comandi. Il nodo «Hue Temperatura» emette inoltre automaticamente un messaggio non appena lo stato del sensore sul bridge viene aggiornato (variazione di temperatura). Riceverà lo stato aggiornato e tutte le sue informazioni nel messaggio emesso.\n\nSe desidera maggiori informazioni su questo nodo, sui comandi disponibili e sui valori di uscita, ci faccia clic una volta nel suo flusso e vada all'icona del libro di Node-RED (angolo in alto a destra).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "0ebb67a61954b5d7",
+        "type": "debug",
+        "z": "4e9f59149660a0d5",
+        "name": "Informazioni",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 160,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "61bd0f6cab995030",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Richiedere lo stato attuale",
+        "info": "",
+        "x": 120,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "266a95ec791a4434",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Stato",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"status\":true}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
+        "id": "64d6a759a6ee3c70",
+        "type": "comment",
+        "z": "4e9f59149660a0d5",
+        "name": "Accendere / spegnere il dispositivo",
+        "info": "",
+        "x": 120,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ede50c625f3d6870",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Accendere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "e8cf23462e2c1f9a",
+        "type": "inject",
+        "z": "4e9f59149660a0d5",
+        "name": "Spegnere",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "20a19938c9eb011c"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle-o"
+    },
+    {
+        "id": "20a19938c9eb011c",
+        "type": "hue-temperature",
+        "z": "4e9f59149660a0d5",
+        "skipevents": false,
+        "initevents": false,
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "0ebb67a61954b5d7"
+            ]
+        ]
+    }
+]

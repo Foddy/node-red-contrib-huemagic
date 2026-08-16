@@ -1,0 +1,86 @@
+<script type="text/markdown" data-help-name="hue-syncbox">
+«Hue Sync Box» düğümü bir Philips Hue Play HDMI Sync Box'ı denetler ve o anda ne yaptığını bildirir.
+
+### Kurulum
+
+Sync box, Hue Bridge'inize bağlı değildir; kendi yerel API'sini konuşur ve bu yüzden kendi yapılandırmasına ihtiyaç duyar. Sync box cihazınızın IP adresini girin ve erişim belirteci alanının yanındaki düğmeye tıklayın. Ardından sync box üzerindeki düğmeyi LED yeşil yanıp sönene kadar basılı tutun — HueMagic cihazı bir dakika boyunca sorgular ve yanıt verir vermez belirteci kaydeder.
+
+Sync box durumunu kendiliğinden göndermediği için HueMagic düzenli olarak sorar. Ne sıklıkta soracağını yapılandırmada belirleyebilirsiniz; varsayılan 10 saniyedir. İsteğe bağlı olarak «Düğümün mesajlarını yoksay» ayarıyla bu düğümün tüm otomatik durum mesajlarını devre dışı bırakabilirsiniz. Alternatif olarak, Node-RED başlatılırken düğümün başlatma mesajının bastırılmamasını seçebilirsiniz. Düğümün siz bir şey gönderene kadar sessiz kalmasını tercih ediyorsanız «Yalnızca bir komuttan sonra bildir» seçeneğini etkinleştirin. Bu durumda uygulamadan veya bir anahtardan gelen değişiklikleri yok sayar ve yalnızca sizin komutlarınıza yanıt verir.
+
+### Durumu sorgulama
+
+Düğüme aşağıdaki içeriğe sahip bir `msg.payload` nesnesi iletildiğinde sync box'ın güncel durumunu verir. Alternatif olarak, önce düğüme bir mesaj göndermeden Node-RED arayüzündeki düğmeye de basabilirsiniz.
+
+: status (boolean): Sync box'ın güncel durumunu döndürür
+
+### Açma / kapatma (basit)
+
+Sync box'ı hızlıca açmak veya kapatmak için düğüme aşağıdaki içeriğe sahip bir nesne gönderin. Açıldığında en son kullanılan eşitleme moduna dönülür.
+
+: payload (boolean): `true` eşitlemeyi başlatır, `false` cihazı güç tasarrufuna alır
+
+### Sync box komutları (genişletilmiş)
+
+Sync box'ı daha ayrıntılı denetlemek için aşağıdaki parametreleri bir `msg.payload` nesnesinde gönderin:
+
+: mode (string): `powersave`, `passthrough`, `video`, `game`, `music` veya `ambient` değerlerinden biri
+: sync (boolean): `true` eşitlemeyi başlatır, `false` durdurur
+: toggle (boolean | any): Önceki duruma göre eşitlemeyi açıp kapatır
+: passthrough (boolean): `true` görüntüyü eşitleme yapmadan televizyonunuza aktarır
+: intensity (string): Işıkların görüntüyü ne kadar güçlü izleyeceği. `subtle`, `moderate`, `high` veya `intense` değerlerinden biri
+: brightness (int): Parlaklığın yüzde değeri (0-100)
+: brightnessLevel (int): Parlaklığın cihazın saydığı biçimde sayısal değeri (0-200; 100 temel değerdir)
+: incrementBrightness (int | boolean): Sync box'ın parlaklığının yüzde kaç artırılacağını belirtir veya %10'luk adımlar için `true`
+: decrementBrightness (int | boolean): Sync box'ın parlaklığının yüzde kaç azaltılacağını belirtir veya %10'luk adımlar için `true`
+: input (string | int): Gösterilecek HDMI girişi: `input1` – `input4` veya kısaca `1` – `4`
+: entertainmentArea (string): Cihazın süreceği eğlence alanı, ör. `groups/13`
+
+### Düğümün durum mesajları
+
+Sync box'ın durumu her değiştiğinde düğüm aşağıdaki durum mesajını döndürür:
+
+#### `msg.payload` altındaki durum nesnesi
+
+: on (boolean): Cihaz güç tasarrufundayken `false`
+: syncing (boolean): Işıklar görüntüyü izlerken `true`
+: passthrough (boolean): Cihaz görüntüyü aktarırken `true`
+: mode (string): Şu anda etkin olan mod
+: lastSyncMode (string): En son kullanılan eşitleme modu
+: intensity (string | boolean): Şu anda etkin olan modun yoğunluğu
+: brightness (int | boolean): Yüzde cinsinden parlaklık
+: brightnessLevel (int | boolean): Cihazın saydığı biçimde parlaklık (0-200)
+: input (string | boolean): Şu anda gösterilen HDMI girişi
+: inputs (object): Dört HDMI girişinin tamamı; `name`, `type`, `status` (`unplugged`, `plugged`, `linked` veya `unknown`) ve `active` olup olmadıkları
+: entertainmentArea (string | boolean): Cihazın sürdüğü eğlence alanı
+: updated (string): Kaynağın HueMagic tarafından son güncellenme zamanı (ISO 8601)
+
+#### `msg.info` altındaki sync box bilgileri
+
+: id (string | boolean): Sync box'ın benzersiz kimliği
+: name (string | boolean): Sync box'ın geçerli adı
+: type (string): Cihazın türü (her zaman `syncbox`)
+: ipAddress (string | boolean): Cihazın kendisi için bildirdiği IP adresi
+: softwareVersion (string | boolean): Sync box'ın geçerli ürün yazılımı
+: apiLevel (int | boolean): Sync box'ın API düzeyi
+: ledMode (int | boolean): Geçerli LED modu
+: wifi (object | boolean): Kablosuz bağlantının `ssid` ve `strength` değerlerini içerir
+: model (object): Sync box'ın model bilgilerini `id`, `manufacturer` ve `name` altında içerir
+
+#### `msg.updated` altındaki durum değişiklikleri
+
+Sync box'ın önceki durumuna kıyasla değişen parametreleri bir nesne olarak listeler. Herhangi bir değişiklik kaydedilmediyse bu nesne boştur.
+
+#### `msg.lastState` altındaki son sync box durumu
+
+Son kaydedilen değişiklikten önceki durumun eksiksiz durum nesnesini içerir (yukarıdaki çıktı değerlerine bakın). HueMagic önceki durumu henüz kaydetmediyse `false` verilir.
+
+#### `msg.command` altındaki son komut (isteğe bağlı)
+
+Düğümün durumu belirli bir komutla değiştiyse, yürütülen komutun tamamı da çıktı olarak verilir. Aksi hâlde düğüm bu nesneyi çıktı olarak vermez.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

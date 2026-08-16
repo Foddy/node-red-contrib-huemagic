@@ -1,8 +1,92 @@
-[![Hue Magic Logo](https://gist.githubusercontent.com/Foddy/9b647b910d03a31cee40f97c3988dd1c/raw/7ee635bd958ad04d7ba53c6c40ec401f879bffc2/huemagic-logo.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
+[![Hue Magic Logo](https://raw.githubusercontent.com/Foddy/node-red-contrib-huemagic/master/docs/images/huemagic-logo.svg)](https://flows.nodered.org/node/node-red-contrib-huemagic)
 
 # Changelog
 
-### v4.2.2 (latest)
+### v5.0.0 (latest)
+
+> **Attention!** HueMagic v5 requires **Node.js 18+** and **Node-RED v3+**. The "Hue Group" node now speaks the CLIP/v2 API instead of the legacy API, and the alert effect on the "Hue Light" & "Hue Group" nodes is now played by the bridge itself, which also restores the previous state on its own. Your existing flows keep working as they are — no reconfiguration needed.
+
+**New devices and features**
+
+* New "Hue Speaker" node plays the sounds of a Hue Secure chime and can use it as an indoor siren
+* New "Hue Automation" node enables and disables the automations you created in the Philips Hue app — the modern successor to the rules of the legacy API
+* The "Hue Motion" node now also covers Hue Secure cameras and, on the Hue Bridge Pro, the MotionAware areas that turn your lights into motion sensors
+* Cameras and MotionAware areas can be made more or less sensitive
+* The "Hue Buttons" node now also reports the Hue Secure video doorbell
+* The Hue wall switch module can be switched between rocker and pushbutton mode ([#331](https://github.com/Foddy/node-red-contrib-huemagic/issues/331)) (thx @KGS501)
+* The "Hue Light" node can play the built-in effects of a light (`candle`, `fire`, `sparkle`, `prism` and more)
+* The "Hue Light" node can play the `sunrise` and `sunset` simulation of a light for up to six hours
+* The behaviour of a light after a power cut can now be configured (`safety`, `powerfail`, `last_on_state` or `custom`)
+* The mode of a gradient can now be set, so the colors are spread as an interpolated, mirrored, pixelated or segmented palette
+* The "Hue Motion" and "Hue Brightness" nodes now also read the grouped sensors the bridge aggregates for a room or zone
+* New "Hue Sync Box" node controls a Philips Hue Play HDMI Sync Box over its own local API — modes, intensity, brightness, HDMI input and entertainment area ([#195](https://github.com/Foddy/node-red-contrib-huemagic/issues/195)) (thx @masterfish1)
+* The "Hue Scene" node can now recall a scene with its own transition time and brightness, so the same scene can be applied slowly or dimmed depending on the time of day ([#392](https://github.com/Foddy/node-red-contrib-huemagic/issues/392)) (thx @guenter-ms)
+* Scenes in the node configuration are now sorted by room or zone first and then by name, so the scenes of one room stay together ([#259](https://github.com/Foddy/node-red-contrib-huemagic/issues/259)) (thx @hendersj)
+* The "Hue Brightness" node lets you set the light level below which a room counts as dark instead of insisting on a fixed value ([#279](https://github.com/Foddy/node-red-contrib-huemagic/issues/279)) (thx @kazzyUK)
+* The "Hue Temperature" node can correct the measured value with an offset, so a sensor that reads too warm can finally be calibrated ([#205](https://github.com/Foddy/node-red-contrib-huemagic/issues/205)) (thx @tutenchamun)
+* Every node that reports events can now be set to "Only report after a command", so it stays silent when a light is changed in the app or by a switch and only answers your own commands ([#247](https://github.com/Foddy/node-red-contrib-huemagic/issues/247)) (thx @adams-family)
+* New example flows for the "Hue Speaker", "Hue Automation" and "Hue Sync Box" nodes
+
+**Philips Hue Bridge Pro**
+
+* Support for the Philips Hue Bridge Pro: the API key is now requested over HTTPS, because modern bridges no longer answer on plain HTTP ([#454](https://github.com/Foddy/node-red-contrib-huemagic/issues/454)) ([#452](https://github.com/Foddy/node-red-contrib-huemagic/issues/452)) (thx @ozdeadmeat & @JGoor)
+* Requesting the API key now keeps asking the bridge for a minute instead of guessing a single moment
+* Fixed a crash that took down the whole Node-RED instance as soon as a Bridge Pro streamed an unknown service type ([#453](https://github.com/Foddy/node-red-contrib-huemagic/issues/453)) (thx @lmuser22)
+* Bridges are now also discovered when they run on a port other than 443
+
+**Stability**
+
+* HueMagic no longer takes Node-RED down with it — all known uncaught exceptions and unhandled promise rejections have been closed ([#435](https://github.com/Foddy/node-red-contrib-huemagic/issues/435)) ([#398](https://github.com/Foddy/node-red-contrib-huemagic/issues/398)) ([#388](https://github.com/Foddy/node-red-contrib-huemagic/issues/388)) ([#366](https://github.com/Foddy/node-red-contrib-huemagic/issues/366)) ([#336](https://github.com/Foddy/node-red-contrib-huemagic/issues/336)) ([#326](https://github.com/Foddy/node-red-contrib-huemagic/issues/326)) ([#321](https://github.com/Foddy/node-red-contrib-huemagic/issues/321)) ([#312](https://github.com/Foddy/node-red-contrib-huemagic/issues/312)) ([#306](https://github.com/Foddy/node-red-contrib-huemagic/issues/306)) ([#304](https://github.com/Foddy/node-red-contrib-huemagic/issues/304)) ([#270](https://github.com/Foddy/node-red-contrib-huemagic/issues/270)) (thx @MarkRoks, @TerryMcgurk, @CyrielRct, @Wombosvideo, @Zootopie-LG, @ddlsmurf, @nibbsification, @Darkman1900, @bmdevx & @McFozzy75)
+* Commands are now paced to what the bridge actually accepts (about 10 light and 1 group command per second), so the worker setting no longer has to be turned down to 1 to avoid 429/503 errors ([#295](https://github.com/Foddy/node-red-contrib-huemagic/issues/295)) ([#350](https://github.com/Foddy/node-red-contrib-huemagic/issues/350)) ([#404](https://github.com/Foddy/node-red-contrib-huemagic/issues/404)) ([#431](https://github.com/Foddy/node-red-contrib-huemagic/issues/431)) ([#276](https://github.com/Foddy/node-red-contrib-huemagic/issues/276)) (thx @Brewj, @ralfhille, @hazymat, @bevrat & @hurenkam)
+* The connection to the bridge is now rebuilt with a backoff instead of a reconnect storm, and a single failed request no longer restarts the whole bridge ([#372](https://github.com/Foddy/node-red-contrib-huemagic/issues/372)) ([#353](https://github.com/Foddy/node-red-contrib-huemagic/issues/353)) (thx @develmac & @Jai-Gogineni)
+* The watchdog no longer tears down the event subscription every ten seconds, which stopped sensors and switches from reporting after a short while ([#384](https://github.com/Foddy/node-red-contrib-huemagic/issues/384)) ([#396](https://github.com/Foddy/node-red-contrib-huemagic/issues/396)) ([#358](https://github.com/Foddy/node-red-contrib-huemagic/issues/358)) ([#344](https://github.com/Foddy/node-red-contrib-huemagic/issues/344)) (thx @spacewalker0815, @bobhobelman, @otoivanen & @isaac-the-newt)
+* Nodes now detach from the bridge when they are removed, so a re-deploy no longer makes them receive every event twice, three times, … ([#297](https://github.com/Foddy/node-red-contrib-huemagic/issues/297)) ([#301](https://github.com/Foddy/node-red-contrib-huemagic/issues/301)) ([#412](https://github.com/Foddy/node-red-contrib-huemagic/pull/412)) (thx @FreeTechNick, @ScottBevin & @FredBlo)
+* One event in a batch that could not be assigned no longer discards all the following ones
+* Devices that are added to or removed from the bridge are now picked up without restarting Node-RED
+* Requests to the bridge never go through a configured HTTP proxy anymore, which broke the TLS connection on some setups ([#436](https://github.com/Foddy/node-red-contrib-huemagic/issues/436)) ([#265](https://github.com/Foddy/node-red-contrib-huemagic/issues/265)) (thx @rsch90 & @HonestJohn61)
+* Timers and event listeners are properly cleaned up when a node is removed
+
+**Nodes**
+
+* The "Hue Group" node now speaks CLIP/v2, which brings back `incrementBrightness` & `decrementBrightness` and fixes groups without a legacy identifier ([#380](https://github.com/Foddy/node-red-contrib-huemagic/issues/380)) ([#400](https://github.com/Foddy/node-red-contrib-huemagic/issues/400)) ([#405](https://github.com/Foddy/node-red-contrib-huemagic/issues/405)) (thx @peterbaker, @SierraLimaOscar & @guenter-ms)
+* The "Hue Group" node now also reports `brightness`, `brightnessLevel` and the current color ([#292](https://github.com/Foddy/node-red-contrib-huemagic/issues/292)) (thx @Schmetterfliege)
+* Universal mode no longer fails on every other message and the "Hue Group" node finally receives messages in it ([#300](https://github.com/Foddy/node-red-contrib-huemagic/issues/300)) ([#305](https://github.com/Foddy/node-red-contrib-huemagic/issues/305)) ([#418](https://github.com/Foddy/node-red-contrib-huemagic/issues/418)) (thx @oxivanisher, @aL1aL7 & @vongomben)
+* "The group is not yet available" is gone — groups, zones and third party devices are resolved correctly again ([#373](https://github.com/Foddy/node-red-contrib-huemagic/issues/373)) ([#374](https://github.com/Foddy/node-red-contrib-huemagic/issues/374)) ([#376](https://github.com/Foddy/node-red-contrib-huemagic/issues/376)) ([#314](https://github.com/Foddy/node-red-contrib-huemagic/issues/314)) ([#378](https://github.com/Foddy/node-red-contrib-huemagic/issues/378)) ([#377](https://github.com/Foddy/node-red-contrib-huemagic/issues/377)) ([#407](https://github.com/Foddy/node-red-contrib-huemagic/issues/407)) ([#395](https://github.com/Foddy/node-red-contrib-huemagic/issues/395)) (thx @Eggn1n3, @MarkRoks, @marsjupiter1, @andesse, @djiwondee, @Stieger81, @McFozzy75, @otoivanen & @traverseda)
+* Turning a light or group off now always reaches the bridge, even if the cached state claimed it was already off ([#334](https://github.com/Foddy/node-red-contrib-huemagic/issues/334)) (thx @dewenni)
+* Nodes no longer get stuck on "executing command…" after a command that changed nothing ([#315](https://github.com/Foddy/node-red-contrib-huemagic/issues/315)) ([#345](https://github.com/Foddy/node-red-contrib-huemagic/issues/345)) ([#382](https://github.com/Foddy/node-red-contrib-huemagic/issues/382)) ([#394](https://github.com/Foddy/node-red-contrib-huemagic/issues/394)) (thx @BlaM, @NodeRedFan & @adb336)
+* The alert effect is no longer capped at 15 seconds and the bridge now restores the previous state itself, so groups no longer stay dark afterwards ([#451](https://github.com/Foddy/node-red-contrib-huemagic/issues/451)) ([#294](https://github.com/Foddy/node-red-contrib-huemagic/issues/294)) (thx @biosmanager & @spudje)
+* The "Hue Buttons" node now reports the rotation of the Hue Tap Dial Switch and the Lutron Aurora ([#385](https://github.com/Foddy/node-red-contrib-huemagic/issues/385)) ([#275](https://github.com/Foddy/node-red-contrib-huemagic/issues/275)) (thx @WhiteSockedDancer & @hurenkam)
+* The "Hue Buttons" node now also recognizes `long_press`, `long_release` and `double_short_release` ([#129](https://github.com/Foddy/node-red-contrib-huemagic/issues/129)) (thx @Tscherno)
+* Sensors read their values from the reports of the current API, so motion, temperature and brightness stay correct on new firmwares ([#384](https://github.com/Foddy/node-red-contrib-huemagic/issues/384)) ([#396](https://github.com/Foddy/node-red-contrib-huemagic/issues/396)) ([#279](https://github.com/Foddy/node-red-contrib-huemagic/issues/279)) (thx @spacewalker0815, @bobhobelman & @kazzyUK)
+* Devices without a battery (e.g. mains powered sensors) no longer break their node ([#446](https://github.com/Foddy/node-red-contrib-huemagic/issues/446)) (thx @DangersTR)
+* The "Hue Contact" node now also reports whether the sensor has been tampered with and finally got its documentation and example flow
+* The "Hue Scene" node supports smart scenes and no longer fails on scenes whose group has been deleted ([#447](https://github.com/Foddy/node-red-contrib-huemagic/issues/447)) ([#386](https://github.com/Foddy/node-red-contrib-huemagic/issues/386)) ([#449](https://github.com/Foddy/node-red-contrib-huemagic/issues/449)) ([#316](https://github.com/Foddy/node-red-contrib-huemagic/issues/316)) (thx @Himola, @danieldaeschle, @stijnbrocker & @andesse)
+* The searches in the node configuration now report the real error instead of a generic one ([#449](https://github.com/Foddy/node-red-contrib-huemagic/issues/449)) ([#274](https://github.com/Foddy/node-red-contrib-huemagic/issues/274)) (thx @stijnbrocker & @TomGeoDK)
+* `msg.lastState` now really contains the previous state instead of a reference to the current one ([#322](https://github.com/Foddy/node-red-contrib-huemagic/issues/322)) (thx @valiquette)
+* Fixed the random color option, which threw an error instead of picking a color
+* Fixed `brightnessLevel: 0` not turning a light or group off
+* Fixed the state restoration after an animation on the "Hue Group" node
+* Lights and groups no longer flicker when an animation restores their previous state
+
+**Localization**
+
+* All error messages, node states and log outputs are now translated instead of being hardcoded in English
+* HueMagic now speaks ten languages: English, German, Spanish, French, Italian, Dutch, Portuguese, Polish, Turkish and Greek — node configuration, status texts, error messages and the complete node documentation
+* The example flows are translated as well and live in one folder per language, so you can import them in your own language
+* Completed the German translation, which was missing several texts in the node configuration
+* The node icons are now rendered from the SVG versions that have been shipped since v4 but were never used
+
+**Under the hood**
+
+* Requires Node.js 18+ and Node-RED v3+, tested against Node-RED v5 on Node.js 24
+* The event stream is now spoken directly instead of through the `eventsource` dependency, which had dropped support for older Node.js versions
+* Connections to the bridge are kept alive instead of renegotiating TLS for every single request
+* The HTTP endpoints of the node configuration now require an authenticated Node-RED editor session
+* Updated all dependencies to their latest versions
+* Added a test suite (`npm test`) that also guards the translations
+* Published again, so all the fixes that were sitting on master since 2022 finally reach everyone ([#414](https://github.com/Foddy/node-red-contrib-huemagic/issues/414)) (thx @AleksCee)
+
+### v4.2.2
 
 * HueMagic can now be installed again on older Node-RED versions without official support
 * Fixed an issue for Hue Group nodes not getting/updating their current status ([#342](https://github.com/Foddy/node-red-contrib-huemagic/issues/342)) (thx @bmdevx)
@@ -21,7 +105,7 @@
 ### v4.1.0
 
 * New queue worker throttles the number of parallel requests to the bridge to avoid 503 API limit errors (can be configured in the Bridge configuration)
-* Resources are now alphabetically sorted in the node´s configuration interface ([#282](https://github.com/Foddy/node-red-contrib-huemagic/pull/282)) (thx)
+* Resources are now alphabetically sorted in the node's configuration interface ([#282](https://github.com/Foddy/node-red-contrib-huemagic/pull/282)) (thx)
 * "Hue Brightness" node was optimized to output more accurate "dark" and "dayLight" values
 * Several optimizations in the documentation of some nodes
 
@@ -63,8 +147,8 @@
 * "Hue Light" & "Hue Group" can now also receive a named color temperature setting
 * "Hue Light" & "Hue Group" nodes can now receive future brightness states in "turned off" mode ([#244](https://github.com/Foddy/node-red-contrib-huemagic/issues/244))
 * Automatic light temperature setting outputs now values from 153 (coldest) to 500 (warmest)
-* Automatic color correction based on the light´s capabilities for more accurate color settings
-* Optimized node editor configuration UI to better match the current Node-RED´s UI
+* Automatic color correction based on the light's capabilities for more accurate color settings
+* Optimized node editor configuration UI to better match the current Node-RED's UI
 * The option for "automatic firmware updates" on the bridge moved to the bridge configuration node
 * "Hue Group" node does no longer contain the "msg.info.model" & "msg.info.class" property
 * Fixed timeout connection issues to the bridge

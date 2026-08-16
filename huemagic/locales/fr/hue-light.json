@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Nom",
+			"skipevents-node": "Ignorer les messages du nœud",
+			"sendinitevents-node": "Ne pas supprimer l'événement d'initialisation",
+			"onlycommands-node": "Signaler uniquement après une commande",
+			"unknown-error": "Une erreur est survenue. Veuillez réessayer.",
+			"bridge": "Bridge",
+			"universalevents": "Événements universels",
+			"universalevents-node": "Reçoit tous les messages des autres nœuds du même type (uniquement en mode universel)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Activer la dénomination des couleurs",
+			"input-name": "Nom de la lumière",
+			"searching": "Recherche de lumières…",
+			"none-found": "Aucune lumière trouvée !",
+			"light": "Lumière"
+		},
+		"node": {
+			"not-configured": "non configuré",
+			"init": "initialisation…",
+			"not-reachable": "non joignable",
+			"universal": "mode universel",
+			"command": "exécution de la commande…",
+			"statusmsg": "Statut interrogé avec succès…",
+			"title": "Hue Lumière",
+			"turned-on": "allumée",
+			"turned-on-percent": "allumée (__percent__ %)",
+			"turned-off": "éteinte",
+			"error-no-id": "Aucun ID de lumière défini. Consultez la documentation.",
+			"error-input": "erreur de saisie",
+			"error-invalid-temp": "Température de couleur non valide. Seules les valeurs de 153 à 500 sont autorisées.",
+			"input": "allumer / éteindre",
+			"output": "statut",
+			"error-not-available": "La lumière n'est pas encore disponible. Veuillez attendre que HueMagic ait établi la connexion avec le bridge ou vérifiez si l'ID de ressource indiqué dans la configuration est valide.",
+			"error-invalid-brightness": "Réglage de luminosité non valide. Seules les valeurs de 0 à 100 pour cent sont autorisées.",
+			"error-invalid-brightness-level": "Réglage de luminosité non valide. Seules les valeurs de 0 à 254 sont autorisées.",
+			"error-invalid-sat": "Réglage de saturation non valide. Seules les valeurs de 0 à 100 sont autorisées.",
+			"error-no-colorloop": "L'effet colorloop n'est pas disponible pour cette lumière.",
+			"error-invalid-effect": "Effet non valide. Cette lumière prend en charge : __effects__",
+			"error-invalid-powerup": "Réglage de mise sous tension non valide. Préréglages autorisés : __presets__"
+		}
+	}
+}

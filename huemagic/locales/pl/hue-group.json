@@ -1,0 +1,46 @@
+{
+	"hue-group": {
+		"config": {
+			"name": "Nazwa",
+			"skipevents-node": "Pomijaj komunikaty węzła",
+			"sendinitevents-node": "Nie pomijaj komunikatu inicjalizacji",
+			"onlycommands-node": "Zgłaszaj tylko po poleceniu",
+			"unknown-error": "Coś poszło nie tak. Spróbuj ponownie.",
+			"bridge": "Bridge",
+			"universalevents": "Zdarzenia uniwersalne",
+			"universalevents-node": "Odbiera wszystkie komunikaty innych węzłów tego samego typu (tylko w trybie uniwersalnym)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Włącz nazywanie kolorów",
+			"input-name": "Nazwa grupy",
+			"searching": "Wyszukiwanie grup…",
+			"none-found": "Nie znaleziono żadnej grupy!",
+			"group": "Grupa",
+			"all": "Wszystkie grupy / światła"
+		},
+		"node": {
+			"not-configured": "nieskonfigurowany",
+			"init": "inicjalizacja…",
+			"universal": "tryb uniwersalny",
+			"command": "wykonywanie polecenia…",
+			"statusmsg": "Stan odczytany pomyślnie…",
+			"title": "Hue Grupa",
+			"brightness": " (__percent__ %)",
+			"all-on": "wszystkie światła włączone",
+			"all-off": "wszystkie światła wyłączone",
+			"some-on": "część świateł włączona",
+			"turned-on": "włączona",
+			"error-input": "błąd danych wejściowych",
+			"error-no-id": "Nie podano identyfikatora grupy.",
+			"error-invalid-sat": "Nieprawidłowe ustawienie nasycenia. Dozwolone są tylko wartości od 0 do 254.",
+			"error-invalid-temp": "Nieprawidłowa temperatura barwowa. Dozwolone są tylko wartości od 153 do 500.",
+			"input": "włącz / wyłącz",
+			"output": "stan",
+			"error-not-available": "Grupa nie jest jeszcze dostępny. Poczekaj, aż HueMagic nawiąże połączenie z bridge, albo sprawdź, czy identyfikator zasobu podany w konfiguracji jest prawidłowy.",
+			"error-invalid-brightness": "Nieprawidłowe ustawienie jasności. Dozwolone są tylko wartości od 0 do 100 procent.",
+			"error-invalid-brightness-level": "Nieprawidłowe ustawienie jasności. Dozwolone są tylko wartości od 0 do 254.",
+			"error-invalid-increment": "Nieprawidłowe ustawienie incrementBrightness. Dozwolone są tylko wartości od -100 % do 100 %.",
+			"error-invalid-decrement": "Nieprawidłowe ustawienie decrementBrightness. Dozwolone są tylko wartości od -100 % do 100 %.",
+			"error-no-colorloop": "Efekt colorloop nie jest dostępny dla tej grupy."
+		}
+	}
+}

@@ -1,0 +1,178 @@
+[
+    {
+        "id": "16cd74edb3f2c03d",
+        "type": "tab",
+        "label": "Hue Scene (example)",
+        "disabled": false,
+        "info": "Παράδειγμα χρήσης του κόμβου «Hue Scene»"
+    },
+    {
+        "id": "ef6d38e72af773f7",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "ΠΡΩΤΑ ΒΗΜΑΤΑ (κάντε διπλό κλικ)",
+        "info": "Πατήστε τον κόμβο «Hue Σκηνή» και επιλέξτε από τη λίστα τόσο το bridge σας όσο και μια σκηνή. Αν δεν έχετε ρυθμίσει ακόμη bridge, θα σας ζητηθεί να ρυθμίσετε ένα πριν ολοκληρώσετε τη διαμόρφωση του κόμβου.\n\nΜόλις ο κόμβος συνδεθεί με το bridge σας και κάνετε deploy τις αλλαγές στο Node-RED, ο κόμβος μπορεί να λαμβάνει και να εκτελεί τις εντολές σας. Ο κόμβος «Hue Σκηνή» μπορεί προαιρετικά να συνδεθεί και με μία ή περισσότερες ομάδες, ώστε να εκτελεστεί μια σκηνή σε συγκεκριμένη ομάδα.\n\nΑν θέλετε περισσότερες πληροφορίες για αυτόν τον κόμβο, τις διαθέσιμες εντολές και τις τιμές εξόδου, πατήστε τον μία φορά στη ροή σας και μεταβείτε στο εικονίδιο βιβλίου του Node-RED (πάνω δεξιά γωνία).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "9212dea7c3727082",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Ενεργοποίηση προκαθορισμένης σκηνής σε προκαθορισμένη ομάδα",
+        "info": "",
+        "x": 200,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a42551dfa1115aa2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Ενεργοποίηση",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "928cb8d82cdf8977"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "928cb8d82cdf8977",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f1b9a5cd1ebfe07",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Ενεργοποίηση προκαθορισμένης σκηνής σε συγκεκριμένες ομάδες",
+        "info": "",
+        "x": 190,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "fe2561642d86c7a2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Ενεργοποίηση στη συνδεδεμένη ομάδα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "fd51b418323a798b",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 260,
+        "wires": [
+            [
+                "d73af7394dd870e1"
+            ]
+        ]
+    },
+    {
+        "id": "d73af7394dd870e1",
+        "type": "hue-group",
+        "z": "16cd74edb3f2c03d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 770,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "91046bac5ac2b796",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Ενεργοποίηση στη συνδεδεμένη ομάδα + δική σας ομάδα",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":\"{ENTER_ADDITIONAL_GROUP_ID_HERE}\"}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 300,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "8afa0a3ca466788a",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Ενεργοποίηση στη συνδεδεμένη ομάδα + δικές σας ομάδες",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":[\"{ENTER_GROUP_ID_NO1_HERE}\",\"{ENTER_GROUP_ID_NO2_HERE}\"]}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 340,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    }
+]

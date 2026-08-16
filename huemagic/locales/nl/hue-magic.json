@@ -1,0 +1,26 @@
+{
+	"hue-magic": {
+		"config": {
+			"name": "Naam",
+			"input-name": "Naam van de animatie",
+			"loop": "Herhalen",
+			"loop-endless": "Eindeloos afspelen",
+			"restore": "Herstellen",
+			"restore-state": "Vorige toestand herstellen na het stoppen",
+			"animation": "Animatie",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"seconds": "sec.",
+			"minutes": "min."
+		},
+		"node": {
+			"title": "Hue Magic",
+			"no-animation": "geen animatie opgegeven",
+			"animating": "animatie loopt…",
+			"stopped": "gestopt",
+			"input": "animatie starten / stoppen",
+			"output": "lamp of groep",
+			"command": "commando uitvoeren…",
+			"playmsg": "Animatie gestart…"
+		}
+	}
+}

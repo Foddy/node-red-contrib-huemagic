@@ -1,0 +1,80 @@
+<script type="text/markdown" data-help-name="hue-speaker">
+El nodo «Hue Altavoz» puede reproducir los sonidos de un timbre Hue Secure y utilizarlo como sirena interior.
+
+### Configuración
+
+Seleccione el Hue Bridge preconfigurado y haga clic en el botón de búsqueda para encontrar todos los altavoces disponibles. Si ya conoce el ID del altavoz, también puede introducirlo aquí manualmente. Puede asignar internamente un nombre nuevo al altavoz o utilizar el nombre predefinido. De forma opcional, puede desactivar todos los mensajes de estado automáticos de este nodo mediante el ajuste «Omitir los mensajes del nodo». El nodo dejará entonces de emitir actualizaciones del dispositivo. También puede elegir que el mensaje de inicialización del nodo no se suprima al iniciar Node-RED. Si activa este ajuste, recibirá un mensaje de estado del altavoz seleccionado después de cada despliegue. Si prefiere que el nodo permanezca en silencio hasta que usted le envíe algo, active «Informar solo tras un comando». En ese caso ignorará los cambios realizados desde la app o desde un interruptor y solo responderá a sus propios comandos.
+
+Si no selecciona ningún altavoz y utiliza así la configuración del nodo, el nodo funciona en el llamado «modo universal». En este modo, el nodo recibe y emite todos los mensajes de estado del mismo tipo. También puede aplicar ajustes en modo universal a un altavoz concreto pasando el ID del altavoz correspondiente como cadena en `msg.topic` junto con sus ajustes.
+
+### Consultar el estado
+
+Emite el estado actual del altavoz en cuanto se transfiere al nodo un objeto `msg.payload` con el siguiente contenido. Como alternativa, también puede pulsar el botón en la interfaz de Node-RED sin tener que enviar antes ningún mensaje al nodo.
+
+: status (boolean): Devuelve el estado actual del altavoz
+
+### Reproducir un sonido
+
+Un altavoz conoce tres canales independientes. `chime` es el sonido del timbre, `alarm` es la sirena y `alert` es una notificación breve. Los sonidos que conoce realmente un dispositivo se enumeran en `msg.info.sounds`. Transfiera los siguientes parámetros en un objeto `msg.payload`:
+
+: chime (string | object | boolean): Nombre del sonido del timbre; `false` lo detiene de nuevo
+: alarm (string | object | boolean): Nombre del sonido de la sirena; `false` lo detiene de nuevo
+: alert (string | object | boolean): Nombre del sonido de notificación; `false` lo detiene de nuevo
+: mute (boolean): `true` silencia el altavoz, `false` vuelve a activar el sonido
+
+En lugar de un simple nombre de sonido, también puede pasar un objeto para controlar el volumen y la duración:
+
+: sound (string): Nombre del sonido, p. ej. `ding_dong_classic` o `siren`
+: volume (int): Volumen en porcentaje (0-100)
+: duration (float): Tiempo de reproducción en segundos
+
+### Mensajes de estado del nodo
+
+En cuanto el altavoz empieza o deja de reproducir, el nodo devuelve el siguiente mensaje de estado.
+
+> [!NOTE]
+> El bridge informa del último sonido reproducido y no lo restablece hasta bastante después de finalizar la reproducción, por lo que estos valores van algo por detrás del audio.
+
+#### Objeto de estado en `msg.payload`
+
+: reachable (boolean | string): `true` si el altavoz está conectado al bridge, `unknown` si el estado de la conexión difiere
+: connectionStatus (string): El estado actual de la conexión con el bridge en forma de cadena. Puede contener `connected`, `disconnected`, `connectivity_issue` o `unidirectional_incoming` como valor
+: playing (boolean): `true` mientras el altavoz reproduce cualquier sonido
+: chime (string | boolean): Nombre del sonido de timbre que se está reproduciendo o `false`
+: alarm (string | boolean): Nombre del sonido de sirena que se está reproduciendo o `false`
+: alert (string | boolean): Nombre del sonido de notificación que se está reproduciendo o `false`
+: muted (boolean): Indica si el altavoz está silenciado
+: updated (string): Momento de la última actualización del recurso por parte de HueMagic (ISO 8601)
+
+#### Información sobre el altavoz en `msg.info`
+
+: id (string): Indica el nuevo ID del altavoz
+: idV1 (string | boolean): Indica el ID antiguo del altavoz
+: uniqueId (string): El ID único del altavoz
+: deviceId (string): El ID único del dispositivo
+: name (string): El nombre asignado actualmente al altavoz
+: type (string): El tipo de dispositivo (siempre `speaker`)
+: softwareVersion (string): El firmware actual del altavoz
+: battery (float | boolean): El nivel de batería actual del altavoz, `false` si no hay batería
+: batteryState (string | boolean): El estado actual del nivel de batería. Puede contener `normal`, `low` o `critical` como valor, o `false` si no hay batería
+: sounds (object): Contiene los sonidos que conoce este dispositivo en `chime`, `alarm` y `alert`
+: model (object): Contiene la información de modelo del altavoz en `id`, `manufacturer`, `name`, `type` y `certified`
+
+#### Cambios de estado en `msg.updated`
+
+Enumera en forma de objeto los parámetros concretos que han cambiado con respecto al último estado del altavoz. Si no se ha registrado ningún cambio, este objeto está vacío.
+
+#### Último estado del altavoz en `msg.lastState`
+
+Contiene el objeto de estado completo (véanse los valores de salida anteriores) del último estado antes del último cambio registrado. Si HueMagic aún no ha registrado el último estado, se emite `false`.
+
+#### Último comando en `msg.command` (opcional)
+
+Si el estado del nodo ha cambiado mediante un comando concreto, también se emite el comando completo que se ha ejecutado. De lo contrario, el nodo no emite este objeto.
+
+### Ejemplos de HueMagic
+
+HueMagic pone a su disposición algunas configuraciones de ejemplo para este nodo. Para importar un ejemplo completo en su interfaz de Node-RED, haga clic en el icono de menú de Node-RED, seleccione «Importar» y navegue hasta «Ejemplos» en la barra lateral de la ventana emergente. A continuación, seleccione la carpeta HueMagic y el nodo que desee para importar un flujo de ejemplo.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

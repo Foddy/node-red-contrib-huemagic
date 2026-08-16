@@ -1,0 +1,178 @@
+[
+    {
+        "id": "16cd74edb3f2c03d",
+        "type": "tab",
+        "label": "Hue Scene (example)",
+        "disabled": false,
+        "info": "Exemple d'utilisation du nœud « Hue Scene »"
+    },
+    {
+        "id": "ef6d38e72af773f7",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "PREMIERS PAS (double-cliquez ici)",
+        "info": "Cliquez sur le nœud « Hue Scène » et sélectionnez dans la liste à la fois votre bridge et une scène. Si vous n'avez pas encore configuré de bridge, il vous sera demandé d'en configurer un avant de pouvoir terminer la configuration du nœud.\n\nDès que le nœud est relié à votre bridge et que vous avez déployé les modifications dans Node-RED, le nœud peut recevoir et exécuter vos commandes. Le nœud « Hue Scène » peut également, en option, être relié à un ou plusieurs groupes afin d'exécuter une scène sur un groupe précis.\n\nSi vous souhaitez obtenir davantage d'informations sur ce nœud, les commandes possibles et les valeurs de sortie, cliquez une fois dessus dans votre flux et accédez à l'icône du livre de Node-RED (coin supérieur droit).",
+        "x": 150,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-question-circle"
+    },
+    {
+        "id": "9212dea7c3727082",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activer une scène prédéfinie sur un groupe prédéfini",
+        "info": "",
+        "x": 200,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a42551dfa1115aa2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activer",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "928cb8d82cdf8977"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "928cb8d82cdf8977",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f1b9a5cd1ebfe07",
+        "type": "comment",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activer une scène prédéfinie sur des groupes précis",
+        "info": "",
+        "x": 190,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "fe2561642d86c7a2",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activer sur le groupe relié",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "fd51b418323a798b",
+        "type": "hue-scene",
+        "z": "16cd74edb3f2c03d",
+        "x": 550,
+        "y": 260,
+        "wires": [
+            [
+                "d73af7394dd870e1"
+            ]
+        ]
+    },
+    {
+        "id": "d73af7394dd870e1",
+        "type": "hue-group",
+        "z": "16cd74edb3f2c03d",
+        "skipevents": false,
+        "initevents": false,
+        "x": 770,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "91046bac5ac2b796",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activer sur le groupe relié + un groupe personnalisé",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":\"{ENTER_ADDITIONAL_GROUP_ID_HERE}\"}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 300,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    },
+    {
+        "id": "8afa0a3ca466788a",
+        "type": "inject",
+        "z": "16cd74edb3f2c03d",
+        "name": "Activer sur le groupe relié + des groupes personnalisés",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"group\":[\"{ENTER_GROUP_ID_NO1_HERE}\",\"{ENTER_GROUP_ID_NO2_HERE}\"]}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 340,
+        "wires": [
+            [
+                "fd51b418323a798b"
+            ]
+        ],
+        "icon": "font-awesome/fa-circle"
+    }
+]

@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hue-scene">
+De node "Hue Scène" kan in de bridge opgeslagen scènes hervatten en op bepaalde groepen toepassen.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare scènes te vinden. De scènes worden eerst op kamer of zone en daarna op naam gesorteerd, zodat de scènes van één kamer altijd bij elkaar in de lijst blijven staan. Als u het ID van de scène al kent, kunt u het hier ook handmatig invoeren. U kunt de scène intern ook een naam geven of de vooraf ingestelde naam gebruiken.
+
+### Scène activeren
+
+U kunt een vooraf ingestelde scène activeren door een object met de volgende inhoud mee te geven:
+
+: payload (boolean): Activeert een vooraf geconfigureerde scène
+: transitionTime (float): Overgangstijd van de scène in seconden. Bij `0` wordt de scène direct toegepast. Geeft u `3` mee, dan faden de lampen in de volgende 3 seconden naar de scène. De bridge accepteert maximaal 6000 seconden
+: brightness (float): Helderheid van de hele scène in procent (`0` – `100`), zodat u dezelfde scène afhankelijk van het tijdstip helderder of gedimder kunt oproepen
+
+> [!NOTE]
+> Beide instellingen zijn alleen beschikbaar voor gewone scènes. Een slimme scène volgt de tijden die u er in de Philips Hue-app voor hebt ingesteld.
+
+### Scène activeren in de universele modus
+
+Gebruikt u deze node in de zogenoemde "universele modus" en hebt u geen scène in de nodeconfiguratie ingesteld, dan kunt u de gewenste scène ook als commando aan de node doorgeven. Geef hiervoor een `msg.payload`-object met de volgende inhoud mee:
+
+: scene (string): ID van de scène die op de bridge geactiveerd moet worden
+
+### Scène op bepaalde groepen activeren
+
+Verbind de uitgang van deze node met een of meer groepen om een scène op specifieke groepen toe te passen. U kunt dit ook "dynamisch" doen door een `msg.payload`-object met de volgende inhoud aan de node door te geven:
+
+: group (string | array [string,…]): ID van de groep of een array met de ID's van meerdere groepen om de scène tot deze groepen te beperken
+
+### Meer informatie over de node
+
+Deze node geeft geen statusberichten uit.
+
+> [!IMPORTANT]
+> U kunt scènes alleen op groepen toepassen als deze op de bridge al aan de betreffende scène gekoppeld zijn. Anders wordt er niets toegepast.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

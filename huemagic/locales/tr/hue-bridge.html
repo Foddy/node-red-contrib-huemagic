@@ -1,0 +1,96 @@
+<script type="text/markdown" data-help-name="hue-bridge-node">
+«Hue Bridge» düğümü, bridge'in tüm ayarlarını ve diğer düğümlerin durum mesajlarını verebilen evrensel bir düğümdür.
+
+### Kurulum
+
+Önce istediğiniz Hue Bridge'i seçin. İsteğe bağlı olarak «Bu düğümde genel cihaz güncellemelerini ve mesajlarını yoksay» ayarıyla bu düğümün tüm otomatik durum mesajlarını devre dışı bırakabilirsiniz. Düğüm bundan sonra cihaz güncellemesi yayınlamaz.
+
+Alternatif olarak, Node-RED başlatılırken tüm düğümlerin başlatma mesajlarının bastırılmamasını seçebilirsiniz. Bu ayarı etkinleştirirseniz her dağıtımdan sonra bridge'e bağlı tüm kaynaklardan durum mesajı alırsınız.
+
+### Ayarları / durumu sorgulama
+
+Düğüme aşağıdaki mesaj gönderildiğinde bridge'in güncel durumunu ve ayarlarını verir. Alternatif olarak, önce düğüme bir mesaj göndermeden Node-RED arayüzündeki düğmeye de basabilirsiniz.
+
+: payload (boolean): Bridge'in güncel durumunu döndürür
+
+### TouchLink taraması başlatma
+
+Bir «TouchLink taraması» ile yeni veya eski cihazları bridge'e eşleyebilirsiniz (ör. bir sıfırlamadan sonra). Bunun için `msg.payload` nesnesini aşağıdaki içerikle gönderin:
+
+: touchLink (boolean): Eski veya yeni cihazları bridge ile eşler
+
+### Tüm cihazları ve kaynakları sorgulama
+
+«fetch» komutuyla bridge'e o anda bağlı olan belirli cihazların listesini alabilirsiniz. Bunun için `msg.payload` nesnesini aşağıdaki içerikle gönderin:
+
+: fetch (string | array [string, ...]): Değer olarak `light`, `group`, `button`, `motion`, `temperature`, `light_level` veya `rule` kabul eder
+
+### Hue Bridge ayarlarını değiştirme
+
+Aşağıdaki komutla bridge üzerindeki belirli ayarları değiştirebilirsiniz. Düğüme `msg.payload.settings` nesnesini aşağıdaki ayar seçenekleriyle gönderin:
+
+> [!WARNING]
+> Ağ ayarlarının değiştirilmesi, bridge'in HueMagic'te yeniden yapılandırılmasını gerektirir.
+
+: name (string): Bridge'in adını değiştirir ve en az 4, en fazla 16 karakter içermelidir
+: zigbeeChannel (int): Geçerli ZigBee kanalını değiştirir (`11`, `15`, `20`, `25` veya `0`)
+: ipAddress (string): Ağ ayarlarındaki IP adresini değiştirir
+: dhcpEnabled (boolean): `true` ağ ayarlarında DHCP'yi etkinleştirir, `false` devre dışı bırakır
+: netmask (string): Ağ ayarlarındaki ağ maskesini değiştirir
+: gateway (string): Ağ ayarlarındaki ağ geçidini belirler
+: proxyAddress (string): Ağ ayarlarında bir proxy adresi belirler
+: proxyPort (string | int): Ağ ayarlarındaki proxy bağlantı noktasını belirler
+: timeZone (string): Bridge üzerinde ayarlı olan saat dilimini değiştirir
+
+### Düğümün durum mesajları
+
+«Hue Bridge» düğümünün durum mesajları dinamiktir. Belirli bir düzeni izleseler de, çıktıları düğümde az önce hangi eylemin yapıldığına göre değişebilir.
+
+#### `msg.payload` altındaki durum nesnesi
+
+: id (string): Hue Bridge'in benzersiz kimliği
+: name (string): Geçerli ad
+: factoryNew (boolean): Bridge'in sıfır olup olmadığını belirtir
+: replacesBridgeId (string | boolean): Eski bridge kimliğini (bir geçiş yapıldıysa) veya `false` verir
+: dataStoreVersion (string): Veri deposunun sürümü
+: starterKitId (string | boolean): Fabrikada oluşturulan başlangıç setinin adı veya `false`
+: softwareVersion (string): Bridge'in yazılım sürümü
+: apiVersion (string): Bridge'in API sürümü
+: zigbeeChannel (int): Şu anda kullanılan ZigBee kanalı
+: macAddress (string): Bridge'in MAC adresi
+: ipAddress (string): Bridge'in IP adresi
+: dhcpEnabled (boolean): DHCP'nin etkin olup olmadığını belirtir
+: netmask (string): Bridge'in ağ maskesi
+: gateway (string): Bridge'in ağ geçidi
+: proxyAddress (string | boolean): Şu anda kullanılan proxy adresi veya `false`
+: proxyPort (string): Şu anda kullanılan proxy bağlantı noktası
+: utcTime (string): Bridge üzerindeki UTC saati
+: timeZone (string): Bridge üzerinde ayarlı saat dilimi
+: localTime (string): Yerel saat dilimi
+: portalServicesEnabled (boolean): Portal hizmetlerinin etkin olup olmadığını belirtir
+: portalConnected (boolean): Bridge'in portala bağlı olup olmadığını belirtir
+: linkButtonEnabled (boolean): Bağlantı düğmesinin etkin olup olmadığını belirtir
+: touchlinkEnabled (boolean): TouchLink'in etkin olup olmadığını belirtir
+: autoUpdatesEnabled (boolean): HueMagic'in güncellemeleri otomatik denetleyip denetlemeyeceğini belirtir
+: users (array [object, ...]): Bridge üzerindeki tüm kullanıcıların listesi (nesne dizisi)
+: updated (string): Kaynağın HueMagic tarafından son güncellenme zamanı (ISO 8601)
+: model (object): Bridge'in model bilgilerini `id`, `manufacturer` ve `name` altında içerir
+
+#### `msg.results` altındaki «fetch» sonuçları (isteğe bağlı)
+
+Düğümde «fetch» komutu kullanıldıysa, bridge ilgili sonuçları `msg.results` nesnesinde verir. Nesne, sorgulanan kaynak gruplarını içerir; bunlar da ilgili tüm kaynakları dizi olarak barındırır.
+
+#### `msg.updated` altındaki genel durum mesajları (isteğe bağlı)
+
+Devre dışı bırakılmadıkça düğüm, bridge üzerindeki her kaynak için güncellenmiş bir durum mesajı verir. `msg.updated` altındaki durum mesajı ilgili kaynağın düzenini izler ve en son güncellenen cihazın türüne göre değişir.
+
+#### `msg.command` altındaki son komut (isteğe bağlı)
+
+Düğümün durumu belirli bir komutla değiştiyse, yürütülen komutun tamamı da çıktı olarak verilir. Aksi hâlde düğüm bu nesneyi çıktı olarak vermez.
+
+### HueMagic örnekleri
+
+HueMagic bu düğüm için bazı örnek yapılandırmalar sunar. Node-RED arayüzünüze eksiksiz bir örnek aktarmak için Node-RED menü simgesine tıklayın, «Import» seçeneğini seçin ve açılan pencerenin kenar çubuğunda «Examples» bölümüne gidin. Ardından HueMagic klasörünü ve istediğiniz düğümü seçerek örnek bir akış aktarın.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

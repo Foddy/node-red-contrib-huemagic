@@ -1,0 +1,44 @@
+{
+	"hue-light": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"colornamer": "Colornamer",
+			"colornamer-info": "Kleurbenaming activeren",
+			"input-name": "Naam van de lamp",
+			"searching": "Lampen zoeken…",
+			"none-found": "Geen lampen gevonden!",
+			"light": "Lamp"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"init": "initialiseren…",
+			"not-reachable": "niet bereikbaar",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Lamp",
+			"turned-on": "aan",
+			"turned-on-percent": "aan (__percent__ %)",
+			"turned-off": "uit",
+			"error-no-id": "Geen lamp-ID opgegeven. Raadpleeg de documentatie.",
+			"error-input": "invoerfout",
+			"error-invalid-temp": "Ongeldige kleurtemperatuur. Alleen 153 tot 500 is toegestaan.",
+			"input": "aan-/uitzetten",
+			"output": "status",
+			"error-not-available": "De lamp is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is.",
+			"error-invalid-brightness": "Ongeldige helderheidsinstelling. Alleen 0 tot 100 procent is toegestaan.",
+			"error-invalid-brightness-level": "Ongeldige helderheidsinstelling. Alleen 0 tot 254 is toegestaan.",
+			"error-invalid-sat": "Ongeldige verzadigingsinstelling. Alleen 0 tot 100 is toegestaan.",
+			"error-no-colorloop": "Het colorloop-effect is niet beschikbaar voor deze lamp.",
+			"error-invalid-effect": "Ongeldig effect. Deze lamp ondersteunt: __effects__",
+			"error-invalid-powerup": "Ongeldige inschakelinstelling. Toegestane presets zijn: __presets__"
+		}
+	}
+}

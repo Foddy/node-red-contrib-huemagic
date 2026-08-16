@@ -1,0 +1,64 @@
+<script type="text/markdown" data-help-name="hue-motion">
+De node "Hue Beweging" kan bewegingen van een geschikte sensor op de bridge registreren en melden.
+
+### Instellen
+
+Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle beschikbare sensoren te vinden. Als u het ID van de sensor al kent, kunt u het hier ook handmatig invoeren. U kunt de sensor intern een nieuwe naam geven of de vooraf ingestelde naam gebruiken. Optioneel kunt u alle automatische statusberichten van deze node uitschakelen met de instelling "Berichten van de node negeren". De node geeft dan geen apparaatupdates meer uit. U kunt ook kiezen of het initialisatiebericht van de node bij het starten van Node-RED niet wordt onderdrukt. Als u deze instelling activeert, ontvangt u na elke deploy een statusbericht van de geselecteerde sensor. Wilt u liever dat de node stil blijft totdat u er iets naartoe stuurt, activeer dan "Alleen na een commando melden". De node negeert dan wijzigingen vanuit de app of een schakelaar en antwoordt alleen op uw eigen commando's.
+
+Als u geen sensor selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type. U kunt in de universele modus ook instellingen op een specifieke sensor toepassen door het bijbehorende sensor-ID als tekenreeks in `msg.topic` samen met uw instellingen mee te geven.
+
+### Status opvragen
+
+Geeft de huidige status van de sensor uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.
+
+: status (boolean): Geeft de huidige status van de sensor terug
+
+### Sensor in-/uitschakelen
+
+Indien nodig kan de sensor op afstand in- en uitgeschakeld worden. Als de sensor is uitgeschakeld, registreert hij geen bewegingen meer en geeft die dus ook niet meer uit. Geef hiervoor een object met de volgende inhoud mee:
+
+: payload (boolean): `true` schakelt de sensor in, `false` schakelt hem uit
+
+### Statusberichten van de node
+
+Zodra de sensor een beweging heeft geregistreerd, geeft de node het volgende statusbericht terug:
+
+#### Statusobject onder `msg.payload`
+
+: active (boolean): Geeft aan of de sensor in- of uitgeschakeld is
+: reachable (boolean | string): `true` als de sensor met de bridge is verbonden, `unknown` als de verbindingsstatus afwijkt
+: connectionStatus (string): De huidige verbindingsstatus met de bridge als tekenreeks. Kan `connected`, `disconnected`, `connectivity_issue` of `unidirectional_incoming` als waarde bevatten
+: motion (boolean): Geeft aan of er beweging is geregistreerd
+: updated (string): Tijdstip van de laatste update van de bron door HueMagic (ISO 8601)
+
+#### Informatie over de sensor onder `msg.info`
+
+: id (string): Geeft het nieuwe ID van de sensor aan
+: idV1 (string | boolean): Geeft het oude ID van de sensor aan
+: uniqueId (string): Het unieke ID van de sensor
+: deviceId (string): Het unieke ID van het apparaat
+: name (string): De momenteel ingestelde naam van de sensor
+: type (string): Het type van de sensor (altijd `motion`)
+: softwareVersion (string): De huidige firmware van de sensor
+: battery (float): Het huidige batterijniveau van de sensor
+: batteryState (string): De huidige status van het batterijniveau. Kan `normal`, `low` of `critical` als waarde bevatten
+: model (object): Bevat de modelinformatie van de sensor onder `id`, `manufacturer`, `name`, `type` en `certified`
+
+#### Statuswijzigingen onder `msg.updated`
+
+Somt in de vorm van een object de afzonderlijke parameters op die ten opzichte van de vorige toestand van de sensor zijn gewijzigd. Als er geen wijzigingen zijn geregistreerd, is dit object leeg.
+
+#### Laatste toestand van de sensor onder `msg.lastState`
+
+Bevat het volledige statusobject (zie de uitvoerwaarden hierboven) van de laatste toestand vóór de laatst geregistreerde wijziging. Als HueMagic de laatste toestand nog niet heeft geregistreerd, wordt `false` uitgegeven.
+
+#### Laatste commando onder `msg.command` (optioneel)
+
+Als de status van de node door een bepaald commando is gewijzigd, wordt ook het volledige uitgevoerde commando meegegeven. Anders geeft de node dit object niet uit.
+
+### Voorbeelden van HueMagic
+
+HueMagic stelt enkele voorbeeldconfiguraties voor deze node beschikbaar. Om een volledig voorbeeld in uw Node-RED-interface te importeren, klikt u op het menupictogram van Node-RED, kiest u "Import" en navigeert u in de zijbalk van het pop-upvenster naar "Examples". Selecteer vervolgens de map HueMagic en de gewenste node om een voorbeeldflow te importeren.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

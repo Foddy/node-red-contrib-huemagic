@@ -1,0 +1,25 @@
+{
+	"hue-syncbox-config": {
+		"config": {
+			"name": "Naam",
+			"syncbox-ip": "IP van de Sync Box",
+			"token": "Toegangstoken",
+			"pollinterval": "Verversen (s)",
+			"missing-ip": "IP van de Hue Sync Box ontbreekt…",
+			"connecting": "Verbinden met de sync box…",
+			"invalid": "Sorry. De geselecteerde Hue Sync Box is ongeldig: ",
+			"error-select-first": "Voer het IP-adres van uw Hue Sync Box in voordat u een nieuw token aanmaakt!",
+			"waiting": "wachten op de knop…",
+			"new-user-press": "Houd de knop op uw Hue Sync Box ingedrukt totdat de led groen knippert!",
+			"retry": "Geen druk op de knop gedetecteerd. Probeer het opnieuw…",
+			"success": "Toegangstoken succesvol aangemaakt!"
+		},
+		"node": {
+			"title": "Hue Sync Box",
+			"initializing": "Sync box initialiseren (__syncbox__)…",
+			"connected": "Verbonden met de sync box",
+			"request-error": "Fout bij het opvragen van informatie van de sync box (__error__)",
+			"statusmsg": "Status succesvol opgevraagd…"
+		}
+	}
+}

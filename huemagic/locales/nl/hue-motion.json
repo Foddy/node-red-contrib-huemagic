@@ -1,0 +1,36 @@
+{
+	"hue-motion": {
+		"config": {
+			"name": "Naam",
+			"skipevents-node": "Berichten van de node negeren",
+			"sendinitevents-node": "Initialisatiebericht niet onderdrukken",
+			"onlycommands-node": "Alleen na een commando melden",
+			"unknown-error": "Er is iets misgegaan. Probeer het opnieuw.",
+			"bridge": "Bridge",
+			"universalevents": "Universele gebeurtenissen",
+			"universalevents-node": "Ontvangt alle berichten van andere nodes van hetzelfde type (alleen in universele modus)",
+			"input-name": "Naam van de sensor",
+			"searching": "Bewegingssensoren zoeken…",
+			"none-found": "Geen bewegingssensoren gevonden!",
+			"sensor": "Sensor"
+		},
+		"node": {
+			"not-configured": "niet geconfigureerd",
+			"not-reachable": "niet bereikbaar",
+			"activated": "geactiveerd",
+			"deactivated": "gedeactiveerd",
+			"universal": "universele modus",
+			"command": "commando uitvoeren…",
+			"statusmsg": "Status succesvol opgevraagd…",
+			"title": "Hue Beweging",
+			"motion": "beweging gedetecteerd",
+			"no-motion": "geen beweging",
+			"input": "activeren / deactiveren / status",
+			"output": "beweging gedetecteerd",
+			"error-no-id": "Geef een geldig sensor-ID op.",
+			"error-not-available": "De sensor is nog niet beschikbaar. Wacht tot HueMagic verbinding met de bridge heeft gemaakt of controleer of het bron-ID in de configuratie geldig is.",
+			"error-no-sensitivity": "Deze bewegingsbron heeft geen instelbare gevoeligheid.",
+			"error-invalid-sensitivity": "Ongeldige gevoeligheid. Alleen 0 tot __max__ is toegestaan."
+		}
+	}
+}

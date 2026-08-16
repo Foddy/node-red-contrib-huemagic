@@ -1,0 +1,59 @@
+<script type="text/markdown" data-help-name="hue-automation">
+The "Hue Automation" node can enable and disable the automations you have created in the Philips Hue app.
+
+### Setup
+
+Select the pre-configured Hue Bridge and click the search button to find all the available automations. If you already know the ID of the automation, you can also enter it here manually. You can either assign a new name for the automation internally or choose the predefined name. Optionally, you can also deactivate all automatic status messages for this node by clicking the setting "Skip events from node". The node will then no longer issue any updates. Alternatively, you can also choose whether the node's initialization message should not be suppressed when Node-RED is started. If you activate this setting, you will receive a status message for the currently selected automation after each deployment. If you would rather have the node stay silent until you send it something, activate "Only report after a command". It then ignores changes from the app or a switch and only answers your own commands.
+
+If you do not select an automation and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type. You can also apply settings in universal mode to a specific automation by transferring the corresponding automation ID as a string in `msg.topic` together with your settings.
+
+### Enable / disable the automation
+
+An automation that has been disabled stays on the bridge and can be enabled again at any time. To do this, pass an object with the following content:
+
+: payload (boolean): `true` enables the automation, `false` disables it
+: enabled (boolean): Same as above, if you prefer to pass an object
+: toggle (boolean | any): Toggles between enabled and disabled, depending on the previous status
+
+### Status messages from the node
+
+As soon as the automation changes, the following status message is returned by the node:
+
+#### Status object under `msg.payload`
+
+: enabled (boolean): Indicates whether the automation is enabled
+: running (boolean): `true` while the bridge is actually executing the automation
+: status (string | boolean): The current status. Can contain `initializing`, `running`, `disabled` or `errored` as a value
+: lastError (string | boolean): The last error reported by the bridge or `false`
+: updated (string): Time of the last update of the resource by HueMagic (ISO 8601)
+
+#### Information about the automation under `msg.info`
+
+: id (string): Indicates the ID of the automation
+: idV1 (string | boolean): Indicates the old ID of the automation
+: name (string | boolean): The name you gave the automation in the Philips Hue app
+: type (string): The type of the resource (always `automation`)
+: script (string | boolean): The ID of the behaviour script behind the automation
+
+#### Configuration under `msg.configuration`
+
+Contains the settings of the automation as they were stored by the Philips Hue app. The structure depends on the type of the automation and is passed through unchanged.
+
+#### Status changes under `msg.updated`
+
+Lists individual parameters in the form of an object that have changed compared to the last state of the automation. If no changes have been registered, this object is empty.
+
+#### Last status of the automation under `msg.lastState`
+
+Contains the complete status object (see output values above) of the last status before the last registered change. If the last state of HueMagic has not yet been registered, it will output `false`.
+
+#### Last command under `msg.command` (optional)
+
+If the status of the node has changed via a certain command, the entire command that was executed is also output. Otherwise this object will not be output by the node.
+
+### Examples from HueMagic
+
+HueMagic provides some sample configurations for this node. To import a full featured example into your Node-RED interface, click on the Node-RED menu icon, then select "Import" and navigate to "Examples" in the sidebar of the popup. Then select the HueMagic folder and your desired node to import a sample flow.
+
+![examples](hue/assets/huemagic-examples.gif)
+</script>

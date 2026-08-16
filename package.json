@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-huemagic",
   "version": "5.0.0",
-  "description": "Philips Hue node to control bridges, lights, groups, scenes, rules, taps, switches, buttons, motion sensors, contact sensors, temperature sensors and Lux sensors using Node-RED.",
+  "description": "Philips Hue nodes to control bridges, lights, groups, scenes, rules, automations, buttons, switches, dials, doorbells, speakers, motion sensors, cameras, contact sensors, temperature sensors, light level sensors and the Hue Play HDMI Sync Box using Node-RED.",
   "author": "foddy",
   "homepage": "https://github.com/Foddy/node-red-contrib-huemagic",
   "license": "Apache-2.0",

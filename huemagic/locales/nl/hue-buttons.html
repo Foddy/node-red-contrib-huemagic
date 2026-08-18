@@ -7,6 +7,8 @@ Selecteer de vooraf geconfigureerde Hue Bridge en klik op de zoekknop om alle be
 
 Als u geen schakelaar of knop selecteert en de nodeconfiguratie zo gebruikt, werkt de node in de zogenoemde "universele modus". In deze modus ontvangt en verstuurt de node alle statusberichten van hetzelfde type.
 
+Onder "Extra uitgangen" kunt u per knoppenbereik een uitgang toevoegen, elk geactiveerd door een specifieke actie (begin van indrukken, einde van kort indrukken, einde van lang indrukken zodra dit minstens de ingestelde duur heeft geduurd, of herhaaldelijk terwijl lang indrukken bezig is). De eerste uitgang van de node ontvangt zoals voorheen altijd elke gebeurtenis; de extra uitgangen ontvangen alleen een kopie van het bericht wanneer zowel het knoppenbereik als de actie overeenkomen.
+
 ### Status opvragen
 
 Geeft de huidige status van de schakelaar of knop uit zodra een `msg.payload`-object met de volgende inhoud aan de node is doorgegeven. U kunt ook op de knop in de Node-RED-interface drukken zonder eerst een bericht naar de node te sturen.

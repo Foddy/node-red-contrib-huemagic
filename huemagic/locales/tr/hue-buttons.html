@@ -7,6 +7,8 @@
 
 Bir anahtar veya düğme seçmez ve düğüm yapılandırmasını bu şekilde kullanırsanız, düğüm «evrensel mod» adı verilen modda çalışır. Bu modda düğüm aynı türdeki tüm durum mesajlarını alır ve yayınlar.
 
+«Ek çıkışlar» altında her düğme aralığı için, belirli bir eylemle (basmanın başlangıcı, kısa basmanın sona ermesi, yapılandırılan süre kadar sürdükten sonra uzun basmanın sona ermesi veya uzun basma devam ederken tekrar tekrar) tetiklenen bir çıkış ekleyebilirsiniz. Düğümün ilk çıkışı öncekiyle aynı şekilde her zaman tüm olayları alır; ek çıkışlar yalnızca hem düğme aralığı hem de eylem eşleştiğinde mesajın bir kopyasını alır.
+
 ### Durumu sorgulama
 
 Düğüme aşağıdaki içeriğe sahip bir `msg.payload` nesnesi iletildiğinde anahtarın veya düğmenin güncel durumunu verir. Alternatif olarak, önce düğüme bir mesaj göndermeden Node-RED arayüzündeki düğmeye de basabilirsiniz.

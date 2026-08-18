@@ -12,7 +12,25 @@
 			"button": "Button",
 			"universalevents": "Universelle Ereignisse",
 			"universalevents-node": "Empfängt alle Nachrichten von anderen Nodes des gleichen Typs (nur im Universalmodus)",
-			"bridge": "Bridge"
+			"bridge": "Bridge",
+			"add-outputs": "Zusätzliche Ausgänge...",
+			"add-outputs-range": "Tastenbereich...",
+			"add-outputs-newflow": "Neuen Ablauf auslösen bei...",
+			"add-outputs-nr": "Ausgang Nr.",
+			"add-outputs-btn-from": "Von...",
+			"add-outputs-btn-to": "Bis...",
+			"add-outputs-startpress": "Druck beginnt",
+			"add-outputs-shortpress": "Kurzer Druck beendet",
+			"add-outputs-longpress": "Langer Druck beendet nach >",
+			"add-outputs-longpresswhile": "Langer Druck (während gedrückt)",
+			"add-outputs-btn-addnew": "neuen Tastenbereich hinzufügen",
+			"outputlabel-btn-from": "Taste #__from__",
+			"outputlabel-btn-from-to": "Tasten #__from__ bis #__to__",
+			"outputlabel-btn-on": "bei:",
+			"outputlabel-btn-startpress": "Druck beginnt",
+			"outputlabel-btn-shortpress": "Kurzer Druck beendet",
+			"outputlabel-btn-longpress": "Langer Druck (>__duration__s)",
+			"outputlabel-btn-longpresswhile": "Langer Druck (während gedrückt)"
 		},
 		"node": {
 			"title": "Hue Buttons",
@@ -26,17 +44,17 @@
 			"statusmsg": "Status erfolgreich abgefragt…",
 			"error-no-id": "Bitte geben Sie eine gültige Schalter-ID an.",
 			"error-not-available": "Der Schalter ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
-			"action-pressed": "gedrückt",
-			"action-holded": "gehalten",
-			"action-shortreleased": "kurz gedrückt",
-			"action-longreleased": "lang gedrückt",
-			"action-repeated": "wiederholt",
-			"action-doublepressed": "doppelt gedrückt",
 			"dial-clockwise": "Drehrad ↻ __degrees__°",
 			"dial-counterclockwise": "Drehrad ↺ __degrees__°",
-			"button-status": "Taste #__button__ (__action__)",
 			"error-no-switchmode": "Dieses Gerät hat keinen einstellbaren Schaltermodus.",
-			"error-invalid-switchmode": "Ungültiger Schaltermodus. Dieses Gerät unterstützt: __modes__"
+			"error-invalid-switchmode": "Ungültiger Schaltermodus. Dieses Gerät unterstützt: __modes__",
+			"status-action-button": "Taste #",
+			"status-action-startpress": "kurzer/langer Druck begonnen",
+			"status-action-doublepress": "Doppelt gedrückt",
+			"status-action-longpress-ongoing": "langer Druck läuft",
+			"status-action-endpress-short": "kurz gedrückt (<0.5s)",
+			"status-action-endpress-long": "langer Druck beendet",
+			"status-action-pressed": "gedrückt"
 		}
 	}
 }

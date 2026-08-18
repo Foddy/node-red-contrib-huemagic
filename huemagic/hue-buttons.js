@@ -16,6 +16,9 @@ module.exports = function(RED)
 		// SAVE LAST COMMAND
 		this.lastCommand = null;
 
+		// SAVE LAST STATE PER BUTTON (USED TO TRACK PRESS DURATION FOR THE ADDITIONAL OUTPUTS' RULES)
+		scope.buttonLastStates = {};
+
 		//
 		// CLOSE NODE
 		this.on('close', function()
@@ -56,6 +59,56 @@ module.exports = function(RED)
 			if(currentState !== false)
 			{
 				const hasEvent = (currentState.payload.button !== false || currentState.payload.rotation !== false);
+				let nodeStatusText = "";
+				let curButtonLastState = {};
+				if(currentState.payload.button !== false)
+				{
+					// Workign in non-dial mode (butyon press)
+					let curActionType = currentState.payload.action;
+					let curButtonID = currentState.payload.button;
+					curButtonLastState = scope.buttonLastStates[curButtonID] || {};
+					switch (curActionType)
+					{
+						case "initial_press":
+							// Start of (short or extended) pressure
+							curButtonLastState = {};
+							curButtonLastState.actionType = 'PRESS_START';
+							curButtonLastState.actionStart = Date.now();
+							nodeStatusText = RED._('hue-buttons.node.status-action-startpress');
+							break;
+						case "long_press":
+						case "repeat":
+							// Extended pressure (sent every 0.5s as long as button is pressed)
+							// Note : 'long_press' is returned, after 'initial_press', as first repeat, to indicate a long press begins
+							curButtonLastState.actionType = 'LONG_ONGOING';
+							curButtonLastState.actionEnd = Date.now();
+							curButtonLastState.countExtPressures = (curButtonLastState.countExtPressures||0) + 1;
+							nodeStatusText = RED._('hue-buttons.node.status-action-longpress-ongoing');
+							break;
+						case "short_release":
+						case "double_short_release":
+							// Short pressure (<0.5s)
+							curButtonLastState.actionType = 'SHORT';
+							curButtonLastState.actionStart = Date.now();
+							curButtonLastState.actionEnd = Date.now();
+							nodeStatusText = RED._((curActionType === 'short_release') ? 'hue-buttons.node.status-action-endpress-short' : 'hue-buttons.node.status-action-doublepress');
+							break;
+						case "long_release":
+							// Release after an extended pressure
+							curButtonLastState.actionType = 'LONG';
+							curButtonLastState.actionEnd = Date.now();
+							nodeStatusText = RED._('hue-buttons.node.status-action-endpress-long');
+							break;
+						default:
+							nodeStatusText = RED._('hue-buttons.node.status-action-pressed');
+					}
+					// Append info which are common to all states
+					curButtonLastState.buttonID = curButtonID;
+					curButtonLastState.actionDuration = (curButtonLastState.actionEnd - curButtonLastState.actionStart) || 0;
+					curButtonLastState.state = curButtonID + ':' + curButtonLastState.actionType + ((curButtonLastState.actionDuration > 0) ? ':' + curButtonLastState.actionDuration.toString() : '');
+					nodeStatusText = RED._('hue-buttons.node.status-action-button') + curButtonLastState.buttonID + ': '+ nodeStatusText + ((curButtonLastState.actionDuration > 0) ? ' (' + (curButtonLastState.actionDuration/1000).toFixed(1).toString() + 's)': '');
+					scope.buttonLastStates[curButtonID] = curButtonLastState;
+				}
 
 				// SEND MESSAGE
 				if(!config.skipevents && hasEvent && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
@@ -66,8 +119,41 @@ module.exports = function(RED)
 						currentState.command = scope.lastCommand;
 					}
 
+					// See if such action is monitored for a defined rule to be sent to a secondary output
+					let multiOutput = [];
+					multiOutput[0] = currentState;
+					if(currentState.payload.button !== false)
+					{
+						let buttonRules = config.rules || [];
+						for (let i = 0; i < buttonRules.length; i++) {
+							multiOutput[i+1] = null;
+							let curRule = buttonRules[i];
+							// Check whether pressed button is within a range this rule must monitor
+							if (curButtonLastState.buttonID < parseInt(curRule.buttonFrom) || curButtonLastState.buttonID > parseInt(curRule.buttonTo)) {
+								continue;
+							}
+							// Check whether action is a monitored one
+							let toMonitor = false;
+							if (curButtonLastState.actionType == 'SHORT' && curRule.onEndShortPress) {
+								toMonitor = true;
+							} else if ((curButtonLastState.actionType == 'PRESS_START') && curRule.onStartPress) {
+								toMonitor = true;
+							} else if (curButtonLastState.actionType == 'LONG_ONGOING' && curRule.onDuringLongPress) {
+								toMonitor = true;
+							} else if (curButtonLastState.actionType == 'LONG' && curRule.onEndLongPress) {
+								if (curButtonLastState.actionDuration >= curRule.minLongPressDuration) {
+									toMonitor = true;
+								}
+							}
+							// Reached here : monitored action, build payload (which is actually simply th current button state with all collected info)
+							if (toMonitor) {
+								multiOutput[i+1] = RED.util.cloneMessage(currentState);
+							}
+						}
+					}
+
 					// SEND STATE
-					scope.send(currentState);
+					scope.send(multiOutput);
 
 					// RESET LAST COMMAND
 					scope.lastCommand = null;
@@ -91,29 +177,7 @@ module.exports = function(RED)
 						}
 						else
 						{
-							var action = "";
-							switch (currentState.payload.action)
-							{
-							  case "repeat":
-							    action = "action-repeated";
-							    break;
-							  case "short_release":
-							    action = "action-shortreleased";
-							    break;
-							  case "long_press":
-							    action = "action-holded";
-							    break;
-							  case "long_release":
-							    action = "action-longreleased";
-							    break;
-							  case "double_short_release":
-							  	action = "action-doublepressed";
-							  	break;
-							  default:
-							    action = "action-pressed";
-							}
-
-							statusText = RED._("hue-buttons.node.button-status", { button: currentState.payload.button, action: RED._("hue-buttons.node." + action) });
+							statusText = nodeStatusText;
 						}
 
 						scope.status({fill: "blue", shape: "dot", text: statusText });

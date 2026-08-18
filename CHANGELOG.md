@@ -2,7 +2,12 @@
 
 # Changelog
 
-### v5.0.0 (latest)
+### v5.0.1 (latest)
+
+* The "Hue Buttons" node can now be configured with additional outputs, each triggered by a range of buttons and a specific action (start of press, short press, long press, or while a long press is ongoing), so a single node can drive several flows without a Switch node in between
+* The "Hue Buttons" node status now reports which button was pressed, which action occurred and, for long presses, how long the button was held
+
+### v5.0.0
 
 > **Attention!** HueMagic v5 requires **Node.js 18+** and **Node-RED v3+**. The "Hue Group" node now speaks the CLIP/v2 API instead of the legacy API, and the alert effect on the "Hue Light" & "Hue Group" nodes is now played by the bridge itself, which also restores the previous state on its own. Your existing flows keep working as they are — no reconfiguration needed.
 

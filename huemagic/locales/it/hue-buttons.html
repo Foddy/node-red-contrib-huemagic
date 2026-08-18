@@ -7,6 +7,8 @@ Selezioni il Hue Bridge preconfigurato e faccia clic sul pulsante di ricerca per
 
 Se non seleziona alcun interruttore o pulsante e utilizza così la configurazione del nodo, il nodo funziona nella cosiddetta «modalità universale». In questa modalità il nodo riceve ed emette tutti i messaggi di stato dello stesso tipo.
 
+In «Uscite aggiuntive» può aggiungere un'uscita per ogni intervallo di pulsanti, ciascuna attivata da un'azione specifica (inizio della pressione, fine di una pressione breve, fine di una pressione prolungata una volta raggiunta la durata configurata, oppure ripetutamente mentre una pressione prolungata è in corso). La prima uscita del nodo continua a ricevere sempre ogni evento, come prima; le uscite aggiuntive ricevono una copia del messaggio solo quando corrispondono sia l'intervallo di pulsanti sia l'azione.
+
 ### Richiedere lo stato
 
 Emette lo stato attuale dell'interruttore o del pulsante non appena al nodo viene trasmesso un oggetto `msg.payload` con il seguente contenuto. In alternativa può anche premere il pulsante nell'interfaccia di Node-RED senza dover inviare prima un messaggio al nodo.

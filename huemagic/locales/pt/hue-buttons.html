@@ -7,6 +7,8 @@ Selecione o Hue Bridge pré-configurado e clique no botão de pesquisa para enco
 
 Se não selecionar nenhum interruptor ou botão e utilizar assim a configuração do nó, o nó funciona no chamado «modo universal». Neste modo, o nó recebe e emite todas as mensagens de estado do mesmo tipo.
 
+Em «Saídas adicionais» pode adicionar uma saída por cada intervalo de botões, cada uma acionada por uma ação específica (início da pressão, fim de uma pressão curta, fim de uma pressão longa assim que esta tenha durado pelo menos a duração configurada, ou repetidamente enquanto uma pressão longa está em curso). A primeira saída do nó continua a receber sempre todos os eventos, tal como antes; as saídas adicionais só recebem uma cópia da mensagem quando o intervalo de botões e a ação correspondem.
+
 ### Consultar o estado
 
 Emite o estado atual do interruptor ou botão assim que for transmitido ao nó um objeto `msg.payload` com o seguinte conteúdo. Em alternativa, também pode premir o botão na interface do Node-RED sem ter de enviar previamente uma mensagem ao nó.

@@ -493,6 +493,20 @@ Select the pre-configured Hue Bridge and hit the search button to find all the a
 
 If you do not select a switch/button and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type.
 
+### Additional outputs
+
+Under "Additional outputs" you can give the node one further output per range of buttons. Each of these outputs is triggered by the actions you tick for it:
+
+|Setting|Description|
+|--|--|
+| From / To | The range of buttons this output listens to, e.g. `1` to `4` for all four keys of a Hue Dimmer Switch |
+| Start press | Fires the moment a key is pressed down, before it is known whether a short or a long press is coming |
+| Short press ended | Fires when a key was released within half a second |
+| Long press ended when > | Fires when a key was released after having been held down for at least the given number of milliseconds |
+| Long press (while pressed) | Fires repeatedly, roughly every half second, for as long as the key is still held down |
+
+The first output of the node always receives every event, exactly as it did before, so existing flows keep working unchanged. The additional outputs only receive a copy of the message when the button range **and** the action match, which saves the Switch node that used to sit behind the node.
+
 ### Get status
 
 Outputs the current status of the switch/button as soon as a `msg.payload` object with the following content has been passed to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.
@@ -1177,7 +1191,12 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v5.0.0 (latest)
+### v5.0.1 (latest)
+
+* The "Hue Buttons" node can now be given additional outputs, each one triggered by a range of buttons and a certain action — the start of a press, the end of a short press, the end of a long press once it lasted long enough, or repeatedly while a long press is still running. One switch can drive several flows without a Switch node behind it ([#455](https://github.com/Foddy/node-red-contrib-huemagic/pull/455)) (thx @FredBlo)
+* The status of the "Hue Buttons" node now also shows how long a button was held down
+
+### v5.0.0
 
 > **Attention!** HueMagic v5 requires **Node.js 18+** and **Node-RED v3+**. The "Hue Group" node now speaks the CLIP/v2 API instead of the legacy API, and the alert effect on the "Hue Light" & "Hue Group" nodes is now played by the bridge itself, which also restores the previous state on its own. Your existing flows keep working as they are — no reconfiguration needed.
 

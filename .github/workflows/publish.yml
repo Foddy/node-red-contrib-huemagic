@@ -1,0 +1,51 @@
+name: Publish to npm
+
+# Publishing happens through npm trusted publishing: GitHub Actions presents a
+# short-lived OIDC token that npm verifies against the trusted publisher of this
+# package. There is no npm token anywhere in this repository.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Use an npm that speaks OIDC
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Make sure the release tag matches the version in package.json
+        if: github.event_name == 'release'
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match version $VERSION in package.json"
+            exit 1
+          fi
+
+      - name: Publish
+        run: npm publish

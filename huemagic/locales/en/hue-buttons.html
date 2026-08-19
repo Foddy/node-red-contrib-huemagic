@@ -7,6 +7,8 @@ Select the pre-configured Hue Bridge and hit the search button to find all the a
 
 If you do not select a switch/button and use the node configuration in this way, the node works in the so-called "universal mode". In this mode, the node receives and outputs all status messages of the same type.
 
+Under "Additional outputs" you can add one output per range of buttons, each triggered by a specific action (start of press, end of a short press, end of a long press once it lasted at least the configured duration, or repeatedly while a long press is ongoing). The first output of the node always receives every event, exactly as before; the additional outputs only receive a copy of the message when both the button range and the action match.
+
 ### Get status
 
 Outputs the current status of the switch/button as soon as a `msg.payload` object with the following content has been passed to the node. Alternatively, you can also press the button in the Node-RED interface without having to pass a message to the node beforehand.

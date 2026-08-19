@@ -2,6 +2,28 @@ module.exports = function(RED)
 {
 	"use strict";
 
+	//
+	// DOES A BUTTON EVENT MATCH THE RULE OF AN ADDITIONAL OUTPUT?
+	function matchesRule(buttonState, rule)
+	{
+		// BUTTON OUTSIDE THE RANGE THE RULE WATCHES?
+		if(buttonState.button < parseInt(rule.buttonFrom) || buttonState.button > parseInt(rule.buttonTo)) { return false; }
+
+		switch (buttonState.actionType)
+		{
+			case "PRESS_START":
+				return !!rule.onStartPress;
+			case "SHORT":
+				return !!rule.onEndShortPress;
+			case "LONG_ONGOING":
+				return !!rule.onDuringLongPress;
+			case "LONG":
+				return (!!rule.onEndLongPress && buttonState.actionDuration >= (parseInt(rule.minLongPressDuration) || 0));
+			default:
+				return false;
+		}
+	}
+
 	function HueButtons(config)
 	{
 		RED.nodes.createNode(this, config);
@@ -15,6 +37,9 @@ module.exports = function(RED)
 
 		// SAVE LAST COMMAND
 		this.lastCommand = null;
+
+		// SAVE THE LAST STATE OF EVERY DEVICE AND BUTTON
+		scope.buttonLastStates = {};
 
 		//
 		// CLOSE NODE
@@ -57,6 +82,54 @@ module.exports = function(RED)
 			{
 				const hasEvent = (currentState.payload.button !== false || currentState.payload.rotation !== false);
 
+				// TRACK THE STATE OF THE PRESSED BUTTON, WHICH GIVES THE ADDITIONAL OUTPUTS THEIR PRESS DURATION
+				let buttonState = {};
+
+				if(currentState.payload.button !== false)
+				{
+					// EVERY DEVICE NUMBERS ITS BUTTONS FROM 1, SO THE STATE HAS TO BE KEPT PER DEVICE AND BUTTON
+					const buttonKey = info.id + ":" + currentState.payload.button;
+					buttonState = scope.buttonLastStates[buttonKey] || {};
+
+					switch (currentState.payload.action)
+					{
+						case "initial_press":
+							// START OF A SHORT OR A LONG PRESS
+							buttonState = { actionType: "PRESS_START", actionStart: Date.now() };
+							break;
+
+						case "long_press":
+						case "repeat":
+							// THE BRIDGE SENDS THIS EVENT EVERY 0.5 SECONDS WHILE THE BUTTON IS STILL HELD DOWN
+							buttonState.actionType = "LONG_ONGOING";
+							buttonState.actionEnd = Date.now();
+							break;
+
+						case "short_release":
+						case "double_short_release":
+							// PRESS SHORTER THAN 0.5 SECONDS
+							buttonState.actionType = "SHORT";
+							buttonState.actionStart = Date.now();
+							buttonState.actionEnd = Date.now();
+							break;
+
+						case "long_release":
+							// RELEASE AFTER A LONG PRESS
+							buttonState.actionType = "LONG";
+							buttonState.actionEnd = Date.now();
+							break;
+
+						default:
+							// UNKNOWN ACTION, MUST NOT INHERIT THE TYPE OF THE PREVIOUS ONE
+							buttonState.actionType = false;
+					}
+
+					buttonState.button = currentState.payload.button;
+					buttonState.actionDuration = (buttonState.actionEnd - buttonState.actionStart) || 0;
+
+					scope.buttonLastStates[buttonKey] = buttonState;
+				}
+
 				// SEND MESSAGE
 				if(!config.skipevents && hasEvent && (config.initevents || info.suppressMessage == false) && (!config.onlycommands || scope.lastCommand !== null))
 				{
@@ -66,8 +139,21 @@ module.exports = function(RED)
 						currentState.command = scope.lastCommand;
 					}
 
+					// COPY THE EVENT TO EVERY ADDITIONAL OUTPUT THAT ASKED FOR IT
+					let outputs = [currentState];
+
+					if(currentState.payload.button !== false)
+					{
+						const rules = Array.isArray(config.rules) ? config.rules : [];
+
+						for (let i = 0; i < rules.length; i++)
+						{
+							outputs[i+1] = matchesRule(buttonState, rules[i]) ? RED.util.cloneMessage(currentState) : null;
+						}
+					}
+
 					// SEND STATE
-					scope.send(currentState);
+					scope.send(outputs);
 
 					// RESET LAST COMMAND
 					scope.lastCommand = null;
@@ -94,6 +180,9 @@ module.exports = function(RED)
 							var action = "";
 							switch (currentState.payload.action)
 							{
+							  case "initial_press":
+							    action = "action-started";
+							    break;
 							  case "repeat":
 							    action = "action-repeated";
 							    break;
@@ -113,7 +202,10 @@ module.exports = function(RED)
 							    action = "action-pressed";
 							}
 
-							statusText = RED._("hue-buttons.node.button-status", { button: currentState.payload.button, action: RED._("hue-buttons.node." + action) });
+							// THE DURATION IS ONLY KNOWN WHILE AND AFTER A BUTTON WAS HELD DOWN
+							statusText = (buttonState.actionDuration > 0)
+								? RED._("hue-buttons.node.button-status-duration", { button: currentState.payload.button, action: RED._("hue-buttons.node." + action), duration: (buttonState.actionDuration / 1000).toFixed(1) })
+								: RED._("hue-buttons.node.button-status", { button: currentState.payload.button, action: RED._("hue-buttons.node." + action) });
 						}
 
 						scope.status({fill: "blue", shape: "dot", text: statusText });

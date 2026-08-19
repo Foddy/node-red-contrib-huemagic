@@ -7,6 +7,8 @@ Sélectionnez le Hue Bridge préconfiguré et cliquez sur le bouton de recherche
 
 Si vous ne sélectionnez aucun interrupteur ou bouton et utilisez la configuration du nœud de cette manière, le nœud fonctionne dans ce que l'on appelle le « mode universel ». Dans ce mode, le nœud reçoit et émet tous les messages de statut du même type.
 
+Dans « Sorties supplémentaires », vous pouvez ajouter une sortie par plage de boutons, chacune déclenchée par une action précise (début de l'appui, fin d'un appui court, fin d'un appui long une fois qu'il a duré au moins la durée configurée, ou de façon répétée pendant qu'un appui long est en cours). La première sortie du nœud reçoit toujours chaque événement, comme auparavant ; les sorties supplémentaires ne reçoivent une copie du message que lorsque la plage de boutons et l'action correspondent toutes les deux.
+
 ### Interroger le statut
 
 Émet le statut actuel de l'interrupteur ou du bouton dès qu'un objet `msg.payload` ayant le contenu suivant est transmis au nœud. Vous pouvez également appuyer sur le bouton dans l'interface Node-RED sans avoir à transmettre au préalable un message au nœud.

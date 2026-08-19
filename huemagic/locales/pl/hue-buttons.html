@@ -7,6 +7,8 @@ Wybierz skonfigurowany Hue Bridge i kliknij przycisk wyszukiwania, aby znaleźć
 
 Jeśli nie wybierzesz przełącznika ani przycisku i użyjesz konfiguracji węzła w ten sposób, węzeł działa w tzw. „trybie uniwersalnym”. W tym trybie węzeł odbiera i wysyła wszystkie komunikaty stanu tego samego typu.
 
+W sekcji „Dodatkowe wyjścia” możesz dodać jedno wyjście na każdy zakres przycisków, z których każde jest wyzwalane przez określone działanie (początek naciśnięcia, koniec krótkiego naciśnięcia, koniec długiego naciśnięcia po osiągnięciu skonfigurowanego czasu trwania, lub cyklicznie podczas trwania długiego naciśnięcia). Pierwsze wyjście węzła nadal zawsze otrzymuje każde zdarzenie, tak jak dotychczas; dodatkowe wyjścia otrzymują kopię komunikatu tylko wtedy, gdy pasują zarówno zakres przycisków, jak i działanie.
+
 ### Odczyt stanu
 
 Zwraca bieżący stan przełącznika lub przycisku, gdy tylko do węzła zostanie przekazany obiekt `msg.payload` o następującej zawartości. Możesz też nacisnąć przycisk w interfejsie Node-RED, bez wcześniejszego wysyłania komunikatu do węzła.

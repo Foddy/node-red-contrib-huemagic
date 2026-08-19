@@ -44,17 +44,19 @@
 			"statusmsg": "Status erfolgreich abgefragt…",
 			"error-no-id": "Bitte geben Sie eine gültige Schalter-ID an.",
 			"error-not-available": "Der Schalter ist noch nicht verfügbar. Bitte warten Sie, bis HueMagic eine Verbindung zur Bridge aufgebaut hat, oder prüfen Sie, ob die Ressourcen-ID in der Konfiguration gültig ist.",
+			"action-pressed": "gedrückt",
+			"action-holded": "gehalten",
+			"action-shortreleased": "kurz gedrückt",
+			"action-longreleased": "lang gedrückt",
+			"action-repeated": "wiederholt",
+			"action-doublepressed": "doppelt gedrückt",
+			"action-started": "Druck begonnen",
 			"dial-clockwise": "Drehrad ↻ __degrees__°",
 			"dial-counterclockwise": "Drehrad ↺ __degrees__°",
+			"button-status": "Taste #__button__ (__action__)",
+			"button-status-duration": "Taste #__button__ (__action__, __duration__s)",
 			"error-no-switchmode": "Dieses Gerät hat keinen einstellbaren Schaltermodus.",
-			"error-invalid-switchmode": "Ungültiger Schaltermodus. Dieses Gerät unterstützt: __modes__",
-			"status-action-button": "Taste #",
-			"status-action-startpress": "kurzer/langer Druck begonnen",
-			"status-action-doublepress": "Doppelt gedrückt",
-			"status-action-longpress-ongoing": "langer Druck läuft",
-			"status-action-endpress-short": "kurz gedrückt (<0.5s)",
-			"status-action-endpress-long": "langer Druck beendet",
-			"status-action-pressed": "gedrückt"
+			"error-invalid-switchmode": "Ungültiger Schaltermodus. Dieses Gerät unterstützt: __modes__"
 		}
 	}
 }

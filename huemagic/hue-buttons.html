@@ -56,17 +56,8 @@
             skipevents: { value: false },
             initevents: { value: false },
             onlycommands: { value: false },
-            rules: { value:[{
-              buttonFrom: 1,
-              buttonTo: 4,
-              onStartPress:false,
-              onEndShortPress:true,
-              onEndLongPress:true,
-              onDuringLongPress:false,
-              minLongPressDuration:1000
-            }],
-          },
-          outputs: {value:1}
+            rules: { value: [] },
+            outputs: { value: 1 }
         },
         align: 'left',
         icon: "hue-buttons.svg",
@@ -82,7 +73,7 @@
             return this._("hue-buttons.node.input");
         },
         outputLabels: function(index) {
-          let rule = this.rules[index-1];
+          let rule = (this.rules || [])[index-1];
           let label = '';
           if (rule) {
             if (rule.buttonFrom == rule.buttonTo) {
@@ -369,9 +360,13 @@
             });
 
             // Add all previously saved rules back to UI List
-            for (let i = 0 ; i < this.rules.length ; i++) {
-              $("#node-input-rule-container").editableList('addItem',{rule:this.rules[i], i:i});
+            let savedRules = this.rules || [];
+            for (let i = 0 ; i < savedRules.length ; i++) {
+              $("#node-input-rule-container").editableList('addItem',{rule:savedRules[i], i:i});
             }
+
+            // An empty list never runs through addItem, so the output map has to be written once here
+            rebuildOutputIndexes ($("#node-input-rule-container").editableList('items'));
           },
 
         oneditresize: function(size) {
@@ -399,7 +394,7 @@
             savedRule.onEndShortPress = rule.find("[id^=node-input-onEndShortPress_]").prop("checked");
             savedRule.onEndLongPress = rule.find("[id^=node-input-onEndLongPress_]").prop("checked");
             savedRule.onDuringLongPress = rule.find("[id^=node-input-onDuringLongPress_]").prop("checked");
-            savedRule.minLongPressDuration = parseInt(rule.find("[id^=node-input-minLongPressDuration_]").val());
+            savedRule.minLongPressDuration = parseInt(rule.find("[id^=node-input-minLongPressDuration_]").val()) || 0;
             node.rules.push (savedRule);
           });
         },

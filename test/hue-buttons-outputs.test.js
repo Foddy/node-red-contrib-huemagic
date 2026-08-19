@@ -11,7 +11,7 @@ function newButtonsNode(config, buttonResource)
 
 	const bridge = {
 		subscribe: function(type, id, cb) { subscribedCallback = cb; return function() {}; },
-		get: function() { return buttonResource; },
+		get: function(type, id) { return (typeof buttonResource === "function") ? buttonResource(id) : buttonResource; },
 		resources: {}
 	};
 
@@ -53,6 +53,13 @@ function baseConfig(rules)
 		onlycommands: false,
 		rules: rules
 	};
+}
+
+function universalConfig(rules)
+{
+	const config = baseConfig(rules);
+	config.sensorid = "";
+	return config;
 }
 
 const RULE_1_TO_4 = { buttonFrom: 1, buttonTo: 4, onStartPress: false, onEndShortPress: true, onEndLongPress: true, onDuringLongPress: false, minLongPressDuration: 1000 };
@@ -120,4 +127,66 @@ test('hue-buttons additional outputs: an empty rule list still sends a single-ou
 	node.fire();
 
 	assert.deepStrictEqual(node.sendHistory[0].length, 1, "no rules configured means no extra outputs");
+});
+
+test('hue-buttons additional outputs: two devices do not share the press state of the same button number', async function()
+{
+	const resources = {
+		"device-a": { payload: { button: 1, rotation: false, action: "initial_press" } },
+		"device-b": { payload: { button: 1, rotation: false, action: "initial_press" } }
+	};
+
+	const rule = Object.assign({}, RULE_1_TO_4, { minLongPressDuration: 300 });
+	const node = newButtonsNode(universalConfig([rule]), function(id) { return resources[id]; });
+
+	// BUTTON 1 OF DEVICE A IS PRESSED AND KEPT DOWN
+	node.fire({ id: "device-a", suppressMessage: false });
+	await new Promise(function(resolve) { setTimeout(resolve, 350); });
+
+	// WHILE IT IS STILL HELD, BUTTON 1 OF DEVICE B IS PRESSED AS WELL
+	node.fire({ id: "device-b", suppressMessage: false });
+
+	// ONLY NOW DEVICE A IS RELEASED, WHICH IS A LONG PRESS OF ITS OWN
+	resources["device-a"].payload.action = "long_release";
+	node.fire({ id: "device-a", suppressMessage: false });
+
+	const multiOutput = node.sendHistory[node.sendHistory.length - 1];
+	assert.ok(multiOutput[1], "the long press of device A must be measured against its own start, not against the press of device B");
+});
+
+test('hue-buttons additional outputs: an unknown action is not routed like the one before it', function()
+{
+	const resource = { payload: { button: 1, rotation: false, action: "short_release" } };
+	const node = newButtonsNode(baseConfig([RULE_1_TO_4]), resource);
+
+	node.fire();
+	assert.ok(node.sendHistory[0][1], "the short press must reach the rule output");
+
+	resource.payload.action = "an_action_the_bridge_did_not_have_yet";
+	node.fire();
+	assert.strictEqual(node.sendHistory[1][1], null, "an unknown action must not inherit the type of the previous one");
+});
+
+test('hue-buttons status: a held button is reported with its duration', async function()
+{
+	const resource = { payload: { button: 2, rotation: false, action: "initial_press" } };
+	const node = newButtonsNode(baseConfig([]), resource);
+
+	node.fire();
+	await new Promise(function(resolve) { setTimeout(resolve, 25); });
+
+	resource.payload.action = "long_release";
+	node.fire();
+
+	assert.strictEqual(node.statusHistory[node.statusHistory.length - 1].text, "hue-buttons.node.button-status-duration");
+});
+
+test('hue-buttons status: a short press is reported without a duration', function()
+{
+	const resource = { payload: { button: 2, rotation: false, action: "short_release" } };
+	const node = newButtonsNode(baseConfig([]), resource);
+
+	node.fire();
+
+	assert.strictEqual(node.statusHistory[node.statusHistory.length - 1].text, "hue-buttons.node.button-status");
 });

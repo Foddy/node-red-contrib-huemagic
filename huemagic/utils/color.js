@@ -1,6 +1,5 @@
 // EXTERNAL HELPERS
 const colornames = require("colornames");
-const colornamer = require('color-namer');
 
 // THE DOMINANT COLORS OF AN IMAGE, LOADED ON DEMAND
 function getColors(...args)
@@ -290,6 +289,49 @@ function hexRgb(hex, options = {})
 	return [red, green, blue];
 }
 
+// THE BASIC COLORS A LIGHT IS NAMED AFTER (THE "BASIC" LIST OF color-namer, MIT)
+const basicColors = [
+	["black", "000000"], ["blue", "0000FF"], ["cyan", "00FFFF"], ["green", "008000"], ["teal", "008080"],
+	["turquoise", "40E0D0"], ["indigo", "4B0082"], ["gray", "808080"], ["purple", "800080"], ["brown", "A52A2A"],
+	["tan", "D2B48C"], ["violet", "EE82EE"], ["beige", "F5F5DC"], ["fuchsia", "FF00FF"], ["gold", "FFD700"],
+	["magenta", "FF00FF"], ["orange", "FFA500"], ["pink", "FFC0CB"], ["red", "FF0000"], ["white", "FFFFFF"],
+	["yellow", "FFFF00"]
+].map(function([name, hex]) { return { name: name, lab: hexLab(hex) }; });
+
+// HEX -> CIE LAB (D65), THE SAME WAY chroma-js DOES IT
+function hexLab(hex)
+{
+	const linear = hexRgb(hex).slice(0, 3).map(function(value)
+	{
+		value = value / 255;
+		return (value <= 0.04045) ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+	});
+	const [r, g, b] = linear;
+	const lab = function(t) { return (t > 0.008856452) ? Math.pow(t, 1 / 3) : t / 0.12841855 + 0.137931034; };
+
+	const x = lab((0.4124564 * r + 0.3575761 * g + 0.1804375 * b) / 0.950470);
+	const y = lab(0.2126729 * r + 0.7151522 * g + 0.0721750 * b);
+	const z = lab((0.0193339 * r + 0.1191920 * g + 0.9503041 * b) / 1.088830);
+
+	return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+
+// HEX -> NAME OF THE NEAREST BASIC COLOR
+function colorName(hex)
+{
+	const target = hexLab(hex);
+	let nearest = false;
+	let nearestDistance = Infinity;
+
+	for (const one of basicColors)
+	{
+		const distance = Math.hypot(target[0] - one.lab[0], target[1] - one.lab[1], target[2] - one.lab[2]);
+		if(distance < nearestDistance) { nearest = one.name; nearestDistance = distance; }
+	}
+
+	return nearest;
+}
+
 // RANDOM HEX COLOR GENERATOR
 function randomHexColor()
 {
@@ -394,7 +436,7 @@ module.exports.xyBriToRgb = xyBriToRgb;
 module.exports.hexRgb = hexRgb;
 module.exports.randomHexColor = randomHexColor;
 module.exports.colornames = colornames;
-module.exports.colornamer = colornamer;
+module.exports.colorName = colorName;
 module.exports.getColors = getColors;
 module.exports.colorTemperature = colorTemperature;
 module.exports.mixColors = mixColors;

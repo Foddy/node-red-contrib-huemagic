@@ -58,7 +58,6 @@
   },
   "dependencies": {
     "async": "^3.2.6",
-    "color-namer": "^1.4.0",
     "colornames": "^1.1.1",
     "dayjs": "^1.11.23",
     "deep-object-diff": "^1.1.9",

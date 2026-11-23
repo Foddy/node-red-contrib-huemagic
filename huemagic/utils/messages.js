@@ -384,8 +384,7 @@ class HueGroupMessage
 
 			if(options.colornames == true)
 			{
-				var cNamesArray = colorUtils.colornamer(colorUtils.rgbHex(RGB.r, RGB.g, RGB.b));
-				this.message.payload.color = cNamesArray.basic[0]["name"];
+				this.message.payload.color = colorUtils.colorName(colorUtils.rgbHex(RGB.r, RGB.g, RGB.b));
 			}
 		}
 
@@ -445,8 +444,7 @@ class HueLightMessage
 
 			if(options.colornames == true)
 			{
-				var cNamesArray = colorUtils.colornamer(colorUtils.rgbHex(RGB.r, RGB.g, RGB.b));
-				this.message.payload.color = cNamesArray.basic[0]["name"];
+				this.message.payload.color = colorUtils.colorName(colorUtils.rgbHex(RGB.r, RGB.g, RGB.b));
 			}
 
 			this.message.info.model.colorGamut = lightService.color.gamut;

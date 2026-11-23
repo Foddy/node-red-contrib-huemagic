@@ -650,3 +650,13 @@ test('api: a HTML error page names a rejected key and an overloaded bridge apart
 	assert.deepStrictEqual(await answer(403), { status: 403, errors: "The bridge does not accept the application key (HTTP 403)." });
 	assert.deepStrictEqual(await answer(503), { status: 503, errors: "The bridge is currently not able to answer (HTTP 503)." });
 });
+
+test('color: a light is named after the nearest basic color', function()
+{
+	assert.strictEqual(colorUtils.colorName("ff0000"), "red");
+	assert.strictEqual(colorUtils.colorName("ff00aa"), "violet");
+	assert.strictEqual(colorUtils.colorName("ff00ff"), "fuchsia");
+	assert.strictEqual(colorUtils.colorName("7f7f80"), "gray");
+	assert.strictEqual(colorUtils.colorName("fefefe"), "white");
+	assert.strictEqual(colorUtils.colorName("000000"), "black");
+});

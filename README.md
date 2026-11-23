@@ -1219,7 +1219,22 @@ If the status of the node has changed via a certain command, the entire command 
 
 # Changelog
 
-### v5.2.0 (latest)
+### v5.2.1 (latest)
+
+**Fixes**
+
+* The scene search of the "Hue Scene" node says "Searching scenes…" again instead of showing the raw text `hue-rules.config.searching` ([#458](https://github.com/Foddy/node-red-contrib-huemagic/issues/458)) (thx @JGoor)
+* When a search for lights, groups, scenes, sensors, rules or automations in the node configuration fails, the error now names the reason, and Node-RED logs it as a warning. Until now the editor only said "Something went wrong", and an unexpected error reached it as an empty `{}` ([#458](https://github.com/Foddy/node-red-contrib-huemagic/issues/458)) (thx @JGoor)
+* A bridge that rejects the application key is now reported as such instead of as a bridge that is "currently not able to answer"
+* A request through an HTTPS proxy to an IP address no longer fails on Node.js 26, which refuses an IP address as TLS server name
+
+**Under the hood**
+
+* The color name under `msg.payload.color` is worked out by HueMagic itself instead of by `color-namer`, which dragged `chroma-js` and the `es5-ext` family with its install script behind it. The names stay exactly the same
+* All remaining dependencies are at their current releases
+* HueMagic installs 9 instead of 21 packages and needs no install scripts, so npm 12 — which blocks the install scripts of dependencies — installs it without warnings. `npm audit` reports no vulnerabilities
+
+### v5.2.0
 
 * The "Hue Buttons" node's additional outputs can now also listen to the dial of a Hue Tap Dial Switch: choose "Rotation" instead of a button and set the range of degrees a turn has to fall into, with counterclockwise turns counting as negative ([#457](https://github.com/Foddy/node-red-contrib-huemagic/pull/457)) (thx @FredBlo)
 

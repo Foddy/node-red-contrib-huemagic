@@ -1,6 +1,7 @@
 const http = require('http');
 const https = require('https');
 const tls = require('tls');
+const net = require('net');
 
 // NOTHING WE TALK TO ANSWERS WITH MORE THAN THIS, AND A RUNAWAY RESPONSE MUST NOT EAT THE HEAP
 const MAX_BYTES = 16 * 1024 * 1024;
@@ -139,7 +140,8 @@ async function send({ url, method = 'GET', headers = {}, data = null, timeout = 
 			delete options.agent;
 			options.createConnection = function()
 			{
-				return tls.connect({ socket: tunnelSocket, servername: target.hostname, rejectUnauthorized: rejectUnauthorized });
+				// SNI TAKES NO IP ADDRESS, NODE 26 EVEN THROWS ON ONE
+				return tls.connect({ socket: tunnelSocket, servername: net.isIP(target.hostname) ? undefined : target.hostname, rejectUnauthorized: rejectUnauthorized });
 			};
 		}
 		else

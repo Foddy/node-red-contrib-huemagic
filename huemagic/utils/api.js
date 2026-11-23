@@ -111,8 +111,9 @@ function API()
 				{
 					let errors = error.response.data;
 
-					// AN OVERLOADED BRIDGE ANSWERS WITH A HTML ERROR PAGE
-					if(typeof errors === 'string') { errors = "The bridge is currently not able to answer (HTTP " + error.response.status + ")."; }
+					// AN OVERLOADED BRIDGE ANSWERS WITH A HTML ERROR PAGE, AND SO DOES ONE THAT REJECTS THE KEY
+					if(typeof errors === 'string' && (error.response.status === 401 || error.response.status === 403)) { errors = "The bridge does not accept the application key (HTTP " + error.response.status + ")."; }
+					else if(typeof errors === 'string') { errors = "The bridge is currently not able to answer (HTTP " + error.response.status + ")."; }
 					else if(errors && errors.errors) { errors = errors.errors; }
 
 					reject({ status: error.response.status, errors: errors });

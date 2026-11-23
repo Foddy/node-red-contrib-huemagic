@@ -158,10 +158,10 @@
                     // CLOSE SEARCH NOTIFICATION
                     notification.close();
                 })
-                .fail(function()
+                .fail(function(xhr)
                 {
                     notification.close();
-                    RED.notify(scope._("hue-contact.config.unknown-error"), "error");
+                    RED.notify(scope._("hue-contact.config.unknown-error") + (xhr.responseText ? "<br>" + $("<div>").text(xhr.responseText).html() : ""), "error");
                 });
             }
 

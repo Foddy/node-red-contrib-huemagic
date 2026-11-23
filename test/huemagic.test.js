@@ -579,3 +579,74 @@ test('messages: the bridge lists the service groups with their resolved services
 	assert.strictEqual(msg.payload.serviceGroups[0].archetype, "computer");
 	assert.deepStrictEqual(msg.payload.serviceGroups[0].services, [ { id: "l1", type: "light" }, { id: "l2", type: "light" } ]);
 });
+
+
+//
+// EDITOR ENDPOINTS
+function resourcesEndpoint(fakeRequest)
+{
+	const routes = {};
+	const warnings = [];
+	require('../huemagic/hue-bridge-config.js')({
+		nodes: { registerType: function() {}, createNode: function() {} },
+		httpAdmin: { get: function(path, permission, handler) { routes[path] = handler; } },
+		auth: { needsPermission: function() {} },
+		log: { warn: function(message) { warnings.push(message); } }
+	});
+
+	return function(type)
+	{
+		const originalRequest = API.request;
+		API.request = fakeRequest;
+
+		return new Promise(function(resolve)
+		{
+			routes['/hue/resources']({ query: { bridge: "b", key: "k", type: type } }, {
+				end: function(body) { resolve({ status: 200, body: body, warnings: warnings }); },
+				status: function(code) { return { send: function(body) { resolve({ status: code, body: body, warnings: warnings }); } }; }
+			});
+		})
+		.finally(function() { API.request = originalRequest; });
+	}
+}
+
+test('endpoints: the scene search lists every scene with the name of its group', async function()
+{
+	const search = resourcesEndpoint(async function() { return [
+		{ id: "r1", type: "room", metadata: { name: "Living" }, children: [], services: [] },
+		{ id: "s1", type: "scene", metadata: { name: "Relax" }, group: { rid: "r1", rtype: "room" } },
+		{ id: "s2", type: "smart_scene", metadata: { name: "Natural" }, group: { rid: "gone", rtype: "zone" } }
+	]; });
+
+	const result = await search("scene");
+	assert.strictEqual(result.status, 200);
+	assert.deepStrictEqual(JSON.parse(result.body), [ { id: "s1", name: "Relax", group: "Living" }, { id: "s2", name: "Natural", group: "–" } ]);
+});
+
+test('endpoints: a failing search gives back and logs the reason instead of "{}"', async function()
+{
+	const search = resourcesEndpoint(async function() { throw new TypeError("broken resource"); });
+
+	const result = await search("scene");
+	assert.strictEqual(result.status, 500);
+	assert.strictEqual(result.body, "broken resource");
+	assert.strictEqual(result.warnings.length, 1);
+	assert.match(result.warnings[0], /scene.*broken resource/);
+});
+
+test('api: a HTML error page names a rejected key and an overloaded bridge apart', async function()
+{
+	const httpUtils = require('../huemagic/utils/http');
+	const originalRequest = httpUtils.request;
+
+	async function answer(status)
+	{
+		httpUtils.request = async function() { throw { response: { status: status, data: "<html>hue personal wireless lighting</html>" } }; };
+		try { await API.request({ config: { bridge: "b", key: "k" }, resource: "scene" }); }
+		catch(error) { return error; }
+		finally { httpUtils.request = originalRequest; }
+	}
+
+	assert.deepStrictEqual(await answer(403), { status: 403, errors: "The bridge does not accept the application key (HTTP 403)." });
+	assert.deepStrictEqual(await answer(503), { status: 503, errors: "The bridge is currently not able to answer (HTTP 503)." });
+});

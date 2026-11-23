@@ -994,7 +994,10 @@ module.exports = function(RED)
 				res.end(JSON.stringify(targetRules));
 			})
 			.catch(function(error) {
-				res.status(500).send(JSON.stringify(error));
+				// A PLAIN ERROR WOULD BE SENT AS "{}", SO GIVE BACK ITS MESSAGE
+				const message = error.message ? error.message : JSON.stringify(error);
+				RED.log.warn("HueMagic: Could not fetch the " + targetType + " resources of the bridge (" + message + ")");
+				res.status(500).send(message);
 			});
 		}
 		// GET ALL OTHER RESOURCES
@@ -1071,7 +1074,10 @@ module.exports = function(RED)
 				res.end(JSON.stringify(targetDevices));
 			})
 			.catch(function(error) {
-				res.status(500).send(JSON.stringify(error));
+				// A PLAIN ERROR WOULD BE SENT AS "{}", SO GIVE BACK ITS MESSAGE
+				const message = error.message ? error.message : JSON.stringify(error);
+				RED.log.warn("HueMagic: Could not fetch the " + targetType + " resources of the bridge (" + message + ")");
+				res.status(500).send(message);
 			});
 		}
 	});

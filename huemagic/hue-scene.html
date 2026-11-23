@@ -91,7 +91,7 @@
                 var current = $('#node-input-sceneid').val();
 
                 // TRIGGER SEARCHING NOTIFICATION
-                var notification = RED.notify(scope._("hue-rules.config.searching"), { type: "compact", modal: true, fixed: true });
+                var notification = RED.notify(scope._("hue-scene.config.searching"), { type: "compact", modal: true, fixed: true });
 
                 // GET THE SCENES
                 $.get('hue/resources', { bridge: bridgeConfig.bridge, key: bridgeConfig.key, type: "scene" })
@@ -134,10 +134,10 @@
                     // CLOSE SEARCH NOTIFICATION
                     notification.close();
                 })
-                .fail(function()
+                .fail(function(xhr)
                 {
                     notification.close();
-                    RED.notify(scope._("hue-scene.config.unknown-error"), "error");
+                    RED.notify(scope._("hue-scene.config.unknown-error") + (xhr.responseText ? "<br>" + $("<div>").text(xhr.responseText).html() : ""), "error");
                 });
             }
 
